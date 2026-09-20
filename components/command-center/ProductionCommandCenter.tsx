@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { LiveOperatingSpinePanel, useLiveOperatingSpine } from "@/components/operations/LiveOperatingSpinePanel";
+import { SambaIntelligencePanel } from "@/components/operations/SambaIntelligencePanel";
 
 export function ProductionCommandCenter() {
   const live = useLiveOperatingSpine();
@@ -24,6 +25,10 @@ export function ProductionCommandCenter() {
       pickupPending: pickups.filter((row) => row.status === "PENDING" || row.status === "AUTHORIZED").length,
       pickupReleased: pickups.filter((row) => row.status === "RELEASED").length,
       pickupStopped: pickups.filter((row) => row.status === "STOPPED").length,
+      physicalPending: pickups.filter((row) => (row.physicalDisposition ?? "PENDING") === "PENDING").length,
+      physicalVerification: pickups.filter((row) => row.status === "AUTHORIZED" && (row.physicalDisposition ?? "PENDING") === "PENDING").length,
+      physicalReleased: pickups.filter((row) => row.physicalDisposition === "RELEASE").length,
+      physicalStopped: pickups.filter((row) => row.physicalDisposition === "STOP" || row.physicalException).length,
       authority: spine?.authority ?? null,
     };
   }, [spine]);
@@ -80,17 +85,23 @@ export function ProductionCommandCenter() {
 
       <LiveOperatingSpinePanel title="LIVE Command Center consumption" live={live} />
 
+      <SambaIntelligencePanel />
+
       <section className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
         <h2 className="text-lg font-bold text-white">Pickup authorization (LIVE)</h2>
         <p className="mt-1 text-xs text-slate-400">
-          Separate dock gate after trip release. Status comes from the same operating-spine payload. Stored driver and
-          equipment records are not physical dock proof.
+          Separate dock gate after trip release. Phase 1 status and Phase 2 physical disposition come from the same
+          operating-spine payload. Stored driver and equipment records are not physical dock proof.
         </p>
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           {[
             { label: "Pending / authorized", value: kpis.pickupPending },
             { label: "RELEASED", value: kpis.pickupReleased },
             { label: "STOPPED", value: kpis.pickupStopped },
+            { label: "Physical pending", value: kpis.physicalPending },
+            { label: "Verification", value: kpis.physicalVerification },
+            { label: "Physical RELEASE", value: kpis.physicalReleased },
+            { label: "Physical STOP / exception", value: kpis.physicalStopped },
           ].map((card) => (
             <div key={card.label} className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
               <p className="text-xs uppercase tracking-wide text-slate-500">{card.label}</p>
@@ -106,7 +117,8 @@ export function ProductionCommandCenter() {
               <li key={row.id}>
                 <Link className="text-teal-200 underline" href={`/dispatch/pickup?loadId=${row.loadId}`}>
                   {row.status}
-                </Link>{" "}
+                </Link>
+                {row.physicalDisposition ? ` · physical ${row.physicalDisposition}` : ""}{" "}
                 {row.reason ? `— ${row.reason}` : null}
               </li>
             ))}
@@ -139,6 +151,11 @@ export function ProductionCommandCenter() {
           <li>
             <Link className="underline" href="/dispatch/pickup">
               Pickup authorization
+            </Link>
+          </li>
+          <li>
+            <Link className="underline" href="/dispatch/pickup/dock">
+              Shipper dock
             </Link>
           </li>
         </ul>

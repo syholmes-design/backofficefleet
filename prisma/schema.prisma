@@ -278,6 +278,20 @@ enum PickupStopReasonCode {
   ASSIGNMENT_DRIFT
 }
 
+enum PickupArrivalResult {
+  MATCH
+  MISMATCH
+  UNVERIFIED
+  EXPIRED
+  UNAUTHORIZED
+}
+
+enum PickupPhysicalDisposition {
+  PENDING
+  RELEASE
+  STOP
+}
+
 enum ConditionCategory {
   MECHANICAL
   ELECTRICAL
@@ -549,6 +563,7 @@ enum OperatingProcessEventType {
   PICKUP_VERIFICATION_RECORDED
   PICKUP_RELEASED
   PICKUP_STOPPED
+  PICKUP_PHYSICAL_RECONCILED
   DELIVERY_PROOF_RECORDED
   SETTLEMENT_RECORDED
   INVOICE_RECORDED
@@ -890,6 +905,7 @@ model Fleet {
   dispatchReleases                 DispatchRelease[]
   pickupAuthorizations             PickupAuthorization[]
   pickupVerificationAttempts       PickupVerificationAttempt[]
+  pickupPhysicalReconciliations    PickupPhysicalReconciliation[]
   conditionThreads                 ConditionThread[]                 @relation("ConditionThreadFleet")
   conditionEvents                  ConditionEvent[]                  @relation("ConditionEventFleet")
   operationalEvidence              OperationalEvidence[]             @relation("OperationalEvidenceFleet")
@@ -913,6 +929,8 @@ model Fleet {
   invoices                         Invoice[]
   invoicePayments                  InvoicePayment[]
   requisitions                     Requisition[]
+  fmcsaVerifications               FmcsaRegulatoryVerification[]
+  sambaFindings                    SambaFinding[]
 
   @@index([status])
   @@index([carrierGroupId, status])
@@ -953,6 +971,7 @@ model User {
   pickupAuthorizationsCreated         PickupAuthorization[]             @relation("PickupAuthorizationCreatedBy")
   pickupAuthorizationsCancelled       PickupAuthorization[]             @relation("PickupAuthorizationCancelledBy")
   pickupVerificationAttempts          PickupVerificationAttempt[]       @relation("PickupVerificationAttemptActor")
+  pickupPhysicalReconciliations       PickupPhysicalReconciliation[]    @relation("PickupPhysicalReconciliationActor")
   driver                              Driver?
   driverClaimTokensCreated            DriverClaimToken[]                @relation("DriverClaimTokenCreatedBy")
   conditionThreadsCreated             ConditionThread[]                 @relation("ConditionThreadCreatedByUser")
@@ -970,6 +989,9 @@ model User {
   requisitionsCreated                 Requisition[]                     @relation("RequisitionCreatedBy")
   requisitionsRequested               Requisition[]                     @relation("RequisitionRequestingManager")
   requisitionApprovals                RequisitionApproval[]             @relation("RequisitionApprovalReviewer")
+  fmcsaVerifications                  FmcsaRegulatoryVerification[]     @relation("FmcsaRegulatoryVerificationActor")
+  sambaFindingsCreated                SambaFinding[]                    @relation("SambaFindingCreatedBy")
+  sambaFindingsResolved               SambaFinding[]                    @relation("SambaFindingResolvedBy")
 
   @@index([status])
 }
@@ -1767,6 +1789,7 @@ model PickupAuthorization {
   createdByUser           User                       @relation("PickupAuthorizationCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
   cancelledByUser         User?                      @relation("PickupAuthorizationCancelledBy", fields: [cancelledByUserId], references: [id], onDelete: Restrict)
   verificationAttempts    PickupVerificationAttempt[]
+  physicalReconciliation  PickupPhysicalReconciliation?
 
   @@index([fleetId, status, createdAt])
   @@index([loadId, createdAt])
@@ -1798,6 +1821,179 @@ model PickupVerificationAttempt {
 
   @@index([pickupAuthorizationId, createdAt])
   @@index([fleetId, createdAt])
+}
+
+model PickupPhysicalReconciliation {
+  id                              String                     @id @default(cuid())
+  pickupAuthorizationId           String                     @unique
+  fleetId                         String
+  loadId                          String
+  disposition                     PickupPhysicalDisposition
+  driverArrivalResult             PickupArrivalResult
+  tractorArrivalResult            PickupArrivalResult
+  trailerArrivalResult            PickupArrivalResult
+  loadArrivalResult               PickupArrivalResult
+  authorizationArrivalResult      PickupArrivalResult
+  identityMatchToAuthorizedRecord Boolean
+  identityPhysicalClass           RecordVerificationClass    @default(UNVERIFIED)
+  equipmentPhysicalClass          RecordVerificationClass    @default(UNVERIFIED)
+  method                          PickupVerificationMethod
+  arrivingDriverId                String?
+  arrivingTractorUnitNumber       String?
+  arrivingTrailerUnitNumber       String?
+  arrivingVin                     String?
+  arrivingPlate                   String?
+  arrivingQr                      String?
+  reason                          String
+  reasonCodes                     Json
+  evidenceReference               String?
+  actorUserId                     String
+  createdAt                       DateTime                   @default(now())
+  updatedAt                       DateTime                   @updatedAt
+  authorization                   PickupAuthorization        @relation(fields: [pickupAuthorizationId], references: [id], onDelete: Restrict)
+  fleet                           Fleet                      @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  actorUser                       User                       @relation("PickupPhysicalReconciliationActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([fleetId, disposition, createdAt])
+  @@index([loadId, createdAt])
+}
+
+enum FmcsaQueryKind {
+  USDOT
+  DOCKET
+}
+
+enum FmcsaVerificationResult {
+  VERIFIED
+  NOT_VERIFIED
+  UNAVAILABLE
+  STALE
+  CONFLICT
+  ERROR
+}
+
+enum FmcsaProvenance {
+  LIVE
+  CACHED
+  FIXTURE
+  UNAVAILABLE
+  ERROR
+}
+
+enum FmcsaFreshnessState {
+  NEVER_VERIFIED
+  LIVE_RETRIEVED
+  CACHED
+  STALE
+  UNAVAILABLE
+}
+
+model FmcsaRegulatoryVerification {
+  id                 String                  @id @default(cuid())
+  fleetId            String
+  carrierRegistryId  String?
+  queriedKind        FmcsaQueryKind
+  queriedValue       String
+  result             FmcsaVerificationResult
+  provenance         FmcsaProvenance
+  freshnessState     FmcsaFreshnessState
+  retrievedAt        DateTime?
+  verifiedAt         DateTime
+  identifierFound    Boolean                 @default(false)
+  usdot              String?
+  docketNumber       String?
+  legalName          String?
+  dbaName            String?
+  allowToOperate     String?
+  outOfService       String?
+  outOfServiceDate   String?
+  fieldComparisons   Json
+  errorCode          String?
+  errorMessage       String?
+  endpointUsed       String?
+  actorUserId        String?
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  fleet              Fleet                   @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  actorUser          User?                   @relation("FmcsaRegulatoryVerificationActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([fleetId, carrierRegistryId, verifiedAt], map: "FmcsaRegVer_fleet_carrier_verified_idx")
+  @@index([fleetId, queriedKind, queriedValue, verifiedAt], map: "FmcsaRegVer_fleet_query_verified_idx")
+}
+
+enum SambaFindingStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+  DISMISSED
+  EXPIRED
+}
+
+enum SambaFindingSeverity {
+  INFO
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum SambaFindingDomain {
+  CARRIER
+  PICKUP
+  DRIVER
+  EQUIPMENT
+  OPERATIONS
+}
+
+enum SambaProvenance {
+  LIVE
+  VERIFIED_EXTERNAL
+  CACHED
+  FIXTURE
+  INFERRED
+  UNVERIFIED
+  INSUFFICIENT_EVIDENCE
+}
+
+model SambaFinding {
+  id                  String               @id @default(cuid())
+  fleetId             String
+  domain              SambaFindingDomain
+  entityType          String
+  entityId            String
+  findingType         String
+  severity            SambaFindingSeverity
+  status              SambaFindingStatus   @default(OPEN)
+  provenance          SambaProvenance
+  evidenceFreshness   String?
+  evidenceSource      String
+  evidenceId          String?
+  evidenceTimestamp   DateTime?
+  demoReferenceUsed   Boolean              @default(false)
+  liveConnected       Boolean              @default(false)
+  fact                String
+  verifiedEvidence    String?
+  inference           String?
+  recommendation      String
+  explanation         String
+  statements          Json
+  evidenceRefs        Json
+  workflowHref        String?
+  llmUsed             Boolean              @default(false)
+  createdByUserId     String?
+  resolvedByUserId    String?
+  resolutionReason    String?
+  acknowledgedAt      DateTime?
+  resolvedAt          DateTime?
+  dismissedAt         DateTime?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  fleet               Fleet                @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  createdByUser       User?                @relation("SambaFindingCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  resolvedByUser      User?                @relation("SambaFindingResolvedBy", fields: [resolvedByUserId], references: [id], onDelete: Restrict)
+
+  @@index([fleetId, status, createdAt], map: "SambaFinding_fleet_status_created_idx")
+  @@index([fleetId, findingType, entityId, status], map: "SambaFinding_fleet_type_entity_status_idx")
 }
 
 model ConditionThread {

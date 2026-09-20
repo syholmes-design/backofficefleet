@@ -4,7 +4,6 @@ import { resolve } from "node:path";
 import { resolveSecurePickupTestDatabaseUrl } from "../lib/test/assertTestDatabaseTarget";
 
 const root = resolve(process.cwd());
-
 let testDatabaseUrl: string;
 try {
   testDatabaseUrl = resolveSecurePickupTestDatabaseUrl(root);
@@ -14,13 +13,12 @@ try {
 }
 
 process.env.DATABASE_URL = testDatabaseUrl;
+process.env.BOF_FMCSA_PROVIDER = "unavailable";
 
 const files = [
   "lib/test/assertTestDatabaseTarget.test.ts",
-  "lib/services/pickupReconciliation.test.ts",
-  "lib/services/pickupAuthorization.certification.test.ts",
-  "lib/services/pickupPhysicalArrival.test.ts",
-  "lib/services/pickupPhysicalReconciliation.certification.test.ts",
+  "lib/services/fmcsa/normalize.test.ts",
+  "lib/services/fmcsa/fmcsaVerification.certification.test.ts",
 ];
 
 const child = spawn("npx", ["--yes", "tsx", "--test", ...files], {
@@ -29,6 +27,7 @@ const child = spawn("npx", ["--yes", "tsx", "--test", ...files], {
   env: {
     ...process.env,
     DATABASE_URL: testDatabaseUrl,
+    BOF_FMCSA_PROVIDER: "unavailable",
   },
   shell: process.platform === "win32",
 });

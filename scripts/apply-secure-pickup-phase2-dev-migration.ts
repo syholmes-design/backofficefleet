@@ -4,7 +4,6 @@ import { resolve } from "node:path";
 import { resolveSecurePickupTestDatabaseUrl } from "../lib/test/assertTestDatabaseTarget";
 
 const root = resolve(process.cwd());
-
 let testDatabaseUrl: string;
 try {
   testDatabaseUrl = resolveSecurePickupTestDatabaseUrl(root);
@@ -13,17 +12,9 @@ try {
   process.exit(1);
 }
 
-process.env.DATABASE_URL = testDatabaseUrl;
+console.log("Applying Prisma migrations to guarded local bof_dev only.");
 
-const files = [
-  "lib/test/assertTestDatabaseTarget.test.ts",
-  "lib/services/pickupReconciliation.test.ts",
-  "lib/services/pickupAuthorization.certification.test.ts",
-  "lib/services/pickupPhysicalArrival.test.ts",
-  "lib/services/pickupPhysicalReconciliation.certification.test.ts",
-];
-
-const child = spawn("npx", ["--yes", "tsx", "--test", ...files], {
+const child = spawn("npx", ["prisma", "migrate", "deploy"], {
   cwd: root,
   stdio: "inherit",
   env: {

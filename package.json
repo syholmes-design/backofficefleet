@@ -75,7 +75,10 @@
     "validate:prompt-013-hardening": "npx --yes tsx scripts/validate-prompt-013-hardening.ts",
     "validate:prompt-020-demo-firewall": "npx --yes tsx scripts/validate-prompt-020-demo-firewall.ts",
     "validate:prompt-021-coherence": "npx --yes tsx scripts/validate-prompt-021-coherence.ts",
-    "test:secure-pickup": "npx --yes tsx scripts/run-secure-pickup-cert.ts"
+    "test:secure-pickup": "npx --yes tsx scripts/run-secure-pickup-cert.ts",
+    "test:fmcsa-verification": "npx --yes tsx scripts/run-fmcsa-verification-test.ts",
+    "test:samba-intelligence": "npx --yes tsx scripts/run-samba-intelligence-test.ts",
+    "test:unified-integration": "npx --yes tsx scripts/run-unified-integration-test.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",

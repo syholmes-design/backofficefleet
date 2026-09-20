@@ -5,6 +5,10 @@ import {
   listPickupAuthorizations,
   verifyPickupAuthorization,
 } from "@/lib/services/pickupAuthorizationService";
+import {
+  getPickupDockView,
+  reconcilePickupPhysicalArrival,
+} from "@/lib/services/pickupPhysicalReconciliationService";
 
 import { NextRequest, NextResponse } from "next/server";
 
@@ -87,7 +91,9 @@ export function getOptionalString(body: Record<string, unknown>, fieldName: stri
 export {
   cancelPickupAuthorization,
   getPickupAuthorization,
+  getPickupDockView,
   issuePickupAuthorization,
   listPickupAuthorizations,
+  reconcilePickupPhysicalArrival,
   verifyPickupAuthorization,
 };

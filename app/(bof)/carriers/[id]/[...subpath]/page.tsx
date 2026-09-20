@@ -9,6 +9,8 @@ import {
 import { getCarrierDispatchGate } from "@/lib/carrier-dispatch-gates";
 import { getCarrierPacketEvidence } from "@/lib/carrier-packet-evidence";
 import { getCarrierReloadFits } from "@/lib/carrier-reload-intelligence";
+import { FmcsaVerificationPanel } from "@/components/carriers/FmcsaVerificationPanel";
+import { SambaIntelligencePanel } from "@/components/operations/SambaIntelligencePanel";
 
 type Props = {
   params: Promise<{ id: string; subpath?: string[] }>;
@@ -69,6 +71,9 @@ export default async function CarrierDetailPage({ params }: Props) {
           <div>
             <div className="flex flex-wrap items-center gap-3">
               <h1 className="text-3xl font-extrabold tracking-tight text-slate-950 md:text-4xl">{carrier.dba}</h1>
+              <span className="inline-flex rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-800">
+                DEMO_REFERENCE
+              </span>
               <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wider ${toneClasses[tone]}`}>
                 {carrier.readinessStatus}
               </span>
@@ -136,6 +141,11 @@ export default async function CarrierDetailPage({ params }: Props) {
           </div>
         </div>
       </section>
+
+      <FmcsaVerificationPanel carrierId={carrier.id} />
+      <div className="mt-6">
+        <SambaIntelligencePanel entityId={carrier.id} />
+      </div>
 
       {/* Packet Controls & Compliance Items */}
       <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">

@@ -44,6 +44,8 @@ export type LiveOperatingSpine = {
     releasedAt: string | null;
     stoppedAt: string | null;
     updatedAt: string;
+    physicalDisposition?: string;
+    physicalException?: boolean;
   }>;
 };
 
@@ -164,6 +166,7 @@ export function LiveOperatingSpinePanel({
                 <li key={row.id}>
                   <Link className="underline decoration-emerald-500/50" href={`/dispatch/pickup?loadId=${row.loadId}`}>
                     {row.status}
+                    {row.physicalDisposition && row.physicalDisposition !== "PENDING" ? ` / ${row.physicalDisposition}` : ""}
                   </Link>{" "}
                   · {row.reason || row.loadId.slice(0, 8)}
                 </li>

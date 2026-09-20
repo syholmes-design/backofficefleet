@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { SambaIntelligencePanel } from "@/components/operations/SambaIntelligencePanel";
 import { ApiError, getErrorMessage, requestJson } from "@/lib/dispatch-workflow-ui";
 
 type PublicAuthorization = {
@@ -194,6 +195,10 @@ export function PickupAuthorizationClient({ initialLoadId = "" }: { initialLoadI
           <Link className="text-teal-200 underline" href="/command-center">
             Command Center
           </Link>
+          {" · "}
+          <Link className="text-teal-200 underline" href="/dispatch/pickup/dock">
+            Phase 2 shipper dock
+          </Link>
         </p>
       </header>
 
@@ -304,6 +309,8 @@ export function PickupAuthorizationClient({ initialLoadId = "" }: { initialLoadI
       ) : null}
 
       {error ? <p className="rounded-lg border border-amber-500/40 bg-amber-950/40 p-3 text-sm text-amber-100">{error}</p> : null}
+
+      <SambaIntelligencePanel />
     </div>
   );
 }

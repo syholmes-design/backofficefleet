@@ -4,7 +4,6 @@ import { resolve } from "node:path";
 import { resolveSecurePickupTestDatabaseUrl } from "../lib/test/assertTestDatabaseTarget";
 
 const root = resolve(process.cwd());
-
 let testDatabaseUrl: string;
 try {
   testDatabaseUrl = resolveSecurePickupTestDatabaseUrl(root);
@@ -15,23 +14,16 @@ try {
 
 process.env.DATABASE_URL = testDatabaseUrl;
 
-const files = [
-  "lib/test/assertTestDatabaseTarget.test.ts",
-  "lib/services/pickupReconciliation.test.ts",
-  "lib/services/pickupAuthorization.certification.test.ts",
-  "lib/services/pickupPhysicalArrival.test.ts",
-  "lib/services/pickupPhysicalReconciliation.certification.test.ts",
-];
-
-const child = spawn("npx", ["--yes", "tsx", "--test", ...files], {
-  cwd: root,
-  stdio: "inherit",
-  env: {
-    ...process.env,
-    DATABASE_URL: testDatabaseUrl,
+const child = spawn(
+  "npx",
+  ["--yes", "tsx", "--test", "lib/test/assertTestDatabaseTarget.test.ts", "lib/services/integration/unifiedIntegration.certification.test.ts"],
+  {
+    cwd: root,
+    stdio: "inherit",
+    env: { ...process.env, DATABASE_URL: testDatabaseUrl, BOF_FMCSA_PROVIDER: "unavailable" },
+    shell: process.platform === "win32",
   },
-  shell: process.platform === "win32",
-});
+);
 
 child.on("exit", (code) => {
   process.exit(code ?? 1);

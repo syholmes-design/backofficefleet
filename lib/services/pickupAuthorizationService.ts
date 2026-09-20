@@ -476,11 +476,16 @@ export async function listPickupAuthorizations(
     where,
     orderBy: [{ createdAt: "desc" }],
     take: 50,
-    include: { verificationAttempts: { orderBy: { createdAt: "desc" }, take: 1 } },
+    include: {
+      verificationAttempts: { orderBy: { createdAt: "desc" }, take: 1 },
+      physicalReconciliation: true,
+    },
   });
   return rows.map((row) => ({
     ...toPublicAuthorization(row),
     latestAttempt: row.verificationAttempts[0] ? toPublicAttempt(row.verificationAttempts[0]) : null,
+    physicalDisposition: row.physicalReconciliation?.disposition ?? "PENDING",
+    physicalException: row.physicalReconciliation?.disposition === "STOP",
   }));
 }
 
@@ -862,5 +867,7 @@ export async function listPickupAuthorizationsForSpine(sessionUser: SessionUserL
     releasedAt: row.releasedAt,
     stoppedAt: row.stoppedAt,
     updatedAt: row.updatedAt,
+    physicalDisposition: row.physicalDisposition,
+    physicalException: row.physicalException,
   }));
 }

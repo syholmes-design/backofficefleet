@@ -14,6 +14,7 @@ import {
   getCarrierStatusTone,
 } from "@/lib/carrier-registry";
 import { getCarrierDispatchGate, getCarrierGateStats } from "@/lib/carrier-dispatch-gates";
+import { FmcsaVerificationPanel } from "@/components/carriers/FmcsaVerificationPanel";
 
 export const metadata = {
   title: "Carrier Registry | BOF",
@@ -48,13 +49,14 @@ export default function CarrierRegistryPage() {
             <p className="text-xs font-black uppercase tracking-[0.28em] text-teal-700">Carrier readiness engine</p>
             <h1 className="mt-3 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">Carrier Registry</h1>
             <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600">
-              BOF tracks carrier authority, insurance, W-9, agreement, payment, lane, and equipment readiness before
-              a carrier can enter the dispatch flow. This is carrier packet control, not a generic CRM.
+              This catalog is DEMO_REFERENCE packet control, not a LIVE carrier master and not operational dispatch
+              authority. LIVE loads, assignments, and Secure Pickup use Prisma operating records. FMCSA evidence, if
+              present, is an overlay and does not replace BOF operational state.
             </p>
           </div>
           <div className="rounded-xl border border-teal-200 bg-teal-50 p-4 text-sm text-teal-900">
             <strong className="block text-lg text-slate-950">{gateStats.allowed} cleared / {gateStats.blocked} blocked</strong>
-            <span>Carrier assignment gates enforce packet readiness before dispatch.</span>
+            <span>DEMO_REFERENCE packet gates. They do not write LIVE dispatch or Secure Pickup state.</span>
           </div>
         </div>
       </section>
@@ -149,6 +151,7 @@ export default function CarrierRegistryPage() {
                 <div className="mt-3 rounded-lg border border-slate-200 bg-white p-3">
                   <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Reload-qualified regions</p>
                   <p className="mt-1 text-sm text-slate-800 font-medium">{carrier.reloadQualifiedRegions.join(" / ")}</p>
+                  <FmcsaVerificationPanel carrierId={carrier.id} compact />
                 </div>
               </Link>
             );

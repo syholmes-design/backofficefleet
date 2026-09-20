@@ -9,6 +9,7 @@ export type SecurePickupCertIds = {
   readinessIds: string[];
   releaseIds: string[];
   authorizationIds: string[];
+  userIds: string[];
 };
 
 export function emptySecurePickupCertIds(): SecurePickupCertIds {
@@ -20,6 +21,7 @@ export function emptySecurePickupCertIds(): SecurePickupCertIds {
     readinessIds: [],
     releaseIds: [],
     authorizationIds: [],
+    userIds: [],
   };
 }
 
@@ -55,20 +57,33 @@ export async function requireCertOperator() {
 }
 
 export async function cleanupSecurePickupCertFixtures(ids: SecurePickupCertIds) {
+  const physical = await prisma.pickupPhysicalReconciliation.findMany({
+    where: { pickupAuthorizationId: { in: ids.authorizationIds } },
+    select: { id: true },
+  });
+  const physicalIds = physical.map((row) => row.id);
+  await prisma.pickupPhysicalReconciliation.deleteMany({
+    where: { pickupAuthorizationId: { in: ids.authorizationIds } },
+  });
   await prisma.pickupVerificationAttempt.deleteMany({
     where: { pickupAuthorizationId: { in: ids.authorizationIds } },
   });
   await prisma.operatingProcessEvent.deleteMany({
     where: {
       OR: [
-        { entityId: { in: ids.authorizationIds } },
+        { entityId: { in: [...ids.authorizationIds, ...physicalIds] } },
         { relatedRecordId: { in: ids.authorizationIds } },
         { loadId: { in: ids.loadIds } },
       ],
     },
   });
   await prisma.auditEvent.deleteMany({
-    where: { entityType: "PickupAuthorization", entityId: { in: ids.authorizationIds } },
+    where: {
+      OR: [
+        { entityType: "PickupAuthorization", entityId: { in: ids.authorizationIds } },
+        { entityType: "PickupPhysicalReconciliation", entityId: { in: physicalIds } },
+      ],
+    },
   });
   await prisma.pickupAuthorization.deleteMany({ where: { id: { in: ids.authorizationIds } } });
   await prisma.dispatchRelease.deleteMany({ where: { id: { in: ids.releaseIds } } });
@@ -77,13 +92,17 @@ export async function cleanupSecurePickupCertFixtures(ids: SecurePickupCertIds) 
   await prisma.load.deleteMany({ where: { id: { in: ids.loadIds } } });
   await prisma.equipment.deleteMany({ where: { id: { in: ids.equipmentIds } } });
   await prisma.driver.deleteMany({ where: { id: { in: ids.driverIds } } });
+  if (ids.userIds.length > 0) {
+    await prisma.fleetMembership.deleteMany({ where: { userId: { in: ids.userIds } } });
+    await prisma.user.deleteMany({ where: { id: { in: ids.userIds } } });
+  }
 }
 
 export async function createSecurePickupChain(
   fleetId: string,
   actorUserId: string,
   ids: SecurePickupCertIds,
-  options?: { trip?: boolean },
+  options?: { trip?: boolean; tractorVin?: string | null },
 ) {
   const stamp = `${Date.now().toString(36)}-${Math.random().toString(16).slice(2, 8)}`;
   const driver = await prisma.driver.create({
@@ -100,6 +119,7 @@ export async function createSecurePickupChain(
       fleetId,
       equipmentType: "TRACTOR",
       unitNumber: `SP-TR-${stamp}`,
+      vin: options?.tractorVin ?? null,
       status: "AVAILABLE",
     },
   });
@@ -180,6 +200,16 @@ export function pickupHttpError(error: unknown): {
   payload?: {
     authorization?: { id?: string; status?: string };
     attempt?: { result?: string; reasonCodes?: unknown; presentedTokenValid?: boolean };
+    physical?: {
+      disposition?: string;
+      dimensions?: Record<string, string>;
+      identityClass?: string;
+      identityPhysicalClass?: string;
+      equipmentPhysicalClass?: string;
+      evidenceReference?: string | null;
+      identityPhysicallyVerified?: boolean;
+    };
+    reason?: string;
   };
 } {
   return error as {
@@ -188,6 +218,16 @@ export function pickupHttpError(error: unknown): {
     payload?: {
       authorization?: { id?: string; status?: string };
       attempt?: { result?: string; reasonCodes?: unknown; presentedTokenValid?: boolean };
+      physical?: {
+        disposition?: string;
+        dimensions?: Record<string, string>;
+        identityClass?: string;
+        identityPhysicalClass?: string;
+        equipmentPhysicalClass?: string;
+        evidenceReference?: string | null;
+        identityPhysicallyVerified?: boolean;
+      };
+      reason?: string;
     };
   };
 }

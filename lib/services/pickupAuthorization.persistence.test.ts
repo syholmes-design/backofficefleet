@@ -36,6 +36,7 @@ async function cleanup(ids: {
   releaseIds: string[];
   authorizationIds: string[];
 }) {
+  await prisma.pickupPhysicalReconciliation.deleteMany({ where: { pickupAuthorizationId: { in: ids.authorizationIds } } });
   await prisma.pickupVerificationAttempt.deleteMany({ where: { pickupAuthorizationId: { in: ids.authorizationIds } } });
   await prisma.operatingProcessEvent.deleteMany({
     where: {
