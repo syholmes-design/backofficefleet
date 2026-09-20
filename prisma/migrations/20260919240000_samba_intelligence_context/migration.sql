@@ -1,0 +1,9 @@
+ALTER TABLE "SambaFinding" ADD COLUMN IF NOT EXISTS "relatedEntityRefs" JSONB;
+ALTER TABLE "SambaFinding" ADD COLUMN IF NOT EXISTS "patternType" TEXT;
+ALTER TABLE "SambaFinding" ADD COLUMN IF NOT EXISTS "recommendedAction" TEXT;
+ALTER TABLE "SambaFinding" ADD COLUMN IF NOT EXISTS "temporalContext" TEXT;
+ALTER TABLE "SambaFinding" ADD COLUMN IF NOT EXISTS "evidenceSummary" TEXT;
+ALTER TABLE "SambaFinding" ADD COLUMN IF NOT EXISTS "whatHappened" TEXT;
+ALTER TABLE "SambaFinding" ADD COLUMN IF NOT EXISTS "whyItMatters" TEXT;
+ALTER TABLE "SambaFinding" ADD COLUMN IF NOT EXISTS "whatIsNotVerified" TEXT;
+ALTER TABLE "SambaFinding" ADD COLUMN IF NOT EXISTS "context" JSONB;

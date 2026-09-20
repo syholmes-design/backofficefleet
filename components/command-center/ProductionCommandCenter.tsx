@@ -85,7 +85,7 @@ export function ProductionCommandCenter() {
 
       <LiveOperatingSpinePanel title="LIVE Command Center consumption" live={live} />
 
-      <SambaIntelligencePanel />
+      <SambaIntelligencePanel loadId={spine?.loads[0]?.id} />
 
       <section className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
         <h2 className="text-lg font-bold text-white">Pickup authorization (LIVE)</h2>

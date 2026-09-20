@@ -144,7 +144,7 @@ export default async function CarrierDetailPage({ params }: Props) {
 
       <FmcsaVerificationPanel carrierId={carrier.id} />
       <div className="mt-6">
-        <SambaIntelligencePanel entityId={carrier.id} />
+        <SambaIntelligencePanel entityId={carrier.id} carrierRegistryId={carrier.id} />
       </div>
 
       {/* Packet Controls & Compliance Items */}

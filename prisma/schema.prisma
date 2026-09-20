@@ -1979,6 +1979,15 @@ model SambaFinding {
   statements          Json
   evidenceRefs        Json
   workflowHref        String?
+  relatedEntityRefs   Json?
+  patternType         String?
+  recommendedAction   String?
+  temporalContext     String?
+  evidenceSummary     String?
+  whatHappened        String?
+  whyItMatters        String?
+  whatIsNotVerified   String?
+  context             Json?
   llmUsed             Boolean              @default(false)
   createdByUserId     String?
   resolvedByUserId    String?

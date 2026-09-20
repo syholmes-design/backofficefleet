@@ -4,8 +4,9 @@ import { requireFleetAccess, type SessionUserLike } from "@/lib/authorization";
 import { createAuditRecord } from "@/lib/audit";
 import { getCarrierById } from "@/lib/carrier-registry";
 import { prisma } from "@/lib/prisma";
-import { renderSambaExplanation, sambaLlmBoundary } from "@/lib/services/samba/explanation";
-import { SAMBA_FINDING_TYPES, SAMBA_OPERATOR_ROLES, type SambaEvidenceRef, type SambaStatement } from "@/lib/services/samba/types";
+import { renderSambaContextNarrative, renderSambaExplanation, sambaLlmBoundary } from "@/lib/services/samba/explanation";
+import { getSambaOperationalContext } from "@/lib/services/samba/sambaContext";
+import { SAMBA_FINDING_TYPES, SAMBA_OPERATOR_ROLES, SAMBA_PATTERN_TYPES, type SambaEvidenceRef, type SambaStatement } from "@/lib/services/samba/types";
 
 function requireSession(user: SessionUserLike | null | undefined) {
   if (!user?.id) throw Object.assign(new Error("Unauthorized"), { statusCode: 401 });
@@ -76,6 +77,15 @@ async function upsertOpenFinding(
     statements: SambaStatement[];
     evidenceRefs: SambaEvidenceRef[];
     workflowHref?: string | null;
+    relatedEntityRefs?: unknown;
+    patternType?: string | null;
+    recommendedAction?: string | null;
+    temporalContext?: string | null;
+    evidenceSummary?: string | null;
+    whatHappened?: string | null;
+    whyItMatters?: string | null;
+    whatIsNotVerified?: string | null;
+    context?: unknown;
   },
 ) {
   const existing = await prisma.sambaFinding.findFirst({
@@ -113,6 +123,15 @@ async function upsertOpenFinding(
       statements: input.statements as unknown as Prisma.InputJsonValue,
       evidenceRefs: input.evidenceRefs as unknown as Prisma.InputJsonValue,
       workflowHref: input.workflowHref ?? null,
+      relatedEntityRefs: (input.relatedEntityRefs as Prisma.InputJsonValue) ?? undefined,
+      patternType: input.patternType ?? null,
+      recommendedAction: input.recommendedAction ?? input.recommendation,
+      temporalContext: input.temporalContext ?? null,
+      evidenceSummary: input.evidenceSummary ?? null,
+      whatHappened: input.whatHappened ?? null,
+      whyItMatters: input.whyItMatters ?? null,
+      whatIsNotVerified: input.whatIsNotVerified ?? null,
+      context: (input.context as Prisma.InputJsonValue) ?? undefined,
       llmUsed: false,
       createdByUserId: user.id as string,
     },
@@ -129,13 +148,24 @@ async function upsertOpenFinding(
   return { row, created: true };
 }
 
-export async function listSambaFindings(user: SessionUserLike | null | undefined, fleetId: string) {
+export async function listSambaFindings(
+  user: SessionUserLike | null | undefined,
+  fleetId: string,
+  relatedEntityId?: string | null,
+) {
   requireSession(user);
   requireTenant(user!, fleetId);
   const rows = await prisma.sambaFinding.findMany({
-    where: { fleetId },
+    where: {
+      fleetId,
+      ...(relatedEntityId
+        ? {
+            OR: [{ entityId: relatedEntityId }, { evidenceId: relatedEntityId }],
+          }
+        : {}),
+    },
     orderBy: [{ createdAt: "desc" }],
-    take: 50,
+    take: 200,
   });
   return {
     llm: sambaLlmBoundary(),
@@ -809,6 +839,8 @@ export async function evaluateSambaIntelligence(user: SessionUserLike | null | u
     if (inserted.created) created.push(inserted.row.id);
   }
 
+  await applySambaCorrelations(actor, fleetId, created);
+
   const listed = await listSambaFindings(actor, fleetId);
   return {
     createdCount: created.length,
@@ -817,4 +849,343 @@ export async function evaluateSambaIntelligence(user: SessionUserLike | null | u
     llm: sambaLlmBoundary(),
     findings: listed.findings,
   };
+}
+
+export { getSambaOperationalContext };
+
+async function applySambaCorrelations(actor: SessionUserLike, fleetId: string, created: string[]) {
+  const stopped = await prisma.pickupAuthorization.findMany({
+    where: { fleetId, status: "STOPPED" },
+    orderBy: { updatedAt: "desc" },
+    take: 50,
+  });
+  const byDriver = new Map<string, typeof stopped>();
+  const byTractor = new Map<string, typeof stopped>();
+  for (const row of stopped) {
+    byDriver.set(row.driverId, [...(byDriver.get(row.driverId) ?? []), row]);
+    byTractor.set(row.tractorEquipmentId, [...(byTractor.get(row.tractorEquipmentId) ?? []), row]);
+  }
+  for (const [driverId, rows] of byDriver) {
+    if (rows.length < 2) continue;
+    const latest = rows[0]!;
+    const statements: SambaStatement[] = [
+      {
+        class: "FACT",
+        text: `${rows.length} STOPPED PickupAuthorization rows are related to driver ${driverId}. Latest=${latest.id}.`,
+        source: "PickupAuthorization",
+        provenance: "LIVE",
+        authority: "LIVE_BOF",
+      },
+      {
+        class: "INFERENCE",
+        text: "This may be relevant to a repeated pickup assignment issue. Samba is not stating that the driver caused the stops.",
+        source: "Samba",
+        provenance: "INFERRED",
+        authority: "INFERENCE",
+      },
+      {
+        class: "RECOMMENDATION",
+        text: "Review the driver/equipment assignment before another pickup attempt.",
+        source: "Samba",
+        provenance: "INFERRED",
+        authority: "INFERENCE",
+      },
+    ];
+    const inserted = await upsertOpenFinding(actor, {
+      fleetId,
+      domain: "PICKUP",
+      entityType: "Driver",
+      entityId: driverId,
+      findingType: SAMBA_FINDING_TYPES.PICKUP_REPEATED_STOP,
+      severity: "MEDIUM",
+      provenance: "INFERRED",
+      evidenceSource: "PickupAuthorization",
+      evidenceId: latest.id,
+      liveConnected: true,
+      fact: statements[0]!.text,
+      inference: statements[1]!.text,
+      recommendation: statements[2]!.text,
+      whatHappened: statements[0]!.text,
+      whyItMatters: "A repeated STOP pattern is related to the same stored driver and may be relevant to operator review.",
+      whatIsNotVerified: "intent, fraud, physical identity, or a causal link between stops",
+      patternType: SAMBA_PATTERN_TYPES.REPEATED_PICKUP_STOP_SAME_DRIVER,
+      recommendedAction: statements[2]!.text,
+      relatedEntityRefs: rows.slice(0, 5).map((row) => ({ entityType: "PickupAuthorization", entityId: row.id, relationship: "prior_or_current_stop", provenance: "LIVE" })),
+      explanation: renderSambaContextNarrative({
+        whatHappened: statements[0]!.text,
+        whyItMatters: "A repeated STOP pattern is related to the same stored driver and may be relevant to operator review.",
+        whatSupportsThis: rows.slice(0, 5).map((row) => `FACT (LIVE_BOF/LIVE): PickupAuthorization ${row.id} status=STOPPED.`),
+        whatIsNotVerified: "intent, fraud, physical identity, or a causal link between stops",
+        whatToReviewNext: "Review the driver/equipment assignment before another pickup attempt.",
+        workflowHref: "/dispatch/pickup",
+      }),
+      statements,
+      evidenceRefs: rows.slice(0, 5).map((row) => ({
+        source: "BOF",
+        entityType: "PickupAuthorization",
+        entityId: row.id,
+        provenance: "LIVE",
+        timestamp: row.updatedAt.toISOString(),
+      })),
+      workflowHref: `/dispatch/pickup?loadId=${latest.loadId}`,
+    });
+    if (inserted.created) created.push(inserted.row.id);
+  }
+
+  const notReady = await prisma.driverReadinessScore.findMany({
+    where: { fleetId, status: "NOT_READY" },
+    orderBy: { evaluatedAt: "desc" },
+    take: 25,
+  });
+  const seenNotReady = new Set<string>();
+  for (const row of notReady) {
+    if (seenNotReady.has(row.driverId)) continue;
+    seenNotReady.add(row.driverId);
+    const assignment = await prisma.dispatchAssignment.findFirst({
+      where: { fleetId, driverId: row.driverId, status: "ACTIVE" },
+    });
+    const pickup = await prisma.pickupAuthorization.findFirst({
+      where: { fleetId, driverId: row.driverId, status: { in: ["PENDING", "AUTHORIZED", "STOPPED"] } },
+      orderBy: { createdAt: "desc" },
+    });
+    if (!assignment && !pickup) continue;
+    const relatedId = pickup?.id ?? assignment!.id;
+    const statements: SambaStatement[] = [
+      {
+        class: "FACT",
+        text: `DriverReadinessScore ${row.id} status=NOT_READY is related to ${pickup ? `PickupAuthorization ${pickup.id}` : `DispatchAssignment ${assignment!.id}`}.`,
+        source: "DriverReadinessScore",
+        provenance: "LIVE",
+        authority: "LIVE_BOF",
+      },
+      {
+        class: "INFERENCE",
+        text: "A readiness issue is related to a current pickup workflow and may be relevant to dispatch review.",
+        source: "Samba",
+        provenance: "INFERRED",
+        authority: "INFERENCE",
+      },
+      {
+        class: "RECOMMENDATION",
+        text: "Review driver readiness in the existing trip-release workflow. Samba will not change readiness.",
+        source: "Samba",
+        provenance: "INFERRED",
+        authority: "INFERENCE",
+      },
+    ];
+    const inserted = await upsertOpenFinding(actor, {
+      fleetId,
+      domain: "DRIVER",
+      entityType: "Driver",
+      entityId: row.driverId,
+      findingType: SAMBA_FINDING_TYPES.DRIVER_NOT_READY_PICKUP_RELATED,
+      severity: "MEDIUM",
+      provenance: "INFERRED",
+      evidenceSource: "DriverReadinessScore",
+      evidenceId: row.id,
+      liveConnected: true,
+      fact: statements[0]!.text,
+      inference: statements[1]!.text,
+      recommendation: statements[2]!.text,
+      patternType: SAMBA_PATTERN_TYPES.REPEATED_DRIVER_NOT_READY,
+      relatedEntityRefs: [
+        { entityType: "DriverReadinessScore", entityId: row.id, relationship: "readiness", provenance: "LIVE" },
+        pickup
+          ? { entityType: "PickupAuthorization", entityId: pickup.id, relationship: "related_pickup", provenance: "LIVE" }
+          : { entityType: "DispatchAssignment", entityId: assignment!.id, relationship: "related_assignment", provenance: "LIVE" },
+      ],
+      whatHappened: statements[0]!.text,
+      whyItMatters: statements[1]!.text,
+      whatIsNotVerified: "physical identity or new qualification documents not already stored in BOF",
+      recommendedAction: statements[2]!.text,
+      explanation: renderSambaContextNarrative({
+        whatHappened: statements[0]!.text,
+        whyItMatters: statements[1]!.text,
+        whatSupportsThis: [statements[0]!.text],
+        whatIsNotVerified: "physical identity or new qualification documents not already stored in BOF",
+        whatToReviewNext: statements[2]!.text,
+        workflowHref: pickup ? `/dispatch/pickup?loadId=${pickup.loadId}` : "/dispatch",
+      }),
+      statements,
+      evidenceRefs: [
+        {
+          source: "BOF",
+          entityType: "DriverReadinessScore",
+          entityId: row.id,
+          provenance: "LIVE",
+          timestamp: row.evaluatedAt.toISOString(),
+        },
+      ],
+      workflowHref: pickup ? `/dispatch/pickup?loadId=${pickup.loadId}` : assignment ? `/trip-release/${assignment.loadId}` : "/dispatch",
+    });
+    if (inserted.created) created.push(inserted.row.id);
+  }
+
+  const conditions = await prisma.conditionThread.findMany({
+    where: { fleetId, lifecycleState: { not: "RESOLVED" } },
+    take: 25,
+  });
+  for (const thread of conditions) {
+    const assignment = await prisma.dispatchAssignment.findFirst({
+      where: {
+        fleetId,
+        status: "ACTIVE",
+        OR: [{ tractorEquipmentId: thread.equipmentId }, { trailerEquipmentId: thread.equipmentId }],
+      },
+    });
+    const pickup = await prisma.pickupAuthorization.findFirst({
+      where: {
+        fleetId,
+        OR: [{ tractorEquipmentId: thread.equipmentId }, { trailerEquipmentId: thread.equipmentId }],
+        status: { in: ["PENDING", "AUTHORIZED", "STOPPED", "RELEASED"] },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    if (!assignment && !pickup) continue;
+    const statements: SambaStatement[] = [
+      {
+        class: "FACT",
+        text: `ConditionThread ${thread.id} on equipment ${thread.equipmentId} lifecycle=${thread.lifecycleState} is related to ${pickup ? `PickupAuthorization ${pickup.id}` : `DispatchAssignment ${assignment!.id}`}.`,
+        source: "ConditionThread",
+        provenance: "LIVE",
+        authority: "LIVE_BOF",
+      },
+      {
+        class: "INFERENCE",
+        text: "An equipment condition may be operationally relevant to the related pickup or assignment. Samba is not stating the condition caused a pickup outcome.",
+        source: "Samba",
+        provenance: "INFERRED",
+        authority: "INFERENCE",
+      },
+      {
+        class: "RECOMMENDATION",
+        text: "Review the existing equipment condition workflow before relying on this unit for another pickup.",
+        source: "Samba",
+        provenance: "INFERRED",
+        authority: "INFERENCE",
+      },
+    ];
+    const inserted = await upsertOpenFinding(actor, {
+      fleetId,
+      domain: "EQUIPMENT",
+      entityType: "ConditionThread",
+      entityId: thread.id,
+      findingType: SAMBA_FINDING_TYPES.EQUIPMENT_CONDITION_PICKUP_RELATED,
+      severity: thread.severity === "BLOCKING" ? "HIGH" : "MEDIUM",
+      provenance: "INFERRED",
+      evidenceSource: "ConditionThread",
+      evidenceId: thread.id,
+      liveConnected: true,
+      fact: statements[0]!.text,
+      inference: statements[1]!.text,
+      recommendation: statements[2]!.text,
+      patternType: SAMBA_PATTERN_TYPES.REPEATED_EQUIPMENT_CONDITION,
+      relatedEntityRefs: [
+        { entityType: "Equipment", entityId: thread.equipmentId, relationship: "conditioned_equipment", provenance: "LIVE" },
+        pickup
+          ? { entityType: "PickupAuthorization", entityId: pickup.id, relationship: "related_pickup", provenance: "LIVE" }
+          : { entityType: "DispatchAssignment", entityId: assignment!.id, relationship: "related_assignment", provenance: "LIVE" },
+      ],
+      whatHappened: statements[0]!.text,
+      whyItMatters: statements[1]!.text,
+      whatIsNotVerified: "shop inspection, telematics, or a causal link to pickup outcome",
+      recommendedAction: statements[2]!.text,
+      explanation: renderSambaContextNarrative({
+        whatHappened: statements[0]!.text,
+        whyItMatters: statements[1]!.text,
+        whatSupportsThis: [statements[0]!.text],
+        whatIsNotVerified: "shop inspection, telematics, or a causal link to pickup outcome",
+        whatToReviewNext: statements[2]!.text,
+        workflowHref: "/dispatch",
+      }),
+      statements,
+      evidenceRefs: [
+        {
+          source: "BOF",
+          entityType: "ConditionThread",
+          entityId: thread.id,
+          provenance: "LIVE",
+          timestamp: thread.updatedAt.toISOString(),
+        },
+      ],
+      workflowHref: pickup ? `/dispatch/pickup?loadId=${pickup.loadId}` : "/dispatch",
+    });
+    if (inserted.created) created.push(inserted.row.id);
+  }
+
+  const fmcsaConflicts = await prisma.fmcsaRegulatoryVerification.findMany({
+    where: { fleetId, result: "CONFLICT" },
+    orderBy: { verifiedAt: "desc" },
+    take: 10,
+  });
+  for (const row of fmcsaConflicts) {
+    if (!row.carrierRegistryId) continue;
+    const statements: SambaStatement[] = [
+      {
+        class: "VERIFIED_EVIDENCE",
+        text: `FmcsaRegulatoryVerification ${row.id} result=CONFLICT for DEMO_REFERENCE carrier ${row.carrierRegistryId}.`,
+        source: "FmcsaRegulatoryVerification",
+        provenance: row.provenance,
+        authority: "EXTERNAL",
+      },
+      {
+        class: "INFERENCE",
+        text: "This external evidence conflict may be relevant to compliance review of that carrier packet. DEMO_REFERENCE is not LIVE carrier authority. Samba will not guess a Load relationship without a stored carrier foreign key.",
+        source: "Samba",
+        provenance: "INFERRED",
+        authority: "INFERENCE",
+      },
+      {
+        class: "RECOMMENDATION",
+        text: "Review the FMCSA evidence conflict against the carrier record.",
+        source: "Samba",
+        provenance: "INFERRED",
+        authority: "INFERENCE",
+      },
+    ];
+    const inserted = await upsertOpenFinding(actor, {
+      fleetId,
+      domain: "CARRIER",
+      entityType: "FmcsaRegulatoryVerification",
+      entityId: row.id,
+      findingType: SAMBA_FINDING_TYPES.FMCSA_CARRIER_WORKFLOW_RELATED,
+      severity: "MEDIUM",
+      provenance: "INFERRED",
+      evidenceSource: "FMCSA",
+      evidenceId: row.id,
+      evidenceTimestamp: row.verifiedAt,
+      demoReferenceUsed: true,
+      liveConnected: row.provenance === "LIVE",
+      fact: statements[0]!.text,
+      inference: statements[1]!.text,
+      recommendation: statements[2]!.text,
+      patternType: SAMBA_PATTERN_TYPES.UNRESOLVED_FMCSA_CONFLICT,
+      relatedEntityRefs: [{ entityType: "CarrierRegistry", entityId: row.carrierRegistryId, relationship: "demo_reference_overlay", provenance: "UNVERIFIED" }],
+      whatHappened: statements[0]!.text,
+      whyItMatters: statements[1]!.text,
+      whatIsNotVerified: "LIVE carrier master, physical authority documents, or a load-carrier foreign key",
+      recommendedAction: statements[2]!.text,
+      explanation: renderSambaContextNarrative({
+        whatHappened: statements[0]!.text,
+        whyItMatters: statements[1]!.text,
+        whatSupportsThis: [statements[0]!.text],
+        whatIsNotVerified: "LIVE carrier master, physical authority documents, or a load-carrier foreign key",
+        whatToReviewNext: statements[2]!.text,
+        workflowHref: `/carriers/${row.carrierRegistryId}`,
+      }),
+      statements,
+      evidenceRefs: [
+        {
+          source: "FMCSA",
+          entityType: "FmcsaRegulatoryVerification",
+          entityId: row.id,
+          provenance: row.provenance,
+          timestamp: row.verifiedAt.toISOString(),
+          freshness: row.freshnessState,
+        },
+      ],
+      workflowHref: `/carriers/${row.carrierRegistryId}`,
+    });
+    if (inserted.created) created.push(inserted.row.id);
+  }
 }

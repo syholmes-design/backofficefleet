@@ -16,11 +16,11 @@ process.env.DATABASE_URL = testDatabaseUrl;
 
 const child = spawn(
   "npx",
-  ["--yes", "tsx", "--test", "lib/test/assertTestDatabaseTarget.test.ts", "lib/services/samba/sambaIntelligence.certification.test.ts"],
+  ["--yes", "tsx", "--test", "--test-concurrency=1", "lib/test/assertTestDatabaseTarget.test.ts", "lib/services/samba/sambaIntelligence.certification.test.ts", "lib/services/samba/sambaIntelligence2.certification.test.ts"],
   {
     cwd: root,
     stdio: "inherit",
-    env: { ...process.env, DATABASE_URL: testDatabaseUrl },
+    env: { ...process.env, DATABASE_URL: testDatabaseUrl, NODE_TEST_CONCURRENCY: "1" },
     shell: process.platform === "win32",
   },
 );

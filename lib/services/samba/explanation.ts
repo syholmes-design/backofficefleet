@@ -37,7 +37,26 @@ export function sambaLlmBoundary() {
   return {
     configured: sambaLlmConfigured(),
     capability: "AI-INTEGRATION-DEPENDENT" as const,
-    mayAuthorOperationalState: false,
-    usedForFindingState: false,
+    mayAuthorOperationalState: false as const,
+    usedForFindingState: false as const,
   };
+}
+
+export function renderSambaContextNarrative(input: {
+  whatHappened: string;
+  whyItMatters: string;
+  whatSupportsThis: string[];
+  whatIsNotVerified: string;
+  whatToReviewNext: string;
+  workflowHref: string | null;
+}): string {
+  return [
+    `WHAT HAPPENED: ${input.whatHappened}`,
+    `WHY IT MATTERS: ${input.whyItMatters}`,
+    `WHAT SUPPORTS THIS: ${input.whatSupportsThis.join(" ") || "INSUFFICIENT_EVIDENCE"}`,
+    `WHAT IS NOT VERIFIED: ${input.whatIsNotVerified}`,
+    `WHAT TO REVIEW NEXT: ${input.whatToReviewNext}`,
+    `EXISTING BOF WORKFLOW: ${input.workflowHref ?? "none"}`,
+    "Samba did not change BOF operational records. Correlation is not causation.",
+  ].join(" ");
 }
