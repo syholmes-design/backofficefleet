@@ -114,8 +114,8 @@ export async function getSambaOperationalContext(
             })
           : null);
 
-  if (!load && assignment && "load" in assignment && assignment.load) {
-    load = assignment.load;
+  if (!load && assignment?.loadId) {
+    load = await prisma.load.findFirst({ where: { id: assignment.loadId, fleetId } });
   }
 
   const driverId = authorization?.driverId ?? assignment?.driverId ?? query.driverId ?? null;
@@ -343,7 +343,8 @@ export async function getSambaOperationalContext(
   const cleanRelease =
     authorization?.status === "RELEASED" &&
     physical?.disposition === "RELEASE" &&
-    physical.identityPhysicalClass !== "IDENTITY_PHYSICALLY_VERIFIED";
+    physical.identityMatchToAuthorizedRecord === true &&
+    physical.identityPhysicalClass === "UNVERIFIED";
 
   let whatHappened: string;
   let whyItMatters: string;

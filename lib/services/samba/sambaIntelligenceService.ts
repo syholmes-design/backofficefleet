@@ -949,7 +949,6 @@ async function applySambaCorrelations(actor: SessionUserLike, fleetId: string, c
       orderBy: { createdAt: "desc" },
     });
     if (!assignment && !pickup) continue;
-    const relatedId = pickup?.id ?? assignment!.id;
     const statements: SambaStatement[] = [
       {
         class: "FACT",

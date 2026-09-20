@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const session = await auth();
   const user = userFrom(session);
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { statusCode: 401 });
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
     const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
     const fleetId = fleetIdFrom(user, request, body.fleetId);
