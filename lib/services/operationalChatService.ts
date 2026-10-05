@@ -2,6 +2,9 @@ import { AuditAction, OperationalChatMessageState, OperationalChatParticipantRol
 import { prisma } from "@/lib/prisma";
 import { requireFleetAccess, type SessionUserLike } from "@/lib/authorization";
 import { getAuthorizedOperatingRecord } from "@/lib/services/operatingRecordService";
+import { canReadTrainingSubject } from "@/lib/services/regulatoryKnowledgeService";
+
+const TRAINING_RECORD_TYPES = new Set(["TRAINING_ASSIGNMENT", "TRAINING_CERTIFICATION"]);
 
 const INTERNAL_ROLES = new Set(["BOF_OPERATIONS", "BOF_ADMINISTRATION", "BOF_COMPLIANCE_REVIEW", "FLEET_ADMIN", "FLEET_OPERATIONS", "FLEET_MANAGER", "DISPATCH", "SAFETY", "FINANCE"]);
 
@@ -80,6 +83,30 @@ const threadInclude = {
   messages: { orderBy: { createdAt: "asc" as const }, include: { sender: { select: { id: true, name: true, email: true } }, reads: { select: { userId: true, readAt: true } } } },
 } satisfies Prisma.OperationalChatThreadInclude;
 
+async function trainingRecordVisible(user: SessionUserLike, fleetId: string, recordType: string, recordId: string) {
+  if (!TRAINING_RECORD_TYPES.has(recordType)) return true;
+  if (recordType === "TRAINING_ASSIGNMENT") {
+    const assignment = await prisma.trainingAssignment.findFirst({ where: { id: recordId, fleetId }, select: { driver: { select: { userId: true } } } });
+    return Boolean(assignment) && canReadTrainingSubject(user, fleetId, assignment?.driver.userId);
+  }
+  const certification = await prisma.trainingCertification.findFirst({ where: { id: recordId, fleetId }, select: { driver: { select: { userId: true } } } });
+  return Boolean(certification) && canReadTrainingSubject(user, fleetId, certification?.driver.userId);
+}
+
+async function visibleCitations<T extends { recordType: string; recordId: string }>(user: SessionUserLike, fleetId: string, citations: T[]) {
+  const visible: T[] = [];
+  for (const citation of citations) {
+    if (await trainingRecordVisible(user, fleetId, citation.recordType, citation.recordId)) visible.push(citation);
+  }
+  return visible;
+}
+
+async function redactTrainingPointer<T extends { recordType: OperationalChatRecordType | null; recordId: string | null }>(user: SessionUserLike, fleetId: string, thread: T) {
+  if (!thread.recordType || !thread.recordId || !TRAINING_RECORD_TYPES.has(thread.recordType)) return thread;
+  if (await trainingRecordVisible(user, fleetId, thread.recordType, thread.recordId)) return thread;
+  return { ...thread, recordType: null, recordId: null };
+}
+
 function publicThread(thread: Prisma.OperationalChatThreadGetPayload<{ include: typeof threadInclude }>, canSeeInternal: boolean) {
   return {
     ...thread,
@@ -93,7 +120,11 @@ export async function listOperationalChatThreads(user: SessionUserLike, fleetId:
   const userId = getUserId(user);
   const canSeeInternal = userCanSeeInternal(user, fleetId);
   const threads = await prisma.operationalChatThread.findMany({ where: { tenantId: fleetId, ...(recordContext ? { recordType: recordContext.recordType as OperationalChatRecordType, recordId: recordContext.recordId } : {}), ...(canSeeInternal ? {} : { visibility: "CUSTOMER_VISIBLE", participants: { some: { userId } } }) }, orderBy: { updatedAt: "desc" }, include: { participants: { select: { userId: true, role: true } }, messages: { where: { senderId: { not: userId } }, orderBy: { createdAt: "asc" }, select: { id: true, body: true, visibility: true, state: true, createdAt: true, editedAt: true, deletedAt: true, sender: { select: { id: true, name: true, email: true } }, reads: { where: { userId }, select: { id: true } } } }, citations: { select: { recordType: true, recordId: true, title: true, route: true } } } });
-  return threads.map((thread) => { const visibleMessages = thread.messages.filter((message) => canSeeInternal || message.visibility === "CUSTOMER_VISIBLE"); return { ...thread, unreadCount: visibleMessages.filter((message) => message.reads.length === 0).length, messages: visibleMessages.map((message) => ({ id: message.id, body: message.deletedAt ? "Message deleted" : message.body, visibility: message.visibility, state: message.state, createdAt: message.createdAt, editedAt: message.editedAt, deletedAt: message.deletedAt, sender: message.sender })), participants: thread.participants.filter((participant) => canSeeInternal || participant.role === "CUSTOMER") }; });
+  return Promise.all(threads.map(async (thread) => {
+    const visibleMessages = thread.messages.filter((message) => canSeeInternal || message.visibility === "CUSTOMER_VISIBLE");
+    const presented = { ...thread, unreadCount: visibleMessages.filter((message) => message.reads.length === 0).length, messages: visibleMessages.map((message) => ({ id: message.id, body: message.deletedAt ? "Message deleted" : message.body, visibility: message.visibility, state: message.state, createdAt: message.createdAt, editedAt: message.editedAt, deletedAt: message.deletedAt, sender: message.sender })), participants: thread.participants.filter((participant) => canSeeInternal || participant.role === "CUSTOMER"), citations: await visibleCitations(user, fleetId, thread.citations) };
+    return redactTrainingPointer(user, fleetId, presented);
+  }));
 }
 
 export async function getOperationalChatThread(user: SessionUserLike, fleetId: string, threadId: string) {
@@ -103,7 +134,8 @@ export async function getOperationalChatThread(user: SessionUserLike, fleetId: s
   const participant = thread.participants.some((entry) => entry.userId === user.id);
   const canSeeInternal = userCanSeeInternal(user, fleetId);
   if ((!participant && !canSeeInternal) || (!canSeeInternal && thread.visibility !== "CUSTOMER_VISIBLE")) throw new OperationalChatError("THREAD_ACCESS_DENIED", 403);
-  return publicThread(thread, canSeeInternal);
+  const presented = { ...publicThread(thread, canSeeInternal), citations: await visibleCitations(user, fleetId, thread.citations) };
+  return redactTrainingPointer(user, fleetId, presented);
 }
 
 export async function createOperationalChatThread(user: SessionUserLike, input: ChatThreadCreateInput) {

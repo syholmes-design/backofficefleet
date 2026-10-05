@@ -1,6 +1,7 @@
 import { OperationalChatRecordType, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireFleetAccess, type SessionUserLike } from "@/lib/authorization";
+import { canReadTrainingSubject } from "@/lib/services/regulatoryKnowledgeService";
 
 export type OperatingRecordType = OperationalChatRecordType;
 
@@ -37,6 +38,11 @@ function requireValue(value: string, name: string) {
 function assertFleetAccess(user: SessionUserLike, fleetId: string) {
   const access = requireFleetAccess(user, fleetId);
   if (!access.allowed) throw new OperatingRecordError(access.reason ?? "TENANT_ACCESS_DENIED", access.reason === "AUTH_REQUIRED" ? 401 : 403);
+}
+
+async function assertTrainingRecordReadable(user: SessionUserLike, fleetId: string, driverId: string) {
+  const driver = await prisma.driver.findFirst({ where: { id: driverId, fleetId }, select: { userId: true } });
+  if (!canReadTrainingSubject(user, fleetId, driver?.userId)) throw new OperatingRecordError("TRAINING_RECORD_DENIED", 403);
 }
 
 const loadSelect = Prisma.validator<Prisma.LoadSelect>()({
@@ -134,12 +140,14 @@ export async function getAuthorizedOperatingRecord(
   if (recordType === "TRAINING_ASSIGNMENT") {
     const record = await prisma.trainingAssignment.findFirst({ where: { id: recordId, fleetId: tenantId }, include: { trainingModule: true, requirementVersion: { include: { requirement: true } }, certification: true } });
     if (!record) throw new OperatingRecordError("Training assignment not found", 404);
+    await assertTrainingRecordReadable(user, tenantId, record.driverId);
     return { tenantId, recordType, recordId, title: `Training assignment: ${record.trainingModule.title}`, snapshot: asIsoSnapshot(record), route: "/safety/training" };
   }
 
   if (recordType === "TRAINING_CERTIFICATION") {
     const record = await prisma.trainingCertification.findFirst({ where: { id: recordId, fleetId: tenantId }, include: { assignment: { include: { trainingModule: true, requirementVersion: { include: { requirement: true } } } } } });
     if (!record) throw new OperatingRecordError("Training certification not found", 404);
+    await assertTrainingRecordReadable(user, tenantId, record.driverId);
     return { tenantId, recordType, recordId, title: `Training certification: ${record.assignment.trainingModule.title}`, snapshot: asIsoSnapshot(record), route: "/safety/training" };
   }
 

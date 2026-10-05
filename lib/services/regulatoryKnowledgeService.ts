@@ -25,6 +25,26 @@ function requireFleet(user: SessionUserLike, fleetId: string) {
 
 const TRAINING_ADMIN_ROLES = ["BOF_OPERATIONS", "BOF_ADMINISTRATION", "BOF_COMPLIANCE_REVIEW", "FLEET_ADMIN", "FLEET_OPERATIONS", "FLEET_MANAGER"];
 
+// Progress the assigned driver may record on their own assignment. Completion, certification and
+// review outcomes are never set by the subject, even when the subject also holds a training admin role.
+const DRIVER_SELF_SERVICE_STATUSES: TrainingAssignmentStatus[] = ["STARTED", "VIEWED", "KNOWLEDGE_CHECK", "ACKNOWLEDGED"];
+
+// Current statuses a subject cannot leave. These are written only by a training admin (or by
+// certification). ASSIGNED and the progress statuses above stay mutable so a driver can continue
+// legitimate progress. PASSED has no separate writer and is not in this set.
+const SUBJECT_LOCKED_STATUSES: TrainingAssignmentStatus[] = ["REVIEW_REQUIRED", "CERTIFIED", "COMPLETE", "OVERDUE", "CANCELLED"];
+
+function isTrainingAdmin(user: SessionUserLike, fleetId: string) {
+  // Same membership rule as requireFleetAccess. Production sessions omit status after auth.ts
+  // has already dropped INACTIVE and INVITED memberships, so a missing status is not a denial.
+  return requireFleetAccess(user, fleetId, TRAINING_ADMIN_ROLES).allowed;
+}
+
+export function canReadTrainingSubject(user: SessionUserLike, fleetId: string, subjectUserId: string | null | undefined) {
+  if (isTrainingAdmin(user, fleetId)) return true;
+  return Boolean(subjectUserId) && subjectUserId === user.id;
+}
+
 const requirementInclude = {
   source: true,
   versions: { orderBy: { effectiveDate: "desc" as const }, include: { trainingLinks: { include: { trainingModule: true, trainingSegment: true } } } },
@@ -90,11 +110,16 @@ export async function createTrainingAssignment(userInput: SessionUserLike | null
 export async function listTrainingAssignments(userInput: SessionUserLike | null | undefined, fleetId: string, driverId?: string) {
   const user = requireUser(userInput);
   requireFleet(user, fleetId);
-  const internal = user.memberships?.some((membership) => membership.fleetId === fleetId && TRAINING_ADMIN_ROLES.includes(membership.roleCode) && membership.status === "ACTIVE");
-  const linkedDriver = internal ? null : await prisma.driver.findFirst({ where: { fleetId, userId: user.id }, select: { id: true } });
-  if (!internal && (!linkedDriver || (driverId && driverId !== linkedDriver.id))) throw new RegulatoryKnowledgeError("TRAINING_ASSIGNMENT_DENIED", 403);
+  const internal = isTrainingAdmin(user, fleetId);
+  let scopedDriverId = driverId;
+  if (!internal) {
+    // A non-internal caller only ever sees their own assignments, whether or not driverId was sent.
+    const linkedDriver = await prisma.driver.findFirst({ where: { fleetId, userId: user.id }, select: { id: true } });
+    if (!linkedDriver || (driverId && driverId !== linkedDriver.id)) throw new RegulatoryKnowledgeError("TRAINING_ASSIGNMENT_DENIED", 403);
+    scopedDriverId = linkedDriver.id;
+  }
   const assignments = await prisma.trainingAssignment.findMany({
-    where: { fleetId, ...(driverId ? { driverId } : {}) },
+    where: { fleetId, ...(scopedDriverId ? { driverId: scopedDriverId } : {}) },
     orderBy: { assignedAt: "desc" },
     include: {
       trainingModule: { include: { segments: true } },
@@ -102,7 +127,7 @@ export async function listTrainingAssignments(userInput: SessionUserLike | null 
       certification: true,
     },
   });
-  if (driverId && assignments.some((assignment) => assignment.driverId !== driverId)) throw new RegulatoryKnowledgeError("Training assignment not found", 404);
+  if (scopedDriverId && assignments.some((assignment) => assignment.driverId !== scopedDriverId)) throw new RegulatoryKnowledgeError("Training assignment not found", 404);
   return assignments;
 }
 
@@ -111,10 +136,25 @@ export async function updateTrainingAssignment(userInput: SessionUserLike | null
   requireFleet(user, input.fleetId);
   const assignment = await prisma.trainingAssignment.findFirst({ where: { id: input.assignmentId, fleetId: input.fleetId }, include: { driver: { select: { userId: true } } } });
   if (!assignment) throw new RegulatoryKnowledgeError("Training assignment not found", 404);
-  const internal = user.memberships?.some((membership) => membership.fleetId === input.fleetId && TRAINING_ADMIN_ROLES.includes(membership.roleCode) && membership.status === "ACTIVE");
-  if (!internal && assignment.driver.userId !== user.id) throw new RegulatoryKnowledgeError("TRAINING_ASSIGNMENT_DENIED", 403);
+  const internal = isTrainingAdmin(user, input.fleetId);
+  const isSubject = assignment.driver.userId === user.id;
+  if (!internal && !isSubject) throw new RegulatoryKnowledgeError("TRAINING_ASSIGNMENT_DENIED", 403);
+  if (isSubject && SUBJECT_LOCKED_STATUSES.includes(assignment.status)) throw new RegulatoryKnowledgeError("TRAINING_SUBJECT_STATUS_LOCKED", 403);
+  if (isSubject && !DRIVER_SELF_SERVICE_STATUSES.includes(input.status)) throw new RegulatoryKnowledgeError("TRAINING_SELF_SERVICE_STATUS_DENIED", 403);
   const now = new Date();
-  const updated = await prisma.trainingAssignment.update({ where: { id: assignment.id }, data: { status: input.status, knowledgeCheckStatus: input.knowledgeCheckStatus, startedAt: input.status === "STARTED" ? now : assignment.startedAt, viewedAt: input.status === "VIEWED" ? now : assignment.viewedAt, acknowledgedAt: input.acknowledge ? now : assignment.acknowledgedAt, completedAt: ["COMPLETE", "CERTIFIED"].includes(input.status) ? now : assignment.completedAt } });
+  const data = { status: input.status, knowledgeCheckStatus: input.knowledgeCheckStatus, startedAt: input.status === "STARTED" ? now : assignment.startedAt, viewedAt: input.status === "VIEWED" ? now : assignment.viewedAt, acknowledgedAt: input.acknowledge ? now : assignment.acknowledgedAt, completedAt: ["COMPLETE", "CERTIFIED"].includes(input.status) ? now : assignment.completedAt };
+  if (isSubject) {
+    // The status predicate is part of the write, so a certification that commits first is not overwritten.
+    const result = await prisma.trainingAssignment.updateMany({ where: { id: assignment.id, fleetId: input.fleetId, status: { notIn: SUBJECT_LOCKED_STATUSES } }, data });
+    if (result.count !== 1) {
+      const current = await prisma.trainingAssignment.findFirst({ where: { id: assignment.id, fleetId: input.fleetId }, select: { id: true } });
+      if (!current) throw new RegulatoryKnowledgeError("Training assignment not found", 404);
+      throw new RegulatoryKnowledgeError("TRAINING_SUBJECT_STATUS_LOCKED", 403);
+    }
+  } else {
+    await prisma.trainingAssignment.update({ where: { id: assignment.id }, data });
+  }
+  const updated = await prisma.trainingAssignment.findUniqueOrThrow({ where: { id: assignment.id } });
   await prisma.auditEvent.create({ data: { actorId: user.id, actorEmail: user.email ?? undefined, tenantId: input.fleetId, action: "UPDATED", entityType: "TrainingAssignment", entityId: assignment.id, details: { status: input.status, knowledgeCheckStatus: input.knowledgeCheckStatus, acknowledged: input.acknowledge ?? false } } });
   return updated;
 }
@@ -123,8 +163,9 @@ export async function certifyTrainingAssignment(userInput: SessionUserLike | nul
   const user = requireUser(userInput);
   const access = requireFleetAccess(user, input.fleetId, TRAINING_ADMIN_ROLES);
   if (!access.allowed) throw new RegulatoryKnowledgeError(access.reason ?? "ROLE_REQUIRED", access.reason === "AUTH_REQUIRED" ? 401 : 403);
-  const assignment = await prisma.trainingAssignment.findFirst({ where: { id: input.assignmentId, fleetId: input.fleetId }, select: { id: true, driverId: true } });
+  const assignment = await prisma.trainingAssignment.findFirst({ where: { id: input.assignmentId, fleetId: input.fleetId }, select: { id: true, driverId: true, driver: { select: { userId: true } } } });
   if (!assignment) throw new RegulatoryKnowledgeError("Training assignment not found", 404);
+  if (assignment.driver.userId === user.id) throw new RegulatoryKnowledgeError("TRAINING_SELF_CERTIFICATION_DENIED", 403);
   const certification = await prisma.$transaction(async (tx) => {
     const record = await tx.trainingCertification.upsert({ where: { assignmentId: assignment.id }, create: { assignmentId: assignment.id, fleetId: input.fleetId, driverId: assignment.driverId, outcome: input.outcome, certifiedById: user.id, expiresAt: input.expiresAt ? new Date(input.expiresAt) : undefined, notes: input.notes }, update: { outcome: input.outcome, certifiedById: user.id, certifiedAt: new Date(), expiresAt: input.expiresAt ? new Date(input.expiresAt) : null, notes: input.notes } });
     await tx.trainingAssignment.update({ where: { id: assignment.id }, data: { status: input.outcome === "CERTIFIED" ? "CERTIFIED" : "REVIEW_REQUIRED" } });
@@ -146,11 +187,13 @@ export async function getRegulatoryCitationForOperatingRecord(user: SessionUserL
     return { tenantId: fleetId, recordType, recordId, title: trainingModule.title, snapshot: { id: trainingModule.id, title: trainingModule.title, category: trainingModule.category, ownership: trainingModule.ownership, version: trainingModule.version, regulatoryLinks: trainingModule.regulatoryLinks }, route: "/safety/training" };
   }
   if (recordType === "TRAINING_ASSIGNMENT") {
-    const assignment = await prisma.trainingAssignment.findFirst({ where: { id: recordId, fleetId }, include: { trainingModule: true, requirementVersion: { include: { requirement: true } }, certification: true } });
+    const assignment = await prisma.trainingAssignment.findFirst({ where: { id: recordId, fleetId }, include: { driver: { select: { userId: true } }, trainingModule: true, requirementVersion: { include: { requirement: true } }, certification: true } });
     if (!assignment) throw new RegulatoryKnowledgeError("Training assignment not found", 404);
+    if (!canReadTrainingSubject(user, fleetId, assignment.driver.userId)) throw new RegulatoryKnowledgeError("TRAINING_ASSIGNMENT_DENIED", 403);
     return { tenantId: fleetId, recordType, recordId, title: `Training assignment: ${assignment.trainingModule.title}`, snapshot: assignment as unknown as Record<string, unknown>, route: "/safety/training" };
   }
-  const certification = await prisma.trainingCertification.findFirst({ where: { id: recordId, fleetId }, include: { assignment: { include: { trainingModule: true, requirementVersion: { include: { requirement: true } } } } } });
+  const certification = await prisma.trainingCertification.findFirst({ where: { id: recordId, fleetId }, include: { driver: { select: { userId: true } }, assignment: { include: { trainingModule: true, requirementVersion: { include: { requirement: true } } } } } });
   if (!certification) throw new RegulatoryKnowledgeError("Training certification not found", 404);
+  if (!canReadTrainingSubject(user, fleetId, certification.driver.userId)) throw new RegulatoryKnowledgeError("TRAINING_ASSIGNMENT_DENIED", 403);
   return { tenantId: fleetId, recordType, recordId, title: `Training certification: ${certification.assignment.trainingModule.title}`, snapshot: certification as unknown as Record<string, unknown>, route: "/safety/training" };
 }
