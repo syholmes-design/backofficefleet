@@ -14,7 +14,7 @@ export const CHANGE_ROLE_CONFIRMATION = "CHANGE OPERATOR ROLE";
 
 export const BCRYPT_ROUNDS = 12;
 
-export const PROVISION_OPERATOR_ROLE = "FLEET_OPERATIONS" as const;
+export const PROVISION_OPERATOR_ROLE = "FLEET_ADMIN" as const;
 
 export type ProvisionOperatorRole = typeof PROVISION_OPERATOR_ROLE;
 

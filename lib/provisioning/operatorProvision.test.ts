@@ -55,7 +55,7 @@ type Memory = {
 function baseMemory(): Memory {
   return {
     roles: [
-      { id: "role-ops", code: "FLEET_OPERATIONS" },
+      { id: "role-ops", code: "FLEET_ADMIN" },
       { id: "role-dispatch", code: "DISPATCH" },
       { id: "role-driver", code: "DRIVER" },
     ],
@@ -177,7 +177,7 @@ function request(overrides: Partial<OperatorProvisionRequest> = {}): OperatorPro
     name: "Operator",
     password: PASSWORD,
     fleetId: "fleet-live",
-    roleCode: "FLEET_OPERATIONS",
+    roleCode: "FLEET_ADMIN",
     confirmations: emptyConfirmations(),
     ...overrides,
   };
@@ -245,12 +245,13 @@ test("dry run produces zero writes even when the production phrase is present", 
 
 test("missing role, missing fleet, inactive fleet, and invalid email fail with no writes", async () => {
   const missingRole = baseMemory();
-  missingRole.roles = missingRole.roles.filter((role) => role.code !== "FLEET_OPERATIONS");
+  const roleCount = missingRole.roles.length;
+  missingRole.roles = missingRole.roles.filter((role) => role.code !== "FLEET_ADMIN");
   await assert.rejects(() => provisionOperator(createStore(missingRole), request()), (error: OperatorProvisionError) => {
-    return error.code === "ROLE_NOT_FOUND" && missingRole.writes.length === 0;
+    return error.code === "ROLE_NOT_FOUND" && missingRole.writes.length === 0 && missingRole.roles.length === roleCount - 1;
   });
 
-  for (const roleCode of ["DISPATCH", "FLEET_ADMIN", "FLEET_MANAGER", "BOF_OPERATIONS", "BOF_COMPLIANCE_REVIEW"]) {
+  for (const roleCode of ["DISPATCH", "FLEET_OPERATIONS", "FLEET_MANAGER", "BOF_OPERATIONS", "BOF_COMPLIANCE_REVIEW"]) {
     const unapproved = baseMemory();
     await assert.rejects(
       () => provisionOperator(createStore(unapproved), request({ roleCode })),
@@ -333,7 +334,7 @@ test("creates an operator once and does not duplicate an active membership", asy
     assert.equal(created.audit.email, "operator@example.com");
     assert.equal(created.audit.userResult, "created");
     assert.equal(created.audit.membershipResult, "created");
-    assert.equal(created.audit.role, "FLEET_OPERATIONS");
+    assert.equal(created.audit.role, "FLEET_ADMIN");
     const text = formatAudit(created.audit);
     assert.equal(text.includes(PASSWORD), false);
     assert.equal(text.includes(HASH), false);
@@ -439,7 +440,7 @@ test("inactive user and inactive membership require confirmation and role change
     userId: "user-1",
     fleetId: "fleet-live",
     roleId: "role-ops",
-    roleCode: "FLEET_OPERATIONS",
+    roleCode: "FLEET_ADMIN",
     status: "INVITED",
   });
   await assert.rejects(
@@ -484,7 +485,7 @@ test("inactive user and inactive membership require confirmation and role change
     request({ mode: "execute", confirmations: confirmed({ changeRole: CHANGE_ROLE_CONFIRMATION }) }),
     { hashPassword: hasher().hashPassword },
   );
-  assert.equal(roleChange.memberships[0].roleCode, "FLEET_OPERATIONS");
+  assert.equal(roleChange.memberships[0].roleCode, "FLEET_ADMIN");
   assert.equal(roleChange.memberships.length, 1);
   if (changed.mode === "execute") assert.equal(changed.audit.membershipResult, "changed");
 });
@@ -518,7 +519,7 @@ test("cli session dry-run does not confirm or write, and execute uses one transa
     name: "Operator",
     password: PASSWORD,
     fleetId: "fleet-live",
-    roleCode: "FLEET_OPERATIONS",
+    roleCode: "FLEET_ADMIN",
     readConfirmations: async () => {
       confirmationsRead += 1;
       return confirmed();
@@ -539,7 +540,7 @@ test("cli session dry-run does not confirm or write, and execute uses one transa
     name: "Operator",
     password: PASSWORD,
     fleetId: "fleet-live",
-    roleCode: "FLEET_OPERATIONS",
+    roleCode: "FLEET_ADMIN",
     readConfirmations: async () => confirmed(),
     deps: { hashPassword: hash.hashPassword },
   });
@@ -597,6 +598,8 @@ test("tool source and runbook do not embed a connection string or the test passw
   assert.equal(script.includes("BOF_OPERATIONS"), false);
   assert.equal(script.includes("BOF_COMPLIANCE_REVIEW"), false);
   assert.match(script, /roleCode: PROVISION_OPERATOR_ROLE/);
+  assert.match(source, /PROVISION_OPERATOR_ROLE = "FLEET_ADMIN"/);
+  assert.equal(source.includes("FLEET_OPERATIONS"), false);
   assert.match(script, /setRawMode\(true\)/);
   assert.equal(script.includes("stdout.write(value"), false);
   assert.equal(script.includes("stdout.write(char"), false);
