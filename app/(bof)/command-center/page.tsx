@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Command Center | BOF",
-  description: "LIVE production operating feeds",
+  description: "Fleet operations overview",
 };
 
 export default function CommandCenterPage() {

@@ -11,7 +11,7 @@ import { buildFeaturedDocumentIndex, buildVerifiedDocumentIndex } from "@/lib/ve
 
 export const metadata = {
   title: "Operations File Cabinet",
-  description: "Delta Advanced Trucking, Inc.'s driver files, company policies, dispatch forms, SOPs, claims documents, training resources, and back-office templates organized in one operating library through BOF",
+  description: "Sample fleet operating library — policies, forms, templates, and generated examples in BackOfficeFleet. Sample files are not live carrier evidence.",
 };
 
 export default async function DocumentsPage() {

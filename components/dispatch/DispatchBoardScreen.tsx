@@ -258,9 +258,13 @@ export function DispatchBoardScreen({
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
       <OpsModuleMasthead
-        eyebrow="Dispatch triage"
-        title="CRITICAL · MAJOR · MINOR"
-        description="Operational urgency is separate from load readiness. Canonical gates still decide whether a load can move; this board ranks how serious the open issue is."
+        eyebrow={demoMode ? "Dispatch triage" : "Dispatch"}
+        title={demoMode ? "CRITICAL · MAJOR · MINOR" : "Dispatch board"}
+        description={
+          demoMode
+            ? "Operational urgency is separate from load readiness. Canonical gates still decide whether a load can move; this board ranks how serious the open issue is."
+            : "Loads, assignments, and delivery status for your fleet."
+        }
         imageSrc="/generated/marketing/dispatch-command-center-hero-photo.png"
         imageAlt="Dispatch command workspace"
         imagePosition="center right"
@@ -276,16 +280,16 @@ export function DispatchBoardScreen({
                 { label: "Loads on Board", value: loads.length, hint: "Current fleet list", href: "#dispatch-board" },
                 { label: "Active Assignments", value: assignedCount, href: "#dispatch-board" },
                 { label: "Delivered", value: deliveredCount, href: "#dispatch-board" },
-                { label: "Needs Attention", value: blockedCount, href: "#dispatch-triage" },
+                { label: "Needs Attention", value: blockedCount, href: "#dispatch-board" },
               ]
         }
       />
-      <DispatchTriageBoard demoMode={demoMode} onSelectLoad={onSelectLoad} onOpenAssign={onOpenAssign} />
+      {demoMode ? <DispatchTriageBoard demoMode={demoMode} onSelectLoad={onSelectLoad} onOpenAssign={onOpenAssign} /> : null}
       <OpsWorkflowRail
         headingId="bof-dispatch-operating-flow"
         eyebrow="Dispatch sequence"
         title="Assignment, readiness, proof, and attention on one board"
-        description="Canonical load identity stays in place. The sequence below uses the same operating counts as the board — not a second data source."
+        description="The sequence below uses the same operating counts as the board."
         steps={[
           {
             step: "Loads",
@@ -304,7 +308,7 @@ export function DispatchBoardScreen({
           {
             step: "Delivered",
             title: "Completed movement",
-            detail: demoMode ? "Based on canonical load status." : "Delivered loads from backend status.",
+            detail: demoMode ? "Based on canonical load status." : "Loads marked delivered.",
             value: deliveredCount,
             tone: "ready",
           },

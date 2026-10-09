@@ -41,8 +41,8 @@ type DriverRow = {
   eligibilityStatus: "ready" | "needs_review" | "blocked";
   dispatchEligibility: string;
   compliance: string;
-  safety: "Elite" | "Standard" | "At Risk";
-  settlement: "Paid" | "Pending" | "Hold / Review";
+  safety: "Elite" | "Standard" | "At Risk" | "Not available";
+  settlement: "Paid" | "Pending" | "Hold / Review" | "Not available";
   currentOrNextLoad: string;
   documentSummary: string;
   blockerHref?: string;
@@ -411,25 +411,25 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
             entityLabel: summary.driverName,
             status: authoritativeStatus.status,
             reviewStatus: authoritativeStatus.status,
-            summary: summary.readiness?.summary ?? summary.qualification?.summary ?? "LIVE Prisma operational summary",
+            summary: summary.readiness?.summary ?? summary.qualification?.summary ?? "Live driver file",
             issues: [],
-            documentsColumnLabel: "LIVE",
-            complianceColumnLabel: "LIVE",
-            recommendedNextStepText: "Open the driver portal for the authoritative operational summary.",
+            documentsColumnLabel: "Live",
+            complianceColumnLabel: "Live",
+            recommendedNextStepText: "Open the driver file.",
             primaryGuidance: {
               headline: authoritativeStatus.primaryReason,
               plainEnglishReason: authoritativeStatus.primaryReason,
               operationalImpact: authoritativeStatus.businessImpact,
-              proposedSolution: "Open the driver portal for the authoritative operational summary.",
+              proposedSolution: "Open the driver file.",
               severity: authoritativeStatus.status === "ready" ? "watch" : authoritativeStatus.status,
-              primaryActionLabel: "Open driver portal",
-              primaryActionHref: `/portals/driver/${summary.driverId}`,
+              primaryActionLabel: "Open driver file",
+              primaryActionHref: `/drivers/${summary.driverId}`,
             },
             severity: authoritativeStatus.status === "blocked" ? "blocked" : authoritativeStatus.status === "needs_review" ? "needs_review" : "ready",
             headline: authoritativeStatus.primaryReason,
             reason: authoritativeStatus.primaryReason,
             impact: authoritativeStatus.businessImpact,
-            recommendedFix: "Open the driver portal for the authoritative operational summary.",
+            recommendedFix: "Open the driver file.",
             issueType: "unknown",
             actions: [],
           };
@@ -447,14 +447,14 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
             compliance: summary.qualification?.qualificationStatus
               ? formatEnumLabel(summary.qualification.qualificationStatus)
               : "Not yet evaluated",
-            safety: "Standard",
-            settlement: "Pending",
-            currentOrNextLoad: "No active dispatch assignment shown in this view.",
+            safety: "Not available",
+            settlement: "Not available",
+            currentOrNextLoad: "Not available in the live roster.",
             documentSummary:
               summary.qualification?.summary ??
               summary.readiness?.summary ??
               "No authoritative evaluation is currently available.",
-            blockerHref: `/portals/driver/${summary.driverId}`,
+            blockerHref: `/drivers/${summary.driverId}`,
             loadLinkId: null,
             primaryReviewReason: authoritativeStatus.primaryReason,
             reviewExplanation: liveReview,
@@ -462,11 +462,11 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
               status: authoritativeStatus.status,
               primaryReason: authoritativeStatus.primaryReason,
               businessImpact: authoritativeStatus.businessImpact,
-              requiredFix: "Open the driver portal for the authoritative operational summary.",
+              requiredFix: "Open the driver file.",
               ownerTeam: "Operations Team",
               fixAction: {
-                label: "Open driver portal",
-                href: `/portals/driver/${summary.driverId}`,
+                label: "Open driver file",
+                href: `/drivers/${summary.driverId}`,
               },
             },
             actionIssues: [],
@@ -558,31 +558,76 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
     [data, driverRequirements, hasFleetContext, operationalSummaries, operationalSummaryMap, sandbox]
   );
 
+  const liveRoster = hasFleetContext && !sandbox;
+
   const filteredDriverRows = useMemo(() => {
     const query = searchText.trim().toLowerCase();
     let rows = driverRows;
-    
-    // Handle existing filters
-    if (driverStatusFilter === "expiring_soon") {
+    const expiringCodes = new Set(["MEDICAL_EXPIRING", "LICENSE_EXPIRING"]);
+    const missingCodes = new Set([
+      "OPERATIONAL_CREDENTIAL_MISSING",
+      "LICENSE_EXPIRED",
+      "MEDICAL_EXPIRED",
+      "DRUG_TEST_REJECTED",
+    ]);
+    const requirementDueWithin = (driverId: string, days: number) => {
+      const now = Date.now();
+      const horizon = now + days * 24 * 60 * 60 * 1000;
+      return driverRequirements.some((requirement) => {
+        if (requirement.driverId !== driverId || requirement.resolutionStatus === "RESOLVED" || !requirement.dueDate) {
+          return false;
+        }
+        const due = new Date(requirement.dueDate).getTime();
+        return !Number.isNaN(due) && due >= now && due <= horizon;
+      });
+    };
+    const requirementMissing = (driverId: string) =>
+      driverRequirements.some(
+        (requirement) =>
+          requirement.driverId === driverId &&
+          requirement.resolutionStatus !== "RESOLVED" &&
+          (requirement.actionStatus === "ACTION_REQUIRED" || requirement.actionStatus === "MISSING"),
+      );
+
+    if (liveRoster && (driverStatusFilter === "expiring_soon" || driverStatusFilter === "documents_expiring")) {
+      const windowDays = driverStatusFilter === "documents_expiring" ? 90 : credentialWindowDays;
+      rows = rows.filter((row) => {
+        const codes = operationalSummaryMap.get(row.driverId)?.readiness?.reasonCodes ?? [];
+        return codes.some((code) => expiringCodes.has(code)) || requirementDueWithin(row.driverId, windowDays);
+      });
+    } else if (liveRoster && driverStatusFilter === "missing_docs") {
+      rows = rows.filter((row) => {
+        const codes = operationalSummaryMap.get(row.driverId)?.readiness?.reasonCodes ?? [];
+        return codes.some((code) => missingCodes.has(code)) || requirementMissing(row.driverId);
+      });
+    } else if (
+      liveRoster &&
+      (driverStatusFilter === "employee_driver" ||
+        driverStatusFilter === "owner_operator" ||
+        driverStatusFilter === "missing_acknowledgments" ||
+        driverStatusFilter === "settlement_review")
+    ) {
+      rows = [];
+    } else if (!liveRoster && driverStatusFilter === "expiring_soon") {
       rows = rows.filter((row) =>
         driverHasCredentialExpiringWithin(data, row.driverId, credentialWindowDays)
       );
-    } else if (driverStatusFilter === "missing_docs") {
+    } else if (!liveRoster && driverStatusFilter === "missing_docs") {
       rows = rows.filter((row) => driverHasMissingOrInvalidDoc(data, row.driverId));
-    } else if (driverStatusFilter === "employee_driver") {
+    } else if (!liveRoster && driverStatusFilter === "employee_driver") {
       rows = rows.filter((row) => row.workerType === 'Employee Driver');
-    } else if (driverStatusFilter === "owner_operator") {
+    } else if (!liveRoster && driverStatusFilter === "owner_operator") {
       rows = rows.filter((row) => row.workerType === 'Independent Contractor / Owner-Operator');
-    } else if (driverStatusFilter === "documents_expiring") {
+    } else if (!liveRoster && driverStatusFilter === "documents_expiring") {
       rows = rows.filter((row) => 
         driverHasCredentialExpiringWithin(data, row.driverId, 90)
       );
-    } else if (driverStatusFilter === "missing_acknowledgments") {
+    } else if (!liveRoster && driverStatusFilter === "missing_acknowledgments") {
       rows = rows.filter((row) => {
         const acknowledgments = getDriverPolicyAcknowledgments(row.driverId, data);
         return acknowledgments.some(ack => ack.status === 'missing');
       });
-    } else if (driverStatusFilter === "settlement_review") {
+    } else if (!liveRoster && driverStatusFilter === "settlement_review") {
       rows = rows.filter((row) => {
         const settlement = getDriverSettlementSummary(row.driverId, data);
         return settlement.status === 'needs_review';
@@ -598,9 +643,9 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
         row.driverId.toLowerCase().includes(query) ||
         (row.email ?? "").toLowerCase().includes(query)
     );
-  }, [credentialWindowDays, data, driverRows, driverStatusFilter, searchText]);
+  }, [credentialWindowDays, data, driverRequirements, driverRows, driverStatusFilter, liveRoster, operationalSummaryMap, searchText]);
 
-  const visibleDriverRows = hydrated ? filteredDriverRows : [];
+  const visibleDriverRows = liveRoster ? filteredDriverRows : hydrated ? filteredDriverRows : [];
   const evaluatedAttentionCount = driverRows.filter(
     (row) => row.authoritativeSource !== "unavailable" && row.eligibilityStatus !== "ready",
   ).length;
@@ -624,6 +669,8 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
           />
+          {liveRoster ? null : (
+            <>
           <label className="bof-drivers-credential-window__label" htmlFor="bof-drivers-credential-window">
             Expiring window
           </label>
@@ -637,6 +684,8 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
             <option value={60}>60 days</option>
             <option value={30}>30 days</option>
           </select>
+            </>
+          )}
         </div>
         <div className="bof-drivers-filter-bar" role="toolbar" aria-label="Filter driver roster">
           {[
@@ -646,11 +695,15 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
             { id: "blocked" as const, label: "Blocked" },
             { id: "expiring_soon" as const, label: "Expiring soon" },
             { id: "missing_docs" as const, label: "Missing docs" },
-            { id: "employee_driver" as const, label: "Employee Driver" },
-            { id: "owner_operator" as const, label: "Owner-Operator" },
-            { id: "documents_expiring" as const, label: "Documents Expiring" },
-            { id: "missing_acknowledgments" as const, label: "Missing Acknowledgments" },
-            { id: "settlement_review" as const, label: "Settlement Review" },
+            ...(liveRoster
+              ? []
+              : [
+                  { id: "employee_driver" as const, label: "Employee Driver" },
+                  { id: "owner_operator" as const, label: "Owner-Operator" },
+                  { id: "documents_expiring" as const, label: "Documents Expiring" },
+                  { id: "missing_acknowledgments" as const, label: "Missing Acknowledgments" },
+                  { id: "settlement_review" as const, label: "Settlement Review" },
+                ]),
           ].map((f) => (
             <button
               key={f.id}
@@ -715,7 +768,9 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                       <DriverAvatar name={row.name} photoUrl={row.avatar} size={40} />
                       <div>
-                        <div style={{ fontWeight: '600', color: '#1E293B', fontSize: '0.875rem' }}>{row.name}</div>
+                        <div style={{ fontWeight: '600', color: '#1E293B', fontSize: '0.875rem' }}>
+                          {liveRoster ? <Link href={`/drivers/${row.driverId}`} style={{ color: 'inherit', textDecoration: 'none' }}>{row.name}</Link> : row.name}
+                        </div>
                         <div style={{ fontSize: '0.75rem', color: '#64748B' }}>{row.email ?? row.phone ?? "No contact"}</div>
                       </div>
                     </div>
@@ -791,7 +846,7 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
                             {row.readinessSummary.fixAction.label}
                           </Link>
                         )}
-                        <Link href={row.actionIssues.length > 0 ? row.actionIssues[0].primaryActionHref : `/portals/driver/${row.driverId}`} className="bof-driver-roster-action" style={{
+                        <Link href={liveRoster ? `/drivers/${row.driverId}` : row.actionIssues.length > 0 ? row.actionIssues[0].primaryActionHref : `/portals/driver/${row.driverId}`} className="bof-driver-roster-action" style={{
                           padding: '0.375rem 0.75rem',
                           backgroundColor: '#F3F4F6',
                           color: '#374151',
@@ -801,11 +856,11 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
                           fontWeight: '500',
                           border: '1px solid #D1D5DB'
                         }}>
-                          Review issue
+                          {liveRoster ? "Open driver file" : "Review issue"}
                         </Link>
                       </div>
                     ) : (
-                      <Link href={`/portals/driver/${row.driverId}`} className="bof-driver-roster-action" style={{
+                      <Link href={liveRoster ? `/drivers/${row.driverId}` : `/portals/driver/${row.driverId}`} className="bof-driver-roster-action" style={{
                         padding: '0.375rem 0.75rem',
                         backgroundColor: '#F0FDF4',
                         color: '#166534',
@@ -815,7 +870,7 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
                         fontWeight: '500',
                         border: '1px solid #BBF7D0'
                       }}>
-                        View Documents
+                        {liveRoster ? "Open driver file" : "View Documents"}
                       </Link>
                     )}
                   </td>
@@ -831,7 +886,9 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
                 <div className="bof-driver-roster-card__identity">
                   <DriverAvatar name={row.name} photoUrl={row.avatar} size={42} />
                   <div>
-                    <div className="bof-driver-roster-card__name">{row.name}</div>
+                    <div className="bof-driver-roster-card__name">
+                      {liveRoster ? <Link href={`/drivers/${row.driverId}`}>{row.name}</Link> : row.name}
+                    </div>
                     <div className="bof-driver-roster-card__meta">
                       {row.driverId} - {row.email ?? row.phone ?? "No contact"}
                     </div>
@@ -872,7 +929,7 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
                       {row.readinessSummary.fixAction.label}
                     </Link>
                   )}
-                  <Link href={row.actionIssues.length > 0 ? row.actionIssues[0].primaryActionHref : `/portals/driver/${row.driverId}`} className="bof-driver-roster-action" style={{
+                  <Link href={liveRoster ? `/drivers/${row.driverId}` : row.actionIssues.length > 0 ? row.actionIssues[0].primaryActionHref : `/portals/driver/${row.driverId}`} className="bof-driver-roster-action" style={{
                     padding: '0.55rem 0.85rem',
                     backgroundColor: '#F8FAFC',
                     color: '#334155',
@@ -882,12 +939,12 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
                     fontWeight: '700',
                     border: '1px solid #CBD5E1'
                   }}>
-                    Review issue
+                    {liveRoster ? "Open driver file" : "Review issue"}
                   </Link>
                 </div>
               ) : (
                 <div className="bof-driver-roster-actions">
-                  <Link href={`/portals/driver/${row.driverId}`} className="bof-driver-roster-action" style={{
+                  <Link href={liveRoster ? `/drivers/${row.driverId}` : `/portals/driver/${row.driverId}`} className="bof-driver-roster-action" style={{
                     padding: '0.55rem 0.85rem',
                     backgroundColor: '#F0FDF4',
                     color: '#166534',
@@ -897,7 +954,7 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
                     fontWeight: '700',
                     border: '1px solid #BBF7D0'
                   }}>
-                    View Documents
+                    {liveRoster ? "Open driver file" : "View Documents"}
                   </Link>
                 </div>
               )}

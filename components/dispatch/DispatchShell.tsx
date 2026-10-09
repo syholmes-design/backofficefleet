@@ -205,16 +205,20 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries, sa
 
   return (
     <div className="flex min-h-[calc(100vh-3.5rem)] flex-col bg-slate-950 text-slate-100 lg:flex-row">
-      <DispatchNav />
+      <DispatchNav sandbox={sandbox} />
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <div className="px-4 pt-3">
-          <DemoPageExplainerById pageId="dispatch" />
-        </div>
-        <div className="px-4">
-          <DispatchCopilotAdvocatePanel />
-        </div>
+        {sandbox ? (
+          <>
+            <div className="px-4 pt-3">
+              <DemoPageExplainerById pageId="dispatch" />
+            </div>
+            <div className="px-4">
+              <DispatchCopilotAdvocatePanel />
+            </div>
+          </>
+        ) : null}
         <div className="px-4 pb-3">
-          <LiveOperatingSpinePanel title="LIVE dispatch consumption" />
+          <LiveOperatingSpinePanel title="Fleet snapshot" />
         </div>
 
         {view === "board" ? (
@@ -239,7 +243,7 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries, sa
           <div className="flex min-h-0 flex-1 flex-col p-5">
             <h1 className="text-lg font-semibold text-white">Load detail</h1>
             <p className="mt-1 text-sm text-slate-400">
-              Select a backend load to review the same operational panel used inside dispatch.
+              Select a fleet load to review the same panel used on the dispatch board.
             </p>
             <div className="mt-4 max-w-xl space-y-3">
               <label className="block text-xs text-slate-500">
@@ -288,7 +292,7 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries, sa
           <div className="flex min-h-0 flex-1 flex-col p-5">
             <h1 className="text-lg font-semibold text-white">Assign driver &amp; equipment</h1>
             <p className="mt-1 text-sm text-slate-400">
-              Choose a backend load and open the same assignment modal used from the dispatch board.
+              Choose a fleet load and open the same assignment window used from the dispatch board.
             </p>
             <div className="mt-4 max-w-md">
               <label className="block text-xs text-slate-500">

@@ -14,7 +14,6 @@ import {
   type OperationsFileCabinetAudience,
   type OperationsFileCabinetStatus,
 } from "@/lib/operations-file-cabinet";
-import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 import type { CanonicalDocumentRecord } from "@/lib/verified-document-index";
 import { getControlledDocumentByAppId } from "@/lib/document-control/registry";
 
@@ -46,7 +45,7 @@ function controlLine(item: OperationsFileCabinetItem): string | null {
   if (ctrl.productionGate === "NEEDS_REVIEW" || ctrl.lifecycle !== "ACTIVE") {
     parts.push("uploaded ≠ approved");
   }
-  if (item.isCompletedSample) parts.push("DEMO sample · not LIVE evidence");
+  if (item.isCompletedSample) parts.push("Sample file · not carrier evidence");
   return parts.join(" · ");
 }
 
@@ -295,7 +294,7 @@ export function OperationsFileCabinetClient({ featuredDocuments }: Props) {
 
     // Handle completed demo samples
     if (item.section === "Completed Demo Samples" || item.isCompletedSample) {
-      return "View completed sample";
+      return "View sample file";
     }
     
     if (item.sourceAuthenticity === "generated_from_template" && item.status === "available" && !item.isBlankTemplate) {
@@ -429,7 +428,7 @@ export function OperationsFileCabinetClient({ featuredDocuments }: Props) {
         <div style={{ position: "relative", zIndex: 1 }}>
           <h1 className="bof-title">Operations File Cabinet</h1>
           <p className="bof-lead">
-            Driver files, company policies, dispatch forms, SOPs, claims documents, training resources, and back-office templates organized in one operating library for Delta Advanced Trucking, Inc.
+            Driver files, company policies, dispatch forms, SOPs, claims documents, training resources, and back-office templates in one operating library. Sample files are walkthrough material, not live carrier evidence.
           </p>
           
           {/* Hero Chips */}
@@ -490,8 +489,6 @@ export function OperationsFileCabinetClient({ featuredDocuments }: Props) {
           </div>
         </div>
       </div>
-
-      <DemoPageExplainerById pageId="documents" />
 
       {/* Summary Cards */}
       <div style={{
@@ -1053,7 +1050,7 @@ export function OperationsFileCabinetClient({ featuredDocuments }: Props) {
               textTransform: "uppercase",
               marginBottom: "0.45rem"
             }}>
-              Demo proof shelf
+              Quick access
             </div>
             <h2 style={{
               fontSize: "clamp(1.35rem, 2vw, 1.85rem)",
@@ -1069,7 +1066,7 @@ export function OperationsFileCabinetClient({ featuredDocuments }: Props) {
               margin: 0,
               lineHeight: "1.55"
             }}>
-              The most demo-relevant policies, claims packets, and operating templates are surfaced first so the owner can prove the workflow without digging through a file dump.
+              Essential policies, claims packets, and operating templates. Sample fleet files are not live carrier evidence.
             </p>
           </div>
           <div style={{
@@ -1086,7 +1083,7 @@ export function OperationsFileCabinetClient({ featuredDocuments }: Props) {
               {featuredItems.length}
             </strong>
             <span style={{ fontSize: "0.78rem", lineHeight: 1.35 }}>
-              ready links in the curated proof shelf
+              documents in this collection
             </span>
           </div>
         </div>
@@ -1266,7 +1263,7 @@ export function OperationsFileCabinetClient({ featuredDocuments }: Props) {
           color: "rgba(255, 255, 255, 0.9)",
           margin: "0 0 1rem 0"
         }}>
-          Cabinet Build Queue
+          Planned additions
         </h2>
         <p style={{
           fontSize: "0.9rem",
@@ -1274,7 +1271,7 @@ export function OperationsFileCabinetClient({ featuredDocuments }: Props) {
           margin: "0 0 1.5rem 0",
           lineHeight: "1.4"
         }}>
-          These items are tracked in the document roadmap and grouped here so the demo shows what evidence will be added next.
+          These items are tracked for a future release. They are not approved or released documents.
         </p>
         
         <div style={{

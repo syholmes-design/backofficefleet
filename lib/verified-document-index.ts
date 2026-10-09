@@ -115,11 +115,11 @@ export async function buildFeaturedDocumentIndex(): Promise<CanonicalDocumentRec
       type: group === "driver" ? "driver-file" : group === "policy" ? "policy" : "template",
       audience: ["manager", "owner"],
       status: "available",
-      description: `Verified BOF ${title} document.`,
+      description: `Sample fleet file: ${title}. Not live carrier evidence.`,
       href,
       sourceAuthenticity: "generated_from_template",
       documentOwner: "employer",
-      employerName: "Delta Advanced Trucking, Inc.",
+      employerName: "BOF sample fleet",
     };
     const kind = classifyHref(href, { ...base, href, status: "available" });
     records.push(toRecord({
@@ -130,7 +130,7 @@ export async function buildFeaturedDocumentIndex(): Promise<CanonicalDocumentRec
       status: "available",
       sourceAuthenticity: "generated_from_template",
       isBlankTemplate: false,
-      isCompletedSample: false,
+      isCompletedSample: registryItem ? Boolean(registryItem.isCompletedSample) : true,
     }, kind, id));
   }
   return records.filter((record) => record.kind !== "missing");

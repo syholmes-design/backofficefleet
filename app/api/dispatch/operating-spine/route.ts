@@ -18,6 +18,7 @@ export async function GET() {
       listPickupAuthorizationsForSpine(session.user),
     ]);
     const loadIds = loads.map((load) => load.id);
+    const fleetIds = [...new Set(loads.map((load) => load.fleetId))];
     const heldSettlements =
       loadIds.length === 0
         ? []
@@ -34,6 +35,43 @@ export async function GET() {
               updatedAt: true,
             },
           });
+    const proofsRequiringReview =
+      loadIds.length === 0
+        ? []
+        : await prisma.loadProofOfDelivery.findMany({
+            where: {
+              fleetId: { in: fleetIds },
+              loadId: { in: loadIds },
+              lifecycleClass: "LIVE",
+              status: { in: ["REJECTED", "MISSING", "EXCEPTION"] },
+            },
+            orderBy: { updatedAt: "desc" },
+            take: 25,
+            select: {
+              id: true,
+              loadId: true,
+              proofType: true,
+              status: true,
+              exceptionStatus: true,
+              verifiedAt: true,
+              updatedAt: true,
+            },
+          });
+    const proofLoadIds = [...new Set(proofsRequiringReview.map((proof) => proof.loadId))];
+    const proofSettlements =
+      proofLoadIds.length === 0
+        ? []
+        : await prisma.settlement.findMany({
+            where: { loadId: { in: proofLoadIds }, fleetId: { in: fleetIds } },
+            orderBy: { updatedAt: "desc" },
+            select: { loadId: true, status: true },
+          });
+    const settlementStatusByLoadId = new Map<string, string>();
+    for (const settlement of proofSettlements) {
+      if (!settlementStatusByLoadId.has(settlement.loadId)) {
+        settlementStatusByLoadId.set(settlement.loadId, settlement.status);
+      }
+    }
 
     return NextResponse.json({
       authority: "LIVE",
@@ -41,6 +79,10 @@ export async function GET() {
       equipment,
       heldSettlements,
       pickupAuthorizations,
+      proofsRequiringReview: proofsRequiringReview.map((proof) => ({
+        ...proof,
+        settlementStatus: settlementStatusByLoadId.get(proof.loadId) ?? null,
+      })),
     });
   } catch (error) {
     const statusCode =

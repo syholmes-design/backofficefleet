@@ -41,7 +41,7 @@ function activeItemId(pathname: string, view: string | null): NavItem["id"] {
   return "board";
 }
 
-export function DispatchNav() {
+export function DispatchNav({ sandbox = false }: { sandbox?: boolean }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const view = searchParams.get("view");
@@ -54,7 +54,7 @@ export function DispatchNav() {
     >
       <div className="mb-3 border-b border-slate-800 pb-3">
         <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-          Delta Advanced Trucking
+          {sandbox ? "Training dispatch" : "Fleet dispatch"}
         </p>
         <p className="text-sm font-semibold text-teal-500">Dispatch Control</p>
       </div>
@@ -63,7 +63,7 @@ export function DispatchNav() {
         <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-600">
           Primary
         </p>
-        {PRIMARY_ITEMS.map(({ id, label, icon: Icon, href }) => {
+        {PRIMARY_ITEMS.filter((item) => sandbox || (item.id !== "exceptions" && item.id !== "settlement")).map(({ id, label, icon: Icon, href }) => {
           const on = id === active;
           return (
             <Link

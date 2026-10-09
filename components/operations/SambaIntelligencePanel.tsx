@@ -332,46 +332,35 @@ export function SambaIntelligencePanel({ entityId, loadId, carrierRegistryId }: 
             <LayerLabel tone="review">RECOMMENDED REVIEW</LayerLabel>
             <p className="mt-2 text-slate-200">{context.recommendedReview?.text ?? context.narrative.whatToReviewNext}</p>
             <p className="mt-1 text-[11px] text-slate-500">
-              Samba recommends review only. It does not execute an operational action
-              {context.recommendedReview ? " (executesAction: false)" : ""}.
+              Review only. This panel does not release, stop, or authorize a load.
             </p>
             {context.recommendedReview ? (
               <Link className="mt-2 inline-block text-xs text-teal-200 underline" href={context.recommendedReview.workflowHref}>
-                Open existing BOF workflow: {context.recommendedReview.workflowLabel}
+                Open workflow: {context.recommendedReview.workflowLabel}
               </Link>
             ) : context.narrative.workflowHref ? (
               <Link className="mt-2 inline-block text-xs text-teal-200 underline" href={context.narrative.workflowHref}>
-                Open existing BOF workflow
+                Open workflow
                 {context.narrative.workflowLabel ? `: ${context.narrative.workflowLabel}` : ""}
               </Link>
             ) : null}
           </div>
-          <p className="text-[11px] text-slate-500">
-            Provenance {context.provenance}. Samba mayAuthorOperationalState=
-            {String(context.mayAuthorOperationalState ?? false)}. Samba mutatedOperationalRecords=
-            {String(context.mutatedOperationalRecords ?? false)}.
-          </p>
         </div>
       ) : null}
 
-      <h3 className="mt-5 text-sm font-semibold text-white">Existing Samba findings</h3>
+      <h3 className="mt-5 text-sm font-semibold text-white">Open findings</h3>
       <p className="mt-1 text-xs text-slate-500">
-        Findings are Samba intelligence. Acknowledge, resolve, and dismiss only change Samba finding status, not BOF
-        operational records.
+        Acknowledge, resolve, and dismiss update the finding only. They do not change loads or settlements.
       </p>
       {findings.length === 0 ? (
-        <p className="mt-2 text-sm text-slate-400">No open Samba findings for this tenant.</p>
+        <p className="mt-2 text-sm text-slate-400">No open findings for this fleet.</p>
       ) : (
         <ul className="mt-3 space-y-3">
           {findings.slice(0, 8).map((finding) => (
             <li key={finding.id} className="rounded-lg border border-slate-800 bg-slate-950/60 p-3 text-sm text-slate-200">
               <p className="text-xs uppercase tracking-wide text-slate-500">
-                {finding.findingType} · {finding.severity} · {finding.status} · provenance {finding.provenance}
-                {finding.patternType ? ` · pattern ${finding.patternType}` : ""}
-                {finding.evidenceFreshness ? ` · ${finding.evidenceFreshness}` : ""}
-                {finding.liveConnected ? " · live evidence" : ""}
-                {finding.demoReferenceUsed ? " · DEMO_REFERENCE carrier snapshot (not LIVE authority)" : ""}
-                {finding.llmUsed ? " · LLM used" : " · deterministic"}
+                {finding.severity} · {finding.findingType} · {finding.status}
+                {finding.demoReferenceUsed ? " · sample reference, not live records" : ""}
               </p>
               <p className="mt-2 text-white">{finding.whatHappened ?? finding.fact}</p>
               {finding.whyItMatters ? <p className="mt-1 text-slate-300">Why it matters: {finding.whyItMatters}</p> : null}
@@ -382,7 +371,7 @@ export function SambaIntelligencePanel({ entityId, loadId, carrierRegistryId }: 
               <div className="mt-2 flex flex-wrap gap-2">
                 {finding.workflowHref ? (
                   <Link className="text-xs text-teal-200 underline" href={finding.workflowHref}>
-                    Open existing BOF workflow
+                    Open workflow
                   </Link>
                 ) : null}
                 <button type="button" className="text-xs text-slate-300 underline" onClick={() => void transition(finding.id, "ACKNOWLEDGED")}>

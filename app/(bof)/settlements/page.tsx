@@ -10,8 +10,8 @@ import { Suspense } from "react";
 import { SettlementsPayrollPageClient } from "@/components/settlements-payroll/SettlementsPayrollPageClient";
 
 export const metadata = {
-  title: "Settlements Command Center | BOF",
-  description: "Driver pay, deductions, reimbursements, and settlement readiness from source-of-truth data",
+  title: "Settlement holds | BOF",
+  description: "Proof-related settlement holds for your fleet. This page is not live payroll.",
 };
 
 export default function SettlementsPage() {

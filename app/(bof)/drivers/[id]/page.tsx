@@ -2,16 +2,17 @@
  * BOF Route Owner:
  * URL: /drivers/:id
  * Type: DISPATCH
- * Primary component: DriverDetailPageClient
+ * Primary component: OperatorDriverDetail
  * Route map: docs/BOF_ROUTE_MAP.md
  * Edit this file only for route-level layout/wiring.
  */
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
-import { DriverDetailPageClient } from "@/components/drivers/DriverDetailPageClient";
-import { DriverCopilotAdvocatePanel } from "@/components/copilot/DriverCopilotAdvocatePanel";
+import { OperatorDriverDetail } from "@/components/drivers/OperatorDriverDetail";
 import { getDriverByIdForSession } from "@/lib/services/driverService";
+import { getDriverOperationalSummary } from "@/lib/services/driverOperationalReadModelService";
+import { listDriverRequirementsForFleet } from "@/lib/services/requirementService";
 import { type SessionWithMemberships } from "@/lib/session-fleet";
 
 export const dynamic = "force-dynamic";
@@ -37,9 +38,6 @@ export default async function DriverDetailPage({ params }: Props) {
           <span aria-hidden> / </span>
           <span>Driver {id}</span>
         </nav>
-        <div className="mt-4">
-          <DriverCopilotAdvocatePanel driverId={id} variant="full" tone="ops" />
-        </div>
         <div className="mt-4 rounded-xl border border-amber-700/40 bg-amber-950/20 p-6 text-sm text-amber-50">
           Session expired. Sign in again to review the driver file.
         </div>
@@ -49,6 +47,10 @@ export default async function DriverDetailPage({ params }: Props) {
 
   try {
     const driver = await getDriverByIdForSession(session.user, id);
+    const [summary, requirements] = await Promise.all([
+      getDriverOperationalSummary(session.user, driver.id),
+      listDriverRequirementsForFleet(session.user, driver.id, driver.fleetId),
+    ]);
 
     return (
       <div className="bof-page">
@@ -58,7 +60,7 @@ export default async function DriverDetailPage({ params }: Props) {
           <span>Driver {driver.firstName} {driver.lastName}</span>
         </nav>
         <div className="mt-4 overflow-hidden rounded-xl border border-slate-800 bg-slate-950">
-          <DriverDetailPageClient driverId={driver.id} />
+          <OperatorDriverDetail driver={driver} summary={summary} requirements={requirements} />
         </div>
       </div>
     );

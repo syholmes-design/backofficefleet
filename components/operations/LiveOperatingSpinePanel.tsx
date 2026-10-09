@@ -33,6 +33,16 @@ export type LiveOperatingSpine = {
     holdReason: string | null;
     updatedAt: string;
   }>;
+  proofsRequiringReview?: Array<{
+    id: string;
+    loadId: string;
+    proofType: "POD" | "BOL" | "PHOTO" | "GEOLOCATION" | "SIGNATURE" | "OTHER";
+    status: "REJECTED" | "MISSING" | "EXCEPTION";
+    exceptionStatus: string | null;
+    verifiedAt: string | null;
+    updatedAt: string;
+    settlementStatus: string | null;
+  }>;
   pickupAuthorizations?: Array<{
     id: string;
     loadId: string;
@@ -85,11 +95,13 @@ export function useLiveOperatingSpine(options?: { enabled?: boolean }): LiveOper
 }
 
 export function LiveOperatingSpinePanel({
-  title = "LIVE operational spine",
+  title = "Operations snapshot",
   live,
+  focus = "all",
 }: {
   title?: string;
   live?: LiveOperatingSpineState;
+  focus?: "all" | "holds";
 }) {
   const local = useLiveOperatingSpine({ enabled: live == null });
   const { spine, error, loading, refresh } = live ?? local;
@@ -100,7 +112,9 @@ export function LiveOperatingSpinePanel({
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-emerald-300">{title}</p>
           <p className="mt-1 text-xs leading-5 text-slate-300">
-            Prisma equipment, loads, and settlement holds. DEMO T-102 / L001 remain DEMO_ONLY and are not relabeled LIVE.
+            {focus === "holds"
+              ? "Settlement holds for loads in your fleet."
+              : "Equipment, loads, settlement holds, and pickup gates for your fleet."}
           </p>
         </div>
         <button
@@ -108,15 +122,16 @@ export function LiveOperatingSpinePanel({
           onClick={() => void refresh()}
           className="rounded border border-emerald-500/40 px-2 py-1 text-xs text-emerald-100 hover:bg-emerald-950/60"
         >
-          Refresh LIVE
+          Refresh
         </button>
       </div>
-      {loading ? <p className="mt-3 text-xs text-slate-400">Loading LIVE records…</p> : null}
+      {loading ? <p className="mt-3 text-xs text-slate-400">Loading fleet data…</p> : null}
       {error ? <p className="mt-3 text-xs text-amber-200">{error}</p> : null}
       {spine ? (
-        <div className="mt-3 grid gap-3 md:grid-cols-3 lg:grid-cols-4">
+        <div className={`mt-3 grid gap-3 ${focus === "holds" ? "" : "md:grid-cols-3 lg:grid-cols-4"}`}>
+          {focus === "all" ? (
           <div>
-            <p className="text-xs font-semibold text-slate-400">LIVE equipment ({spine.equipment.length})</p>
+            <p className="text-xs font-semibold text-slate-400">Equipment ({spine.equipment.length})</p>
             <ul className="mt-1 space-y-1 text-xs">
               {spine.equipment.slice(0, 8).map((unit) => (
                 <li key={unit.id}>
@@ -126,11 +141,13 @@ export function LiveOperatingSpinePanel({
                   · {unit.status}
                 </li>
               ))}
-              {spine.equipment.length === 0 ? <li>No LIVE equipment in this operator scope.</li> : null}
+              {spine.equipment.length === 0 ? <li>No equipment in your fleet.</li> : null}
             </ul>
           </div>
+          ) : null}
+          {focus === "all" ? (
           <div>
-            <p className="text-xs font-semibold text-slate-400">LIVE loads ({spine.loads.length})</p>
+            <p className="text-xs font-semibold text-slate-400">Loads ({spine.loads.length})</p>
             <ul className="mt-1 space-y-1 text-xs">
               {spine.loads.slice(0, 8).map((load) => (
                 <li key={load.id}>
@@ -140,11 +157,12 @@ export function LiveOperatingSpinePanel({
                   · {load.status}
                 </li>
               ))}
-              {spine.loads.length === 0 ? <li>No LIVE loads in this operator scope.</li> : null}
+              {spine.loads.length === 0 ? <li>No loads in your fleet.</li> : null}
             </ul>
           </div>
+          ) : null}
           <div>
-            <p className="text-xs font-semibold text-slate-400">LIVE settlement holds ({spine.heldSettlements.length})</p>
+            <p className="text-xs font-semibold text-slate-400">Settlement holds ({spine.heldSettlements.length})</p>
             <ul className="mt-1 space-y-1 text-xs">
               {spine.heldSettlements.slice(0, 8).map((hold) => (
                 <li key={hold.id}>
@@ -154,9 +172,10 @@ export function LiveOperatingSpinePanel({
                   · {hold.holdReason || hold.status}
                 </li>
               ))}
-              {spine.heldSettlements.length === 0 ? <li>No LIVE settlement holds.</li> : null}
+              {spine.heldSettlements.length === 0 ? <li>No settlement holds.</li> : null}
             </ul>
           </div>
+          {focus === "all" ? (
           <div>
             <p className="text-xs font-semibold text-slate-400">
               Pickup authorization ({spine.pickupAuthorizations?.length ?? 0})
@@ -171,9 +190,10 @@ export function LiveOperatingSpinePanel({
                   · {row.reason || row.loadId.slice(0, 8)}
                 </li>
               ))}
-              {(spine.pickupAuthorizations ?? []).length === 0 ? <li>No pickup authorizations in this operator scope.</li> : null}
+              {(spine.pickupAuthorizations ?? []).length === 0 ? <li>No pickup authorizations in your fleet.</li> : null}
             </ul>
           </div>
+          ) : null}
         </div>
       ) : null}
     </section>

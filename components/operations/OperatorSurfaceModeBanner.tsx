@@ -56,12 +56,7 @@ export function OperatorSurfaceModeBanner() {
   if (isLiveProductionPath(pathname)) {
     return (
       <div className="border-b border-emerald-500/40 bg-emerald-950/70 px-4 py-2 text-sm text-emerald-50">
-        <strong>LIVE production operator path.</strong> Operational state comes from Prisma/API. DEMO records
-        (L001, T-102, DRV-*) are not LIVE authority. DEMO sandbox:{" "}
-        <Link className="underline decoration-emerald-300" href="/demo/command-center">
-          /demo/command-center
-        </Link>
-        .
+        <strong>Production.</strong> Status on this page comes from your live fleet records.
       </div>
     );
   }
