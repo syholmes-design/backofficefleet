@@ -1,14 +1,40 @@
+import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { getLoadProcessIntelligence } from "@/lib/load-process-intelligence";
-import { isDatabaseUrlNotConfiguredError, prismaUnavailablePayload } from "@/lib/prisma";
+import { isDatabaseUrlNotConfiguredError, prisma, prismaUnavailablePayload } from "@/lib/prisma";
 import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
+import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
+import { isDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
 
 export async function GET(_request: Request, context: { params: Promise<{ loadId: string }> }) {
   const unauthorized = await operatorUnauthorizedResponse();
   if (unauthorized) return unauthorized;
+  const session = await auth();
   const { loadId } = await context.params;
+  const key = decodeURIComponent(loadId).trim();
+  if (!key || isDemoOperationalKey(key)) {
+    return NextResponse.json({ error: "Load not found" }, { status: 404 });
+  }
   try {
-    const processIntelligence = await getLoadProcessIntelligence(loadId);
+    const matches = await prisma.load.findMany({
+      where: { OR: [{ id: key }, { referenceNumber: key }, { sourceRecordId: key }] },
+      select: { id: true, fleetId: true },
+      take: 20,
+    });
+    const actor = session?.user as SessionUserLike | undefined;
+    let allowed: { id: string; fleetId: string } | null = null;
+    for (const row of matches) {
+      const access = await authorizedFleetAccess(actor, row.fleetId);
+      if (access.allowed) {
+        allowed = row;
+        break;
+      }
+    }
+    if (!allowed) return NextResponse.json({ error: "Load not found" }, { status: 404 });
+    const processIntelligence = await getLoadProcessIntelligence(allowed.id, {
+      fleetId: allowed.fleetId,
+      liveOnly: true,
+    });
     if (!processIntelligence) return NextResponse.json({ error: "Load not found" }, { status: 404 });
     return NextResponse.json(processIntelligence);
   } catch (error) {

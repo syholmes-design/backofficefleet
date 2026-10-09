@@ -446,9 +446,13 @@ function filterCases(cases: DiscoveryCase[], filters: BofProcessDiscoveryFilters
   });
 }
 
-export async function getLoadProcessDiscovery(filters: BofProcessDiscoveryFilters = {}) {
+export async function getLoadProcessDiscovery(
+  filters: BofProcessDiscoveryFilters = {},
+  scope?: { fleetIds: string[] | null },
+) {
   const loads = await prisma.load.findMany({
     where: {
+      ...(scope?.fleetIds ? { fleetId: { in: scope.fleetIds } } : {}),
       operatingProcessEvents: {
         some: {
           eventTimestamp: {
@@ -592,10 +596,16 @@ export async function getLoadProcessDiscovery(filters: BofProcessDiscoveryFilter
   };
 }
 
-export async function getLoadProcessIntelligence(loadId: string) {
-  const demoLoad = findDemoLoad(loadId);
+export async function getLoadProcessIntelligence(
+  loadId: string,
+  scope?: { fleetId: string; liveOnly: true },
+) {
+  const demoLoad = scope?.liveOnly ? null : findDemoLoad(loadId);
   const persistedLoad = await prisma.load.findFirst({
-    where: { OR: [{ id: loadId }, { referenceNumber: loadId }, { sourceRecordId: loadId }] },
+    where: {
+      ...(scope?.liveOnly ? { fleetId: scope.fleetId } : {}),
+      OR: [{ id: loadId }, { referenceNumber: loadId }, { sourceRecordId: loadId }],
+    },
     include: {
       operatingProcessEvents: { orderBy: [{ eventTimestamp: "asc" }, { id: "asc" }] },
       operatingExceptions: true,

@@ -1,3 +1,4 @@
+import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
 import { NextRequest, NextResponse } from "next/server";
 import { recruitingV2UnauthorizedResponse } from "@/lib/recruiting-v2/require-operator-session";
 import { prisma } from "@/lib/prisma";
@@ -102,6 +103,8 @@ async function findCandidate(candidateId: string) {
 }
 
 export async function GET(_request: NextRequest, context: RouteContext) {
+  const unauthorized = await operatorUnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   const { candidateId } = await context.params;
   const candidate = await findCandidate(candidateId);
 

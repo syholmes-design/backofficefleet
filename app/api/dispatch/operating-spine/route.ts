@@ -5,6 +5,64 @@ import { listPickupAuthorizationsForSpine } from "@/lib/services/pickupAuthoriza
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+function spineLoad(load: {
+  id: string;
+  fleetId: string;
+  customerName: string;
+  origin: string;
+  destination: string;
+  commodityClass: string | null;
+  pickupWindowStart: Date | null;
+  pickupWindowEnd: Date | null;
+  deliveryWindowStart: Date | null;
+  deliveryWindowEnd: Date | null;
+  referenceNumber: string | null;
+  secondaryReferenceNumber: string | null;
+  status: string;
+  sourceRecordId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}) {
+  return {
+    id: load.id,
+    fleetId: load.fleetId,
+    customerName: load.customerName,
+    origin: load.origin,
+    destination: load.destination,
+    commodityClass: load.commodityClass,
+    pickupWindowStart: load.pickupWindowStart,
+    pickupWindowEnd: load.pickupWindowEnd,
+    deliveryWindowStart: load.deliveryWindowStart,
+    deliveryWindowEnd: load.deliveryWindowEnd,
+    referenceNumber: load.referenceNumber,
+    secondaryReferenceNumber: load.secondaryReferenceNumber,
+    status: load.status,
+    sourceRecordId: load.sourceRecordId,
+    createdAt: load.createdAt,
+    updatedAt: load.updatedAt,
+  };
+}
+
+function spineEquipment(unit: {
+  id: string;
+  fleetId: string;
+  equipmentType: string;
+  unitNumber: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+}) {
+  return {
+    id: unit.id,
+    fleetId: unit.fleetId,
+    equipmentType: unit.equipmentType,
+    unitNumber: unit.unitNumber,
+    status: unit.status,
+    createdAt: unit.createdAt,
+    updatedAt: unit.updatedAt,
+  };
+}
+
 export async function GET() {
   const session = await auth();
   if (!session?.user?.id) {
@@ -75,8 +133,8 @@ export async function GET() {
 
     return NextResponse.json({
       authority: "LIVE",
-      loads,
-      equipment,
+      loads: loads.map(spineLoad),
+      equipment: equipment.map(spineEquipment),
       heldSettlements,
       pickupAuthorizations,
       proofsRequiringReview: proofsRequiringReview.map((proof) => ({

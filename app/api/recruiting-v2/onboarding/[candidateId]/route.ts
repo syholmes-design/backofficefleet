@@ -1,3 +1,4 @@
+import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
 import { NextRequest, NextResponse } from "next/server";
 import { recruitingV2UnauthorizedResponse } from "@/lib/recruiting-v2/require-operator-session";
 import type { Prisma, RecruitingV2DocumentStatus, RecruitingV2DocumentType } from "@prisma/client";
@@ -205,6 +206,8 @@ function onboardingPayload(context: NonNullable<Awaited<ReturnType<typeof getOnb
 }
 
 export async function GET(_request: NextRequest, context: RouteContext) {
+  const unauthorized = await operatorUnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   const { candidateId } = await context.params;
   const onboardingContext = await getOnboardingContext(candidateId);
   if (!onboardingContext) return NextResponse.json({ error: "Candidate not found" }, { status: 404 });

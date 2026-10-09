@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getBofData } from "@/lib/load-bof-data";
+import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
 import {
   buildLoadGeneratedSvg,
   buildDriverGeneratedSvg,
@@ -11,6 +12,8 @@ import {
 type Ctx = { params: Promise<{ segments: string[] }> };
 
 export async function GET(_req: Request, ctx: Ctx) {
+  const unauthorized = await operatorUnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   const { segments } = await ctx.params;
   if (!segments || segments.length < 3) {
     return new NextResponse("Not found", { status: 404 });

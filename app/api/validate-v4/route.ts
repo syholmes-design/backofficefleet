@@ -4,9 +4,15 @@
  */
 
 import { NextResponse } from 'next/server';
+import { operatorUnauthorizedResponse } from '@/lib/require-operator-session';
 import { getV3OperationalData, isV3DataAvailable } from '@/lib/v3-operational-loader';
 
 export async function GET() {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  const unauthorized = await operatorUnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   try {
     console.log('🔍 Starting V4 workbook validation...');
     

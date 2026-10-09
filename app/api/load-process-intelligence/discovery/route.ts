@@ -1,7 +1,9 @@
+import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { getLoadProcessDiscovery, type BofLoadProcessDeviationType } from "@/lib/load-process-intelligence";
 import { isDatabaseUrlNotConfiguredError, prismaUnavailablePayload } from "@/lib/prisma";
 import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
+import { isServiceRole, type SessionUserLike } from "@/lib/services/intakeService";
 
 const ALLOWED_FILTERS = new Set([
   "dateFrom",
@@ -58,6 +60,16 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "deviationType is invalid" }, { status: 422 });
   }
 
+  const session = await auth();
+  const actor = session?.user as SessionUserLike | undefined;
+  const fleetIds =
+    actor && isServiceRole(actor, ["BOF_OPERATIONS", "BOF_COMPLIANCE_REVIEW"])
+      ? null
+      : (actor?.memberships ?? [])
+          .filter((membership) => membership.status !== "INACTIVE")
+          .map((membership) => membership.fleetId)
+          .filter(Boolean);
+
   try {
     const result = await getLoadProcessDiscovery({
       dateFrom: dateFrom instanceof Date ? dateFrom : undefined,
@@ -70,7 +82,7 @@ export async function GET(request: Request) {
       variant: url.searchParams.get("variant") ?? undefined,
       conformance: url.searchParams.get("conformance") ?? undefined,
       deviationType: deviationType as BofLoadProcessDeviationType | undefined,
-    });
+    }, { fleetIds });
 
     return NextResponse.json(result);
   } catch (error) {

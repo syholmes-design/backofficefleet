@@ -1,3 +1,4 @@
+import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
 import { NextRequest, NextResponse } from "next/server";
 import type { Prisma, RecruitingV2DocumentStatus, RecruitingV2DocumentType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
@@ -75,6 +76,8 @@ function serializeInterview(interview: {
 }
 
 export async function GET(_request: NextRequest, context: RouteContext) {
+  const unauthorized = await operatorUnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   const { candidateId } = await context.params;
   const candidate = await prisma.candidate.findUnique({
     where: { candidateCode: candidateId },
