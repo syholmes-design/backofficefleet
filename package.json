@@ -12,6 +12,8 @@
     "lint:eslint": "eslint app components lib next.config.ts --max-warnings=0",
     "typecheck": "tsc -p tsconfig.typecheck.json --noEmit",
     "provision:demo-user": "npx --yes tsx scripts/provision-demo-user.ts",
+    "provision:operator": "npx --yes tsx scripts/provision-operator.ts",
+    "test:provision-operator": "node --import ./scripts/lib/ts-alias-loader.mjs --test lib/provisioning/operatorProvision.test.ts",
     "codex:bootstrap": "node scripts/codex-bootstrap.mjs",
     "codex:registry-sync": "node scripts/agent-registry-sync.mjs",
     "codex:before-demo": "node scripts/codex-before-demo.mjs",
