@@ -1223,6 +1223,11 @@ const NEUTRAL_SOURCE = "docs/codex-environment-runbook.md";
 const NEUTRAL_BASIS =
   "Reviewed docs/codex-environment-runbook.md. The source is BOF-authored. It is carrier-neutral because no recorded carrier fact is present.";
 const POSITIVE_COMMIT = "c505f4044946c48f4a6f8f3ccd9f80a8e261cf38";
+/**
+ * Parent of the production phase-2 control plane. This commit is an ancestor of
+ * this branch, and lib/document-control/family/phase2/types.ts is not in it.
+ */
+const PATH_ABSENT_ANCESTOR = "495ce8c1d3ee2ef01489dfbfe7913eb9701f1418";
 const POSITIVE_SHA1 = "0e37ac8ccbfcb50e5266d89b800c13364761e383";
 const CURVED_QUOTE_SOURCE = "source-assets/template-packs/BOF-template-pack-standardization.md";
 const CARRIER_SOURCE = "public/generated/company-operations-vault/hr-templates/new-driver-onboarding-checklist.html";
@@ -1359,7 +1364,7 @@ check("12f. A provenance commit that does not contain the source path is rejecte
     citationFor(
       "BOF-TST-001@1.0",
       "lib/document-control/family/phase2/types.ts",
-      "5a6fccbdd819804ae4a2d284b7b8efeb91481bef",
+      PATH_ABSENT_ANCESTOR,
     ),
     ({ knownMasterIds: ["BOF-TST-001@1.0"] }),
   );
@@ -1637,7 +1642,7 @@ check("12m. Provenance must be a full ancestor commit and pin the source bytes",
   );
   expectQualificationCode(wrongHash, G.hashMismatch);
   const absentPath = evaluateCitation(
-    citationFor(FIXTURE_ID, "lib/document-control/family/phase2/types.ts", "5a6fccbdd819804ae4a2d284b7b8efeb91481bef"),
+    citationFor(FIXTURE_ID, "lib/document-control/family/phase2/types.ts", PATH_ABSENT_ANCESTOR),
     { knownMasterIds: [FIXTURE_ID] },
   );
   expectQualificationCode(absentPath, G.provenancePathMissing);

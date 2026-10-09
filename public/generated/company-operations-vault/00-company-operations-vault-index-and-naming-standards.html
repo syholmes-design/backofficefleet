@@ -1,311 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Company Operations Vault Index and Naming Standards</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            color: #1a202c;
-            background-color: #f8fafc;
-            margin: 0;
-            padding: 1in;
-        }
-        .paper {
-            max-width: 8.5in;
-            margin: 0 auto;
-            background: white;
-            padding: 0.5in;
-            box-shadow: 0 0.125in 0.25in rgba(0, 0, 0, 0.1);
-            border: 1px solid #e2e8f0;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 0.5in;
-            border-bottom: 2px solid #0BA5A4;
-            padding-bottom: 0.25in;
-        }
-        .title {
-            font-size: 18pt;
-            font-weight: bold;
-            color: #0BA5A4;
-            margin-bottom: 0.125in;
-        }
-        .subtitle {
-            font-size: 12pt;
-            color: #4a5568;
-            margin-bottom: 0.5in;
-        }
-        .section {
-            margin-bottom: 0.5in;
-        }
-        .section-title {
-            font-size: 11pt;
-            font-weight: bold;
-            color: #0BA5A4;
-            margin-bottom: 0.125in;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 0.0625in;
-        }
-        .standards-list {
-            list-style: none;
-            padding-left: 0.25in;
-        }
-        .standards-list li {
-            margin-bottom: 0.125in;
-            font-size: 9pt;
-        }
-        .standard-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.125in;
-        }
-        .standard-name {
-            font-weight: 600;
-            color: #1a202c;
-            min-width: 3in;
-        }
-        .standard-value {
-            color: #4a5568;
-            font-style: italic;
-        }
-        .category-section {
-            margin-top: 0.75in;
-        }
-        .category-title {
-            font-size: 11pt;
-            font-weight: bold;
-            color: #0BA5A4;
-            margin-bottom: 0.25in;
-        }
-        .category-list {
-            list-style: none;
-            padding-left: 0.25in;
-        }
-        .category-list li {
-            margin-bottom: 0.125in;
-            font-size: 9pt;
-        }
-        .footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #f7fafc;
-            border-top: 1px solid #e2e8f0;
-            padding: 0.125in;
-            text-align: center;
-            font-size: 8pt;
-            color: #4a5568;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BOF-GOV-POL-001 Company Operations Vault Index and Naming Standards</title>
+  <link rel="stylesheet" href="./bof-controlled-document.css" />
 </head>
 <body>
-    <div class="paper">
-        <div class="header">
-            <div class="title">Company Operations Vault</div>
-            <div class="subtitle">Index and Naming Standards</div>
-        </div>
+  <article class="bof-doc">
+    <header class="bof-doc__brand">
+      <div>
+        <p>BackOfficeFleet controlled document</p>
+        <h1>Company Operations Vault Index and Naming Standards</h1>
+        <p class="bof-doc__employer">Document-system standard for the BOF vault. Does not create operational authority.</p>
+      </div>
+      <aside class="bof-meta">
+        <div><strong>Document code</strong><span>BOF-GOV-POL-001</span></div>
+        <div><strong>Version</strong><span>2.2</span></div>
+        <div><strong>Status</strong><span>ACTIVE</span></div>
+        <div><strong>Effective</strong><span>20 Sep 2026</span></div>
+        <div><strong>Review by</strong><span>20 Sep 2027</span></div>
+        <div><strong>Owner</strong><span>Document Steward</span></div>
+        <div><strong>Approver</strong><span>Operations leadership</span></div>
+      </aside>
+    </header>
 
-        <div class="section">
-            <div class="section-title">Document Overview</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                The Company Operations Vault centralizes all back-office documents that control BOF's business operations. This document establishes the framework for document management, naming conventions, version control, and access protocols that ensure consistency across HR, payroll, finance, dispatch, safety, and administrative functions.
-            </p>
-        </div>
+    <h2>1. Purpose</h2>
+    <p>
+      Every controlled document answers: why it exists, who owns it, who maintains it, who reviews it, who approves it,
+      which workflow it supports, what evidence it creates, and when it is superseded. A file is not approved merely because it was uploaded.
+    </p>
 
-        <div class="section">
-            <div class="section-title">Document Categories</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                All Company Operations Vault documents are organized into functional categories that align with BOF's business structure. Each category serves specific operational needs and stakeholder groups.
-            </p>
-        </div>
+    <h2>2. Document code</h2>
+    <p>Format: <strong>BOF-[FUNCTION]-[TYPE]-[SEQUENCE]</strong>. Sequence is stable. Revision is a separate Version field.</p>
+    <table>
+      <thead><tr><th>Function</th><th>Meaning</th><th>Type</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>SAF</td><td>Safety &amp; compliance</td><td>POL</td><td>Policy</td></tr>
+        <tr><td>DRV</td><td>Driver / qualification</td><td>SOP</td><td>Procedure</td></tr>
+        <tr><td>OPS</td><td>Operations / dispatch</td><td>FORM</td><td>Operational form</td></tr>
+        <tr><td>EQP</td><td>Equipment / maintenance</td><td>CHK</td><td>Checklist</td></tr>
+        <tr><td>HR / ONB</td><td>HR / onboarding</td><td>ACK</td><td>Acknowledgment</td></tr>
+        <tr><td>FIN / CUS / CAR / SEC / IT / GOV</td><td>Finance, customer, carrier, security, IT, governance</td><td>AGR / REC / EVD</td><td>Agreement / record / evidence</td></tr>
+      </tbody>
+    </table>
+    <p>Example: Document Code <strong>BOF-SAF-POL-001</strong> Version <strong>2.0</strong>. Do not create BOF-SAF-POL-001A for a revision.</p>
+    <p>If an application path already exists (for example <code>10-safety-compliance-governance-policy.html</code> or <code>DAT_SOP_CLM_001_Rev3_1.pdf</code>), keep that path. Overlay the controlled code in metadata.</p>
 
-        <div class="section">
-            <div class="section-title">Naming Standards</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                Standardized naming ensures document discoverability, version tracking, and regulatory compliance. All documents follow a consistent format: [Category] [Document Type] - [Specific Purpose/Version].
-            </p>
-        </div>
+    <h2>3. Lifecycle</h2>
+    <p>DRAFT → INTERNAL REVIEW → COMPLIANCE REVIEW (when required) → APPROVAL → ACTIVE → REVISION → SUPERSEDED → ARCHIVED.</p>
+    <p>A superseded version must not be presented as ACTIVE.</p>
 
-        <div class="section">
-            <div class="section-title">Document Standards</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                Every document maintains professional quality with BOF branding, consistent formatting, and clear business language. Documents include version control, review dates, and business function connections.
-            </p>
-        </div>
+    <h2>4. Roles</h2>
+    <ul>
+      <li><strong>Owner</strong> — substantive accuracy and business purpose.</li>
+      <li><strong>Steward</strong> — metadata, revision history, distribution.</li>
+      <li><strong>Compliance reviewer</strong> — regulatory review when the document states legal requirements.</li>
+      <li><strong>Approver</strong> — authorized to place the document in ACTIVE status.</li>
+    </ul>
+    <p>The same person may hold more than one role. Content ownership is still distinct from file administration.</p>
 
-        <div class="section">
-            <div class="section-title">Access Control</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                Document access is role-based and tracked. Modifications require approval through established workflows, with audit trails maintained for compliance and governance.
-            </p>
-        </div>
+    <h2>5. Digital behavior</h2>
+    <p>
+      Prefer structured BOF records over duplicate Word/PDF when the system already captures the fact
+      (settlement totals, dispatch holds, pickup authorization). Static templates remain for policies, acknowledgments,
+      and human-completed checklists.
+    </p>
 
-        <div class="section">
-            <div class="section-title">Business Integration</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                Each document connects to specific BOF business functions, creating a unified system where policies, procedures, and records support operational decisions and compliance requirements.
-            </p>
-        </div>
+    <h2>6. Vault classes</h2>
+    <p>DRIVER-OWNED · EMPLOYER RECORD · OPERATIONAL RECORD · COMPLIANCE RECORD · FINANCIAL RECORD · SYSTEM-GENERATED RECORD.</p>
 
-        <div class="section">
-            <div class="section-title">Version 1.0</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                Effective: October 15, 2025<br>
-                Last reviewed: October 15, 2025<br>
-                Applies to: Admin, HR, Payroll, Finance, Compliance<br>
-                Next review due: January 15, 2026
-            </p>
-        </div>
+    <h2>7. Authority labels</h2>
+    <p>Documents that mention law must distinguish Regulatory requirement, BOF/company policy, and operational best practice. Unverified statements are flagged for legal/compliance review.</p>
 
-        <div class="section">
-            <div class="section-title">Document Categories</div>
-            <div class="category-section">
-                <div class="category-title">Vault Administration</div>
-                <ul class="category-list">
-                    <li>
-                        <div class="standard-item">
-                            <span class="standard-name">Index and Naming Standards</span>
-                            <span class="standard-value">Document Management & Governance</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
+    <h2>8. Current vault documents (presentation layer)</h2>
+    <p>Historical and impostor copies live under <code>_historical/</code> and are not current. <code>_generator-preview/</code> is not the vault surface.</p>
+    <table>
+      <thead><tr><th>Code</th><th>Name</th><th>Current path</th><th>Surface note</th></tr></thead>
+      <tbody>
+        <tr><td>BOF-GOV-POL-001</td><td>Company Operations Vault Index and Naming Standards</td><td>00-company-operations-vault-index-and-naming-standards.html</td><td>Current index</td></tr>
+        <tr><td>BOF-SAF-POL-001</td><td>Safety &amp; Compliance Governance Policy</td><td>10-safety-compliance-governance-policy.html</td><td>Strong recovered policy</td></tr>
+        <tr><td>BOF-SAF-SOP-001</td><td>DVIR / Defect Escalation SOP</td><td>bof-saf-sop-001-dvir-defect-escalation.html</td><td>Internal review</td></tr>
+        <tr><td>BOF-SAF-FORM-001</td><td>Safety &amp; Compliance Operational Checklist</td><td>bof-saf-form-001-operational-checklist.html</td><td>Strong recovered form</td></tr>
+        <tr><td>BOF-DRV-CHK-001</td><td>DQF Completeness Checklist</td><td>bof-drv-chk-001-driver-qualification-file.html</td><td>Internal review</td></tr>
+        <tr><td>BOF-DRV-FORM-002</td><td>New-Hire HOS Statement</td><td>bof-drv-form-002-new-hire-hos-statement.html</td><td>Internal review</td></tr>
+        <tr><td>BOF-HR-ACK-001</td><td>Driver Policy Acknowledgment</td><td>hr-templates/driver-policy-acknowledgment-form.html</td><td>Strong recovered acknowledgment</td></tr>
+        <tr><td>BOF-ONB-CHK-001</td><td>New Driver Onboarding Checklist</td><td>hr-templates/new-driver-onboarding-checklist.html</td><td>Driver-specific; not HR-CHK-001</td></tr>
+        <tr><td>BOF-SAF-SOP-002</td><td>Claims / Escalation SOP</td><td>DAT_SOP_CLM_001_Rev3_1.pdf</td><td>Filename preserved</td></tr>
+        <tr><td>BOF-FIN-POL-001</td><td>Payroll, Compensation, and Deductions Policy</td><td>04-payroll-compensation-and-deductions-policy.html</td><td>Recovered from HR-PAY-001 DOCX</td></tr>
+        <tr><td>BOF-IT-POL-001</td><td>Information Security Governance Policy</td><td>11-information-security-governance-policy.html</td><td>Recovered DAT-IT-003 identity</td></tr>
+        <tr><td>BOF-IT-POL-002</td><td>Acceptable Use of Company Systems Policy</td><td>12-acceptable-use-of-company-systems-policy.html</td><td>Recovered DAT-IT-001 identity</td></tr>
+        <tr><td>BOF-IT-POL-003</td><td>Information Classification Policy</td><td>13-information-classification-policy.html</td><td>Recovered DAT-IT-004 identity</td></tr>
+        <tr><td>BOF-IT-POL-004</td><td>Data Protection and Secure Handling Standard</td><td>14-data-protection-and-secure-handling-standard.html</td><td>Recovered DAT-IT-004-S identity</td></tr>
+        <tr><td>BOF-IT-POL-005</td><td>Privacy and Employee Data Handling Policy</td><td>15-privacy-and-employee-data-handling-policy.html</td><td>EXTERNAL COMPLIANCE GAP — REVIEW REQUIRED</td></tr>
+        <tr><td>BOF-IT-POL-006</td><td>Vendor Security Assessment Policy</td><td>16-vendor-security-assessment-policy.html</td><td>Recovered DAT-IT-014 identity</td></tr>
+        <tr><td>BOF-IT-POL-007</td><td>AI Use and Automation Governance Policy</td><td>17-ai-use-and-automation-governance-policy.html</td><td>Recovered DAT-IT-008 identity</td></tr>
+        <tr><td>BOF-HR-POL-001</td><td>Employee Handbook</td><td>01-employee-handbook-template.html</td><td>SOURCE NOT RECOVERED</td></tr>
+        <tr><td>BOF-HR-POL-002</td><td>Code of Conduct and Workplace Policies</td><td>02-code-of-conduct-and-workplace-policies.html</td><td>SOURCE NOT RECOVERED</td></tr>
+        <tr><td>BOF-HR-CHK-001</td><td>HR Onboarding and Offboarding Checklist</td><td>03-hr-onboarding-and-offboarding-checklist.html</td><td>SOURCE NOT RECOVERED</td></tr>
+        <tr><td>BOF-FIN-SOP-001</td><td>Accounting, Finance Close, AP, and AR SOP</td><td>05-accounting-finance-close-ap-ar-sop.html</td><td>SOURCE NOT RECOVERED</td></tr>
+        <tr><td>BOF-FIN-POL-002</td><td>Factoring and Receivables Policy</td><td>06-factoring-and-receivables-policy.html</td><td>SOURCE NOT RECOVERED</td></tr>
+        <tr><td>BOF-FIN-POL-003</td><td>Vendor maintenance / tax audit / cash-flow overlay</td><td>08, 19, and 21 html paths preserved</td><td>SOURCE NOT RECOVERED (three hrefs)</td></tr>
+        <tr><td>BOF-GOV-POL-002</td><td>Mission, Vision, and Operating Principles</td><td>09-mission-vision-and-operating-principles.html</td><td>SOURCE NOT RECOVERED</td></tr>
+        <tr><td>BOF-HR-POL-003</td><td>Driver Worker Classification Policy</td><td>18-driver-worker-classification-and-owner-operator-engagement-policy.html</td><td>SOURCE NOT RECOVERED</td></tr>
+        <tr><td>BOF-FIN-FORM-001</td><td>Fuel, Mileage and Excise Tax Support Checklist</td><td>20-fuel-mileage-and-excise-tax-support-checklist.html</td><td>SOURCE NOT RECOVERED</td></tr>
+      </tbody>
+    </table>
+    <p>The complete roster lives in application metadata at <code>lib/document-control/registry.ts</code> and <code>lib/document-control/phase2-roster.ts</code>.</p>
 
-            <div class="category-section">
-                <div class="category-title">HR & Employment Operations</div>
-                <ul class="category-list">
-                    <li>
-                        <div class="standard-item">
-                            <span class="standard-name">Employee Handbook</span>
-                            <span class="standard-value">HR Management & Employee Relations</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="standard-item">
-                            <span class="standard-name">Code of Conduct and Workplace Policies</span>
-                            <span class="standard-value">HR Management & Compliance</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="standard-item">
-                            <span class="standard-name">HR Onboarding and Offboarding Checklist</span>
-                            <span class="standard-value">HR Management & Operations</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
+    <h2>9. Revision history</h2>
+    <table>
+      <thead><tr><th>Version</th><th>Date</th><th>Summary</th></tr></thead>
+      <tbody>
+        <tr><td>1.0</td><td>15 Oct 2025</td><td>Descriptive vault index without stable codes.</td></tr>
+        <tr><td>2.0</td><td>20 Sep 2026</td><td>Controlled-document convention and lifecycle.</td></tr>
+        <tr><td>2.1</td><td>20 Sep 2026</td><td>Phase 2 related-document table for Tier 1 SOP/DQF/equipment forms. Codes remain stable.</td></tr>
+        <tr><td>2.2</td><td>22 Sep 2026</td><td>Current surface lists recovered BOF documents and SOURCE NOT RECOVERED placeholders. Teal impostor/legacy-generated pages quarantined under _historical/.</td></tr>
+      </tbody>
+    </table>
 
-            <div class="category-section">
-                <div class="category-title">Payroll & Compensation</div>
-                <ul class="category-list">
-                    <li>
-                        <div class="standard-item">
-                            <span class="standard-name">Payroll, Compensation, and Deductions Policy</span>
-                            <span class="standard-value">Payroll Management & Finance</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="category-section">
-                <div class="category-title">Accounting & Finance</div>
-                <ul class="category-list">
-                    <li>
-                        <div class="standard-item">
-                            <span class="standard-name">Accounting, Finance Close, AP, and AR SOP</span>
-                            <span class="standard-value">Finance & Accounting</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="category-section">
-                <div class="category-title">Factoring & Receivables</div>
-                <ul class="category-list">
-                    <li>
-                        <div class="standard-item">
-                            <span class="standard-name">Factoring and Receivables Policy</span>
-                            <span class="standard-value">Finance & Credit</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="category-section">
-                <div class="category-title">Insurance, Claims & Risk</div>
-                <ul class="category-list">
-                    <li>
-                        <div class="standard-item">
-                            <span class="standard-name">Insurance, Risk, and Claims SOP</span>
-                            <span class="standard-value">Risk Management & Insurance</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="category-section">
-                <div class="category-title">Vendor, Maintenance & Purchasing</div>
-                <ul class="category-list">
-                    <li>
-                        <div class="standard-item">
-                            <span class="standard-name">Vendor, Maintenance, and Purchasing Policy</span>
-                            <span class="standard-value">Procurement & Maintenance</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="category-section">
-                <div class="category-title">Safety & Compliance Governance</div>
-                <ul class="category-list">
-                    <li>
-                        <div class="standard-item">
-                            <span class="standard-name">Safety and Compliance Governance Policy</span>
-                            <span class="standard-value">Safety & Compliance</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="category-section">
-                <div class="category-title">Mission, Vision & Operating Principles</div>
-                <ul class="category-list">
-                    <li>
-                        <div class="standard-item">
-                            <span class="standard-name">Mission, Vision, and Operating Principles</span>
-                            <span class="standard-value">Executive Management</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="section">
-            <div class="section-title">Vault Administration</div>
-                <ul class="category-list">
-                    <li>
-                        <div class="standard-item">
-                            <span class="standard-name">Document Retention and Archive Policy</span>
-                            <span class="standard-value">Vault Administration</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="standard-item">
-                            <span class="standard-name">Access Control and Audit Policy</span>
-                            <span class="standard-value">Vault Administration</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="footer">
-            BackOfficeFleet operations document. Routed for internal workflow review.
-        </div>
-    </div>
+    <footer class="bof-doc__footer">
+      <span>BOF-GOV-POL-001 | Version 2.2</span>
+      <span>Document system only</span>
+    </footer>
+  </article>
 </body>
 </html>

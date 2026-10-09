@@ -1,0 +1,111 @@
+/**
+ * Operational body for BOF-SAF-FORM-001.
+ * Identity (code, version, owner, lifecycle) comes from the registry via the generator.
+ * Body text is the issued form content, not a second control record.
+ */
+export const BOF_SAF_FORM_001_BODY_HTML = `
+<p class="check">Operational form under BOF-SAF-POL-001. Issued for Delta Advanced Trucking, Inc. demo operations. Not live fleet telemetry.</p>
+<p class="check">Complete only the sections that apply to this event. Prefer BOF structured DVIR / ELD / DQF records when they already exist for the same trip or driver. This form is evidence, not a second source of operational truth.</p>
+
+<div class="three">
+  <div><div class="label">Completed by</div><div class="field"></div></div>
+  <div><div class="label">Employee / driver ID</div><div class="field"></div></div>
+  <div><div class="label">Position</div><div class="field"></div></div>
+  <div><div class="label">Terminal / location</div><div class="field"></div></div>
+  <div><div class="label">Date completed</div><div class="field"></div></div>
+  <div><div class="label">Supervisor / reviewer</div><div class="field"></div></div>
+</div>
+
+<h2>Section A — Driver qualification verification</h2>
+<p>Ref: BOF-SAF-POL-001 §4. Instructions: confirm current status. Attach copies where the DQF does not already hold the file.</p>
+<p class="check">☐ Valid CDL on file — Class ______ Endorsements ______</p>
+<p class="check">☐ DOT Medical Examiner’s Certificate — Expiry ______</p>
+<p class="check">☐ MVR reviewed — violations in past 36 months ______ <span class="tag tag-pol">Company policy threshold</span></p>
+<p class="check">☐ Pre-employment drug screen — ☐ Negative ☐ Pending ☐ Other</p>
+<p class="check">☐ Safety orientation completed — Date ______</p>
+<p class="check">☐ ELDT completed if required — Date ______ <span class="tag tag-reg">Part 380 when applicable</span></p>
+<p class="check">☐ HAZMAT endorsement / TSA clearance if HAZMAT assigned — Expiry ______</p>
+<p class="check">☐ Driver qualification file complete in BOF</p>
+<div class="label">Notes / exceptions</div>
+<div class="field" style="min-height:2.2rem;"></div>
+
+<h2>Section B — Vehicle pre-trip inspection (DVIR)</h2>
+<p>Ref: BOF-SAF-POL-001 §5. If the trip already has a BOF structured pre-trip / DVIR, attach the system record ID instead of duplicating every line.</p>
+<div class="three">
+  <div><div class="label">Unit #</div><div class="field"></div></div>
+  <div><div class="label">VIN last 6</div><div class="field"></div></div>
+  <div><div class="label">Odometer / date-time</div><div class="field"></div></div>
+</div>
+<p>Mark S = satisfactory, D = defect, NA = not applicable.</p>
+<table class="grid">
+  <tr><th>Item</th><th>S/D/NA</th><th>Item</th><th>S/D/NA</th></tr>
+  <tr><td>Tires / inflation</td><td></td><td>Steering</td><td></td></tr>
+  <tr><td>Wheels / lug nuts</td><td></td><td>Service &amp; parking brakes</td><td></td></tr>
+  <tr><td>Lights / markers / reflectors</td><td></td><td>Horn / wipers / mirrors</td><td></td></tr>
+  <tr><td>Coupling / 5th wheel</td><td></td><td>Seat belt</td><td></td></tr>
+  <tr><td>Cargo securement</td><td></td><td>ELD status</td><td></td></tr>
+  <tr><td>Placards (if HAZMAT)</td><td></td><td>Fire extinguisher / triangles</td><td></td></tr>
+</table>
+<div class="label">Defects and corrective action</div>
+<div class="field" style="min-height:2.2rem;"></div>
+<div class="two">
+  <div class="sig">Driver signature / date-time</div>
+  <div class="sig">Mechanic clearance if defect / date</div>
+</div>
+
+<h2>Section C — Hours of service / ELD</h2>
+<p>Ref: BOF-SAF-POL-001 §3. Prefer the ELD system record. Complete this section only if a manual exception log is required.</p>
+<p class="check">Duty at start: ☐ Off ☐ Sleeper ☐ On-duty ☐ Driving &nbsp; Start ______ End ______</p>
+<p class="check">Driving hours today ______ &nbsp; On-duty hours today ______</p>
+<p class="check">☐ 34-hour restart used &nbsp; ☐ ELD malfunction reported &nbsp; Ticket # ______</p>
+<p class="check">Manual log exemption if used: ☐ Short-haul ☐ Adverse conditions ☐ Other ______</p>
+<div class="sig">Driver certification that HOS records are accurate</div>
+
+<h2>Section D — Drug &amp; alcohol program events</h2>
+<p>Ref: BOF-SAF-POL-001 §7. Record events in this period only. Random rates are not printed here because they are published by FMCSA and change.</p>
+<p class="check">☐ No testing events this period</p>
+<p class="check">☐ Random notified — Date ______ Result ______</p>
+<p class="check">☐ Post-accident test — Date ______ Result ______</p>
+<p class="check">☐ Reasonable suspicion — Date ______ Result ______</p>
+<p class="check">☐ Return-to-duty / follow-up — Date ______ Remaining tests ______</p>
+<p class="check">☐ Refusal recorded — Date ______ Disposition ______</p>
+
+<h2>Section E — Incident / accident log</h2>
+<p>Ref: BOF-SAF-POL-001 §7. Attach BOF-SAF-FORM-002 / incident-report template when an event occurred.</p>
+<div class="three">
+  <div><div class="label">Date / time</div><div class="field"></div></div>
+  <div><div class="label">Location</div><div class="field"></div></div>
+  <div><div class="label">Type</div><div class="field">Acc / near-miss / damage / HAZMAT / injury</div></div>
+</div>
+<p class="check">DOT-recordable? ☐ Yes ☐ No &nbsp; Fatality? ☐ Yes ☐ No &nbsp; OOS? ☐ Yes ☐ No</p>
+<div class="label">Description</div>
+<div class="field" style="min-height:2.2rem;"></div>
+<p class="check">Post-accident testing completed? ☐ Yes ☐ NA &nbsp; Safety notified? ☐ Yes time ______ ☐ No</p>
+<div class="two">
+  <div class="sig">Driver signature / date</div>
+  <div class="sig">Safety manager signature / date</div>
+</div>
+
+<h2>Section F — Training tracker</h2>
+<table class="grid">
+  <tr><th>Module</th><th>Authority</th><th>Completed</th><th>Next due</th><th>Verified by</th></tr>
+  <tr><td>Company safety orientation</td><td><span class="tag tag-pol">Company policy</span></td><td></td><td></td><td></td></tr>
+  <tr><td>ELDT (if required)</td><td><span class="tag tag-reg">Part 380</span></td><td></td><td>N/A</td><td></td></tr>
+  <tr><td>HAZMAT awareness (if assigned)</td><td><span class="tag tag-review">Confirm 172.704</span></td><td></td><td></td><td></td></tr>
+  <tr><td>Load securement</td><td><span class="tag tag-pol">Company policy</span></td><td></td><td></td><td></td></tr>
+</table>
+
+<h2>Section G — Supervisor review</h2>
+<p>Overall status: ☐ Fully compliant &nbsp; ☐ Compliant with exceptions &nbsp; ☐ Non-compliant</p>
+<div class="label">Exceptions / corrective actions / deadline</div>
+<div class="field" style="min-height:2.2rem;"></div>
+<p class="check">Follow-up required? ☐ Yes date ______ ☐ No</p>
+<div class="two">
+  <div class="sig">Supervisor name / title / signature / date</div>
+  <div class="sig">Director of Safety review if non-compliant</div>
+</div>
+<p class="check">Submit to Safety within 24 hours of completion (company policy). Not live production counts.</p>
+`;
+
+/** Effective date already printed on the pre-shell issued form. Not invented. */
+export const BOF_SAF_FORM_001_EXISTING_EFFECTIVE_DATE = "September 20, 2026";

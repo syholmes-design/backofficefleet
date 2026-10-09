@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Information Security Governance Policy</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #1a202c;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 1in;
+        }
+        .paper {
+            max-width: 8.5in;
+            margin: 0 auto;
+            background: white;
+            padding: 0.5in;
+            box-shadow: 0 0.125in 0.25in rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 0.5in;
+            border-bottom: 2px solid #0BA5A4;
+            padding-bottom: 0.25in;
+        }
+        .title {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.125in;
+        }
+        .subtitle {
+            font-size: 12pt;
+            color: #4a5568;
+            margin-bottom: 0.5in;
+        }
+        .metadata {
+            background: #f8fafc;
+            padding: 0.25in;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            margin-bottom: 0.5in;
+            font-size: 9pt;
+        }
+        .metadata-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.125in;
+        }
+        .metadata-label {
+            font-weight: bold;
+            color: #4a5568;
+        }
+        .section {
+            margin-bottom: 0.5in;
+        }
+        .section-title {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.125in;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.0625in;
+        }
+        .policy-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .policy-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0.125in 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .policy-name {
+            font-weight: bold;
+            color: #2d3748;
+            flex: 1;
+            margin-right: 0.5in;
+        }
+        .policy-value {
+            color: #4a5568;
+            flex: 2;
+        }
+        .role-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0.25in;
+            font-size: 9pt;
+        }
+        .role-table th {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 0.125in;
+            text-align: left;
+            font-weight: bold;
+            color: #0BA5A4;
+        }
+        .role-table td {
+            border: 1px solid #e2e8f0;
+            padding: 0.125in;
+        }
+        .signature-block {
+            margin-top: 1in;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 0.5in;
+        }
+        .signature-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5in;
+        }
+        .signature-field {
+            width: 45%;
+        }
+        .signature-line {
+            border-bottom: 1px solid #2d3748;
+            margin-bottom: 0.125in;
+            height: 0.5in;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 1in;
+            padding-top: 0.5in;
+            border-top: 1px solid #e2e8f0;
+            font-size: 9pt;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="paper">
+        <div class="header">
+            <div class="title">Information Security Governance Policy</div>
+            <div class="subtitle">Enterprise Security Framework and Risk Management</div>
+        </div>
+
+        <div class="metadata">
+            <div class="metadata-row">
+                <span class="metadata-label">Document ID:</span>
+                <span>BOF-SEC-001</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Version:</span>
+                <span>2.0</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Effective Date:</span>
+                <span>November 1, 2025</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Owner Team:</span>
+                <span>Information Security & Compliance</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Approved By:</span>
+                <span>Chief Information Security Officer</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Review Cadence:</span>
+                <span>Quarterly</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Classification:</span>
+                <span>Internal Use</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">1. Purpose and Scope</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                This Information Security Governance Policy establishes the comprehensive framework for protecting BOF's information assets, ensuring regulatory compliance, and maintaining business continuity. This policy applies to all employees, contractors, consultants, and third parties with access to BOF information systems, data, or facilities.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Scope:</strong> All electronic and physical information assets, including but not limited to dispatch systems, payroll data, driver information, financial records, customer data, and supporting infrastructure.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">2. Executive Oversight and Accountability</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                BOF's executive leadership maintains ultimate accountability for information security governance. The Chief Information Security Officer (CISO) reports directly to the Chief Technology Officer and provides quarterly security briefings to the Executive Leadership Team and Board of Directors.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Executive Responsibilities:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Approve security policies and allocate resources for implementation</li>
+                <li>Ensure compliance with legal and regulatory requirements</li>
+                <li>Review security incident reports and major risk assessments</li>
+                <li>Support security awareness and training initiatives</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">3. Security Roles and Responsibilities</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Clear roles and responsibilities are defined to ensure effective security governance throughout the organization.
+            </p>
+            <table class="role-table">
+                <thead>
+                    <tr>
+                        <th>Role</th>
+                        <th>Key Responsibilities</th>
+                        <th>Accountability</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Chief Information Security Officer (CISO)</strong></td>
+                        <td>Security strategy, risk management, incident response, compliance</td>
+                        <td>Overall security posture</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Security Manager</strong></td>
+                        <td>Daily security operations, team management, policy enforcement</td>
+                        <td>Security operations effectiveness</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IT Security Engineers</strong></td>
+                        <td>Technical controls implementation, vulnerability management</td>
+                        <td>System security configurations</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Compliance Officer</strong></td>
+                        <td>Regulatory compliance, audits, policy reviews</td>
+                        <td>Compliance status reporting</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Department Managers</strong></td>
+                        <td>Security awareness, access request approvals, incident reporting</td>
+                        <td>Department-level security</td>
+                    </tr>
+                    <tr>
+                        <td><strong>All Employees</strong></td>
+                        <td>Policy adherence, security awareness, incident reporting</td>
+                        <td>Personal security practices</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">4. Security Governance Framework</div>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Information Security Management</span>
+                        <span class="policy-value">Comprehensive security program with risk assessment and incident response</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Access Control</span>
+                        <span class="policy-value">Role-based access with least privilege principle and regular access reviews</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Data Classification</span>
+                        <span class="policy-value">Confidential, Restricted, Internal, and Public data classification system</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Security Awareness Training</span>
+                        <span class="policy-value">Annual security training for all personnel with phishing awareness</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Incident Management</span>
+                        <span class="policy-value">Structured incident response with 24/7 monitoring and reporting</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Business Continuity</span>
+                        <span class="policy-value">Disaster recovery planning with regular testing and updates</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Compliance Management</span>
+                        <span class="policy-value">Regular compliance audits and adherence to industry standards</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">5. Incident Reporting and Management</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                All security incidents must be reported immediately to the Security Operations Center (SOC) via the incident reporting hotline or secure email. Incidents include but are not limited to unauthorized access, data breaches, malware infections, and policy violations.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Incident Response Timeline:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li><strong>Immediate (0-1 hour):</strong> Initial assessment and containment</li>
+                <li><strong>Triage (1-4 hours):</strong> Investigation and impact analysis</li>
+                <li><strong>Response (4-24 hours):</strong> Remediation and recovery</li>
+                <li><strong>Recovery (24-72 hours):</strong> System restoration and monitoring</li>
+                <li><strong>Post-incident (1-2 weeks):</strong> Root cause analysis and improvement</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">6. Security Awareness and Training</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                All personnel must complete mandatory security awareness training within 30 days of hire and annually thereafter. Additional role-specific training is required for IT staff, managers, and personnel with access to sensitive data.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Training Requirements:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Annual security awareness training (all staff)</li>
+                <li>Phishing simulation exercises (quarterly)</li>
+                <li>Data handling and classification training (data handlers)</li>
+                <li>Secure coding practices (development team)</li>
+                <li>Incident response procedures (IT and security staff)</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">7. Periodic Review and Assessment</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                This policy and its effectiveness will be reviewed quarterly by the Information Security & Compliance team. Annual comprehensive assessments will be conducted to evaluate the overall security posture and identify areas for improvement.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Review Activities:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Policy compliance audits (quarterly)</li>
+                <li>Risk assessments (semi-annual)</li>
+                <li>Penetration testing (annual)</li>
+                <li>Vulnerability assessments (monthly)</li>
+                <li>Security metrics reporting (monthly)</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">8. Audit and Compliance Monitoring</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Regular audits will be conducted to ensure compliance with this policy and applicable regulations. All security controls will be monitored for effectiveness and compliance with established standards.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Compliance Framework:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>NIST Cybersecurity Framework alignment</li>
+                <li>ISO 27001:2022 controls implementation</li>
+                <li>GDPR and CCPA data protection compliance</li>
+                <li>DOT and FMCSA regulatory requirements</li>
+                <li>Industry-specific transportation security standards</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">9. Technical Controls</div>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Network Security</span>
+                        <span class="policy-value">Next-generation firewalls, intrusion prevention, network segmentation, and secure remote access</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Endpoint Protection</span>
+                        <span class="policy-value">Advanced endpoint detection and response, disk encryption, and mobile device management</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Application Security</span>
+                        <span class="policy-value">Secure SDLC, code scanning, web application firewalls, and regular penetration testing</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Data Encryption</span>
+                        <span class="policy-value">AES-256 encryption at rest and in transit, with centralized key management</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Identity and Access Management</span>
+                        <span class="policy-value">Multi-factor authentication, single sign-on, and privileged access management</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">10. Administrative Controls</div>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Security Policies</span>
+                        <span class="policy-value">Comprehensive policy suite with regular reviews and updates</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Personnel Security</span>
+                        <span class="policy-value">Background checks, security agreements, and role-based access certification</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Physical Security</span>
+                        <span class="policy-value">Data center access controls, visitor management, and secure document disposal</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Vendor Security</span>
+                        <span class="policy-value">Third-party risk assessments, security clauses in contracts, and regular audits</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">11. Integration with BOF Systems</div>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Dispatch Integration</span>
+                        <span class="policy-value">Secure access controls, audit logging, and real-time monitoring for dispatch systems</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Payroll Integration</span>
+                        <span class="policy-value">Encrypted payroll data, role-based access, and compliance with wage regulations</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Document Management</span>
+                        <span class="policy-value">Secure document storage, version control, and access logging for all company documents</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Driver Portal</span>
+                        <span class="policy-value">Secure driver authentication, data privacy, and mobile application security</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">12. Policy Compliance and Enforcement</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Compliance with this policy is mandatory for all personnel. Violations may result in disciplinary action, up to and including termination of employment, and may be reported to appropriate regulatory authorities.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Enforcement Measures:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Security awareness training refresher (first offense)</li>
+                <li>Written warning and mandatory remediation (second offense)</li>
+                <li>Suspension of access privileges (serious violations)</li>
+                <li>Termination of employment (willful or repeated violations)</li>
+                <li>Legal action for criminal violations</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">13. Exceptions and Variations</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Requests for exceptions to this policy must be submitted in writing to the CISO with detailed justification, risk assessment, and proposed compensating controls. All exceptions require approval from the CISO and relevant business unit leader.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Exception Criteria:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Business necessity cannot be met through other means</li>
+                <li>Risk is acceptable and properly mitigated</li>
+                <li>Compensating controls are implemented</li>
+                <li>Exception is time-limited with review date</li>
+            </ul>
+        </div>
+
+        <div class="signature-block">
+            <div class="section-title">Policy Approval and Acknowledgment</div>
+            <div class="signature-row">
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Chief Information Security Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Chief Technology Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+            </div>
+            <div class="signature-row">
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Chief Executive Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Next Review Date</p>
+                    <p style="font-size: 8pt; text-align: center;">February 1, 2026</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            BackOfficeFleet operations document. Routed for internal workflow review.
+        </div>
+    </div>
+</body>
+</html>

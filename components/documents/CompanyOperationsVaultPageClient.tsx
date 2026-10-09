@@ -61,7 +61,6 @@ export function CompanyOperationsVaultPageClient({
     "Payroll & Compensation",
     "Accounting & Finance",
     "Factoring & Receivables",
-    "Insurance, Claims & Risk",
     "Vendor, Maintenance & Purchasing",
     "Safety & Compliance Governance",
     "Mission, Vision & Operating Principles"

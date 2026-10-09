@@ -1,3 +1,7 @@
+import { getControlledDocumentByAppId } from "@/lib/document-control/registry";
+import { fileCabinetItemIsCurrentCanonical } from "@/lib/document-control/canonical-gate";
+import type { DocumentLifecycle } from "@/lib/document-control/types";
+
 export type OperationsFileCabinetItem = {
   id: string;
   title: string;
@@ -76,6 +80,9 @@ export type OperationsFileCabinetItem = {
   tags?: string[];
   sampleHref?: string;
   templateHref?: string;
+  controlledCode?: string;
+  controlledVersion?: string;
+  lifecycleStatus?: "draft" | "internal_review" | "compliance_review" | "approved" | "active" | "revision" | "superseded" | "archived" | "review_required";
 };
 
 export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
@@ -524,13 +531,13 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Secondary Driver Documents",
     type: "driver-file",
     audience: ["driver", "manager", "hr", "safety"],
-    status: "available",
-    description: "Training and onboarding completion records as represented in the BOF company operations library.",
+    status: "needs_review",
+    description: "SOURCE NOT RECOVERED. This href opens the HR onboarding gap sheet, not a completed training record.",
     href: "/generated/company-operations-vault/03-hr-onboarding-and-offboarding-checklist.html",
-    sourceAuthenticity: "generated_from_template",
+    sourceAuthenticity: "coming_soon",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
-    isCompletedSample: true,
+    isCompletedSample: false,
     tags: ["training", "completion", "onboarding"]
   },
   {
@@ -1016,10 +1023,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Policies & SOPs",
     type: "policy",
     audience: ["driver", "manager", "hr", "safety"],
-    status: "available",
-    description: "Company code of conduct and ethical guidelines.",
+    status: "needs_review",
+    description: "SOURCE NOT RECOVERED. The current page is a gap sheet, not an approved code of conduct.",
     href: "/generated/company-operations-vault/02-code-of-conduct-and-workplace-policies.html",
-    sourceAuthenticity: "official_template",
+    sourceAuthenticity: "coming_soon",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
     tags: ["conduct", "ethics", "policy"]
@@ -1261,8 +1268,8 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     type: "template",
     audience: ["dispatcher", "manager", "customer"],
     status: "template",
-    description: "Standard load intake form for customer load requests",
-    href: "/documents/template-packs/load-intake-form.html",
+    description: "Opens the existing Load Tender / Order Sheet. The live intake workflow remains /dispatch/intake.",
+    href: "/documents/template-packs/load-tender-order-sheet.html",
     sourceAuthenticity: "official_template",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
@@ -1541,10 +1548,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Policies & SOPs",
     type: "policy",
     audience: ["driver", "manager", "hr", "safety"],
-    status: "available",
-    description: "Comprehensive employee handbook with workplace policies and procedures",
+    status: "needs_review",
+    description: "SOURCE NOT RECOVERED. The current page is a gap sheet, not an approved employee handbook.",
     href: "/generated/company-operations-vault/01-employee-handbook-template.html",
-    sourceAuthenticity: "official_template",
+    sourceAuthenticity: "coming_soon",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
     tags: ["employee", "handbook", "workplace", "policy"]
@@ -1557,10 +1564,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Policies & SOPs",
     type: "policy",
     audience: ["driver", "manager", "hr", "safety"],
-    status: "available",
-    description: "Workplace behavior standards and code of conduct policies",
+    status: "needs_review",
+    description: "SOURCE NOT RECOVERED. The current page is a gap sheet, not an approved code of conduct.",
     href: "/generated/company-operations-vault/02-code-of-conduct-and-workplace-policies.html",
-    sourceAuthenticity: "official_template",
+    sourceAuthenticity: "coming_soon",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
     tags: ["code", "conduct", "workplace", "behavior", "policy"]
@@ -1573,10 +1580,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Policies & SOPs",
     type: "policy",
     audience: ["manager", "hr", "driver"],
-    status: "available",
-    description: "Employee lifecycle procedures for onboarding and offboarding",
+    status: "needs_review",
+    description: "SOURCE NOT RECOVERED. The current page is a gap sheet, not an approved onboarding checklist.",
     href: "/generated/company-operations-vault/03-hr-onboarding-and-offboarding-checklist.html",
-    sourceAuthenticity: "official_template",
+    sourceAuthenticity: "coming_soon",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
     tags: ["hr", "onboarding", "offboarding", "checklist", "policy"]
@@ -1605,10 +1612,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Policies & SOPs",
     type: "sop",
     audience: ["manager", "finance", "billing"],
-    status: "available",
-    description: "Standard operating procedures for accounting and finance operations",
+    status: "needs_review",
+    description: "SOURCE NOT RECOVERED. The current page is a gap sheet, not an approved finance SOP.",
     href: "/generated/company-operations-vault/05-accounting-finance-close-ap-ar-sop.html",
-    sourceAuthenticity: "official_template",
+    sourceAuthenticity: "coming_soon",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
     tags: ["accounting", "finance", "sop", "procedures"]
@@ -1621,10 +1628,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Policies & SOPs",
     type: "policy",
     audience: ["manager", "finance", "billing"],
-    status: "available",
-    description: "Receivables management and factoring procedures",
+    status: "needs_review",
+    description: "SOURCE NOT RECOVERED. The current page is a gap sheet, not an approved factoring policy.",
     href: "/generated/company-operations-vault/06-factoring-and-receivables-policy.html",
-    sourceAuthenticity: "official_template",
+    sourceAuthenticity: "coming_soon",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
     tags: ["factoring", "receivables", "financial", "policy"]
@@ -1637,10 +1644,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Policies & SOPs",
     type: "policy",
     audience: ["manager", "procurement", "maintenance"],
-    status: "available",
-    description: "Procurement policies and vendor management procedures",
+    status: "needs_review",
+    description: "SOURCE NOT RECOVERED. The current page is a gap sheet, not an approved vendor policy.",
     href: "/generated/company-operations-vault/08-vendor-maintenance-and-purchasing-policy.html",
-    sourceAuthenticity: "official_template",
+    sourceAuthenticity: "coming_soon",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
     tags: ["vendor", "procurement", "purchasing", "policy"]
@@ -1653,10 +1660,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Policies & SOPs",
     type: "policy",
     audience: ["driver", "manager", "hr", "owner"],
-    status: "available",
-    description: "Company mission, vision, and core operating principles",
+    status: "needs_review",
+    description: "SOURCE NOT RECOVERED. The current page is a gap sheet, not recovered operating principles.",
     href: "/generated/company-operations-vault/09-mission-vision-and-operating-principles.html",
-    sourceAuthenticity: "official_template",
+    sourceAuthenticity: "coming_soon",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
     tags: ["mission", "vision", "principles", "company", "policy"]
@@ -1670,12 +1677,155 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     type: "policy",
     audience: ["driver", "manager", "safety", "hr"],
     status: "available",
-    description: "Safety compliance and governance framework",
+    description: "BOF-SAF-POL-001 governing safety policy. Regulatory citations are labeled separately from company policy. Demo employer: Delta Advanced Trucking.",
     href: "/generated/company-operations-vault/10-safety-compliance-governance-policy.html",
     sourceAuthenticity: "official_template",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
-    tags: ["safety", "compliance", "governance", "policy"]
+    tags: ["safety", "compliance", "governance", "policy", "BOF-SAF-POL-001"],
+    controlledCode: "BOF-SAF-POL-001",
+    controlledVersion: "1.0",
+    lifecycleStatus: "active"
+  },
+  {
+    id: "safety-compliance-operational-checklist",
+    title: "Safety & Compliance Operational Checklist",
+    cabinet: "Policies & SOPs",
+    section: "Company Policies & SOPs",
+    category: "Policies & SOPs",
+    type: "checklist",
+    audience: ["driver", "manager", "safety"],
+    status: "available",
+    description: "BOF-SAF-FORM-001 operational checklist under BOF-SAF-POL-001. Records qualification, DVIR, HOS, testing, incidents, and training. Not live fleet data.",
+    href: "/generated/company-operations-vault/bof-saf-form-001-operational-checklist.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["safety", "checklist", "dvir", "BOF-SAF-FORM-001"],
+    controlledCode: "BOF-SAF-FORM-001",
+    controlledVersion: "1.0",
+    lifecycleStatus: "active"
+  },
+  {
+    id: "dvir-defect-escalation-sop",
+    title: "Driver Vehicle Inspection and Defect Escalation SOP",
+    cabinet: "Policies & SOPs",
+    section: "Company Policies & SOPs",
+    category: "Policies & SOPs",
+    type: "sop",
+    audience: ["driver", "manager", "safety", "maintenance", "dispatcher"],
+    status: "available",
+    description: "BOF-SAF-SOP-001. How pre-trip/post-trip inspections and defect holds are performed. Does not grant dispatch-release authority. Internal review — not approved as operational policy yet.",
+    href: "/generated/company-operations-vault/bof-saf-sop-001-dvir-defect-escalation.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["safety", "dvir", "sop", "BOF-SAF-SOP-001"],
+    controlledCode: "BOF-SAF-SOP-001",
+    controlledVersion: "1.0",
+    lifecycleStatus: "internal_review"
+  },
+  {
+    id: "driver-qualification-file-checklist",
+    title: "Driver Qualification File Completeness Checklist",
+    cabinet: "Driver Qualification Files",
+    section: "Blank Templates",
+    category: "Driver Qualification Files",
+    type: "checklist",
+    audience: ["manager", "hr", "safety"],
+    status: "available",
+    description: "BOF-DRV-CHK-001 completeness aid for the DQF. Maps to existing CDL/MEC/MVR/Clearinghouse templates. Not live driver evidence.",
+    href: "/generated/company-operations-vault/bof-drv-chk-001-driver-qualification-file.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["dqf", "checklist", "qualification", "BOF-DRV-CHK-001"],
+    controlledCode: "BOF-DRV-CHK-001",
+    controlledVersion: "1.0",
+    lifecycleStatus: "internal_review"
+  },
+  {
+    id: "annual-driving-record-review",
+    title: "Annual Driving Record Review",
+    cabinet: "Driver Qualification Files",
+    section: "Blank Templates",
+    category: "Driver Qualification Files",
+    type: "form",
+    audience: ["manager", "safety"],
+    status: "available",
+    description: "BOF-DRV-002 blank annual MVR review. Recovered from BOF-DRV-FORM-001. Company standards stay in BOF-SAF-POL-001. Not a completed MVR.",
+    href: "/generated/company-operations-vault/bof-drv-form-001-annual-driving-record-review.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["mvr", "dqf", "BOF-DRV-002"],
+    controlledCode: "BOF-DRV-002",
+    controlledVersion: "1.0",
+    lifecycleStatus: "internal_review"
+  },
+  {
+    id: "new-hire-hos-statement",
+    title: "New-Hire Hours of Service Statement",
+    cabinet: "Driver Qualification Files",
+    section: "Blank Templates",
+    category: "Driver Qualification Files",
+    type: "form",
+    audience: ["driver", "manager", "safety", "dispatcher"],
+    status: "available",
+    description: "BOF-DRV-FORM-002 blank 7-day on-duty statement before first dispatch. Not an ELD record.",
+    href: "/generated/company-operations-vault/bof-drv-form-002-new-hire-hos-statement.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["hos", "onboarding", "BOF-DRV-FORM-002"],
+    controlledCode: "BOF-DRV-FORM-002",
+    controlledVersion: "1.0",
+    lifecycleStatus: "internal_review"
+  },
+  {
+    id: "periodic-vehicle-inspection-record",
+    title: "Periodic Commercial Vehicle Inspection Record",
+    cabinet: "Policies & SOPs",
+    section: "Company Policies & SOPs",
+    category: "Policies & SOPs",
+    type: "form",
+    audience: ["manager", "safety", "maintenance"],
+    status: "available",
+    description: "BOF-VEH-001 blank periodic inspection record. Recovered from BOF-EQP-FORM-001. Distinct from daily DVIR. Not live equipment evidence.",
+    href: "/generated/company-operations-vault/bof-eqp-form-001-periodic-vehicle-inspection.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["equipment", "inspection", "BOF-VEH-001"],
+    controlledCode: "BOF-VEH-001",
+    controlledVersion: "1.0",
+    lifecycleStatus: "internal_review"
+  },
+  {
+    id: "accident-register",
+    title: "Accident Register",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Claims Forms",
+    category: "Safety / Claims / Insurance",
+    type: "form",
+    audience: ["manager", "safety", "legal"],
+    status: "available",
+    description: "BOF-DRV-003 blank accident register. Recovered from BOF-SAF-FORM-004. Demo claim files are not this register. Not live accident evidence.",
+    href: "/generated/company-operations-vault/bof-saf-form-004-accident-register.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["accident", "register", "BOF-DRV-003"],
+    controlledCode: "BOF-DRV-003",
+    controlledVersion: "1.0",
+    lifecycleStatus: "internal_review"
   },
   {
     id: "information-security-governance",
@@ -1797,10 +1947,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Policies & SOPs",
     type: "policy",
     audience: ["driver", "manager", "hr", "legal"],
-    status: "available",
-    description: "Driver classification and owner-operator engagement policies",
+    status: "needs_review",
+    description: "SOURCE NOT RECOVERED. The current page is a gap sheet, not an approved classification policy.",
     href: "/generated/company-operations-vault/18-driver-worker-classification-and-owner-operator-engagement-policy.html",
-    sourceAuthenticity: "official_template",
+    sourceAuthenticity: "coming_soon",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
     tags: ["driver", "classification", "owner", "operator", "policy"]
@@ -1813,10 +1963,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Policies & SOPs",
     type: "policy",
     audience: ["manager", "finance", "legal"],
-    status: "available",
-    description: "Tax compliance and audit readiness procedures",
+    status: "needs_review",
+    description: "SOURCE NOT RECOVERED. The current page is a gap sheet, not an approved tax policy.",
     href: "/generated/company-operations-vault/19-tax-and-regulatory-audit-readiness-policy.html",
-    sourceAuthenticity: "official_template",
+    sourceAuthenticity: "coming_soon",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
     tags: ["tax", "audit", "compliance", "regulatory", "policy"]
@@ -1829,10 +1979,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Policies & SOPs",
     type: "checklist",
     audience: ["driver", "manager", "finance"],
-    status: "available",
-    description: "Fuel tax and mileage reporting support checklist",
+    status: "needs_review",
+    description: "SOURCE NOT RECOVERED. The current page is a gap sheet, not an IFTA rulebook. The existing IFTA log is a separate worksheet.",
     href: "/generated/company-operations-vault/20-fuel-mileage-and-excise-tax-support-checklist.html",
-    sourceAuthenticity: "official_template",
+    sourceAuthenticity: "coming_soon",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
     tags: ["fuel", "mileage", "tax", "checklist", "compliance"]
@@ -1845,10 +1995,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Policies & SOPs",
     type: "policy",
     audience: ["manager", "finance", "billing"],
-    status: "available",
-    description: "Cash flow management and receivables acceleration procedures",
+    status: "needs_review",
+    description: "SOURCE NOT RECOVERED. The current page is a gap sheet, not an approved cash-flow policy.",
     href: "/generated/company-operations-vault/21-cash-flow-management-and-receivables-acceleration-policy.html",
-    sourceAuthenticity: "official_template",
+    sourceAuthenticity: "coming_soon",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
     tags: ["cash", "flow", "receivables", "financial", "policy"]
@@ -2085,24 +2235,60 @@ export type OperationsFileCabinetType = OperationsFileCabinetItem["type"];
 export type OperationsFileCabinetAudience = OperationsFileCabinetItem["audience"][number];
 export type OperationsFileCabinetStatus = OperationsFileCabinetItem["status"];
 
+function toCabinetLifecycle(
+  lifecycle: DocumentLifecycle
+): NonNullable<OperationsFileCabinetItem["lifecycleStatus"]> {
+  switch (lifecycle) {
+    case "DRAFT":
+      return "draft";
+    case "INTERNAL_REVIEW":
+      return "internal_review";
+    case "COMPLIANCE_REVIEW":
+      return "compliance_review";
+    case "APPROVAL":
+      return "review_required";
+    case "ACTIVE":
+      return "active";
+    case "REVISION":
+      return "revision";
+    case "SUPERSEDED":
+      return "superseded";
+    case "ARCHIVED":
+      return "archived";
+  }
+}
+
+function overlayControlledMetadata(item: OperationsFileCabinetItem): OperationsFileCabinetItem {
+  const ctrl = getControlledDocumentByAppId(item.id);
+  if (!ctrl) return item;
+  return {
+    ...item,
+    controlledCode: item.controlledCode ?? ctrl.code,
+    controlledVersion: item.controlledVersion ?? ctrl.version,
+    lifecycleStatus: item.lifecycleStatus ?? toCabinetLifecycle(ctrl.lifecycle),
+  };
+}
+
 export function getOperationsFileCabinetItems(): OperationsFileCabinetItem[] {
-  return OPERATIONS_FILE_CABINET_REGISTRY;
+  return OPERATIONS_FILE_CABINET_REGISTRY
+    .filter((item) => fileCabinetItemIsCurrentCanonical(item.id))
+    .map(overlayControlledMetadata);
 }
 
 export function getOperationsFileCabinetItemsByCategory(category: OperationsFileCabinetCategory): OperationsFileCabinetItem[] {
-  return OPERATIONS_FILE_CABINET_REGISTRY.filter(item => item.category === category);
+  return getOperationsFileCabinetItems().filter(item => item.category === category);
 }
 
 export function getOperationsFileCabinetItemsByType(type: OperationsFileCabinetType): OperationsFileCabinetItem[] {
-  return OPERATIONS_FILE_CABINET_REGISTRY.filter(item => item.type === type);
+  return getOperationsFileCabinetItems().filter(item => item.type === type);
 }
 
 export function getOperationsFileCabinetItemsByAudience(audience: OperationsFileCabinetAudience): OperationsFileCabinetItem[] {
-  return OPERATIONS_FILE_CABINET_REGISTRY.filter(item => item.audience.includes(audience));
+  return getOperationsFileCabinetItems().filter(item => item.audience.includes(audience));
 }
 
 export function getOperationsFileCabinetItemsByStatus(status: OperationsFileCabinetStatus): OperationsFileCabinetItem[] {
-  return OPERATIONS_FILE_CABINET_REGISTRY.filter(item => item.status === status);
+  return getOperationsFileCabinetItems().filter(item => item.status === status);
 }
 
 export function getOperationsFileCabinetCategories(): OperationsFileCabinetCategory[] {

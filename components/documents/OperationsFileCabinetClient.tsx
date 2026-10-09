@@ -16,6 +16,7 @@ import {
 } from "@/lib/operations-file-cabinet";
 import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 import type { CanonicalDocumentRecord } from "@/lib/verified-document-index";
+import { getControlledDocumentByAppId } from "@/lib/document-control/registry";
 
 type QuickFilter =
   | "all"
@@ -30,6 +31,24 @@ type Props = {
   canonicalIndex?: CanonicalDocumentRecord[];
   featuredDocuments?: CanonicalDocumentRecord[];
 };
+
+function controlLine(item: OperationsFileCabinetItem): string | null {
+  const ctrl = getControlledDocumentByAppId(item.id);
+  if (!ctrl) return null;
+  const parts = [
+    `v${item.controlledVersion ?? ctrl.version}`,
+    (item.lifecycleStatus ?? ctrl.lifecycle).replaceAll("_", " "),
+    ctrl.owner,
+    ctrl.workflow,
+  ];
+  if (ctrl.relatedPolicy) parts.push(`Policy ${ctrl.relatedPolicy}`);
+  if (ctrl.relatedSop) parts.push(`SOP ${ctrl.relatedSop}`);
+  if (ctrl.productionGate === "NEEDS_REVIEW" || ctrl.lifecycle !== "ACTIVE") {
+    parts.push("uploaded ≠ approved");
+  }
+  if (item.isCompletedSample) parts.push("DEMO sample · not LIVE evidence");
+  return parts.join(" · ");
+}
 
 export function OperationsFileCabinetClient({ featuredDocuments }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -645,6 +664,20 @@ export function OperationsFileCabinetClient({ featuredDocuments }: Props) {
                                 }}>
                                   {item.title}
                                 </h3>
+                                {item.controlledCode ? (
+                                  <span style={{
+                                    fontSize: "0.7rem",
+                                    padding: "0.2rem 0.5rem",
+                                    borderRadius: "12px",
+                                    backgroundColor: "rgba(45, 212, 191, 0.16)",
+                                    color: "#99f6e4",
+                                    fontWeight: "700",
+                                    whiteSpace: "nowrap",
+                                    marginRight: "0.4rem"
+                                  }}>
+                                    {item.controlledCode}
+                                  </span>
+                                ) : null}
                                 {sourceChip && (
                                   <span style={{
                                     fontSize: "0.7rem",
@@ -667,6 +700,16 @@ export function OperationsFileCabinetClient({ featuredDocuments }: Props) {
                               }}>
                                 {item.description}
                               </p>
+                              {controlLine(item) ? (
+                                <p style={{
+                                  fontSize: "0.72rem",
+                                  color: "#99f6e4",
+                                  margin: "-0.5rem 0 1rem",
+                                  lineHeight: 1.45
+                                }}>
+                                  {controlLine(item)}
+                                </p>
+                              ) : null}
                               {item.href ? (
                                 <Link
                                   href={item.href}

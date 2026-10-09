@@ -1,0 +1,269 @@
+/* BOF controlled-document visual system. Printable letter. No app chrome. */
+@page {
+  size: letter;
+  margin: 0.65in 0.7in 0.85in;
+  @bottom-center { content: "Page " counter(page); font-size: 8pt; color: #4a5b68; }
+}
+:root {
+  --bof-ink: #13202b;
+  --bof-muted: #4a5b68;
+  --bof-line: #c5d0d6;
+  --bof-accent: #0b6e6a;
+  --bof-wash: #f3f7f8;
+  --bof-warn: #7a4a12;
+  --bof-warn-bg: #f7f0e4;
+  --bof-reg: #1d3b66;
+  --bof-reg-bg: #e8eef6;
+  --bof-pol: #21543c;
+  --bof-pol-bg: #e7f2ea;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  color: var(--bof-ink);
+  font-family: "Segoe UI", Calibri, Arial, sans-serif;
+  font-size: 11pt;
+  line-height: 1.45;
+  background: #eceff1;
+}
+.sheet {
+  max-width: 8.5in;
+  margin: 0 auto;
+  background: #fff;
+  padding: 0.55in 0.6in 0.7in;
+  border: 1px solid var(--bof-line);
+}
+.ident {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  border-bottom: 3px solid var(--bof-accent);
+  padding-bottom: 0.35rem;
+}
+.ident .org {
+  font-size: 11pt;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--bof-accent);
+}
+.ident .doc-title {
+  margin: 0.15rem 0 0;
+  font-size: 16pt;
+  font-weight: 800;
+  line-height: 1.15;
+}
+.ident .code {
+  text-align: right;
+  font-size: 9pt;
+  font-weight: 700;
+  color: var(--bof-muted);
+  white-space: nowrap;
+}
+.meta {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.7rem 0 0.9rem;
+  font-size: 9pt;
+}
+.meta th, .meta td {
+  border: 1px solid var(--bof-line);
+  padding: 0.28rem 0.4rem;
+  text-align: left;
+  vertical-align: top;
+}
+.meta th {
+  width: 22%;
+  background: var(--bof-wash);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bof-muted);
+  font-size: 8pt;
+}
+h2 {
+  margin: 1.05rem 0 0.35rem;
+  font-size: 11.5pt;
+  color: var(--bof-accent);
+  border-bottom: 1px solid var(--bof-line);
+  padding-bottom: 0.15rem;
+}
+h3 { margin: 0.7rem 0 0.25rem; font-size: 10.5pt; }
+p, li { font-size: 10pt; }
+ol { padding-left: 1.15rem; }
+.tag {
+  display: inline-block;
+  font-size: 7.5pt;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.12rem 0.35rem;
+  margin: 0 0.2rem 0.2rem 0;
+}
+.tag-reg { background: var(--bof-reg-bg); color: var(--bof-reg); }
+.tag-pol { background: var(--bof-pol-bg); color: var(--bof-pol); }
+.tag-best { background: var(--bof-wash); color: var(--bof-muted); }
+.tag-review { background: var(--bof-warn-bg); color: var(--bof-warn); }
+.callout {
+  border-left: 4px solid var(--bof-warn);
+  background: var(--bof-warn-bg);
+  padding: 0.45rem 0.6rem;
+  margin: 0.5rem 0;
+  font-size: 9.5pt;
+}
+.callout-reg { border-left-color: var(--bof-reg); background: var(--bof-reg-bg); }
+table.grid { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.7rem; font-size: 9.5pt; }
+table.grid th, table.grid td { border: 1px solid var(--bof-line); padding: 0.32rem 0.4rem; vertical-align: top; }
+table.grid th { background: var(--bof-wash); text-align: left; font-size: 8pt; text-transform: uppercase; letter-spacing: 0.04em; }
+.field {
+  border: 1px solid var(--bof-line);
+  min-height: 1.55rem;
+  padding: 0.2rem 0.35rem;
+  font-size: 9pt;
+  background: #fff;
+}
+.label { font-size: 8pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--bof-muted); margin-bottom: 0.12rem; }
+.check { margin: 0.18rem 0; font-size: 10pt; }
+/* Shell signature lines. Do not use bare .sig — body documents (ACK) own that class. */
+.ctrl-sig,
+.two > .sig {
+  margin-top: 0.9rem;
+  border-top: 1px solid #111;
+  padding-top: 0.2rem;
+  min-height: 1.6rem;
+  font-size: 8.5pt;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bof-muted);
+}
+.sheet > .ident h1.doc-title {
+  font-size: 16pt;
+  font-weight: 800;
+  line-height: 1.15;
+}
+.footer {
+  margin-top: 1.1rem;
+  border-top: 1px solid var(--bof-line);
+  padding-top: 0.35rem;
+  font-size: 8pt;
+  color: var(--bof-muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; }
+.three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.45rem; }
+@media print {
+  html, body { background: #fff; overflow: visible; }
+  .sheet {
+    border: 0;
+    max-width: 8.5in;
+    width: 100%;
+    padding: 0;
+    overflow: visible;
+  }
+  table.meta,
+  table.related-docs,
+  table.grid {
+    table-layout: fixed;
+    width: 100%;
+    max-width: 100%;
+  }
+  table.meta th,
+  table.meta td,
+  table.related-docs th,
+  table.related-docs td,
+  table.grid th,
+  table.grid td {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .doc-body .document {
+    max-width: 100% !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+}
+@media (max-width: 720px) {
+  body { background: #fff; overflow-x: hidden; }
+  .sheet, .bof-doc { padding: 0.85rem; border: 0; max-width: 100%; }
+  .two, .three, .ident, .bof-doc__brand { display: block; }
+  .ident .code { text-align: left; margin-top: 0.35rem; }
+  table.meta,
+  table.related-docs {
+    display: block;
+    width: 100%;
+    table-layout: auto;
+  }
+  table.meta tbody,
+  table.related-docs tbody,
+  table.meta tr,
+  table.related-docs tr {
+    display: block;
+    width: 100%;
+  }
+  table.meta th,
+  table.meta td,
+  table.related-docs th,
+  table.related-docs td {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+  }
+  .doc-body .document {
+    max-width: 100% !important;
+    margin: 0.5rem 0 !important;
+    padding: 0.75rem !important;
+    box-shadow: none !important;
+  }
+  .doc-body .topline,
+  .doc-body .grid,
+  .doc-body .signatures {
+    display: block !important;
+  }
+  .doc-body .meta {
+    min-width: 0 !important;
+  }
+  .doc-body table {
+    width: 100% !important;
+    max-width: 100% !important;
+    table-layout: fixed !important;
+  }
+  .doc-body th,
+  .doc-body td {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .sheet {
+    overflow-x: hidden;
+  }
+}
+
+.bof-doc { max-width: 8.5in; margin: 0 auto; background: #fff; padding: 0.55in 0.6in 0.7in; border: 1px solid var(--bof-line); }
+.bof-doc__brand { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 3px solid var(--bof-accent); padding-bottom: 0.35rem; }
+.bof-doc__brand p { margin: 0; font-size: 9pt; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: var(--bof-accent); }
+.bof-doc__brand h1 { margin: 0.2rem 0; font-size: 16pt; }
+.bof-doc__employer { text-transform: none !important; font-weight: 400 !important; letter-spacing: 0 !important; color: var(--bof-muted) !important; }
+.bof-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem 0.7rem; font-size: 8.5pt; min-width: 12rem; }
+.bof-meta strong { display: block; color: var(--bof-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.bof-doc table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; font-size: 9.5pt; }
+.bof-doc th, .bof-doc td { border: 1px solid var(--bof-line); padding: 0.32rem 0.4rem; text-align: left; vertical-align: top; }
+.bof-doc th { background: var(--bof-wash); font-size: 8pt; text-transform: uppercase; }
+.ident--review { border-bottom-color: var(--bof-warn); }
+.status-chip {
+  display: inline-block;
+  margin-top: 0.25rem;
+  font-size: 8pt;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.4rem;
+}
+.status-chip--active { background: var(--bof-pol-bg); color: var(--bof-pol); }
+.status-chip--review { background: var(--bof-warn-bg); color: var(--bof-warn); }
+.ident--review .status-chip--active { display: none; }
+.doc-class { margin: 0.25rem 0 0; font-size: 9.5pt; color: var(--bof-muted); }
+.generator-preview-banner { font-weight: 700; }
+.approval-pending { font-weight: 700; }
