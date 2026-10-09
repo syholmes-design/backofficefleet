@@ -24,11 +24,13 @@ export function DriversCommandCenterV4({ operationalSummaries, driverRequirement
           This view turns driver files into dispatch decisions: expired credentials, missing documents,
           acknowledgments, compliance incidents, and eligibility blockers are visible before a planner assigns work.
         </p>
-        <div className="mt-4">
-          <DemoPageExplainerById pageId="drivers" />
-        </div>
+        {sandbox ? (
+          <div className="mt-4">
+            <DemoPageExplainerById pageId="drivers" />
+          </div>
+        ) : null}
       </header>
-      <DriverCopilotAdvocatePanel variant="compact" tone="ops" />
+      {sandbox ? <DriverCopilotAdvocatePanel variant="compact" tone="ops" /> : null}
 
       {/* Driver Roster Section */}
       <section>
@@ -57,11 +59,7 @@ export function DriversCommandCenterV4({ operationalSummaries, driverRequirement
       </section>
       ) : (
         <p className="rounded-lg border border-slate-800 bg-slate-950/60 p-4 text-sm text-slate-300">
-          Workbook compliance queue is isolated on{" "}
-          <a className="text-amber-200 underline" href="/demo/drivers">
-            /demo/drivers
-          </a>
-          . This production roster uses Prisma driver operational summaries only.
+          Workbook compliance stays on the training roster. This production roster uses live driver files only.
         </p>
       )}
     </div>

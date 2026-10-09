@@ -669,7 +669,7 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
           />
-          {liveRoster ? null : (
+          {sandbox ? (
             <>
           <label className="bof-drivers-credential-window__label" htmlFor="bof-drivers-credential-window">
             Expiring window
@@ -685,7 +685,7 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
             <option value={30}>30 days</option>
           </select>
             </>
-          )}
+          ) : null}
         </div>
         <div className="bof-drivers-filter-bar" role="toolbar" aria-label="Filter driver roster">
           {[
@@ -695,15 +695,15 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
             { id: "blocked" as const, label: "Blocked" },
             { id: "expiring_soon" as const, label: "Expiring soon" },
             { id: "missing_docs" as const, label: "Missing docs" },
-            ...(liveRoster
-              ? []
-              : [
+            ...(sandbox
+              ? [
                   { id: "employee_driver" as const, label: "Employee Driver" },
                   { id: "owner_operator" as const, label: "Owner-Operator" },
                   { id: "documents_expiring" as const, label: "Documents Expiring" },
                   { id: "missing_acknowledgments" as const, label: "Missing Acknowledgments" },
                   { id: "settlement_review" as const, label: "Settlement Review" },
-                ]),
+                ]
+              : []),
           ].map((f) => (
             <button
               key={f.id}

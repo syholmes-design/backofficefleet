@@ -332,7 +332,7 @@ export function DispatchBoardScreen({
               <h2 className="mt-2 break-all text-2xl font-black text-white sm:text-3xl">
                 {selectedLoad?.id ?? "No load selected"}
               </h2>
-              <p className="mt-2 text-base text-slate-300">{selectedLoad?.customerName ?? "Select a backend load"}</p>
+              <p className="mt-2 text-base text-slate-300">{selectedLoad?.customerName ?? "Select a load"}</p>
               {selectedLoad ? (
                 <p className="mt-1 text-sm text-slate-400">
                   {selectedLoad.origin} to {selectedLoad.destination}
@@ -622,7 +622,7 @@ export function DispatchBoardScreen({
           <p className="mt-2 text-sm leading-6 text-slate-300">
             {demoMode
               ? "Rows use the same canonical load, driver, equipment, and exception fields as the Load File."
-              : "Loads, statuses, and assignment presence now come from backend records."}
+              : "Loads and assignments from your fleet."}
           </p>
           {loadsError ? (
             <div className="mt-5 rounded-lg border border-rose-700/50 bg-rose-950/30 p-4 text-sm text-rose-100">
@@ -645,7 +645,7 @@ export function DispatchBoardScreen({
               ))
             ) : filteredRows.length === 0 ? (
               <p className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 text-sm text-slate-400">
-                No backend loads are available for this fleet.
+                No loads in scope for this fleet.
               </p>
             ) : (
               filteredRows.map((load) => {
