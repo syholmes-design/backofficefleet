@@ -11,6 +11,21 @@ type DriverFile = {
   fleetId: string;
 };
 
+type CurrentAssignment = {
+  id: string;
+  loadId: string;
+  status: string;
+  assignedAt: string;
+  load: {
+    id: string;
+    customerName: string;
+    origin: string;
+    destination: string;
+    status: string;
+    referenceNumber: string | null;
+  };
+};
+
 function formatWhen(value: string | null | undefined) {
   if (!value) return "Not recorded";
   const date = new Date(value);
@@ -22,10 +37,12 @@ export function OperatorDriverDetail({
   driver,
   summary,
   requirements,
+  currentAssignment,
 }: {
   driver: DriverFile;
   summary: DriverOperationalSummary;
   requirements: DriverReviewRequirement[];
+  currentAssignment: CurrentAssignment | null;
 }) {
   const openRequirements = requirements.filter((requirement) => requirement.resolutionStatus !== "RESOLVED");
 
@@ -100,8 +117,32 @@ export function OperatorDriverDetail({
         ) : null}
       </section>
 
+      <section className="rounded-xl border border-slate-800 bg-slate-950/70 p-4">
+        <h2 className="text-sm font-bold text-white">Current assignment</h2>
+        {currentAssignment ? (
+          <div className="mt-2 text-sm text-slate-200">
+            <p className="font-semibold text-white">{currentAssignment.load.customerName}</p>
+            <p className="mt-1 text-slate-300">
+              {currentAssignment.load.origin} to {currentAssignment.load.destination}
+            </p>
+            <p className="mt-1 text-xs text-slate-400">
+              {currentAssignment.load.status.replaceAll("_", " ")}
+              {currentAssignment.load.referenceNumber ? ` · ${currentAssignment.load.referenceNumber}` : ""}
+              {` · assigned ${formatWhen(currentAssignment.assignedAt)}`}
+            </p>
+            <p className="mt-3">
+              <Link className="text-teal-200 underline" href={`/dispatch?loadId=${currentAssignment.loadId}`}>
+                Open load on dispatch
+              </Link>
+            </p>
+          </div>
+        ) : (
+          <p className="mt-2 text-sm text-slate-400">No active assignment on this driver file.</p>
+        )}
+      </section>
+
       <p className="text-xs text-slate-500">
-        Safety score, settlement pay, and current load are not shown on this live driver file.
+        Safety score and settlement pay are not shown on this live driver file.
       </p>
       <p className="text-sm">
         <Link className="text-teal-200 underline" href="/drivers">

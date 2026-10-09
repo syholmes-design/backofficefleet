@@ -10,6 +10,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { OperatorDriverDetail } from "@/components/drivers/OperatorDriverDetail";
+import { getActiveAssignmentForDriver } from "@/lib/services/dispatchAssignmentService";
+import { DEMO_SOURCE_REJECTED } from "@/lib/uos/demo-operational-keys";
 import { getDriverByIdForSession } from "@/lib/services/driverService";
 import { getDriverOperationalSummary } from "@/lib/services/driverOperationalReadModelService";
 import { listDriverRequirementsForFleet } from "@/lib/services/requirementService";
@@ -47,9 +49,10 @@ export default async function DriverDetailPage({ params }: Props) {
 
   try {
     const driver = await getDriverByIdForSession(session.user, id);
-    const [summary, requirements] = await Promise.all([
+    const [summary, requirements, currentAssignment] = await Promise.all([
       getDriverOperationalSummary(session.user, driver.id),
       listDriverRequirementsForFleet(session.user, driver.id, driver.fleetId),
+      getActiveAssignmentForDriver(session.user, driver.id),
     ]);
 
     return (
@@ -60,7 +63,12 @@ export default async function DriverDetailPage({ params }: Props) {
           <span>Driver {driver.firstName} {driver.lastName}</span>
         </nav>
         <div className="mt-4 overflow-hidden rounded-xl border border-slate-800 bg-slate-950">
-          <OperatorDriverDetail driver={driver} summary={summary} requirements={requirements} />
+          <OperatorDriverDetail
+            driver={driver}
+            summary={summary}
+            requirements={requirements}
+            currentAssignment={currentAssignment}
+          />
         </div>
       </div>
     );
@@ -68,8 +76,11 @@ export default async function DriverDetailPage({ params }: Props) {
     const statusCode = typeof error === "object" && error && "statusCode" in error
       ? Number((error as { statusCode?: number }).statusCode)
       : 500;
+    const code = typeof error === "object" && error && "code" in error
+      ? String((error as { code?: string }).code)
+      : "";
 
-    if (statusCode === 404) {
+    if (statusCode === 404 || code === DEMO_SOURCE_REJECTED) {
       notFound();
     }
 

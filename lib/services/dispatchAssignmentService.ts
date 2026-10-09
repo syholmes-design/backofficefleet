@@ -334,6 +334,63 @@ export async function getActiveAssignmentForLoad(
   });
 }
 
+export async function getActiveAssignmentForDriver(
+  sessionUser: SessionUserLike | null | undefined,
+  driverId: string,
+) {
+  requireSessionUser(sessionUser);
+  rejectDemoOperationalKey(driverId, "driverId");
+  const normalizedDriverId = driverId.trim();
+  const driver = await prisma.driver.findUnique({
+    where: { id: normalizedDriverId },
+    select: { id: true, fleetId: true },
+  });
+  if (!driver) {
+    throw Object.assign(new Error("Driver not found"), { statusCode: 404 });
+  }
+
+  const access = await authorizedFleetAccess(sessionUser, driver.fleetId);
+  if (!access.allowed) {
+    await logUnauthorizedDispatchAccess(sessionUser, driver.fleetId, null, access.reason ?? "TENANT_ACCESS_DENIED");
+    throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
+  }
+
+  const assignment = await prisma.dispatchAssignment.findFirst({
+    where: {
+      driverId: driver.id,
+      fleetId: driver.fleetId,
+      status: "ACTIVE",
+    },
+    orderBy: [{ assignedAt: "desc" }, { createdAt: "desc" }],
+    select: {
+      id: true,
+      loadId: true,
+      status: true,
+      assignedAt: true,
+      load: {
+        select: {
+          id: true,
+          customerName: true,
+          origin: true,
+          destination: true,
+          status: true,
+          referenceNumber: true,
+        },
+      },
+    },
+  });
+
+  if (!assignment) return null;
+
+  return {
+    id: assignment.id,
+    loadId: assignment.loadId,
+    status: assignment.status,
+    assignedAt: assignment.assignedAt.toISOString(),
+    load: assignment.load,
+  };
+}
+
 export async function getAssignmentById(sessionUser: SessionUserLike | null | undefined, assignmentId: string) {
   requireSessionUser(sessionUser);
 
