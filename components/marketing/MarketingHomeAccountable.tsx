@@ -11,7 +11,10 @@ import {
   MarketingHomeLifecycle,
   MarketingHomeWorkflowCards,
 } from "@/components/marketing/MarketingHomeExperience";
+import { FleetAssessmentWizardClient } from "@/components/marketing/funnel/FleetAssessmentWizardClient";
+import { FleetSavingsCalculatorClient } from "@/components/marketing/funnel/FleetSavingsCalculatorClient";
 import { BOF_RUNTIME_LINKS } from "@/lib/marketing-runtime-links";
+import { SERVICE_PILLARS } from "@/lib/marketing-service-pillars";
 
 const audiences = [
   ["Carrier / Private Fleet", "Operate drivers, equipment, loads, compliance, and financial workflows."],
@@ -42,6 +45,57 @@ export default function MarketingHomeAccountable() {
   return (
     <main className="bof-home-redesign bg-slate-50 text-slate-950">
       <MarketingHomeHeroExperience />
+
+      <section id="what-we-do" className="bof-home-section bof-home-section--white" aria-labelledby="what-we-do-heading">
+        <div className="bof-mkt-container">
+          <div className="bof-home-section-head">
+            <p className="bof-home-eyebrow">What we do</p>
+            <h2 id="what-we-do-heading">An operating layer and a managed back office for transportation businesses.</h2>
+            <p>BOF connects the systems a fleet already uses and administers the back-office work around readiness, proof, settlements, and exceptions. Dispatch stays with the carrier. BOF does not become the carrier, the broker, or the marketplace.</p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {SERVICE_PILLARS.map((pillar) => (
+              <article key={pillar.href} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <h3 className="text-xl font-bold text-slate-950">{pillar.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-600">{pillar.description}</p>
+                <Link href={pillar.href} className="mt-4 inline-flex text-sm font-bold text-cyan-700">
+                  Open {pillar.title}
+                </Link>
+              </article>
+            ))}
+          </div>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href="/what-we-do" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">Full operating model</Link>
+            <Link href="/how-bof-works" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">How BOF works</Link>
+            <Link href="/aggregators" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">Aggregator networks</Link>
+            <Link href="/qa" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">Questions</Link>
+          </div>
+        </div>
+      </section>
+
+      <section id="we-save-you-money" className="bof-home-section bof-home-section--soft" aria-labelledby="savings-heading">
+        <div className="bof-mkt-container">
+          <div className="bof-home-section-head">
+            <p className="bof-home-eyebrow">We save you money</p>
+            <h2 id="savings-heading">Estimate operating drag from your own assumptions.</h2>
+            <p>Change the fleet size, load volume, and pain levels. The result is a directional model of insurance posture, dispute exposure, revenue at risk, and settlement drag. It is an estimate, not a verified customer outcome and not a savings guarantee.</p>
+          </div>
+          <FleetSavingsCalculatorClient embedded />
+        </div>
+      </section>
+
+      <section id="assess-the-operation" className="bof-home-section bof-home-section--white" aria-labelledby="assess-heading">
+        <div className="bof-mkt-container">
+          <div className="bof-home-section-head">
+            <p className="bof-home-eyebrow">Assess the operation</p>
+            <h2 id="assess-heading">Walk the operation and keep the answers in this browser.</h2>
+            <p>The assessment validates each step and shows a completion summary. There is no verified public intake service on this site, so the answers are stored in this browser and are not sent to BOF. Use the summary with your BOF contact, or continue to the qualification page.</p>
+          </div>
+          <FleetAssessmentWizardClient embedded />
+        </div>
+      </section>
+
+      <MarketingHomeCommandPreview />
 
       <section id="who-bof-serves" className="bof-home-section bof-home-section--white" aria-labelledby="who-bof-serves-heading">
         <div className="bof-mkt-container">
@@ -94,7 +148,6 @@ export default function MarketingHomeAccountable() {
       </section>
 
       <MarketingHomeLifecycle />
-      <MarketingHomeCommandPreview />
       <MarketingHomeWorkflowCards />
 
       <section id="exceptions" className="bof-home-section bof-home-section--white" aria-labelledby="exceptions-heading">

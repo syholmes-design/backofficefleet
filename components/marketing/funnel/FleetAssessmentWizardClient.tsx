@@ -150,7 +150,13 @@ function persistDraft(d: AssessmentDraft) {
   }
 }
 
-export function FleetAssessmentWizardClient({ initialSector }: { initialSector?: string }) {
+export function FleetAssessmentWizardClient({
+  initialSector,
+  embedded = false,
+}: {
+  initialSector?: string;
+  embedded?: boolean;
+}) {
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<AssessmentDraft>(EMPTY);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -240,7 +246,11 @@ export function FleetAssessmentWizardClient({ initialSector }: { initialSector?:
           <span>Assessment complete</span>
         </nav>
         <div className="bof-mkt-funnel-success">
-          <h1 className="bof-mkt-funnel-h1">Thank you — your assessment is captured</h1>
+          {embedded ? (
+            <h3 className="bof-mkt-funnel-h1">Thank you — your assessment is captured</h3>
+          ) : (
+            <h1 className="bof-mkt-funnel-h1">Thank you — your assessment is captured</h1>
+          )}
           <p className="bof-mkt-funnel-lead">
             This demo does not transmit data to a server. Your answers stay in this browser (session + local storage) so
             you can refine them anytime. For a live engagement, export this summary verbally to your BOF contact.
@@ -255,6 +265,18 @@ export function FleetAssessmentWizardClient({ initialSector }: { initialSector?:
             </li>
             <li>
               <strong>Urgency:</strong> {draft.urgency.replaceAll("_", " ")} days to decision
+            </li>
+            <li>
+              <strong>Pressure points:</strong>{" "}
+              {[
+                draft.painCompliance ? questionSet.painCompliance : null,
+                draft.painProof ? questionSet.painProof : null,
+                draft.painDispatch ? questionSet.painDispatch : null,
+                draft.painSettlements ? questionSet.painSettlements : null,
+                draft.painAdmin ? questionSet.painAdmin : null,
+              ]
+                .filter(Boolean)
+                .join("; ") || "None selected"}
             </li>
           </ul>
           <div className="bof-mkt-funnel-actions bof-mkt-funnel-actions--stack">
@@ -285,7 +307,11 @@ export function FleetAssessmentWizardClient({ initialSector }: { initialSector?:
 
       <header className="bof-mkt-funnel-wizard-head">
         <p className="bof-mkt-hero-premium-eyebrow">Consultative intake · {FORM_STEPS} steps</p>
-        <h1 className="bof-mkt-funnel-h1">Fleet Operations Assessment</h1>
+        {embedded ? (
+          <h3 className="bof-mkt-funnel-h1">Fleet Operations Assessment</h3>
+        ) : (
+          <h1 className="bof-mkt-funnel-h1">Fleet Operations Assessment</h1>
+        )}
         <p className="bof-mkt-funnel-lead">
           Structured like the conversations BOF runs with elite fleets—dispatch, compliance, proof, and settlements in one
           thread. Progress saves automatically in your browser.

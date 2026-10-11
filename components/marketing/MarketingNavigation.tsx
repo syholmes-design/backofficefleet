@@ -85,7 +85,7 @@ export function MarketingNavigation() {
     <nav className="border-b border-gray-200 bg-white shadow-sm">
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8">
         <div className="flex min-h-16 flex-wrap items-center justify-between gap-x-4 gap-y-2 py-2 xl:flex-nowrap">
-          <Link href="/" className="flex shrink-0 items-center" onClick={closeMenus}>
+          <Link href="/" aria-label="BackOfficeFleet home" className="flex shrink-0 items-center" onClick={closeMenus}>
             <MarketingBrandMark />
           </Link>
 

@@ -8,7 +8,7 @@ import { BOF_RUNTIME_LINKS } from "@/lib/marketing-runtime-links";
 
 const DEMO_METRICS = [
   { label: "Drivers at Risk", value: 4, display: (n: number) => String(n), href: "/safety", hint: "Readiness / safety review" },
-  { label: "Loads at Risk", value: 7, display: (n: number) => String(n), href: BOF_RUNTIME_LINKS.dispatch, hint: "Load execution exceptions" },
+  { label: "Loads at Risk", value: 7, display: (n: number) => String(n), href: "/demo/dispatch", hint: "Load execution exceptions" },
   { label: "Claims Exposure", value: 82, display: (n: number) => `$${n}k`, href: "/rf-actions", hint: "Proof / claims queue" },
   { label: "Money at Risk", value: 214, display: (n: number) => `$${n}k`, href: "/money-at-risk", hint: "Settlement / cash holds" },
 ] as const;
@@ -17,14 +17,14 @@ const LIFECYCLE = [
   {
     stage: "Driver readiness",
     body: "Inputs, credentials, equipment, and people are ready before work starts.",
-    href: "/drivers",
+    href: "/demo/drivers",
     evidence: "CDL / med card / assignment eligibility",
     next: "Release only after readiness clears",
   },
   {
     stage: "Load execution",
     body: "Dispatch context, appointments, routes, and operating requirements stay connected.",
-    href: BOF_RUNTIME_LINKS.dispatch,
+    href: "/demo/dispatch",
     evidence: "Assignment, trip release, pickup gate",
     next: "Blocked work stays owned",
   },
@@ -38,7 +38,7 @@ const LIFECYCLE = [
   {
     stage: "Settlement",
     body: "Proof, holds, deductions, accessorials, and pay stay aligned.",
-    href: "/settlements",
+    href: "/demo/settlements",
     evidence: "Hold reason + owner",
     next: "Pay follows completed record",
   },
@@ -66,7 +66,7 @@ const CC_ROWS = [
     meta: "Illustrative: L001 proof packet needs closeout",
     val: "L001",
     valClass: "bof-mkt-cc-mock-kpi-val--warn",
-    href: "/loads/L001",
+    href: "/demo/loads",
   },
   {
     label: "Proof",
@@ -82,7 +82,7 @@ const CC_ROWS = [
     meta: "Illustrative: QR lumper closeout · $180",
     val: "$180",
     valClass: "bof-mkt-cc-mock-kpi-val--warn",
-    href: "/settlements",
+    href: "/demo/settlements",
   },
   {
     label: "Cash",
@@ -141,53 +141,16 @@ function DemoMetric({
   );
 }
 
-function BrandS() {
-  return (
-    <svg className="bof-home-s" viewBox="0 0 220 280" aria-hidden="true" focusable="false">
-      <defs>
-        <linearGradient id="bofHomeSFill" x1="20%" y1="0%" x2="90%" y2="100%">
-          <stop offset="0%" stopColor="#ecfeff" />
-          <stop offset="32%" stopColor="#5eead4" />
-          <stop offset="68%" stopColor="#14b8a6" />
-          <stop offset="100%" stopColor="#0f766e" />
-        </linearGradient>
-        <linearGradient id="bofHomeSSheen" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="rgba(255,255,255,0.55)" />
-          <stop offset="40%" stopColor="rgba(255,255,255,0)" />
-        </linearGradient>
-        <filter id="bofHomeSGlow" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="6" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-      <path
-        filter="url(#bofHomeSGlow)"
-        fill="url(#bofHomeSFill)"
-        d="M168 58c-8-22-32-40-72-40-48 0-78 24-82 62-3 32 16 50 58 64l36 12c22 8 30 16 28 30-2 18-18 28-46 28-32 0-50-12-56-34l-38 8c10 42 48 66 96 66 54 0 88-26 94-68 6-40-18-60-64-76l-34-12c-20-7-28-15-26-28 2-16 16-24 40-24 24 0 40 10 46 30z"
-      />
-      <path
-        fill="url(#bofHomeSSheen)"
-        d="M96 28c38 0 62 16 70 40-8-8-22-16-44-16-30 0-50 12-54 34-2 10 0 18 8 26-28-10-40-28-38-52 4-22 24-32 58-32z"
-      />
-    </svg>
-  );
-}
+const HERO_PATH = [
+  ["1", "What we do", "#what-we-do"],
+  ["2", "We save you money", "#we-save-you-money"],
+  ["3", "Assess the operation", "#assess-the-operation"],
+  ["4", "Demo the difference", "#demo-the-difference"],
+] as const;
 
 export function MarketingHomeHeroExperience() {
   return (
-    <section id="hero" className="bof-home-hero" aria-labelledby="bof-mkt-hero-heading">
-      <Image
-        src="/approved/bofhero.png"
-        alt="Professional truck driver operating on the road at sunrise"
-        fill
-        priority
-        sizes="100vw"
-        className="bof-home-hero__image"
-      />
-      <div className="bof-home-hero__overlay" aria-hidden />
+    <section id="hero" className="bof-home-hero bof-home-hero--focus" aria-labelledby="bof-mkt-hero-heading">
       <div className="bof-mkt-container bof-home-hero__content">
         <div className="bof-home-hero__copy">
           <p className="bof-home-eyebrow">BackOfficeFleet · CONTROL • COMPLY • CLEAR</p>
@@ -196,52 +159,72 @@ export function MarketingHomeHeroExperience() {
             Connect the systems, people, proof, and decisions that keep transportation moving.
           </p>
           <p className="bof-home-hero__lead">
-            BOF gives carriers, private fleets, aggregators, brokers, and logistics companies one operating environment
-            for readiness, load execution, compliance, exceptions, documentation, settlements, and cash flow.
-          </p>
-          <p className="bof-home-hero__flow-line" aria-hidden>
-            Driver readiness → Load execution → Proof → Settlement → Cash flow
+            BOF gives carriers, private fleets, and aggregator networks one operating environment for readiness,
+            load execution, compliance, exceptions, documentation, settlements, and cash flow. Dispatch stays with
+            the carrier. BOF does not become the broker or the marketplace.
           </p>
           <div className="bof-home-hero__ctas" aria-label="Primary actions">
-            <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-              Request a BOF Assessment
+            <Link href="#what-we-do" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              What we do
             </Link>
-            <Link href={BOF_RUNTIME_LINKS.dashboard} className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-              See BOF in Action
+            <Link href="#demo-the-difference" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              Demo the difference
             </Link>
           </div>
+          <nav className="bof-home-hero__ctas" aria-label="Homepage sections">
+            <Link href="#we-save-you-money" className="bof-home-hero__text-link">Savings estimate</Link>
+            <Link href="#assess-the-operation" className="bof-home-hero__text-link">Assess the operation</Link>
+            <Link href="/aggregators" className="bof-home-hero__text-link">For aggregators</Link>
+          </nav>
         </div>
         <div className="bof-home-hero__visual">
-          <div className="bof-home-hero__signal" aria-hidden>
-            <span className="bof-home-hero__signal-node" data-stage="Ready" />
-            <span className="bof-home-hero__signal-node" data-stage="Load" />
-            <span className="bof-home-hero__signal-node" data-stage="Proof" />
-            <span className="bof-home-hero__signal-node" data-stage="Settle" />
-            <span className="bof-home-hero__signal-node" data-stage="Cash" />
+          <div className="bof-home-hero__visual-media">
+            <Image
+              src="/approved/bofhero.png"
+              alt="Professional truck driver operating on the road at sunrise"
+              fill
+              priority
+              sizes="(max-width: 959px) 100vw, 42vw"
+              className="bof-home-hero__image"
+            />
           </div>
-          <div className="bof-home-hero__panel">
-            <div className="bof-home-hero__panel-head">
-              <span>Demo operating snapshot</span>
-              <strong>Not live fleet data</strong>
-            </div>
-            <div className="bof-home-hero__metric-grid">
-              {DEMO_METRICS.map((metric) => (
-                <DemoMetric
-                  key={metric.label}
-                  label={metric.label}
-                  target={metric.value}
-                  display={metric.display}
-                  href={metric.href}
-                  hint={metric.hint}
-                />
-              ))}
-            </div>
-            <p>Hover a metric for the owning workflow. Click opens the existing BOF route. Values are a labeled demo snapshot, not production counts.</p>
-          </div>
-          <BrandS />
+          <ol className="bof-home-hero__path" aria-label="Continue through the site">
+            {HERO_PATH.map(([step, label, href]) => (
+              <li key={href}>
+                <Link href={href}>
+                  <span>{step}</span>
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </section>
+  );
+}
+
+export function MarketingHomeDemoSnapshot() {
+  return (
+    <div className="bof-home-hero__panel">
+      <div className="bof-home-hero__panel-head">
+        <span>Sample operating snapshot</span>
+        <strong>Not live fleet data</strong>
+      </div>
+      <div className="bof-home-hero__metric-grid">
+        {DEMO_METRICS.map((metric) => (
+          <DemoMetric
+            key={metric.label}
+            label={metric.label}
+            target={metric.value}
+            display={metric.display}
+            href={metric.href}
+            hint={metric.hint}
+          />
+        ))}
+      </div>
+      <p>These counts are a labeled sample. They are not production fleet totals. Each card opens an existing BOF route.</p>
+    </div>
   );
 }
 
@@ -283,28 +266,89 @@ export function MarketingHomeLifecycle() {
 
 export function MarketingHomeCommandPreview() {
   return (
-    <section id="command-center" className="bof-home-section bof-home-section--soft" aria-labelledby="command-center-heading">
+    <section id="demo-the-difference" className="bof-home-section bof-home-section--soft" aria-labelledby="demo-difference-heading">
+      <div className="bof-mkt-container mb-8">
+        <div className="bof-home-section-head">
+          <p className="bof-home-eyebrow">Demo the difference</p>
+          <h2 id="demo-difference-heading">A sample operating picture, labeled as a sample.</h2>
+          <p>The counts below are illustrative. They are not a live customer fleet and they are not production totals.</p>
+        </div>
+        <MarketingHomeDemoSnapshot />
+        <MarketingHomeDemoFilm />
+      </div>
       <MarketingCommandCenterPreview
         rows={CC_ROWS}
-        headingId="command-center-heading"
+        headingId="demo-command-heading"
         title="Information becomes action when the operating layer owns the next move."
-        lead="The Command Center is where transportation signals become accountable decisions, not just another dashboard. This is an illustrative demo surface using existing BOF demo routes — not a live production fleet feed. Each row has a status, an owner workflow, and a next action."
-        demoHref={BOF_RUNTIME_LINKS.commandCenter}
-        demoLabel="Explore the Command Center"
+        lead="The Command Center is where transportation signals become accountable decisions, not just another dashboard. This preview uses existing BOF demo routes. It is not a live production fleet feed."
+        demoHref="/dashboard"
+        demoLabel="Open the demo lobby"
         statusBadge="Demo snapshot"
       />
+      <div className="bof-mkt-container mt-4">
+        <Link href="/demo/command-center" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+          Open the DEMO Command Center
+        </Link>
+      </div>
     </section>
   );
 }
 
 const WORKFLOW_CARDS = [
-  { stage: "01 Ready", title: "Drivers", href: "/drivers", evidence: "Readiness, credentials, assignment eligibility" },
-  { stage: "02 Load", title: "Dispatch", href: BOF_RUNTIME_LINKS.dispatch, evidence: "Execution exceptions and trip ownership" },
-  { stage: "03 Proof", title: "Operations Vault", href: BOF_RUNTIME_LINKS.vault, evidence: "POD, seals, photos, document packet" },
-  { stage: "04 Settle", title: "Settlements", href: "/settlements", evidence: "Holds, deductions, pay alignment" },
+  { stage: "01 Ready", title: "Drivers", href: "/demo/drivers", evidence: "Readiness, credentials, assignment eligibility" },
+  { stage: "02 Load", title: "Dispatch", href: "/demo/dispatch", evidence: "Execution exceptions and trip ownership" },
+  { stage: "03 Proof", title: "Operations Vault", href: "/bof-vault", evidence: "POD, seals, photos, document packet" },
+  { stage: "04 Settle", title: "Settlements", href: "/demo/settlements", evidence: "Holds, deductions, pay alignment" },
   { stage: "05 Cash", title: "Money at risk", href: "/money-at-risk", evidence: "Exposure attached to the same load" },
-  { stage: "06 Tower", title: "Command Center", href: BOF_RUNTIME_LINKS.commandCenter, evidence: "Signals with owner and next action" },
+  { stage: "06 Tower", title: "Command Center", href: "/demo/command-center", evidence: "Signals with owner and next action" },
 ] as const;
+
+const DEMO_FILMS = [
+  { name: "bof-aggregator.mp4", poster: "bof-aggregator.jpg", label: "Aggregator network" },
+  { name: "bof-fleet-owner.mp4", poster: "bof-fleet-owner.jpg", label: "Fleet owner" },
+  { name: "bof-business-operations.mp4", poster: "bof-business-operations.jpg", label: "Business operations" },
+  { name: "bof-driver-vault.mp4", poster: "bof-driver-vault.jpg", label: "Driver vault" },
+  { name: "bof-customer-portal-load-intake.mp4", poster: "bof-customer-portal-load-intake.jpg", label: "Load intake" },
+] as const;
+
+function demoMediaUrl(name: string) {
+  return `/api/marketing-demo-media?name=${encodeURIComponent(name)}`;
+}
+
+function MarketingHomeDemoFilm() {
+  const [active, setActive] = useState<(typeof DEMO_FILMS)[number]>(DEMO_FILMS[0]);
+  return (
+    <div className="bof-home-film">
+      <div className="bof-home-section-head">
+        <p className="bof-home-eyebrow">Existing BOF demonstrations</p>
+        <h3>Watch the operating walkthroughs already produced for BOF.</h3>
+        <p>These are the existing BOF demonstration videos, including the aggregator walkthrough. They are not a separate analytics recording.</p>
+      </div>
+      <video
+        key={active.name}
+        className="bof-home-film__player"
+        controls
+        preload="none"
+        poster={demoMediaUrl(active.poster)}
+        aria-label={active.label}
+      >
+        <source src={demoMediaUrl(active.name)} type="video/mp4" />
+      </video>
+      <div className="bof-home-film__choices" role="group" aria-label="Choose a demonstration">
+        {DEMO_FILMS.map((film) => (
+          <button
+            key={film.name}
+            type="button"
+            aria-pressed={film.name === active.name}
+            onClick={() => setActive(film)}
+          >
+            {film.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function MarketingHomeWorkflowCards() {
   return (

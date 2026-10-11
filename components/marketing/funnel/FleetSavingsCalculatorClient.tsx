@@ -7,6 +7,7 @@ import {
   type MarketingFleetPainLevel,
   type MarketingFleetSavingsInputs,
   computeMarketingSavingsPresentation,
+  describeMarketingSavingsDerivation,
 } from "@/lib/marketing-funnel-savings";
 import { MARKETING_CALCULATOR_STORAGE_KEY } from "@/lib/marketing-funnel-constants";
 import { MarketingFunnelField } from "./MarketingFunnelField";
@@ -37,7 +38,7 @@ function saveDraft(input: MarketingFleetSavingsInputs) {
   }
 }
 
-export function FleetSavingsCalculatorClient() {
+export function FleetSavingsCalculatorClient({ embedded = false }: { embedded?: boolean }) {
   const [powerUnits, setPowerUnits] = useState(45);
   const [monthlyLoads, setMonthlyLoads] = useState(320);
   const [avgRevenuePerLoad, setAvgRevenuePerLoad] = useState(2200);
@@ -117,7 +118,7 @@ export function FleetSavingsCalculatorClient() {
     <div className="bof-mkt-funnel-calculator">
       <header className="bof-mkt-funnel-calculator-head">
         <p className="bof-mkt-hero-premium-eyebrow">Fleet economics · directional model</p>
-        <h1 className="bof-mkt-funnel-h1">Fleet Savings Outlook</h1>
+        {embedded ? null : <h1 className="bof-mkt-funnel-h1">Fleet Savings Outlook</h1>}
         <p className="bof-mkt-funnel-lead">
           Translate operational pain into the same savings categories BOF uses in the demo command center—insurance posture,
           legal exposure, revenue at risk, and settlement drag. Tune inputs to match your network; results are{" "}
@@ -292,6 +293,25 @@ export function FleetSavingsCalculatorClient() {
                   </p>
                 </div>
               </div>
+              <details className="bof-mkt-funnel-disclaimer">
+                <summary>How this estimate was derived</summary>
+                <ul>
+                  {describeMarketingSavingsDerivation(
+                    {
+                      powerUnits,
+                      monthlyLoads,
+                      avgRevenuePerLoad,
+                      compliancePain,
+                      proofPain,
+                      dispatchSettlementPain,
+                      adminOpsFte,
+                    },
+                    result,
+                  ).map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+              </details>
               <ul className="bof-mkt-funnel-disclaimer">
                 {result.disclaimers.map((d) => (
                   <li key={d}>{d}</li>

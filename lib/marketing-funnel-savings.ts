@@ -181,3 +181,17 @@ export function computeMarketingSavingsPresentation(
     disclaimers: [...DISCLAIMERS],
   };
 }
+
+/** Plain-language trace from the visitor's inputs to the modeled dollars. */
+export function describeMarketingSavingsDerivation(
+  input: MarketingFleetSavingsInputs,
+  presentation: MarketingSavingsPresentation,
+): string[] {
+  const base = presentation.base;
+  return [
+    `Loads used: ${base.totalLoads}. Revenue base: $${base.totalRevenue.toLocaleString("en-US")} (loads × revenue per load).`,
+    `Pain weights on a 0–1 scale: compliance ${PAIN_TO_UNIT[input.compliancePain]}, proof ${PAIN_TO_UNIT[input.proofPain]}, dispatch and settlement ${PAIN_TO_UNIT[input.dispatchSettlementPain]}.`,
+    `Derived from those weights: ${base.loadsWithIssues} loads with issues, ${base.loadsWithRf} loads with proof exposure, ${base.settlementsHeld} settlements held.`,
+    "Each dollar line is that category's demo-engine annual figure divided by 12. The monthly total is the sum of the four lines. This is not a verified customer result.",
+  ];
+}
