@@ -1,0 +1,8 @@
+# Root-only exclusions. Public marketing files and agreement documents stay in the upload.
+/recovered
+/source-assets
+/docs
+/temp_dqf_master.docx
+/*.odt
+/*.diff
+/.composite-crop-report.json
