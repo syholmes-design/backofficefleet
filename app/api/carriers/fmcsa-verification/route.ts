@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getLatestFmcsaVerification, verifyCarrierWithFmcsa } from "@/lib/services/fmcsa/fmcsaVerificationService";
+import { evaluateSambaIntelligence } from "@/lib/services/samba/sambaIntelligenceService";
 
 type RouteSessionUser = {
   id?: string;
@@ -71,7 +72,36 @@ export async function POST(request: NextRequest) {
       value: typeof body.value === "string" ? body.value : null,
       useCache: body.refresh === true ? false : true,
     });
-    return NextResponse.json(result, { status: 201 });
+    let sambaObservation: { evaluated: boolean; createdCount: number; error?: string } = {
+      evaluated: false,
+      createdCount: 0,
+    };
+    try {
+      const evaluated = await evaluateSambaIntelligence(user, fleetId);
+      sambaObservation = {
+        evaluated: true,
+        createdCount: evaluated.createdCount,
+      };
+    } catch (sambaError) {
+      const statusCode =
+        sambaError && typeof sambaError === "object" && "statusCode" in sambaError
+          ? Number((sambaError as { statusCode?: number }).statusCode) || 500
+          : 500;
+      sambaObservation = {
+        evaluated: false,
+        createdCount: 0,
+        error:
+          statusCode === 401 || statusCode === 403 || statusCode === 422
+            ? sambaError instanceof Error
+              ? sambaError.message
+              : "Samba observation was not recorded"
+            : "Samba observation was not recorded",
+      };
+    }
+    return NextResponse.json(
+      { ...result, sambaObservation, mutatedOperationalRecords: false },
+      { status: 201 },
+    );
   } catch (error) {
     return pickupLikeError(error);
   }

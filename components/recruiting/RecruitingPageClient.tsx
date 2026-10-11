@@ -151,7 +151,7 @@ export function RecruitingPageClient() {
     params.set("candidateId", candidateId);
     params.set("tab", tab);
     if (workflow) params.set("workflow", workflow);
-    window.history.replaceState(null, "", `/recruiting?${params.toString()}`);
+    window.history.replaceState(null, "", `/recruiting/workspace?${params.toString()}`);
   }
 
   const candidateDocumentRows = selectedCandidate
@@ -226,7 +226,7 @@ export function RecruitingPageClient() {
     setSelectedCandidateId(candidateId);
     setActiveTab("candidate-detail");
     setActiveCandidateWorkflow(null);
-    window.history.replaceState(null, "", `/recruiting?candidateId=${encodeURIComponent(candidateId)}&tab=candidate-detail`);
+    window.history.replaceState(null, "", `/recruiting/workspace?candidateId=${encodeURIComponent(candidateId)}&tab=candidate-detail`);
   }
 
   function workflowHeading(workflow: NonNullable<typeof activeCandidateWorkflow>) {

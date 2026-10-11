@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PackageCheck, ShieldCheck, Truck, UserRoundCheck } from "lucide-react";
+import { SambaIntelligencePanel } from "@/components/operations/SambaIntelligencePanel";
+import { buildLiveLoadReview } from "@/lib/live-load-review";
 import { DispatchReleaseHistory } from "./DispatchReleaseHistory";
 import {
   ApiError,
@@ -68,6 +70,7 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
   }, [refreshReleaseState]);
 
   const latestRelease = workflow?.latestRelease ?? history[0] ?? null;
+  const liveReview = buildLiveLoadReview(loadId, workflow, null);
   const latestReasonCodes = getJsonStringArray(latestRelease?.reasonCodes);
   const bannerTone =
     latestRelease?.disposition === "RELEASED"
@@ -399,6 +402,27 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
           ) : null}
         </aside>
       </div>
+
+      <section className="mt-6 space-y-3 rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-400">Stored workflow review</h2>
+        {loading ? (
+          <p className="text-sm text-slate-300">The stored workflow snapshot is still loading.</p>
+        ) : liveReview.length === 0 ? (
+          <p className="text-sm text-slate-300">No stored blocker is recorded on this snapshot.</p>
+        ) : (
+          liveReview.map((item) => (
+            <article key={item.id} className="rounded border border-slate-800 p-3">
+              <p className="text-xs font-bold uppercase tracking-wide text-amber-200">
+                {item.severity} · {item.stage}
+              </p>
+              <p className="mt-2 text-sm text-white">{item.explanation}</p>
+              <p className="mt-1 text-xs text-slate-400">{item.recommendedAction}</p>
+              <p className="mt-1 text-xs text-slate-500">Recorded outcome: {item.recordedOutcome}</p>
+            </article>
+          ))
+        )}
+        <SambaIntelligencePanel loadId={loadId} />
+      </section>
 
       <footer className="trip-release-footer">
         <button

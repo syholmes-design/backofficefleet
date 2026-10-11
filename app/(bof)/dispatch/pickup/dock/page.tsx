@@ -13,6 +13,11 @@ export const metadata = {
   description: "Phase 2 physical-arrival reconciliation for Secure Pickup",
 };
 
-export default function PickupDockPage() {
-  return <PickupDockClient />;
+export default async function PickupDockPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ authorizationId?: string }>;
+}) {
+  const params = await searchParams;
+  return <PickupDockClient initialAuthorizationId={params.authorizationId ?? ""} />;
 }

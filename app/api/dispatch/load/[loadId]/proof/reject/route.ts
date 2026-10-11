@@ -18,8 +18,9 @@ export async function POST(request: NextRequest, context: { params: Promise<{ lo
     if (!isRecord(body)) {
       return NextResponse.json({ error: "Invalid JSON body" }, { status: 422 });
     }
+    const proofId = typeof body.proofId === "string" ? body.proofId : "";
     const reason = typeof body.reason === "string" ? body.reason : "";
-    const result = await rejectProofAndHoldSettlement(session.user, loadId, reason);
+    const result = await rejectProofAndHoldSettlement(session.user, loadId, proofId, reason);
     return NextResponse.json(result);
   } catch (error) {
     const statusCode =
@@ -27,7 +28,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ lo
         ? Number((error as { statusCode?: number }).statusCode) || 500
         : 500;
     const message =
-      statusCode === 401 || statusCode === 403 || statusCode === 404 || statusCode === 422
+      statusCode === 401 || statusCode === 403 || statusCode === 404 || statusCode === 409 || statusCode === 422
         ? error instanceof Error
           ? error.message
           : "Request failed"

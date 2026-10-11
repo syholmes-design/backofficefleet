@@ -407,6 +407,7 @@ export async function listDriverRequirementsForFleet(
     actionStatus: row.actionStatus,
     requiredAction: row.requiredAction,
     resolutionStatus: row.resolutionStatus,
+    affirmationStatus: row.affirmationStatus,
   }));
 }
 

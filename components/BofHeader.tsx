@@ -7,11 +7,22 @@ import { DemoWalkthroughRibbon } from "@/components/DemoWalkthroughRibbon";
 import { ExistingDocumentNavAnchor } from "@/components/ExistingDocumentNavAnchor";
 import { MarketingNavigation } from "@/components/marketing/MarketingNavigation";
 
+const LIVE_COMMAND_CENTER = "/command-center";
+const DEMO_LANDING = "/dashboard";
+
+function productLogoHref(pathname: string) {
+  if (pathname === "/demo" || pathname.startsWith("/demo/") || pathname === "/dashboard" || pathname.startsWith("/dashboard/")) {
+    return DEMO_LANDING;
+  }
+  return LIVE_COMMAND_CENTER;
+}
+
 const productNav = [
   { href: "/command-center", label: "Command Center" },
   { href: "/dispatch", label: "Dispatch" },
   { href: "/loads", label: "Loads" },
   { href: "/drivers", label: "Drivers" },
+  { href: "/settlements", label: "Settlements" },
   { href: "/recruiting", label: "Recruiting" },
   { href: "/documents", label: "Documents" },
   { href: "/operational-chat", label: "Conversations" },
@@ -64,7 +75,7 @@ export function BofHeader() {
     return (
       <header className="bof-product-header sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950 shadow-sm isolate">
         <div className="mx-auto flex max-w-[1600px] flex-col items-start gap-3 px-4 py-3 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:px-12 xl:px-16">
-          <ExistingDocumentNavAnchor href="/dispatch" className="inline-flex shrink-0 items-center text-slate-100 no-underline"><BofLogo variant="dark" size="demoLarge" priority /></ExistingDocumentNavAnchor>
+          <ExistingDocumentNavAnchor href={productLogoHref(pathname)} aria-label="BackOfficeFleet home" className="inline-flex shrink-0 items-center text-slate-100 no-underline"><BofLogo variant="dark" size="demoLarge" priority /></ExistingDocumentNavAnchor>
           <nav className="bof-product-nav flex w-full min-w-0 flex-nowrap items-center gap-2 overflow-x-auto pb-1 text-sm lg:flex-1 lg:flex-wrap lg:gap-3 lg:pb-0" aria-label={navAriaLabel}>
             {productNav.map((item) => (
               <ExistingDocumentNavAnchor

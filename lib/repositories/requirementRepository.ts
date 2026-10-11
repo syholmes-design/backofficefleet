@@ -33,6 +33,7 @@ export async function getRequirementsForDriver(driverId: string, fleetId: string
       actionStatus: true,
       requiredAction: true,
       resolutionStatus: true,
+      affirmationStatus: true,
     },
     orderBy: { createdAt: "desc" },
   });

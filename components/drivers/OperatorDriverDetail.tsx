@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { MedicalRenewalAffirmButton } from "@/components/drivers/MedicalRenewalAffirmButton";
+import { RequirementEvidenceAffirmButton } from "@/components/drivers/RequirementEvidenceAffirmButton";
+import { SambaIntelligencePanel } from "@/components/operations/SambaIntelligencePanel";
 import type { DriverReviewRequirement } from "@/lib/driver-review-explanation";
 import type { DriverOperationalSummary } from "@/lib/services/driverOperationalReadModelService";
 
@@ -104,6 +107,9 @@ export function OperatorDriverDetail({
                   {requirement.actionStatus?.replaceAll("_", " ") || "Open"}
                   {requirement.dueDate ? ` · due ${formatWhen(String(requirement.dueDate))}` : ""}
                 </p>
+                {requirement.requirementType !== "MEDICAL" && requirement.affirmationStatus !== "AFFIRMED" ? (
+                  <RequirementEvidenceAffirmButton requirementId={requirement.id} label={requirement.label} />
+                ) : null}
               </li>
             ))}
           </ul>
@@ -114,6 +120,9 @@ export function OperatorDriverDetail({
               Open latest intake
             </Link>
           </p>
+        ) : null}
+        {openRequirements.some((requirement) => requirement.requirementType === "MEDICAL") ? (
+          <MedicalRenewalAffirmButton driverId={driver.id} />
         ) : null}
       </section>
 
@@ -141,8 +150,9 @@ export function OperatorDriverDetail({
         )}
       </section>
 
+      <SambaIntelligencePanel driverId={driver.id} />
       <p className="text-xs text-slate-500">
-        Safety score and settlement pay are not shown on this live driver file.
+        Safety score and settlement pay are not shown on this live driver file. SambaSafety review reads stored findings and does not change qualification or pay.
       </p>
       <p className="text-sm">
         <Link className="text-teal-200 underline" href="/drivers">

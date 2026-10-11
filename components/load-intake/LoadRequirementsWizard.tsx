@@ -13,10 +13,9 @@ import type { LoadIntakeRecord } from "@/lib/load-requirements-intake-types";
 import { LoadIntakeStep4PacketReview } from "@/components/load-intake/LoadIntakeStep4PacketReview";
 import { LoadIntakeAddressCombo } from "@/components/load-intake/LoadIntakeAddressCombo";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
 import type { LoadIntakeSourceType } from "@/lib/load-requirements-intake-types";
 import { buildWizardIntakeRecord } from "@/lib/load-intake/build-wizard-intake-record";
-import { commitIntakeWizardToBof } from "@/lib/load-intake/commit-intake-to-bof";
+import { mapIntakeRecordToCreateLoadPayload } from "@/lib/load-intake/map-intake-to-create-load-payload";
 import { buildIntakeWizardStateFromClientRequest } from "@/lib/load-intake/prefill-client-request-intake";
 import { getClientLoadRequests } from "@/lib/client-load-requests";
 import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
@@ -169,8 +168,7 @@ function toPipelineSourceType(entry: IntakeEntrySource): LoadIntakeSourceType {
 
 export function LoadRequirementsWizard() {
   const searchParams = useSearchParams();
-  const { data, setFullData } = useBofDemoData();
-  const upsertDispatchLoad = useDispatchDashboardStore((s) => s.upsertLoad);
+  const { data } = useBofDemoData();
   const [step, setStep] = useState(1);
   const [state, setState] = useState<IntakeWizardState>(() => createLoadIntakeWizardState());
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -404,7 +402,7 @@ export function LoadRequirementsWizard() {
     URL.revokeObjectURL(a.href);
   }, [data.loadProofBundles, data.loads, runtimeIntakeLoadIds]);
 
-  const saveIntakeLoad = useCallback(() => {
+  const saveIntakeLoad = useCallback(async () => {
     setSubmitError(null);
     setSubmitSuccess(null);
     if (normalizedReview.status !== "ready_to_save" && normalizedReview.status !== "needs_review") {
@@ -420,46 +418,35 @@ export function LoadRequirementsWizard() {
       return;
     }
     try {
-      const committed = commitIntakeWizardToBof(data, state, {
-        normalizedRecord: normalizedReview.normalized,
-        sourceType: pipelineSourceType,
-        uploadFileName: uploadFile?.name ?? null,
-        extractionProvider: extractionResult?.providerName,
-        extractionConfidence: extractionResult?.confidence,
-        extractionWarnings: extractionResult?.warnings,
-        reviewedBy:
-          intakeEntrySource === "client_request"
-            ? "client_request_import"
-            : intakeEntrySource === "intake_engine"
-              ? "intake_engine_import"
-              : "dispatcher",
-      });
-      setFullData(committed.nextData);
-      if (committed.dispatchLoad) {
-        upsertDispatchLoad(committed.dispatchLoad);
+      const sessionResponse = await fetch("/api/auth/session");
+      const session = (await sessionResponse.json()) as {
+        user?: { memberships?: Array<{ fleetId?: string }> };
+      };
+      const fleetId = session.user?.memberships?.find((membership) => membership.fleetId)?.fleetId;
+      if (!fleetId) {
+        setSubmitError("A fleet membership is required before this intake can create a live load.");
+        return;
       }
-      setLastSavedLoadId(committed.loadId);
-      setSubmitSuccess(
-        `Saved ${committed.loadId}. Pending generation — run npm run generate:load-docs && npm run generate:load-evidence.`
-      );
+      const payload = mapIntakeRecordToCreateLoadPayload(normalizedReview.normalized, fleetId);
+      const response = await fetch("/api/dispatch/load", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const json = (await response.json()) as { id?: string; error?: string };
+      if (!response.ok || !json.id) {
+        throw new Error(json.error || "The live load was not created.");
+      }
+      setLastSavedLoadId(json.id);
+      setSubmitSuccess(`Saved live load ${json.id} with status PLANNED. A demo workbook load was not written.`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Failed to save intake load.";
       setSubmitError(msg);
     }
   }, [
-    data,
-    extractionResult?.confidence,
-    extractionResult?.providerName,
-    extractionResult?.warnings,
-    intakeEntrySource,
-    pipelineSourceType,
     normalizedReview.missingRequiredFields,
     normalizedReview.normalized,
     normalizedReview.status,
-    setFullData,
-    state,
-    uploadFile?.name,
-    upsertDispatchLoad,
     validationErrors,
   ]);
 
@@ -2021,8 +2008,8 @@ export function LoadRequirementsWizard() {
             <button type="button" className="bof-load-intake-btn" onClick={() => goStep(4)}>
               Back to review
             </button>
-            <button type="button" className="bof-load-intake-btn bof-load-intake-btn--primary" onClick={saveIntakeLoad}>
-              Save load to BOF &amp; sync dispatch
+            <button type="button" className="bof-load-intake-btn bof-load-intake-btn--primary" onClick={() => void saveIntakeLoad()}>
+              Save live load
             </button>
           </div>
         </section>

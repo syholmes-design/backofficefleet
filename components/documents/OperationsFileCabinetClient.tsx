@@ -430,6 +430,12 @@ export function OperationsFileCabinetClient({ featuredDocuments }: Props) {
           <p className="bof-lead">
             Driver files, company policies, dispatch forms, SOPs, claims documents, training resources, and back-office templates in one operating library. Sample files are walkthrough material, not live carrier evidence.
           </p>
+          <nav aria-label="Related document libraries" className="mt-4 flex flex-wrap gap-3 text-sm font-semibold">
+            <Link href="/documents/vault">Driver document vault</Link>
+            <Link href="/documents/company-operations-vault">Company policies and SOPs</Link>
+            <Link href="/documents/template-packs">Template packs</Link>
+            <Link href="/documents/compliance-flow">Compliance flow (demo)</Link>
+          </nav>
           
           {/* Hero Chips */}
           <div style={{

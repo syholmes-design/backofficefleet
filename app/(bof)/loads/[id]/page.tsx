@@ -21,8 +21,11 @@ export const dynamic = "force-dynamic";
 type Props = { params: Promise<{ id: string }> };
 
 function resolveLoadPageId(rawId: string) {
-  if (/^PI-TEST-/i.test(rawId.trim())) return rawId.trim();
-  return normalizeCanonicalLoadId(rawId);
+  const trimmed = rawId.trim();
+  if (/^PI-TEST-/i.test(trimmed)) return trimmed;
+  const normalized = normalizeCanonicalLoadId(trimmed);
+  if (/^L\d{3}$/.test(normalized)) return normalized;
+  return trimmed;
 }
 
 function serializeLoad(load: Awaited<ReturnType<typeof getLoadById>>): DispatchLoadRecord {

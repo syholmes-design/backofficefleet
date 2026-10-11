@@ -18,15 +18,38 @@ import {
   type DispatchLoadWorkflowSnapshot,
 } from "@/lib/dispatch-workflow-ui";
 import { LoadFileCopilotAdvocatePanel } from "@/components/copilot/LoadFileCopilotAdvocatePanel";
+import { SambaIntelligencePanel } from "@/components/operations/SambaIntelligencePanel";
+import { buildLiveLoadReview } from "@/lib/live-load-review";
+import { LoadDeliveryScreen } from "@/components/dispatch/LoadDeliveryScreen";
+import { LoadPickupAuthorizationLinks } from "@/components/dispatch/LoadPickupAuthorizationLinks";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
 import { existingSettlementWorkflowHref } from "@/lib/load-file-proof-settlement-display";
 import { DocumentationReadinessPanel } from "./DocumentationReadinessPanel";
 import { ExistingDocumentNavAnchor } from "@/components/ExistingDocumentNavAnchor";
 
 function ProofRejectHoldForm({ loadId }: { loadId: string }) {
+  const [proofs, setProofs] = useState<Array<{ id: string; status: string; proofType: string }>>([]);
+  const [proofId, setProofId] = useState("");
   const [reason, setReason] = useState("Proof rejected by operator review");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const receivable = proofs.filter((proof) => proof.status === "RECEIVED");
+
+  useEffect(() => {
+    let cancelled = false;
+    requestJson<{ proofs: Array<{ id: string; status: string; proofType: string }> }>(
+      `/api/dispatch/load/${encodeURIComponent(loadId)}/proof/verify`,
+    )
+      .then((body) => {
+        if (!cancelled) setProofs(body.proofs ?? []);
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) setMessage(getErrorMessage(error));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [loadId]);
 
   return (
     <form
@@ -36,10 +59,19 @@ function ProofRejectHoldForm({ loadId }: { loadId: string }) {
         setBusy(true);
         setMessage(null);
         try {
-          await requestJson(`/api/dispatch/load/${loadId}/proof/reject`, {
+          if (!proofId) {
+            setMessage("Proof is required.");
+            return;
+          }
+          const trimmed = reason.trim();
+          if (!trimmed) {
+            setMessage("A rejection reason is required.");
+            return;
+          }
+          await requestJson(`/api/dispatch/load/${encodeURIComponent(loadId)}/proof/reject`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ reason }),
+            body: JSON.stringify({ proofId, reason: trimmed }),
           });
           setMessage("LIVE proof rejected and settlement held.");
         } catch (error) {
@@ -51,8 +83,24 @@ function ProofRejectHoldForm({ loadId }: { loadId: string }) {
     >
       <p className="text-xs font-semibold uppercase tracking-wide text-amber-200">LIVE proof → settlement hold</p>
       <p className="text-[11px] text-slate-400">
-        Writes Prisma proof REJECTED and settlement HELD. DEMO L001 holds are not this record.
+        Rejects the selected received proof and holds settlement. A verified proof stays verified.
       </p>
+      {receivable.length === 0 ? (
+        <p className="text-xs text-slate-400">No received proof is available to reject.</p>
+      ) : (
+        <select
+          className="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs text-slate-100"
+          value={proofId}
+          onChange={(event) => setProofId(event.target.value)}
+        >
+          <option value="">Select a received proof</option>
+          {receivable.map((proof) => (
+            <option key={proof.id} value={proof.id}>
+              {proof.proofType} · {proof.status}
+            </option>
+          ))}
+        </select>
+      )}
       <textarea
         className="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs text-slate-100"
         value={reason}
@@ -61,13 +109,172 @@ function ProofRejectHoldForm({ loadId }: { loadId: string }) {
       />
       <button
         type="submit"
-        disabled={busy}
+        disabled={busy || receivable.length === 0}
         className="rounded border border-amber-400/50 px-3 py-1.5 text-xs text-amber-50 hover:bg-amber-900/40 disabled:opacity-50"
       >
         {busy ? "Saving…" : "Reject proof and hold settlement"}
       </button>
       {message ? <p className="text-xs text-slate-200">{message}</p> : null}
     </form>
+  );
+}
+
+function ProofVerifyForm({ loadId }: { loadId: string }) {
+  const [proofs, setProofs] = useState<Array<{ id: string; status: string; proofType: string }>>([]);
+  const [proofType, setProofType] = useState("POD");
+  const [evidenceId, setEvidenceId] = useState("");
+  const [proofId, setProofId] = useState("");
+  const [confirm, setConfirm] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    requestJson<{ proofs: Array<{ id: string; status: string; proofType: string }> }>(
+      `/api/dispatch/load/${encodeURIComponent(loadId)}/proof/verify`,
+    )
+      .then((body) => {
+        if (!cancelled) setProofs(body.proofs ?? []);
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) setMessage(getErrorMessage(error));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [loadId]);
+
+  const verifiable = proofs.filter((proof) => proof.status !== "REJECTED");
+
+  return (
+    <div className="mt-4 space-y-3">
+      <form
+        className="space-y-2 rounded border border-slate-700 bg-slate-950/40 p-3"
+        onSubmit={async (event) => {
+          event.preventDefault();
+          setBusy(true);
+          setMessage(null);
+          try {
+            const reference = evidenceId.trim();
+            if (!reference) {
+              setMessage("Evidence reference is required.");
+              return;
+            }
+            const created = await requestJson<{
+              proof: { id: string; status: string; proofType: string };
+              duplicate: boolean;
+            }>(`/api/dispatch/load/${encodeURIComponent(loadId)}/proof`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ proofType, evidenceId: reference }),
+            });
+            setProofs((current) =>
+              current.some((proof) => proof.id === created.proof.id) ? current : [...current, created.proof],
+            );
+            setMessage(
+              created.duplicate
+                ? "That proof is already stored for this load."
+                : "Proof received. It is not verified.",
+            );
+          } catch (error) {
+            setMessage(getErrorMessage(error));
+          } finally {
+            setBusy(false);
+          }
+        }}
+      >
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-200">Submit delivery proof</p>
+        <p className="text-[11px] text-slate-400">
+          Records a received proof only when this load already has stored operational evidence. It does not upload a file, accept a web address, or mark the proof verified.
+        </p>
+        <input
+          className="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs text-slate-100"
+          value={evidenceId}
+          onChange={(event) => setEvidenceId(event.target.value)}
+          placeholder="Operational evidence id"
+          autoComplete="off"
+        />
+        <select
+          className="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs text-slate-100"
+          value={proofType}
+          onChange={(event) => setProofType(event.target.value)}
+        >
+          <option value="POD">POD</option>
+          <option value="BOL">BOL</option>
+          <option value="PHOTO">PHOTO</option>
+          <option value="SIGNATURE">SIGNATURE</option>
+          <option value="OTHER">OTHER</option>
+        </select>
+        <button
+          type="submit"
+          disabled={busy}
+          className="rounded border border-slate-500 px-3 py-1.5 text-xs text-slate-100 hover:bg-slate-800 disabled:opacity-50"
+        >
+          {busy ? "Saving…" : "Submit received proof"}
+        </button>
+      </form>
+    <form
+      className="mt-4 space-y-2 rounded border border-teal-500/30 bg-slate-950/40 p-3"
+      onSubmit={async (event) => {
+        event.preventDefault();
+        setBusy(true);
+        setMessage(null);
+        try {
+          if (!proofId) {
+            setMessage("Proof is required.");
+            return;
+          }
+          if (!confirm) {
+            setMessage("Proof verification requires an explicit operator confirmation.");
+            return;
+          }
+          await requestJson(`/api/dispatch/load/${encodeURIComponent(loadId)}/proof/verify`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ proofId, confirm: true }),
+          });
+          setMessage("Stored proof verified. The settlement hold is unchanged.");
+        } catch (error) {
+          setMessage(getErrorMessage(error));
+        } finally {
+          setBusy(false);
+        }
+      }}
+    >
+      <p className="text-xs font-semibold uppercase tracking-wide text-teal-200">LIVE proof verification</p>
+      <p className="text-[11px] text-slate-400">
+        Verifies a stored proof and records POD verified. A settlement hold stays as stored.
+      </p>
+      {verifiable.length === 0 ? (
+        <p className="text-xs text-slate-400">No stored proof is available to verify.</p>
+      ) : (
+        <select
+          className="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs text-slate-100"
+          value={proofId}
+          onChange={(event) => setProofId(event.target.value)}
+        >
+          <option value="">Select a stored proof</option>
+          {verifiable.map((proof) => (
+            <option key={proof.id} value={proof.id}>
+              {proof.proofType} · {proof.status}
+            </option>
+          ))}
+        </select>
+      )}
+      <label className="flex items-center gap-2 text-xs text-slate-200">
+        <input type="checkbox" checked={confirm} onChange={(event) => setConfirm(event.target.checked)} />
+        I am verifying this stored proof.
+      </label>
+      <button
+        type="submit"
+        disabled={busy || verifiable.length === 0}
+        className="rounded border border-teal-400/50 px-3 py-1.5 text-xs text-teal-50 hover:bg-teal-900/40 disabled:opacity-50"
+      >
+        {busy ? "Saving…" : "Verify stored proof"}
+      </button>
+      {message ? <p className="text-xs text-slate-200">{message}</p> : null}
+    </form>
+    </div>
   );
 }
 
@@ -78,11 +285,12 @@ type Props = {
   refreshKey?: number;
 };
 
-type DetailTab = "overview" | "assignment" | "proof" | "documents" | "exceptions" | "settlement";
+type DetailTab = "overview" | "assignment" | "delivery" | "proof" | "documents" | "exceptions" | "settlement";
 
 const TABS: { id: DetailTab; label: string }[] = [
   { id: "overview", label: "Overview" },
   { id: "assignment", label: "Assignment" },
+  { id: "delivery", label: "Delivery" },
   { id: "proof", label: "Proof / Evidence" },
   { id: "documents", label: "Documents" },
   { id: "exceptions", label: "Exceptions" },
@@ -157,6 +365,7 @@ export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey
 
   const readinessReasons = getJsonStringArray(workflow?.readiness?.reasonCodes);
   const releaseReasons = getJsonStringArray(workflow?.latestRelease?.reasonCodes);
+  const liveReview = buildLiveLoadReview(load.id, workflow, workflowError);
 
   return (
     <div className="flex h-full flex-col">
@@ -330,6 +539,8 @@ export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey
           </section>
         ) : null}
 
+        {tab === "delivery" ? <LoadDeliveryScreen loadId={load.id} /> : null}
+
         {tab === "proof" ? (
           <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
             <h3 className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -348,6 +559,7 @@ export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey
                 Open release workflow
               </Link>
             </div>
+            <ProofVerifyForm loadId={load.id} />
             <ProofRejectHoldForm loadId={load.id} />
           </section>
         ) : null}
@@ -392,6 +604,31 @@ export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey
             ) : (
               <p className="text-sm text-slate-300">No release blockers or holds are currently recorded for this load.</p>
             )}
+            <div className="mt-4 space-y-3">
+              <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-400">Stored workflow review</h4>
+              <p className="text-xs text-slate-500">
+                Severity and next steps come from the stored readiness, release, and pre-trip records. This review does not resolve them.
+              </p>
+              {workflowLoading ? (
+                <p className="text-sm text-slate-300">The stored workflow snapshot is still loading.</p>
+              ) : liveReview.length === 0 ? (
+                <p className="text-sm text-slate-300">No stored blocker is recorded on this snapshot.</p>
+              ) : (
+                liveReview.map((item) => (
+                  <article key={item.id} className="rounded border border-slate-800 bg-slate-950/40 p-3">
+                    <p className="text-xs font-bold uppercase tracking-wide text-amber-200">
+                      {item.severity} · {item.stage}
+                    </p>
+                    <p className="mt-2 text-sm text-white">{item.explanation}</p>
+                    <p className="mt-1 text-xs text-slate-400">{item.recommendedAction}</p>
+                    <p className="mt-1 text-xs text-slate-500">Recorded outcome: {item.recordedOutcome}</p>
+                    <Link href={item.href} className="mt-2 inline-flex text-xs font-semibold text-teal-200 underline">
+                      {item.hrefLabel}
+                    </Link>
+                  </article>
+                ))
+              )}
+            </div>
           </section>
         ) : null}
 
@@ -402,9 +639,7 @@ export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey
               Settlement readiness
             </h3>
             <p className="text-sm text-slate-300">
-              This Step 12 integration preserves the existing settlement surfaces. Dispatch release history and pre-trip
-              evidence are now available from authoritative backend workflow records. Driver-week payroll remains at
-              /settlements (STL-* identity). loadId is highlighting only.
+              This opens the live settlement records and proof holds for this load. It does not open the training payroll workbook.
             </p>
             <ExistingDocumentNavAnchor
               href={existingSettlementWorkflowHref({
@@ -413,8 +648,9 @@ export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey
               })}
               className="mt-3 inline-flex rounded border border-teal-700 px-3 py-1.5 text-xs font-medium text-teal-100 hover:bg-teal-950/40"
             >
-              Open driver-week payroll
+              Open live settlements
             </ExistingDocumentNavAnchor>
+            <SambaIntelligencePanel loadId={load.id} />
             {workflow?.latestRelease ? (
               <div className="mt-4 rounded border border-slate-800 bg-slate-950/40 p-3 text-sm text-slate-200">
                 Latest release: {workflow.latestRelease.disposition} · {formatShortDateTime(workflow.latestRelease.evaluatedAt)}
@@ -433,6 +669,7 @@ export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey
           <Link href={`/trip-release/${load.id}`} className="rounded border border-slate-600 bg-slate-800 px-2 py-1.5 text-xs font-medium text-slate-100 hover:bg-slate-700">
             Dispatch release
           </Link>
+          <LoadPickupAuthorizationLinks loadId={load.id} />
           {workflow?.readiness ? (
             <span className="rounded border border-slate-700 bg-slate-900 px-2 py-1.5 text-xs text-slate-300">
               Readiness {workflow.readiness.status} · {formatShortDateTime(workflow.readiness.evaluatedAt)}

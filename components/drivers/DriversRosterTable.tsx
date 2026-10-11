@@ -116,6 +116,9 @@ function DriverEligibilityReviewControls({ driverId, enabled }: { driverId: stri
         Mark eligible
       </button>
       {message ? <span className="text-[11px] text-slate-300">{message}</span> : null}
+      <p className="w-full text-[11px] text-slate-500">
+        SambaSafety findings do not set this disposition. Eligibility remains the operator review.
+      </p>
     </div>
   );
 }

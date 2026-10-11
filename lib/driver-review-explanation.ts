@@ -57,6 +57,7 @@ export type DriverReviewRequirement = {
   actionStatus?: string | null;
   requiredAction?: string | null;
   resolutionStatus?: string | null;
+  affirmationStatus?: string | null;
 };
 
 export function buildRequirementReviewIssue(

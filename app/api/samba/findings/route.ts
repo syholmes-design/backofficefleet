@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 import { evaluateSambaIntelligence, listSambaFindings } from "@/lib/services/samba/sambaIntelligenceService";
+import { rejectDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
 
 type RouteUser = {
   id?: string;
@@ -42,6 +43,7 @@ export async function GET(request: NextRequest) {
     const fleetId = fleetIdFrom(user, request);
     if (!fleetId) throw Object.assign(new Error("fleetId is required"), { statusCode: 422 });
     const relatedEntityId = request.nextUrl.searchParams.get("relatedEntityId") ?? request.nextUrl.searchParams.get("entityId");
+    if (relatedEntityId) rejectDemoOperationalKey(relatedEntityId, "relatedEntityId");
     return NextResponse.json(await listSambaFindings(user, fleetId, relatedEntityId));
   } catch (error) {
     return errorResponse(error);

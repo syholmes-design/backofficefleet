@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { getErrorMessage, requestJson } from "@/lib/dispatch-workflow-ui";
+import { isDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
 
 type Finding = {
   id: string;
@@ -85,7 +86,17 @@ function LayerLabel({ children, tone }: { children: string; tone: "fact" | "infe
   );
 }
 
-export function SambaIntelligencePanel({ entityId, loadId, carrierRegistryId }: { entityId?: string; loadId?: string; carrierRegistryId?: string }) {
+export function SambaIntelligencePanel({
+  entityId,
+  loadId,
+  carrierRegistryId,
+  driverId,
+}: {
+  entityId?: string;
+  loadId?: string;
+  carrierRegistryId?: string;
+  driverId?: string;
+}) {
   const [findings, setFindings] = useState<Finding[]>([]);
   const [context, setContext] = useState<ContextPayload | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -93,24 +104,34 @@ export function SambaIntelligencePanel({ entityId, loadId, carrierRegistryId }: 
   const [llm, setLlm] = useState<string>("AI-INTEGRATION-DEPENDENT");
 
   const load = useCallback(async () => {
+    if (isDemoOperationalKey(loadId) || isDemoOperationalKey(driverId)) {
+      setFindings([]);
+      setContext(null);
+      setError("DEMO operational keys are not live SambaSafety evidence.");
+      return;
+    }
     try {
       const params = new URLSearchParams();
       if (loadId) params.set("loadId", loadId);
+      if (driverId) params.set("driverId", driverId);
       if (entityId && !loadId) params.set("authorizationId", entityId);
       if (carrierRegistryId) params.set("carrierRegistryId", carrierRegistryId);
       const query = params.toString();
+      const relatedEntityId = carrierRegistryId ? driverId : driverId || entityId;
       const [next, ctx] = await Promise.all([
         requestJson<{ findings: Finding[]; llm?: { capability?: string } }>(
-          `/api/samba/findings${entityId ? `?relatedEntityId=${encodeURIComponent(entityId)}` : ""}`,
+          `/api/samba/findings${relatedEntityId ? `?relatedEntityId=${encodeURIComponent(relatedEntityId)}` : ""}`,
         ),
         requestJson<ContextPayload>(`/api/samba/context${query ? `?${query}` : ""}`),
       ]);
-      const rows = entityId
+      const matchId = carrierRegistryId || entityId;
+      const rows = matchId
         ? next.findings.filter(
             (row) =>
-              row.explanation.includes(entityId) ||
-              row.fact.includes(entityId) ||
-              row.id === entityId,
+              row.explanation.includes(matchId) ||
+              row.fact.includes(matchId) ||
+              (row.workflowHref?.includes(matchId) ?? false) ||
+              row.id === matchId,
           )
         : next.findings;
       setFindings(rows.filter((row) => row.status === "OPEN" || row.status === "ACKNOWLEDGED"));
@@ -120,7 +141,7 @@ export function SambaIntelligencePanel({ entityId, loadId, carrierRegistryId }: 
     } catch (nextError) {
       setError(getErrorMessage(nextError));
     }
-  }, [carrierRegistryId, entityId, loadId]);
+  }, [carrierRegistryId, driverId, entityId, loadId]);
 
   useEffect(() => {
     void load();
@@ -132,7 +153,11 @@ export function SambaIntelligencePanel({ entityId, loadId, carrierRegistryId }: 
       await requestJson("/api/samba/context", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ loadId: loadId ?? null, carrierRegistryId: carrierRegistryId ?? null }),
+        body: JSON.stringify({
+          loadId: loadId ?? null,
+          driverId: driverId ?? null,
+          carrierRegistryId: carrierRegistryId ?? null,
+        }),
       });
       await load();
     } catch (nextError) {

@@ -20,8 +20,8 @@ type DockView = {
   physicalVerificationNote: string;
 };
 
-export function PickupDockClient() {
-  const [authorizationId, setAuthorizationId] = useState("");
+export function PickupDockClient({ initialAuthorizationId = "" }: { initialAuthorizationId?: string }) {
+  const [authorizationId, setAuthorizationId] = useState(initialAuthorizationId);
   const [token, setToken] = useState("");
   const [arrivingDriverId, setArrivingDriverId] = useState("");
   const [arrivingTractorUnitNumber, setArrivingTractorUnitNumber] = useState("");
