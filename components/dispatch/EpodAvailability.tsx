@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react";
 
-const EpodAvailabilityContext = createContext(true);
+const EpodAvailabilityContext = createContext(false);
 
 export function EpodAvailabilityProvider({
   enabled,

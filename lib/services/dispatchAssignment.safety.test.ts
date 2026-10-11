@@ -390,13 +390,29 @@ test("dispatch assignment readiness, caller role, fleet isolation, and disabled 
     assert.equal(Number(held.grossAmount), 125);
 
     delete process.env.BOF_EPOD_ENABLED;
+    await assert.rejects(
+      () => proof.submitReceivedLoadProof(disabledActor, settlementLoad.id, "POD", "evidence-1"),
+      (error: unknown) => statusOf(error) === 503,
+    );
+    process.env.BOF_EPOD_ENABLED = "";
+    await assert.rejects(
+      () => proof.verifyStoredLoadProof(disabledActor, settlementLoad.id, "proof-1", true),
+      (error: unknown) => statusOf(error) === 503,
+    );
+    process.env.BOF_EPOD_ENABLED = "FALSE";
+    await assert.rejects(
+      () => proof.rejectProofAndHoldSettlement(disabledActor, settlementLoad.id, "proof-1", "Damage"),
+      (error: unknown) => statusOf(error) === 503,
+    );
+    const stillHeld = await prisma.settlement.findUniqueOrThrow({ where: { id: settlement.id } });
+    assert.equal(stillHeld.status, "CREATED");
+    assert.equal(Number(stillHeld.grossAmount), 125);
+    process.env.BOF_EPOD_ENABLED = "true";
     assert.doesNotThrow(assertEpodEnabled);
     await assert.rejects(
       () => proof.submitReceivedLoadProof(disabledActor, "missing-correction-load", "POD", "evidence-1"),
       (error: unknown) => statusOf(error) === 404,
     );
-    process.env.BOF_EPOD_ENABLED = "true";
-    assert.doesNotThrow(assertEpodEnabled);
 
     const { POST: deliveryPost } = await import("@/app/api/dispatch/load/[loadId]/delivery/route");
     const { POST: photoPost } = await import("@/app/api/dispatch/load/[loadId]/delivery/photos/route");

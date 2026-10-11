@@ -17,21 +17,18 @@ function statusOf(error: unknown) {
     : 0;
 }
 
-test("BOF_EPOD_ENABLED keeps the exact false disable contract", () => {
+test("only the exact value true enables electronic POD", () => {
   try {
-    process.env.BOF_EPOD_ENABLED = "false";
+    for (const value of ["false", "FALSE", "", "1", "yes", "TRUE"]) {
+      process.env.BOF_EPOD_ENABLED = value;
+      assert.equal(isEpodEnabled(), false, value);
+      assert.throws(assertEpodEnabled, (error: unknown) => statusOf(error) === 503);
+    }
+    delete process.env.BOF_EPOD_ENABLED;
     assert.equal(isEpodEnabled(), false);
     assert.throws(assertEpodEnabled, (error: unknown) => statusOf(error) === 503);
 
-    process.env.BOF_EPOD_ENABLED = "FALSE";
-    assert.equal(isEpodEnabled(), true);
-    assert.doesNotThrow(assertEpodEnabled);
-
     process.env.BOF_EPOD_ENABLED = "true";
-    assert.equal(isEpodEnabled(), true);
-    assert.doesNotThrow(assertEpodEnabled);
-
-    delete process.env.BOF_EPOD_ENABLED;
     assert.equal(isEpodEnabled(), true);
     assert.doesNotThrow(assertEpodEnabled);
   } finally {
@@ -83,6 +80,8 @@ test("the delivery tab hides disabled POD actions", () => {
   assert.match(detail, /Electronic POD is disabled/);
   assert.match(detail, /item\.id !== "delivery"/);
   assert.match(layout, /isEpodEnabled\(\)/);
+  assert.match(readFileSync("lib/services/epod/deliveryLifecycle.ts", "utf8"), /BOF_EPOD_ENABLED === "true"/);
+  assert.match(readFileSync("components/dispatch/EpodAvailability.tsx", "utf8"), /createContext\(false\)/);
   assert.match(layout, /EpodAvailabilityProvider/);
   assert.match(detail, /\/api\/dispatch\/load\/\$\{encodeURIComponent\(loadId\)\}\/proof\/reject/);
   assert.match(detail, /ProofRejectHoldForm/);

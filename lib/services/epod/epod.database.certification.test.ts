@@ -173,6 +173,8 @@ test("isolated database persists electronic POD and keeps the settlement hold", 
   const outsiderSession = asSession(outsider);
   const loadIds = [created.load.id];
 
+  const previousFlag = process.env.BOF_EPOD_ENABLED;
+  process.env.BOF_EPOD_ENABLED = "true";
   try {
     await assert.rejects(() => saveCargoPhoto(otherSession, created.load.id, "LOADED_TRAILER", jpeg, "image/jpeg", {}), (error: unknown) => statusOf(error) === 403);
     await assert.rejects(() => saveCargoPhoto(adminSession, created.load.id, "LOADED_TRAILER", jpeg, "image/jpeg", {}), (error: unknown) => statusOf(error) === 403);
@@ -272,6 +274,8 @@ test("isolated database persists electronic POD and keeps the settlement hold", 
     assert.equal(results.filter((result) => result.status === "fulfilled").length, 1);
     assert.equal(results.filter((result) => result.status === "rejected").length, 1);
   } finally {
+    if (previousFlag === undefined) delete process.env.BOF_EPOD_ENABLED;
+    else process.env.BOF_EPOD_ENABLED = previousFlag;
     const evidence = await prisma.operationalEvidence.findMany({ where: { loadId: { in: loadIds } }, select: { storageKey: true } });
     const { removeEvidenceFile } = await import("@/lib/services/epod/evidenceStore");
     for (const row of evidence) {

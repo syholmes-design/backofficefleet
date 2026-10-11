@@ -62,7 +62,7 @@ export function isDeliveryStage(value: string): value is DeliveryStage {
 }
 
 export function isEpodEnabled() {
-  return process.env.BOF_EPOD_ENABLED !== "false";
+  return process.env.BOF_EPOD_ENABLED === "true";
 }
 
 export function assertEpodEnabled() {
