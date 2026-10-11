@@ -21,6 +21,7 @@ import { LoadFileCopilotAdvocatePanel } from "@/components/copilot/LoadFileCopil
 import { SambaIntelligencePanel } from "@/components/operations/SambaIntelligencePanel";
 import { buildLiveLoadReview } from "@/lib/live-load-review";
 import { LoadDeliveryScreen } from "@/components/dispatch/LoadDeliveryScreen";
+import { useEpodEnabled } from "@/components/dispatch/EpodAvailability";
 import { LoadPickupAuthorizationLinks } from "@/components/dispatch/LoadPickupAuthorizationLinks";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
 import { existingSettlementWorkflowHref } from "@/lib/load-file-proof-settlement-display";
@@ -325,6 +326,8 @@ function WorkflowLine({
 }
 
 export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey = 0 }: Props) {
+  const epodEnabled = useEpodEnabled();
+  const visibleTabs = epodEnabled ? TABS : TABS.filter((item) => item.id !== "delivery");
   const [tab, setTab] = useState<DetailTab>("overview");
   const [workflow, setWorkflow] = useState<DispatchLoadWorkflowSnapshot | null>(null);
   const [workflowLoading, setWorkflowLoading] = useState(false);
@@ -403,7 +406,7 @@ export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey
 
       <div className="shrink-0 border-b border-slate-800 px-5 pt-3">
         <nav className="flex gap-1 overflow-x-auto pb-2" aria-label="Load detail sections">
-          {TABS.map((item) => (
+          {visibleTabs.map((item) => (
             <button
               key={item.id}
               type="button"
@@ -539,7 +542,7 @@ export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey
           </section>
         ) : null}
 
-        {tab === "delivery" ? <LoadDeliveryScreen loadId={load.id} /> : null}
+        {epodEnabled && tab === "delivery" ? <LoadDeliveryScreen loadId={load.id} /> : null}
 
         {tab === "proof" ? (
           <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
@@ -559,8 +562,16 @@ export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey
                 Open release workflow
               </Link>
             </div>
-            <ProofVerifyForm loadId={load.id} />
-            <ProofRejectHoldForm loadId={load.id} />
+            {epodEnabled ? (
+              <>
+                <ProofVerifyForm loadId={load.id} />
+                <ProofRejectHoldForm loadId={load.id} />
+              </>
+            ) : (
+              <p className="mt-4 text-sm text-slate-400">
+                Electronic POD is disabled. Delivery evidence, proof submission, verification, and rejection are unavailable.
+              </p>
+            )}
           </section>
         ) : null}
 

@@ -63,8 +63,16 @@ export async function recordOperatingProcessEvent(
   store: OperatingProcessStore,
   user: SessionUserLike | null | undefined,
   input: RecordEventInput,
+  options?: { authorizedFleetId?: string },
 ) {
-  assertTenant(user, input.fleetId);
+  if (options?.authorizedFleetId) {
+    if (!user?.id) throw new ProcessIntelligenceError("AUTH_REQUIRED", 401);
+    if (options.authorizedFleetId !== input.fleetId) {
+      throw new ProcessIntelligenceError("TENANT_ACCESS_DENIED", 403);
+    }
+  } else {
+    assertTenant(user, input.fleetId);
+  }
   if (input.loadId) {
     const load = await store.getLoad(input.fleetId, input.loadId);
     if (!load) throw new ProcessIntelligenceError("Load not found for tenant", 404);

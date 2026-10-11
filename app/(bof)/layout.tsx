@@ -1,8 +1,10 @@
 import { AppShell } from "@/components/AppShell";
 import { BofDemoDataShell } from "@/components/BofDemoDataShell";
+import { EpodAvailabilityProvider } from "@/components/dispatch/EpodAvailability";
 import { BofRouteBadge } from "@/components/dev/BofRouteBadge";
 import { OperatorSurfaceModeBanner } from "@/components/operations/OperatorSurfaceModeBanner";
 import { getBofData } from "@/lib/load-bof-data";
+import { isEpodEnabled } from "@/lib/services/epod/deliveryLifecycle";
 
 export default function BofLayout({
   children,
@@ -13,9 +15,11 @@ export default function BofLayout({
   return (
     <AppShell>
       <BofDemoDataShell seed={seed}>
-        <OperatorSurfaceModeBanner />
-        {children}
-        <BofRouteBadge />
+        <EpodAvailabilityProvider enabled={isEpodEnabled()}>
+          <OperatorSurfaceModeBanner />
+          {children}
+          <BofRouteBadge />
+        </EpodAvailabilityProvider>
       </BofDemoDataShell>
     </AppShell>
   );

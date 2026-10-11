@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { assertEpodEnabled } from "@/lib/services/epod/deliveryLifecycle";
 import { proofRouteStatus, submitReceivedLoadProof } from "@/lib/services/proofSettlementHoldService";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -9,7 +10,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function errorResponse(error: unknown) {
   const statusCode = proofRouteStatus(error);
   const message =
-    statusCode === 401 || statusCode === 403 || statusCode === 404 || statusCode === 409 || statusCode === 422
+    statusCode === 401 || statusCode === 403 || statusCode === 404 || statusCode === 409 || statusCode === 422 || statusCode === 503
       ? error instanceof Error
         ? error.message
         : "Request failed"
@@ -18,6 +19,11 @@ function errorResponse(error: unknown) {
 }
 
 export async function POST(request: NextRequest, context: { params: Promise<{ loadId: string }> }) {
+  try {
+    assertEpodEnabled();
+  } catch (error) {
+    return errorResponse(error);
+  }
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized", code: "AUTH_REQUIRED" }, { status: 401 });

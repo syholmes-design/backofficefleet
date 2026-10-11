@@ -1,15 +1,27 @@
 import { auth } from "@/auth";
+import { assertEpodEnabled } from "@/lib/services/epod/deliveryLifecycle";
 import { advanceDelivery, getEpod } from "@/lib/services/epod/epodPersistence";
 import { proofRouteStatus } from "@/lib/services/proofSettlementHoldService";
 import { NextRequest, NextResponse } from "next/server";
 
 function fail(error: unknown) {
   const status = proofRouteStatus(error);
-  const message = status >= 500 ? "Internal server error" : error instanceof Error ? error.message : "Request failed";
+  const message = status >= 500 && status !== 503 ? "Internal server error" : error instanceof Error ? error.message : "Request failed";
   return NextResponse.json({ error: message }, { status });
 }
 
+function disabledEpodResponse() {
+  try {
+    assertEpodEnabled();
+    return null;
+  } catch (error) {
+    return fail(error);
+  }
+}
+
 export async function GET(_request: NextRequest, context: { params: Promise<{ loadId: string }> }) {
+  const disabled = disabledEpodResponse();
+  if (disabled) return disabled;
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized", code: "AUTH_REQUIRED" }, { status: 401 });
   const { loadId } = await context.params;
@@ -21,6 +33,8 @@ export async function GET(_request: NextRequest, context: { params: Promise<{ lo
 }
 
 export async function POST(request: NextRequest, context: { params: Promise<{ loadId: string }> }) {
+  const disabled = disabledEpodResponse();
+  if (disabled) return disabled;
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized", code: "AUTH_REQUIRED" }, { status: 401 });
   const { loadId } = await context.params;

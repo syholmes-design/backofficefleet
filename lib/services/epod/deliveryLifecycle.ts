@@ -61,8 +61,12 @@ export function isDeliveryStage(value: string): value is DeliveryStage {
   return (DELIVERY_STAGES as readonly string[]).includes(value);
 }
 
+export function isEpodEnabled() {
+  return process.env.BOF_EPOD_ENABLED !== "false";
+}
+
 export function assertEpodEnabled() {
-  if (process.env.BOF_EPOD_ENABLED === "false") {
+  if (!isEpodEnabled()) {
     throw Object.assign(new Error("Electronic POD is disabled."), { statusCode: 503 });
   }
 }

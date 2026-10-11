@@ -27,8 +27,14 @@ export type AuditRecordInput = {
   metadata?: Record<string, unknown> | null;
 };
 
-export async function createAuditRecord(input: AuditRecordInput) {
-  return prisma.auditEvent.create({
+type AuditEventWriter = {
+  auditEvent: {
+    create: typeof prisma.auditEvent.create;
+  };
+};
+
+export async function createAuditRecord(input: AuditRecordInput, db: AuditEventWriter = prisma) {
+  return db.auditEvent.create({
     data: {
       actorId: input.actorId ?? null,
       actorEmail: input.actorEmail ?? null,

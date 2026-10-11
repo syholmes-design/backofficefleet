@@ -8,6 +8,7 @@ import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-sto
 import type { OperatingProcessStore } from "@/lib/process-intelligence/store";
 import { ProcessIntelligenceError } from "@/lib/process-intelligence/types";
 import { prisma } from "@/lib/prisma";
+import { assertEpodEnabled } from "@/lib/services/epod/deliveryLifecycle";
 import { findLoadByOperatorKey } from "@/lib/services/loadService";
 import { rejectDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
 
@@ -184,6 +185,7 @@ export async function rejectProofAndHoldSettlement(
   proofId: string,
   reason: string,
 ) {
+  assertEpodEnabled();
   requireSessionUser(sessionUser);
   const actor = sessionUser as SessionUserLike & { id: string };
   rejectDemoOperationalKey(loadKey, "loadId");
@@ -252,6 +254,7 @@ export async function submitReceivedLoadProof(
   proofType: string,
   evidenceId: string,
 ) {
+  assertEpodEnabled();
   requireSessionUser(sessionUser);
   const actor = sessionUser as SessionUserLike & { id: string };
   const supportedType = assertProofSubmission(loadKey, proofType);
@@ -328,6 +331,7 @@ export async function submitReceivedLoadProof(
 }
 
 export async function listStoredLoadProofs(sessionUser: SessionUserLike | null | undefined, loadKey: string) {
+  assertEpodEnabled();
   requireSessionUser(sessionUser);
   const actor = sessionUser as SessionUserLike & { id: string };
   rejectDemoOperationalKey(loadKey, "loadId");
@@ -353,6 +357,7 @@ export async function verifyStoredLoadProof(
   proofId: string,
   confirm: boolean,
 ) {
+  assertEpodEnabled();
   requireSessionUser(sessionUser);
   const actor = sessionUser as SessionUserLike & { id: string };
   rejectDemoOperationalKey(loadKey, "loadId");

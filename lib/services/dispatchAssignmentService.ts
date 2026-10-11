@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { recordOperatingProcessEvent } from "@/lib/process-intelligence/operating-event-service";
 import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
+import { lockDriverReadinessWrite } from "@/lib/services/readinessService";
 import { findLoadByOperatorKey } from "@/lib/services/loadService";
 import { rejectDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
 
@@ -25,6 +26,29 @@ function requireSessionUser(sessionUser: SessionUserLike | null | undefined) {
   if (!sessionUser?.id) {
     throw Object.assign(new Error("Unauthorized"), { statusCode: 401 });
   }
+}
+
+async function recordAssignmentRefusal(input: {
+  actorId: string;
+  actorEmail: string | null | undefined;
+  fleetId: string;
+  loadId: string;
+  driverId: string;
+  reason: string;
+}) {
+  await createAuditRecord({
+    action: "ACCESS_DENIED",
+    entityType: "DispatchAssignment",
+    tenantId: input.fleetId,
+    actorId: input.actorId,
+    actorEmail: input.actorEmail ?? null,
+    details: {
+      event: "assignment.refused",
+      reason: input.reason,
+      loadId: input.loadId,
+      driverId: input.driverId,
+    },
+  });
 }
 
 async function logUnauthorizedDispatchAccess(
@@ -99,7 +123,7 @@ export async function createAssignment(
   rejectDemoOperationalKey(driverId, "driverId");
   rejectDemoOperationalKey(tractorId, "tractorId");
   if (trailerId) rejectDemoOperationalKey(trailerId, "trailerId");
-  const actorId = sessionUser!.id;
+  const actorId = sessionUser!.id!;
 
   try {
     const assignment = await prisma.$transaction(async (tx) => {
@@ -112,6 +136,25 @@ export async function createAssignment(
       if (!access.allowed) {
         await logUnauthorizedDispatchAccess(sessionUser, load.fleetId, null, access.reason ?? "TENANT_ACCESS_DENIED");
         throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
+      }
+
+      const driverCaller = (sessionUser?.memberships ?? []).find(
+        (membership) =>
+          membership.fleetId === load.fleetId &&
+          membership.roleCode === "DRIVER" &&
+          membership.status !== "INACTIVE" &&
+          membership.status !== "INVITED",
+      );
+      if (driverCaller) {
+        await recordAssignmentRefusal({
+          actorId,
+          actorEmail: sessionUser?.email,
+          fleetId: load.fleetId,
+          loadId: load.id,
+          driverId,
+          reason: "DRIVER_ROLE",
+        });
+        throw Object.assign(new Error("A driver cannot create a dispatch assignment."), { statusCode: 403 });
       }
 
       const driver = await tx.driver.findUnique({ where: { id: driverId } });
@@ -153,6 +196,33 @@ export async function createAssignment(
         }
       }
 
+      // Same transaction-scoped lock taken by the readiness writers before they insert a score.
+      await lockDriverReadinessWrite(tx, driver.id);
+      const readiness = await tx.driverReadinessScore.findFirst({
+        where: { driverId: driver.id, fleetId: load.fleetId },
+        orderBy: [{ evaluatedAt: "desc" }, { createdAt: "desc" }],
+        select: { status: true },
+      });
+      if (!readiness || (readiness.status !== "READY" && readiness.status !== "CONDITIONAL")) {
+        const reason = !readiness ? "MISSING_READINESS" : readiness.status === "NOT_READY" ? "NOT_READY" : "UNSUPPORTED_READINESS";
+        await recordAssignmentRefusal({
+          actorId,
+          actorEmail: sessionUser?.email,
+          fleetId: load.fleetId,
+          loadId: load.id,
+          driverId: driver.id,
+          reason,
+        });
+        throw Object.assign(
+          new Error(
+            readiness?.status === "NOT_READY"
+              ? "ASSIGNMENT BLOCKED — DRIVER NOT READY"
+              : "ASSIGNMENT BLOCKED — NO CURRENT DRIVER READINESS SCORE",
+          ),
+          { statusCode: 409 },
+        );
+      }
+
       const [loadConflict, driverConflict, tractorConflict, trailerConflict] = await Promise.all([
         tx.dispatchAssignment.findFirst({
           where: { loadId: load.id, status: "ACTIVE" },
@@ -187,7 +257,7 @@ export async function createAssignment(
         throw Object.assign(new Error("Trailer already has an active assignment."), { statusCode: 409 });
       }
 
-      return tx.dispatchAssignment.create({
+      const created = await tx.dispatchAssignment.create({
         data: {
           fleetId: load.fleetId,
           loadId: load.id,
@@ -199,9 +269,28 @@ export async function createAssignment(
           assignedByUserId: actorId,
         },
       });
+      await createAuditRecord(
+        {
+          action: "CREATED",
+          entityType: "DispatchAssignment",
+          entityId: created.id,
+          tenantId: load.fleetId,
+          actorId,
+          actorEmail: sessionUser?.email ?? null,
+          details: {
+            event: "dispatch.assigned",
+            loadId: load.id,
+            driverId: driver.id,
+            readinessStatus: readiness.status,
+          },
+        },
+        tx,
+      );
+      return created;
     });
     const store = getOperatingProcessStore();
     const assignmentLineage = { sourceSystem: "BOF" as const, sourceRecordId: assignment.id };
+    const recordedFleet = { authorizedFleetId: assignment.fleetId };
     await recordOperatingProcessEvent(store, sessionUser, {
       fleetId: assignment.fleetId,
       loadId: assignment.loadId,
@@ -216,7 +305,7 @@ export async function createAssignment(
       relatedRecordType: "DispatchAssignment",
       relatedRecordId: assignment.id,
       lineage: assignmentLineage,
-    });
+    }, recordedFleet);
     await recordOperatingProcessEvent(store, sessionUser, {
       fleetId: assignment.fleetId,
       loadId: assignment.loadId,
@@ -231,7 +320,7 @@ export async function createAssignment(
       relatedRecordType: "DispatchAssignment",
       relatedRecordId: assignment.id,
       lineage: assignmentLineage,
-    });
+    }, recordedFleet);
     await recordOperatingProcessEvent(store, sessionUser, {
       fleetId: assignment.fleetId,
       loadId: assignment.loadId,
@@ -246,7 +335,7 @@ export async function createAssignment(
       relatedRecordType: "DispatchAssignment",
       relatedRecordId: assignment.id,
       lineage: assignmentLineage,
-    });
+    }, recordedFleet);
     if (assignment.trailerEquipmentId) {
       await recordOperatingProcessEvent(store, sessionUser, {
         fleetId: assignment.fleetId,
@@ -262,7 +351,7 @@ export async function createAssignment(
         relatedRecordType: "DispatchAssignment",
         relatedRecordId: assignment.id,
         lineage: { sourceSystem: "BOF", sourceRecordId: assignment.trailerEquipmentId },
-      });
+      }, recordedFleet);
     }
     return assignment;
   } catch (error) {

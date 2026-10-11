@@ -1,9 +1,16 @@
 import { auth } from "@/auth";
+import { assertEpodEnabled } from "@/lib/services/epod/deliveryLifecycle";
 import { saveAcknowledgment } from "@/lib/services/epod/epodPersistence";
 import { proofRouteStatus } from "@/lib/services/proofSettlementHoldService";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest, context: { params: Promise<{ loadId: string }> }) {
+  try {
+    assertEpodEnabled();
+  } catch (error) {
+    const status = proofRouteStatus(error);
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Electronic POD is disabled." }, { status });
+  }
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized", code: "AUTH_REQUIRED" }, { status: 401 });
   const { loadId } = await context.params;

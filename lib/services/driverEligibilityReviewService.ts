@@ -7,7 +7,7 @@ import {
   QUALIFICATION_POLICY_VERSION,
   writeQualificationSnapshot,
 } from "@/lib/services/qualificationService";
-import { READINESS_POLICY_VERSION } from "@/lib/services/readinessService";
+import { lockDriverReadinessWrite, READINESS_POLICY_VERSION } from "@/lib/services/readinessService";
 import { rejectDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
 
 export type EligibilityReviewDisposition = "ELIGIBLE" | "INELIGIBLE";
@@ -64,18 +64,21 @@ export async function recordDriverEligibilityReview(
     summary: nextReason,
     policyVersion: QUALIFICATION_POLICY_VERSION,
   });
-  const readiness = await prisma.driverReadinessScore.create({
-    data: {
-      driverId: driver.id,
-      driverIntakeId: intakeId,
-      fleetId: driver.fleetId,
-      evaluatedAt: new Date(),
-      evaluatedByUserId: actor.id,
-      status: eligible ? "READY" : "NOT_READY",
-      summary: nextReason,
-      reasonCodes: (eligible ? ["MANUAL_READINESS_REVIEW"] : ["QUALIFICATION_NOT_COMPLETE"]) as Prisma.InputJsonValue,
-      policyVersion: READINESS_POLICY_VERSION,
-    },
+  const readiness = await prisma.$transaction(async (tx) => {
+    await lockDriverReadinessWrite(tx, driver.id);
+    return tx.driverReadinessScore.create({
+      data: {
+        driverId: driver.id,
+        driverIntakeId: intakeId,
+        fleetId: driver.fleetId,
+        evaluatedAt: new Date(),
+        evaluatedByUserId: actor.id,
+        status: eligible ? "READY" : "NOT_READY",
+        summary: nextReason,
+        reasonCodes: (eligible ? ["MANUAL_READINESS_REVIEW"] : ["QUALIFICATION_NOT_COMPLETE"]) as Prisma.InputJsonValue,
+        policyVersion: READINESS_POLICY_VERSION,
+      },
+    });
   });
 
   await createAuditRecord({

@@ -363,6 +363,10 @@ export function evaluateReadiness(inputs: ReadinessInputs): ReadinessEvaluation 
   };
 }
 
+export async function lockDriverReadinessWrite(db: Prisma.TransactionClient, driverId: string) {
+  await db.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`bof-driver-readiness:${driverId}`}))`;
+}
+
 export async function writeReadinessScore(
   sessionUser: SessionUserLike | null | undefined,
   driverId: string,
@@ -370,18 +374,21 @@ export async function writeReadinessScore(
   fleetId: string,
   evaluation: ReadinessEvaluation,
 ) {
-  const created = await prisma.driverReadinessScore.create({
-    data: {
-      driverId,
-      driverIntakeId: intakeId,
-      fleetId,
-      evaluatedAt: new Date(),
-      evaluatedByUserId: sessionUser?.id ?? null,
-      status: evaluation.status,
-      summary: evaluation.summary,
-      reasonCodes: evaluation.reasonCodes as Prisma.InputJsonValue,
-      policyVersion: evaluation.policyVersion,
-    },
+  const created = await prisma.$transaction(async (tx) => {
+    await lockDriverReadinessWrite(tx, driverId);
+    return tx.driverReadinessScore.create({
+      data: {
+        driverId,
+        driverIntakeId: intakeId,
+        fleetId,
+        evaluatedAt: new Date(),
+        evaluatedByUserId: sessionUser?.id ?? null,
+        status: evaluation.status,
+        summary: evaluation.summary,
+        reasonCodes: evaluation.reasonCodes as Prisma.InputJsonValue,
+        policyVersion: evaluation.policyVersion,
+      },
+    });
   });
   const activeAssignment = await prisma.dispatchAssignment.findFirst({
     where: { driverId, fleetId, status: "ACTIVE" },
