@@ -931,6 +931,7 @@ model Fleet {
   requisitions                     Requisition[]
   fmcsaVerifications               FmcsaRegulatoryVerification[]
   sambaFindings                    SambaFinding[]
+  emailMailboxes                   EmailMailbox[]
 
   @@index([status])
   @@index([carrierGroupId, status])
@@ -992,6 +993,8 @@ model User {
   fmcsaVerifications                  FmcsaRegulatoryVerification[]     @relation("FmcsaRegulatoryVerificationActor")
   sambaFindingsCreated                SambaFinding[]                    @relation("SambaFindingCreatedBy")
   sambaFindingsResolved               SambaFinding[]                    @relation("SambaFindingResolvedBy")
+  emailApprovals                      EmailApproval[]                   @relation("EmailApprovalApprover")
+  emailAgentGrantsCreated             EmailAgentGrant[]                 @relation("EmailAgentGrantCreatedBy")
 
   @@index([status])
 }
@@ -2908,4 +2911,236 @@ model TrainingCertification {
 
   @@index([fleetId, outcome, certifiedAt])
   @@index([driverId, outcome])
+}
+
+// ── BOF Email Service ────────────────────────────────────────────────────────
+// Mailboxes are PLATFORM (BOF-owned, e.g. partnerships@nathson.com) or FLEET
+// (owned by one fleet). Access is resolved in lib/email-service/access.ts from
+// FleetMembership roles plus an explicit per-mailbox approver list. Sending is
+// off by default (sendEnabled + EMAIL_SENDING_ENABLED) and always needs a human
+// approval bound to the exact content hash.
+
+enum EmailMailboxScope {
+  PLATFORM
+  FLEET
+}
+
+enum EmailMailboxLane {
+  TRANSACTIONAL
+  CORRESPONDENCE
+}
+
+enum EmailMailboxStatus {
+  PENDING_CREDENTIALS
+  ACTIVE
+  AUTH_FAILED
+  DISABLED
+}
+
+enum EmailDirection {
+  INBOUND
+  OUTBOUND
+}
+
+enum EmailThreadStatus {
+  OPEN
+  WAITING_ON_THEM
+  WAITING_ON_US
+  CLOSED
+}
+
+enum EmailDraftStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  SENDING
+  SENT
+  FAILED
+  CANCELLED
+}
+
+enum EmailApprovalDecision {
+  APPROVED
+  REJECTED
+}
+
+enum EmailActorKind {
+  USER
+  AGENT
+  SYSTEM
+}
+
+model EmailMailbox {
+  id                       String                  @id @default(cuid())
+  scope                    EmailMailboxScope
+  fleetId                  String?
+  lane                     EmailMailboxLane
+  address                  String                  @unique
+  displayName              String
+  imapHost                 String?
+  imapPort                 Int?
+  smtpHost                 String?
+  smtpPort                 Int?
+  /// IMAP folders the sync worker ingests.
+  syncFolders              String[]                @default([])
+  /// Users who may approve and send from this mailbox (must also have mailbox access).
+  approverUserIds          String[]                @default([])
+  /// When non-empty, recipients must be in these domains (or their subdomains).
+  recipientDomainAllowlist String[]                @default([])
+  sendEnabled              Boolean                 @default(false)
+  status                   EmailMailboxStatus      @default(PENDING_CREDENTIALS)
+  createdAt                DateTime                @default(now())
+  updatedAt                DateTime                @updatedAt
+  fleet                    Fleet?                  @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  credential               EmailMailboxCredential?
+  syncStates               EmailSyncState[]
+  threads                  EmailThread[]
+  messages                 EmailMessage[]
+  drafts                   EmailDraft[]
+  agentGrants              EmailAgentGrant[]
+
+  @@index([scope, status])
+  @@index([fleetId])
+}
+
+/// Envelope-encrypted secret (lib/email-service/credential-vault.ts). No plaintext column.
+/// The key-encryption key lives only in server env (EMAIL_KEK_<VERSION>), never in the DB.
+model EmailMailboxCredential {
+  mailboxId  String       @id
+  username   String
+  keyVersion String
+  wrappedKey String
+  ciphertext String
+  aad        String
+  rotatedAt  DateTime     @default(now())
+  mailbox    EmailMailbox @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
+}
+
+model EmailSyncState {
+  mailboxId           String
+  folder              String
+  uidValidity         BigInt
+  lastUid             BigInt       @default(0)
+  lastSyncedAt        DateTime?
+  lastError           String?
+  consecutiveFailures Int          @default(0)
+  mailbox             EmailMailbox @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
+
+  @@id([mailboxId, folder])
+}
+
+model EmailThread {
+  id            String            @id @default(cuid())
+  mailboxId     String
+  threadKey     String
+  subject       String
+  status        EmailThreadStatus @default(OPEN)
+  lastMessageAt DateTime
+  createdAt     DateTime          @default(now())
+  mailbox       EmailMailbox      @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
+  messages      EmailMessage[]
+  drafts        EmailDraft[]
+  links         EmailEntityLink[]
+
+  @@unique([mailboxId, threadKey])
+  @@index([mailboxId, lastMessageAt])
+}
+
+model EmailMessage {
+  id              String         @id @default(cuid())
+  mailboxId       String
+  threadId        String
+  direction       EmailDirection
+  folder          String
+  imapUid         BigInt?
+  messageIdHeader String
+  inReplyTo       String?
+  references      String[]       @default([])
+  fromAddress     String
+  fromName        String?
+  toAddresses     String[]
+  ccAddresses     String[]       @default([])
+  subject         String
+  /// HTML is converted to text at ingest; raw HTML is not stored.
+  textBody        String
+  receivedAt      DateTime
+  ingestedAt      DateTime       @default(now())
+  mailbox         EmailMailbox   @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
+  thread          EmailThread    @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@unique([mailboxId, messageIdHeader])
+  @@index([mailboxId, receivedAt])
+  @@index([threadId, receivedAt])
+}
+
+model EmailEntityLink {
+  id           String         @id @default(cuid())
+  threadId     String
+  entityType   String
+  entityId     String
+  linkedByKind EmailActorKind
+  linkedById   String
+  linkedAt     DateTime       @default(now())
+  thread       EmailThread    @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@unique([threadId, entityType, entityId])
+  @@index([entityType, entityId])
+}
+
+model EmailDraft {
+  id            String           @id @default(cuid())
+  mailboxId     String
+  threadId      String?
+  inReplyTo     String?
+  toAddresses   String[]
+  ccAddresses   String[]         @default([])
+  subject       String
+  textBody      String
+  status        EmailDraftStatus @default(DRAFT)
+  contentHash   String
+  createdByKind EmailActorKind
+  createdById   String
+  sentMessageId String?
+  lastError     String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  mailbox       EmailMailbox     @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
+  thread        EmailThread?     @relation(fields: [threadId], references: [id], onDelete: SetNull)
+  approval      EmailApproval?
+
+  @@index([mailboxId, status])
+}
+
+/// Human approvals only: approverId references a User row.
+model EmailApproval {
+  draftId     String                @id
+  approverId  String
+  decision    EmailApprovalDecision
+  contentHash String
+  decidedAt   DateTime              @default(now())
+  expiresAt   DateTime
+  note        String?
+  draft       EmailDraft            @relation(fields: [draftId], references: [id], onDelete: Cascade)
+  approver    User                  @relation("EmailApprovalApprover", fields: [approverId], references: [id], onDelete: Restrict)
+}
+
+/// Scoped, expiring access for an AI agent. Scopes cannot include send or approve
+/// (enforced in code and by a CHECK constraint in the migration).
+model EmailAgentGrant {
+  id              String       @id @default(cuid())
+  agentId         String
+  mailboxId       String
+  scopes          String[]
+  folderAllowlist String[]
+  domainAllowlist String[]     @default([])
+  tokenSha256     String       @unique
+  expiresAt       DateTime
+  revokedAt       DateTime?
+  createdById     String
+  createdAt       DateTime     @default(now())
+  mailbox         EmailMailbox @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
+  createdBy       User         @relation("EmailAgentGrantCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([mailboxId])
 }
