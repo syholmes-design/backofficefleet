@@ -7,6 +7,11 @@ import { PrismaAuditSink, PrismaEmailRepository } from "./prisma-repository";
 import { sendingEnabledFromEnv } from "./send-policy";
 import { EmailCore, EmailService } from "./service";
 import { DisabledTransport } from "./transport";
+import type { MailboxConnection } from "./types";
+
+export function sentFolderFor(mailbox: MailboxConnection, env: Record<string, string | undefined> = process.env): string | null {
+  return env.EMAIL_SENT_FOLDER?.trim() || mailbox.syncFolders.find((f) => /(^|[./])sent( items)?$/i.test(f)) || null;
+}
 
 /**
  * Server-only wiring on BOF's existing Prisma client. Import from route handlers and
@@ -15,7 +20,8 @@ import { DisabledTransport } from "./transport";
  * Env (all server-side, Vercel "sensitive"):
  *   EMAIL_KEK_V1            base64 32-byte key-encryption key (credential vault)
  *   EMAIL_SENDING_ENABLED   "true" to allow sending at all (default: off)
- *   EMAIL_SENT_FOLDER       IMAP folder for sent copies (default "INBOX.Sent")
+ *   EMAIL_SENT_FOLDER       optional override for the IMAP folder that receives sent copies
+ *                           (default: the mailbox's synced folder whose name contains "Sent")
  */
 export function createEmailServices(db: PrismaClient, env: Record<string, string | undefined> = process.env) {
   const repo = new PrismaEmailRepository(db);
@@ -28,7 +34,7 @@ export function createEmailServices(db: PrismaClient, env: Record<string, string
 
   // Belt and braces: with sending disabled, no SMTP transport is even constructed.
   const transport = sendingEnabledFromEnv(env)
-    ? new SmtpOutboundTransport(secretFor, { sentFolder: env.EMAIL_SENT_FOLDER ?? "INBOX.Sent" })
+    ? new SmtpOutboundTransport(secretFor, { sentFolder: (mb) => sentFolderFor(mb, env) })
     : new DisabledTransport();
 
   core = new EmailCore(repo, audit, transport, () => ({ globalSendingEnabled: sendingEnabledFromEnv(env), now: new Date() }));

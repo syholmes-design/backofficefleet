@@ -2,12 +2,14 @@ import type { SessionUserLike } from "@/lib/authorization";
 
 import { resolveMailboxCapabilities } from "./access";
 import { contentHash } from "./content-hash";
+import { matchPartner } from "./partner-directory";
 import type { EmailAuditEvent, EmailAuditRecord, EmailAuditSink, EmailRepository, MessageQuery } from "./repository";
 import { evaluateSend, type SendDecision, type SendPolicyConfig } from "./send-policy";
 import { referencedIds, resolveThreadKey, stripMessageId } from "./threading";
 import type { OutboundTransport, SendResult } from "./transport";
 import type {
   Actor,
+  DraftStatus,
   EmailCapability,
   EmailDraft,
   EmailMessage,
@@ -57,6 +59,15 @@ export class EmailCore {
     private readonly policy: () => SendPolicyConfig,
   ) {}
 
+  sendingGloballyEnabled(): boolean {
+    return this.policy().globalSendingEnabled;
+  }
+
+  /** Dry-run of the send gates, for showing the approver why Send is unavailable. */
+  async evaluate(mailbox: MailboxConnection, draft: EmailDraft): Promise<SendDecision> {
+    return evaluateSend(draft, await this.repo.getApproval(draft.id), mailbox, this.policy());
+  }
+
   async record(
     actor: Actor,
     mailbox: MailboxConnection,
@@ -84,6 +95,10 @@ export class EmailCore {
       toAddresses: normalizeAddresses(message.toAddresses),
       ccAddresses: normalizeAddresses(message.ccAddresses),
     };
+    // Already ingested (e.g. re-sync after UIDVALIDITY reset): stop before touching threads,
+    // otherwise a duplicate without reply headers would leave an empty thread behind.
+    const self = await this.repo.findThreadKeys(mailbox.id, [normalized.messageIdHeader]);
+    if (self.size > 0) return null;
     const known = await this.repo.findThreadKeys(mailbox.id, referencedIds(normalized));
     const threadKey = resolveThreadKey(normalized, known);
     const thread = await this.repo.upsertThread(mailbox.id, threadKey, normalized.subject, normalized.receivedAt);
@@ -294,5 +309,75 @@ export class EmailService {
   async linkThread(user: SessionUserLike | null | undefined, mailboxId: string, threadId: string, entityType: string, entityId: string) {
     const { mailbox, actor } = await this.authorize(user, mailboxId, "draft");
     return this.core.link(actor, mailbox, threadId, entityType, entityId);
+  }
+
+  /** Mailbox header data for the inbox: status, last sync, and whether sending is possible at all. */
+  async mailboxOverview(user: SessionUserLike | null | undefined, mailboxId: string) {
+    const { mailbox, caps } = await this.authorize(user, mailboxId, "read");
+    return {
+      mailbox: {
+        id: mailbox.id,
+        address: mailbox.address,
+        displayName: mailbox.displayName,
+        scope: mailbox.scope,
+        status: mailbox.status,
+        sendEnabled: mailbox.sendEnabled,
+        recipientDomainAllowlist: mailbox.recipientDomainAllowlist,
+      },
+      capabilities: [...caps],
+      sendingGloballyEnabled: this.core.sendingGloballyEnabled(),
+      sync: await this.core.repo.getSyncStatus(mailbox.id),
+    };
+  }
+
+  async listThreads(user: SessionUserLike | null | undefined, mailboxId: string, opts: { text?: string; limit?: number } = {}) {
+    const { mailbox } = await this.authorize(user, mailboxId, "read");
+    const limit = Math.min(opts.limit ?? 50, 200);
+    const text = opts.text?.trim();
+    const threads = text
+      ? await this.core.repo.getThreadSummaries([
+          ...new Set((await this.core.repo.queryMessages(mailbox.id, { text, limit: 200 })).map((m) => m.threadId)),
+        ].slice(0, limit))
+      : await this.core.repo.listThreads(mailbox.id, limit);
+    return threads.map((t) => ({ ...t, partner: t.lastFromAddress ? matchPartner(t.lastFromAddress)?.partnerId ?? null : null }));
+  }
+
+  async getThread(user: SessionUserLike | null | undefined, mailboxId: string, threadId: string) {
+    const { mailbox } = await this.authorize(user, mailboxId, "read");
+    const thread = await this.core.repo.getThread(threadId);
+    if (!thread || thread.mailboxId !== mailbox.id) throw new EmailServiceError("Thread not found", 404);
+    const messages = (await this.core.repo.queryMessages(mailbox.id, { threadId, limit: 200 })).sort(
+      (a, b) => a.receivedAt.getTime() - b.receivedAt.getTime(),
+    );
+    const drafts = (await this.core.repo.listDrafts(mailbox.id)).filter((d) => d.threadId === threadId);
+    const links = await this.core.repo.listLinks(threadId);
+    const counterparty = messages.find((m) => m.direction === "INBOUND")?.fromAddress ?? messages[0]?.toAddresses[0];
+    return { thread, messages, drafts, links, suggestedPartner: counterparty ? matchPartner(counterparty) ?? null : null };
+  }
+
+  async listDrafts(user: SessionUserLike | null | undefined, mailboxId: string, statuses?: DraftStatus[]) {
+    const { mailbox } = await this.authorize(user, mailboxId, "read");
+    return this.core.repo.listDrafts(mailbox.id, statuses);
+  }
+
+  /** Draft with its approval and a dry-run of every send gate (nothing is sent). */
+  async getDraft(user: SessionUserLike | null | undefined, mailboxId: string, draftId: string) {
+    const { mailbox } = await this.authorize(user, mailboxId, "read");
+    const draft = await this.core.draftInMailbox(draftId, mailbox);
+    return { draft, approval: await this.core.repo.getApproval(draftId), sendCheck: await this.core.evaluate(mailbox, draft) };
+  }
+
+  async cancelDraft(user: SessionUserLike | null | undefined, mailboxId: string, draftId: string) {
+    const { mailbox, actor } = await this.authorize(user, mailboxId, "draft");
+    const d = await this.core.draftInMailbox(draftId, mailbox);
+    if (!EDITABLE.has(d.status)) throw new EmailServiceError(`Cannot cancel a draft in status ${d.status}`, 409);
+    if (!(await this.core.repo.transitionDraft(draftId, d.status, "CANCELLED"))) throw new EmailServiceError("Draft changed; reload", 409);
+    await this.core.repo.deleteApproval(draftId);
+    await this.core.record(actor, mailbox, "draft.updated", "EmailDraft", draftId, { status: "CANCELLED" });
+  }
+
+  /** Read-capable users may trigger a sync of mailboxes they can see. */
+  async authorizeSync(user: SessionUserLike | null | undefined, mailboxId: string) {
+    return (await this.authorize(user, mailboxId, "read")).mailbox;
   }
 }

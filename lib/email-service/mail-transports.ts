@@ -109,7 +109,7 @@ export class ImapInboundSource implements InboundSource {
 
 export interface SmtpTransportOptions {
   /** IMAP folder to store a copy of sent mail (cPanel does not do this for SMTP). */
-  sentFolder?: string | null;
+  sentFolder?: string | null | ((mailbox: MailboxConnection) => string | null);
   /** Tests only: plain-text SMTP to a local test server. Never set in production. */
   allowInsecureForTests?: boolean;
 }
@@ -152,12 +152,13 @@ export class SmtpOutboundTransport implements OutboundTransport {
       raw,
     });
 
-    if (this.opts.sentFolder && mailbox.imapHost) {
+    const sentFolder = typeof this.opts.sentFolder === "function" ? this.opts.sentFolder(mailbox) : this.opts.sentFolder;
+    if (sentFolder && mailbox.imapHost) {
       // Best effort: the send already succeeded; a failed copy must not trigger a resend.
       const client = imapClient(mailbox, secret);
       try {
         await client.connect();
-        await client.append(this.opts.sentFolder, raw, ["\\Seen"]);
+        await client.append(sentFolder, raw, ["\\Seen"]);
       } catch {
         // Surfaced via the next sync (message missing from Sent); intentionally not thrown.
       } finally {
@@ -177,16 +178,25 @@ export class SmtpOutboundTransport implements OutboundTransport {
  * Explicit, owner-authorized connection test: IMAP LOGIN/LOGOUT and SMTP AUTH,
  * no messages read or sent. Used by `provision-email-mailbox -- --verify`.
  */
-export async function verifyMailboxConnection(
-  mailbox: MailboxConnection,
-  secret: MailboxSecret,
-): Promise<{ imap: "ok" | string; smtp: "ok" | string }> {
-  const result: { imap: "ok" | string; smtp: "ok" | string } = { imap: "not configured", smtp: "not configured" };
+export interface ConnectionCheck {
+  imap: "ok" | string;
+  smtp: "ok" | string;
+  /** Folder paths reported by the server (names only, no message data). */
+  folders: string[];
+  /** Folder flagged \\Sent by the server, if any. */
+  sentFolder: string | null;
+}
+
+export async function verifyMailboxConnection(mailbox: MailboxConnection, secret: MailboxSecret): Promise<ConnectionCheck> {
+  const result: ConnectionCheck = { imap: "not configured", smtp: "not configured", folders: [], sentFolder: null };
   if (mailbox.imapHost) {
     const client = imapClient(mailbox, secret);
     try {
       await client.connect();
       result.imap = "ok";
+      const list = await client.list();
+      result.folders = list.map((f) => f.path);
+      result.sentFolder = list.find((f) => f.specialUse === "\\Sent")?.path ?? null;
     } catch (err) {
       result.imap = (err as Error).message;
     } finally {

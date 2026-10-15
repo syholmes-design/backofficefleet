@@ -67,6 +67,26 @@ export interface EmailRepository {
   listLinks(threadId: string): Promise<EntityLink[]>;
 
   getAgentGrantByTokenHash(tokenSha256: string): Promise<AgentAccessGrant | null>;
+  createAgentGrant(grant: Omit<AgentAccessGrant, "id" | "revokedAt"> & { tokenSha256: string; createdById: string }): Promise<AgentAccessGrant>;
+  revokeAgentGrant(id: string, at: Date): Promise<boolean>;
+  listAgentGrants(mailboxId: string): Promise<AgentAccessGrant[]>;
+
+  listThreads(mailboxId: string, limit: number): Promise<EmailThreadSummary[]>;
+  getThreadSummaries(threadIds: string[]): Promise<EmailThreadSummary[]>;
+  listDrafts(mailboxId: string, statuses?: DraftStatus[]): Promise<EmailDraft[]>;
+  /** Most recent sync attempt across folders, with its error if it failed. */
+  getSyncStatus(mailboxId: string): Promise<SyncStatus>;
+}
+
+export interface SyncStatus {
+  lastAttemptAt: Date | null;
+  lastError: string | null;
+}
+
+export interface EmailThreadSummary extends EmailThread {
+  messageCount: number;
+  lastFromAddress: string | null;
+  snippet: string;
 }
 
 export type EmailAuditEvent =
@@ -237,5 +257,56 @@ export class MemoryEmailRepository implements EmailRepository {
   }
   async getAgentGrantByTokenHash(tokenSha256: string) {
     return this.grants.get(tokenSha256) ?? null;
+  }
+  async createAgentGrant(grant: Omit<AgentAccessGrant, "id" | "revokedAt"> & { tokenSha256: string; createdById: string }) {
+    const { tokenSha256, createdById: _createdBy, ...rest } = grant;
+    void _createdBy;
+    const created: AgentAccessGrant = { ...rest, id: randomUUID(), revokedAt: null };
+    this.grants.set(tokenSha256, created);
+    return { ...created };
+  }
+  async revokeAgentGrant(id: string, at: Date) {
+    for (const g of this.grants.values()) {
+      if (g.id === id && !g.revokedAt) {
+        g.revokedAt = at;
+        return true;
+      }
+    }
+    return false;
+  }
+  async listAgentGrants(mailboxId: string) {
+    return [...this.grants.values()].filter((g) => g.mailboxId === mailboxId).map((g) => ({ ...g }));
+  }
+  private summarize(t: EmailThread): EmailThreadSummary {
+    const msgs = [...this.messages.values()]
+      .filter((m) => m.threadId === t.id)
+      .sort((a, b) => b.receivedAt.getTime() - a.receivedAt.getTime());
+    return { ...t, messageCount: msgs.length, lastFromAddress: msgs[0]?.fromAddress ?? null, snippet: (msgs[0]?.textBody ?? "").slice(0, 160) };
+  }
+  async listThreads(mailboxId: string, limit: number) {
+    return [...this.threads.values()]
+      .filter((t) => t.mailboxId === mailboxId)
+      .sort((a, b) => b.lastMessageAt.getTime() - a.lastMessageAt.getTime())
+      .slice(0, limit)
+      .map((t) => this.summarize(t));
+  }
+  async getThreadSummaries(threadIds: string[]) {
+    return threadIds.flatMap((id) => {
+      const t = this.threads.get(id);
+      return t ? [this.summarize(t)] : [];
+    });
+  }
+  async listDrafts(mailboxId: string, statuses?: DraftStatus[]) {
+    return [...this.drafts.values()]
+      .filter((d) => d.mailboxId === mailboxId && (!statuses || statuses.includes(d.status)))
+      .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+      .map((d) => ({ ...d }));
+  }
+  async getSyncStatus(mailboxId: string): Promise<SyncStatus> {
+    const latest = [...this.cursors.entries()]
+      .filter(([k]) => k.startsWith(`${mailboxId}|`))
+      .map(([, c]) => c)
+      .sort((a, b) => b.syncedAt.getTime() - a.syncedAt.getTime())[0];
+    return { lastAttemptAt: latest?.syncedAt ?? null, lastError: latest?.lastError ?? null };
   }
 }

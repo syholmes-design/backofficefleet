@@ -9,6 +9,7 @@ import { envKekProvider } from "../lib/email-service/credential-vault";
 import { verifyMailboxConnection } from "../lib/email-service/mail-transports";
 import { PrismaAuditSink, PrismaEmailRepository } from "../lib/email-service/prisma-repository";
 import {
+  NATHSON_MAIL_HOST,
   PROVISION_MAILBOX_CONFIRMATION,
   STORE_CREDENTIAL_CONFIRMATION,
   VERIFY_CONNECTION_CONFIRMATION,
@@ -25,7 +26,8 @@ const USAGE = [
   "  npm run provision:email-mailbox -- --dry-run          (default) print the plan, write nothing",
   "  npm run provision:email-mailbox -- --execute          create/update the mailbox record (no password)",
   "  npm run provision:email-mailbox -- --set-credential   seal and store the mailbox password (hidden prompt)",
-  "  npm run provision:email-mailbox -- --verify           test IMAP/SMTP login; marks the mailbox ACTIVE on success",
+  "  npm run provision:email-mailbox -- --verify           log in to IMAP and SMTP (nothing read or sent), list folder",
+  "                                                        names, and mark the mailbox ACTIVE on success",
   "",
   "DATABASE_URL is read from the runtime environment only. --set-credential and --verify also need",
   "EMAIL_KEK_V1 (base64, 32 bytes). Sending stays disabled regardless.",
@@ -121,16 +123,18 @@ async function main() {
       const approverEmail = (await ask("Approver BOF login email (the person who approves sends): ")).toLowerCase();
       const approver = await db.user.findUnique({ where: { email: approverEmail }, select: { id: true, status: true } });
       if (!approver || approver.status !== "ACTIVE") throw new Error(`No ACTIVE BOF user with email ${approverEmail}`);
-      const mailHost = await ask("cPanel mail server hostname (cPanel → Email Accounts → Connect Devices): ");
-      const sentFolder = (await ask('Sent folder [INBOX.Sent]: ')) || "INBOX.Sent";
+      const mailHost = (await ask(`Mail server hostname [${NATHSON_MAIL_HOST}]: `)) || NATHSON_MAIL_HOST;
+      const sentFolder = (await ask("Sent folder [INBOX.Sent] (--verify detects the real name): ")) || "INBOX.Sent";
       const spec = partnershipsMailboxSpec({ mailHost, approverUserIds: [approver.id], sentFolder });
       console.log("\nPlanned mailbox record (sendEnabled=false, status=PENDING_CREDENTIALS):");
       console.log(JSON.stringify(spec, null, 2));
       if (mode === "dry-run") return console.log("\nDry run: nothing written.");
       await confirm(PROVISION_MAILBOX_CONFIRMATION);
       const existing = await db.emailMailbox.findUnique({ where: { address: ADDRESS } });
+      // A changed server means the stored credential/connection is unproven again.
+      const hostChanged = existing && (existing.imapHost !== spec.imapHost || existing.smtpHost !== spec.smtpHost);
       const row = existing
-        ? await db.emailMailbox.update({ where: { address: ADDRESS }, data: spec })
+        ? await db.emailMailbox.update({ where: { address: ADDRESS }, data: { ...spec, ...(hostChanged ? { status: "PENDING_CREDENTIALS" as const } : {}) } })
         : await db.emailMailbox.create({ data: { ...spec, sendEnabled: false, status: "PENDING_CREDENTIALS" } });
       console.log(`Mailbox ${existing ? "updated" : "created"}: ${row.id}`);
       return;
@@ -154,6 +158,15 @@ async function main() {
     await confirm(VERIFY_CONNECTION_CONFIRMATION);
     const result = await verifyMailboxConnection(mailbox, await loadMailboxSecret(core, mailbox, kek));
     console.log(`IMAP: ${result.imap}\nSMTP: ${result.smtp}`);
+    if (result.folders.length > 0) console.log(`Folders on server: ${result.folders.join(", ")}`);
+    if (result.sentFolder && !mailbox.syncFolders.includes(result.sentFolder)) {
+      const answer = await ask(`Server's Sent folder is "${result.sentFolder}" (configured: ${mailbox.syncFolders.join(", ")}). Use it? [y/N]: `);
+      if (answer.toLowerCase() === "y") {
+        const syncFolders = ["INBOX", result.sentFolder];
+        await db.emailMailbox.update({ where: { id: mailbox.id }, data: { syncFolders } });
+        console.log(`Sync folders set to ${syncFolders.join(", ")}.`);
+      }
+    }
     const ok = result.imap === "ok" && result.smtp === "ok";
     await core.repo.updateMailbox(mailbox.id, { status: ok ? "ACTIVE" : "AUTH_FAILED" });
     await core.record(operator, mailbox, "mailbox.status_changed", "EmailMailbox", mailbox.id, { status: ok ? "ACTIVE" : "AUTH_FAILED" });

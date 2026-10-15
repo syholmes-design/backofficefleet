@@ -95,6 +95,28 @@ test("email service on BOF Prisma schema", async (t) => {
       assert.equal((await loadMailboxSecret(core, mailbox, kek)).password, "pw-secret-123");
     });
 
+    await t.test("inbox queries: thread summaries, drafts, last sync and agent grants", async () => {
+      const threads = await repo.listThreads(row.id, 10);
+      assert.equal(threads.length, 1);
+      assert.equal(threads[0].messageCount, 2);
+      assert.equal(threads[0].lastFromAddress, "partners@checkr.com");
+      assert.deepEqual((await repo.getThreadSummaries([threads[0].id])).map((x) => x.id), [threads[0].id]);
+      assert.equal((await service.listThreads(ops, row.id, { text: "expected volume" }))[0]?.partner, "checkr");
+      assert.ok((await repo.listDrafts(row.id, ["SENT"])).length >= 1);
+      assert.deepEqual(await repo.getSyncStatus(row.id), { lastAttemptAt: null, lastError: null });
+      await repo.putSyncCursor(row.id, "INBOX", { uidValidity: 1, lastUid: 5, consecutiveFailures: 0, lastError: null, syncedAt: new Date("2026-10-15T12:00:00Z") });
+      assert.equal((await repo.getSyncStatus(row.id)).lastAttemptAt?.toISOString(), "2026-10-15T12:00:00.000Z");
+      await repo.putSyncCursor(row.id, "INBOX.Sent", { uidValidity: 1, lastUid: 0, consecutiveFailures: 1, lastError: "timeout", syncedAt: new Date("2026-10-15T12:05:00Z") });
+      assert.equal((await repo.getSyncStatus(row.id)).lastError, "timeout");
+      const { issueAgentGrant } = await import("./agent-grants");
+      const { hashAgentToken } = await import("./agent-gateway");
+      const { token, grant } = await issueAgentGrant(repo, { mailbox: (await repo.getMailbox(row.id))!, createdById: approver.id });
+      assert.equal((await repo.getAgentGrantByTokenHash(hashAgentToken(token)))?.id, grant.id);
+      assert.equal(await repo.revokeAgentGrant(grant.id, new Date()), true);
+      assert.ok((await repo.getAgentGrantByTokenHash(hashAgentToken(token)))?.revokedAt);
+      assert.equal((await repo.listAgentGrants(row.id)).length, 1);
+    });
+
     await t.test("database CHECK constraints reject unsafe rows", async () => {
       await assert.rejects(
         prisma.emailAgentGrant.create({

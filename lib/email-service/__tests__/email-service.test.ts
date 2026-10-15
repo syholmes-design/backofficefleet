@@ -289,6 +289,9 @@ describe("search and correspondence history", () => {
     await core.ingest(mailbox, checkrReply({ messageIdHeader: "<outreach-1@nathson.com>", inReplyTo: null, references: [], direction: "OUTBOUND", folder: "INBOX.Sent", fromAddress: "partnerships@nathson.com", toAddresses: ["partners@checkr.com"], subject: "Partner application", textBody: "BackOfficeFleet would like to apply." }));
     const reply = await core.ingest(mailbox, checkrReply());
     assert.equal(await core.ingest(mailbox, checkrReply()), null, "duplicate Message-ID is ignored");
+    const threadsBefore = (await service.listThreads(sylvester, "mb-partnerships")).length;
+    assert.equal(await core.ingest(mailbox, checkrReply({ inReplyTo: null, references: [] })), null);
+    assert.equal((await service.listThreads(sylvester, "mb-partnerships")).length, threadsBefore, "duplicate creates no orphan thread");
     const thread = await service.searchMessages(sylvester, "mb-partnerships", { threadId: reply!.threadId });
     assert.equal(thread.length, 2);
     assert.equal((await service.searchMessages(bofOps, "mb-partnerships", { text: "expected volume" })).length, 1);

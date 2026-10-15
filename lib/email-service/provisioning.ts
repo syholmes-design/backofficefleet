@@ -7,9 +7,12 @@ export const VERIFY_CONNECTION_CONFIRMATION = "VERIFY MAILBOX CONNECTION";
 
 export type MailboxSpec = Omit<MailboxConnection, "id" | "status" | "sendEnabled">;
 
+/** Confirmed in cPanel → Email Accounts → Connect Devices (2026-10-15). */
+export const NATHSON_MAIL_HOST = "nathson.com";
+
 export interface PartnershipsMailboxInput {
   /** cPanel mail server hostname (cPanel → Email Accounts → Connect Devices). */
-  mailHost: string;
+  mailHost?: string;
   approverUserIds: string[];
   /**
    * cPanel/Dovecot usually namespaces folders under "INBOX." (e.g. "INBOX.Sent").
@@ -28,13 +31,14 @@ export function assertMailHost(host: string): string {
 
 /**
  * partnerships@nathson.com — BOF's strategic partnerships mailbox.
- * PLATFORM scope (no fleet), correspondence lane, IMAPS 993 / SMTPS 465,
+ * PLATFORM scope (no fleet), correspondence lane, host nathson.com,
+ * IMAP 993 SSL/TLS and SMTP 465 SSL/TLS, username = the full address,
  * sending off, recipients limited to verification-partner domains until an
  * approver widens the allowlist.
  */
 export function partnershipsMailboxSpec(input: PartnershipsMailboxInput): MailboxSpec {
   if (input.approverUserIds.length === 0) throw new Error("At least one approver is required");
-  const host = assertMailHost(input.mailHost);
+  const host = assertMailHost(input.mailHost ?? NATHSON_MAIL_HOST);
   return {
     scope: "PLATFORM",
     fleetId: null,

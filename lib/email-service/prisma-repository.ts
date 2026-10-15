@@ -5,7 +5,9 @@ import type {
   EmailAuditRecord,
   EmailAuditSink,
   EmailRepository,
+  EmailThreadSummary,
   MessageQuery,
+  SyncStatus,
   SyncCursor,
 } from "./repository";
 import type {
@@ -255,19 +257,98 @@ export class PrismaEmailRepository implements EmailRepository {
 
   async getAgentGrantByTokenHash(tokenSha256: string): Promise<AgentAccessGrant | null> {
     const r = await this.db.emailAgentGrant.findUnique({ where: { tokenSha256 } });
-    return r
-      ? {
-          id: r.id,
-          agentId: r.agentId,
-          mailboxId: r.mailboxId,
-          scopes: r.scopes as AgentScope[],
-          folderAllowlist: r.folderAllowlist,
-          domainAllowlist: r.domainAllowlist,
-          expiresAt: r.expiresAt,
-          revokedAt: r.revokedAt,
-        }
-      : null;
+    return r ? toGrant(r) : null;
   }
+
+  async createAgentGrant(g: Omit<AgentAccessGrant, "id" | "revokedAt"> & { tokenSha256: string; createdById: string }) {
+    return toGrant(
+      await this.db.emailAgentGrant.create({
+        data: {
+          agentId: g.agentId,
+          mailboxId: g.mailboxId,
+          scopes: g.scopes,
+          folderAllowlist: g.folderAllowlist,
+          domainAllowlist: g.domainAllowlist,
+          tokenSha256: g.tokenSha256,
+          expiresAt: g.expiresAt,
+          createdById: g.createdById,
+        },
+      }),
+    );
+  }
+
+  async revokeAgentGrant(id: string, at: Date) {
+    const res = await this.db.emailAgentGrant.updateMany({ where: { id, revokedAt: null }, data: { revokedAt: at } });
+    return res.count === 1;
+  }
+
+  async listAgentGrants(mailboxId: string) {
+    return (await this.db.emailAgentGrant.findMany({ where: { mailboxId }, orderBy: { createdAt: "desc" } })).map(toGrant);
+  }
+
+  private async summaries(threads: Array<{ id: string; mailboxId: string; threadKey: string; subject: string; lastMessageAt: Date }>): Promise<EmailThreadSummary[]> {
+    if (threads.length === 0) return [];
+    const ids = threads.map((t) => t.id);
+    const [counts, latest] = await Promise.all([
+      this.db.emailMessage.groupBy({ by: ["threadId"], where: { threadId: { in: ids } }, _count: { _all: true } }),
+      this.db.emailMessage.findMany({
+        where: { threadId: { in: ids } },
+        orderBy: { receivedAt: "desc" },
+        distinct: ["threadId"],
+        select: { threadId: true, fromAddress: true, textBody: true },
+      }),
+    ]);
+    const countBy = new Map(counts.map((c) => [c.threadId, c._count._all]));
+    const lastBy = new Map(latest.map((m) => [m.threadId, m]));
+    return threads.map((t) => ({
+      id: t.id,
+      mailboxId: t.mailboxId,
+      threadKey: t.threadKey,
+      subject: t.subject,
+      lastMessageAt: t.lastMessageAt,
+      messageCount: countBy.get(t.id) ?? 0,
+      lastFromAddress: lastBy.get(t.id)?.fromAddress ?? null,
+      snippet: (lastBy.get(t.id)?.textBody ?? "").slice(0, 160),
+    }));
+  }
+
+  async listThreads(mailboxId: string, limit: number) {
+    return this.summaries(await this.db.emailThread.findMany({ where: { mailboxId }, orderBy: { lastMessageAt: "desc" }, take: limit }));
+  }
+
+  async getThreadSummaries(threadIds: string[]) {
+    if (threadIds.length === 0) return [];
+    const rows = await this.db.emailThread.findMany({ where: { id: { in: threadIds } } });
+    const byId = new Map(rows.map((r) => [r.id, r]));
+    return this.summaries(threadIds.flatMap((id) => (byId.has(id) ? [byId.get(id)!] : [])));
+  }
+
+  async listDrafts(mailboxId: string, statuses?: DraftStatus[]) {
+    const rows = await this.db.emailDraft.findMany({
+      where: { mailboxId, ...(statuses ? { status: { in: statuses } } : {}) },
+      orderBy: { updatedAt: "desc" },
+      take: 200,
+    });
+    return rows.map(toDraft);
+  }
+
+  async getSyncStatus(mailboxId: string): Promise<SyncStatus> {
+    const r = await this.db.emailSyncState.findFirst({ where: { mailboxId, lastSyncedAt: { not: null } }, orderBy: { lastSyncedAt: "desc" } });
+    return { lastAttemptAt: r?.lastSyncedAt ?? null, lastError: r?.lastError ?? null };
+  }
+}
+
+function toGrant(r: Prisma.EmailAgentGrantGetPayload<object>): AgentAccessGrant {
+  return {
+    id: r.id,
+    agentId: r.agentId,
+    mailboxId: r.mailboxId,
+    scopes: r.scopes as AgentScope[],
+    folderAllowlist: r.folderAllowlist,
+    domainAllowlist: r.domainAllowlist,
+    expiresAt: r.expiresAt,
+    revokedAt: r.revokedAt,
+  };
 }
 
 const ACTION_BY_EVENT: Record<EmailAuditEvent, AuditAction> = {

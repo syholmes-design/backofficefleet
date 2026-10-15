@@ -1,6 +1,7 @@
 # BOF Email Service: partnerships@nathson.com
 
-Status (2026-10-15): **implemented on a development branch; not deployed, not connected.**
+Status (2026-10-15): **inbox, drafting, approval, scheduled sync and restricted Claude connector are
+built on a development branch; not deployed, not connected.** Activation runbook: `ACTIVATION.md`.
 No production database, DNS, mailbox, or Vercel setting has been touched. No credential has
 been requested or used. Sending is disabled in three places.
 
@@ -36,10 +37,10 @@ been requested or used. Sending is disabled in three places.
 
 | # | Requirement | Implementation | State |
 |---|---|---|---|
-| 1 | Secure IMAP | `ImapInboundSource` (imapflow): IMAPS 993, read-only folder lock, bounded UID-incremental fetch, UIDVALIDITY reset, timeouts | Built; unit-tested parser; **not run against cPanel** |
+| 1 | Secure IMAP | `ImapInboundSource` (imapflow): nathson.com:993 TLS, read-only folder lock, bounded UID-incremental fetch, UIDVALIDITY reset, timeouts; scheduled via `/api/email/sync` | Built; unit-tested parser; **not run against cPanel** |
 | 2 | Secure SMTP | `SmtpOutboundTransport` (nodemailer): SMTPS 465 / STARTTLS required on 587; exact same message appended to Sent | Built; tested against a local SMTP server |
-| 3 | Inbox in BOF | `EmailService.searchMessages` / threads | **Service ready; UI + API routes not built** |
-| 4 | AI drafting | `AgentGateway`: search/read/draft/request-approval/link only | Built; **MCP endpoint not built** |
+| 3 | Inbox in BOF | `/email` page (inbox, search, thread view, reply/new draft, approvals queue, drafts) + `/api/email/*` routes | Built; tested end-to-end in a browser against a local DB |
+| 4 | AI drafting | Restricted MCP connector `/api/email/agent` (6 tools via `AgentGateway`), tokens via `npm run email:agent-grant` | Built; tested with the official MCP client and over HTTP |
 | 5 | Human approval | Approval bound to SHA-256 of exact content; any edit voids it; only listed approvers | Built and tested |
 | 6 | Searchable history | Case-insensitive search across subject, body and addresses; threads by References/In-Reply-To | Built and tested on Postgres |
 | 7 | Credential storage | AES-256-GCM envelope encryption; key-encryption key in env (`EMAIL_KEK_V1`) only; secret bound to mailbox id + address; password entered only via hidden terminal prompt | Built and tested |
@@ -79,30 +80,16 @@ Yes. A mailbox is a row, not code:
   separate rows. The only generalization needed is a `--address`/`--scope` option on the CLI and an
   admin UI.
 
-## 5. Remaining steps to activate partnerships@nathson.com
+## 5. Remaining steps to activate
 
-Steps marked **(you)** need your action or authorization. Steps marked **(dev)** are code I can
-write next on the branch.
-
-| # | Step | Who |
-|---|---|---|
-| 1 | Confirm the production branch Vercel deploys, and that this work should target it | you |
-| 2 | Create `partnerships@nathson.com` in cPanel (if not already), and note the mail server hostname from cPanel → Email Accounts → Connect Devices | you |
-| 3 | Check cPanel → Email Deliverability: SPF + DKIM valid for nathson.com; add DMARC (`p=none` to start) | you |
-| 4 | **(dev)** API routes: `GET /api/email/mailboxes`, `…/messages?q=`, `…/threads/[id]`, `POST …/drafts`, `…/drafts/[id]/submit`, `…/drafts/[id]/decision`, `…/drafts/[id]/send`, plus `POST /api/email/sync` (token-protected) | dev |
-| 5 | **(dev)** BOF UI: Partnerships inbox, thread view, draft editor, approval queue (approve shows exact final text), tracker links | dev |
-| 6 | **(dev)** Agent MCP endpoint `/api/email/agent` + grant CLI (issue/revoke token, shown once) | dev |
-| 7 | Review and merge the branch into the production line | you |
-| 8 | Generate a 32-byte key and add `EMAIL_KEK_V1` to Vercel (Production, sensitive). Keep `EMAIL_SENDING_ENABLED` unset. | you |
-| 9 | Apply the migration: `npx prisma migrate deploy` with production `DATABASE_URL` (additive, 9 new tables) | you |
-| 10 | `npm run provision:email-mailbox -- --execute`: approver = your BOF login, host from step 2 | you |
-| 11 | `npm run provision:email-mailbox -- --set-credential`: type the mailbox password into **your** terminal's hidden prompt | you |
-| 12 | `npm run provision:email-mailbox -- --verify`: **the first contact with the live mailbox** (login only, nothing read or sent). Marks it ACTIVE. Also confirm the Sent folder name. | you |
-| 13 | Schedule sync: Vercel cron (Pro) or a free external scheduler calling `/api/email/sync` every 10–15 min | you |
-| 14 | Issue Claude an agent grant for partnerships@ only (INBOX + INBOX.Sent) and add the MCP endpoint as a claude.ai custom connector | you |
-| 15 | **Separately authorize sending**: set `EMAIL_SENDING_ENABLED=true`, then enable the mailbox send switch in BOF | you |
-
-Until step 15, approved drafts can be copied into Outlook and sent by hand.
+All development is done. What remains is operator work, in `ACTIVATION.md`:
+1. Confirm the production branch; review and merge.
+2. Add `EMAIL_KEK_V1` and `EMAIL_SYNC_TOKEN` to Vercel. Leave `EMAIL_SENDING_ENABLED` unset.
+3. `prisma migrate deploy`.
+4. `provision:email-mailbox -- --execute`, then `--set-credential` (hidden prompt), then `--verify`.
+5. Schedule `/api/email/sync` every 15 minutes.
+6. `email:agent-grant -- --issue`, then add the connector in Claude.
+7. Enabling sending is a separate, later decision.
 
 ## 6. Technical obstacles and risks
 
@@ -153,8 +140,9 @@ scripts/run-email-service-db-test.ts         guarded DB test runner
 
 | Check | Result |
 |---|---|
-| `npm run test:email-service` (unit + local SMTP server) | 36/36 pass |
-| `npm run test:email-service:db` (Prisma on local `bof_dev`, all 26 migrations applied) | 5/5 pass: threading/dedupe/search, approval + AuditEvent + single send under concurrency, sealed credential, CHECK constraints |
+| `npm run test:email-service` (unit, local SMTP server, MCP client) | 50/50 pass |
+| `npm run test:email-service:db` (Prisma on local `bof_dev`, all 26 migrations applied) | 6/6 pass: threading/dedupe/search, approval + AuditEvent + single send under concurrency, sealed credential, inbox queries + agent grants, CHECK constraints |
+| Browser walkthrough of `/email` (local DB, headless Chromium) | 25/25 checks: sign-in redirect, inbox, search, thread, reply draft, approval queue, approve exact text, Send disabled with reasons, `/send` → 409, edit voids approval, connector auth/Origin/tools, sync endpoint auth |
 | `prisma migrate deploy` on fresh local DB, then `migrate diff` | Applies; zero drift |
 | `npm run typecheck` / `npm run lint` (repo-wide) | Pass / Pass |
 | `npm run build` (with local DB) | Pass. Without `DATABASE_URL` it fails on `/customers` prerender, the same as before this change. |

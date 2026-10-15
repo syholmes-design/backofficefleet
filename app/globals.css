@@ -18727,3 +18727,76 @@ a.shipper-portal-story-step:focus-visible,
     width: 100%;
   }
 }
+
+/* ── BOF Email (partnerships correspondence) ─────────────────────────────── */
+.bof-email-page { min-height: calc(100vh - 4.5rem); padding: 2rem 1rem 4rem; background: #f1f5f7; color: #0f172a; }
+.bof-email-shell { width: min(1400px, 100%); margin: 0 auto; }
+.bof-email-header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1.5rem; padding: 1.5rem 0 1.25rem; }
+.bof-email-header h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 850; line-height: 1.05; }
+.bof-email-header p:last-child { margin: 0.6rem 0 0; color: #64748b; }
+.bof-email-header-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
+.bof-email-page button { padding: 0.55rem 0.9rem; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #0f172a; font: inherit; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+.bof-email-page button:disabled { opacity: 0.5; cursor: not-allowed; }
+.bof-email-page button.bof-email-primary { border-color: #0f766e; background: #0f766e; color: #ffffff; }
+.bof-email-page button.bof-email-approve { border-color: #15803d; background: #15803d; color: #ffffff; }
+.bof-email-page button.bof-email-reject { border-color: #b91c1c; color: #b91c1c; }
+.bof-email-chip { padding: 0.3rem 0.6rem; border-radius: 999px; background: #e2e8f0; color: #334155; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+.bof-email-chip--active { background: #ccfbf1; color: #0f766e; }
+.bof-email-chip--auth_failed, .bof-email-chip--disabled { background: #fee2e2; color: #b91c1c; }
+.bof-email-chip--pending_credentials { background: #fef3c7; color: #92400e; }
+.bof-email-banner, .bof-email-error, .bof-email-notice { margin: 0 0 1rem; padding: 0.75rem 1rem; border-radius: 6px; font-size: 0.9rem; }
+.bof-email-banner { border: 1px solid #fcd34d; background: #fffbeb; color: #78350f; }
+.bof-email-error { border: 1px solid #fca5a5; background: #fef2f2; color: #991b1b; }
+.bof-email-notice { border: 1px solid #99f6e4; background: #f0fdfa; color: #115e59; cursor: pointer; }
+.bof-email-layout { display: grid; grid-template-columns: 360px minmax(0, 1fr); min-height: 640px; overflow: hidden; border: 1px solid #dbe4ea; border-radius: 8px; background: #ffffff; box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08); }
+.bof-email-sidebar { display: flex; flex-direction: column; min-width: 0; border-right: 1px solid #dbe4ea; background: #f8fafc; }
+.bof-email-tabs { display: flex; border-bottom: 1px solid #dbe4ea; }
+.bof-email-page .bof-email-tabs button { flex: 1; border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: transparent; color: #475569; }
+.bof-email-page .bof-email-tabs button.is-active { border-bottom-color: #0f766e; color: #0f172a; }
+.bof-email-tabs button span { margin-left: 0.4rem; padding: 0.05rem 0.4rem; border-radius: 999px; background: #0f766e; color: #ffffff; font-size: 0.7rem; }
+.bof-email-search { padding: 0.75rem; border-bottom: 1px solid #dbe4ea; }
+.bof-email-search input, .bof-email-field input, .bof-email-field select, .bof-email-field textarea { width: 100%; padding: 0.6rem 0.7rem; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #0f172a; font: inherit; font-size: 0.9rem; }
+.bof-email-list { overflow-y: auto; }
+.bof-email-page .bof-email-list > button { display: grid; gap: 0.2rem; width: 100%; padding: 0.85rem 1rem; border: 0; border-bottom: 1px solid #e2e8f0; border-radius: 0; background: transparent; text-align: left; font-weight: 400; }
+.bof-email-page .bof-email-list > button.is-selected { background: #ecfeff; box-shadow: inset 3px 0 0 #0f766e; }
+.bof-email-list strong { overflow: hidden; font-size: 0.9rem; text-overflow: ellipsis; white-space: nowrap; }
+.bof-email-list span, .bof-email-list small { color: #64748b; font-size: 0.78rem; }
+.bof-email-list p { display: -webkit-box; margin: 0; overflow: hidden; color: #475569; font-size: 0.8rem; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.bof-email-partner { margin-left: 0.4rem; padding: 0.05rem 0.4rem; border-radius: 4px; background: #e0f2fe; color: #075985; font-size: 0.72rem; font-style: normal; font-weight: 700; }
+.bof-email-status { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 4px; background: #e2e8f0; color: #334155; font-size: 0.72rem; font-weight: 800; text-transform: capitalize; }
+.bof-email-status--pending_approval { background: #fef3c7; color: #92400e; }
+.bof-email-status--approved, .bof-email-status--sent { background: #dcfce7; color: #166534; }
+.bof-email-status--rejected, .bof-email-status--failed { background: #fee2e2; color: #991b1b; }
+.bof-email-empty { padding: 1.5rem 1rem; color: #64748b; font-size: 0.85rem; }
+.bof-email-main { min-width: 0; padding: 1.5rem; overflow-y: auto; }
+.bof-email-main h2 { margin: 0.3rem 0; font-size: 1.3rem; }
+.bof-email-main header p { margin: 0 0 0.75rem; color: #64748b; font-size: 0.85rem; }
+.bof-email-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0; }
+.bof-email-message { margin: 1rem 0; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; }
+.bof-email-message--outbound { border-left: 3px solid #0f766e; background: #f8fafc; }
+.bof-email-message-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem; font-size: 0.85rem; }
+.bof-email-message-meta span, .bof-email-message small { color: #64748b; font-size: 0.78rem; }
+.bof-email-body { margin: 0.75rem 0 0; font: inherit; font-size: 0.9rem; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+.bof-email-draft .bof-email-body { padding: 1rem; border: 1px solid #e2e8f0; border-radius: 6px; background: #f8fafc; }
+.bof-email-meta { display: grid; gap: 0.35rem; margin: 0.75rem 0; font-size: 0.85rem; }
+.bof-email-meta div { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 0.5rem; }
+.bof-email-meta dt { color: #64748b; font-weight: 700; }
+.bof-email-meta dd { margin: 0; overflow-wrap: anywhere; }
+.bof-email-hint { margin: 0.25rem 0 0.75rem; color: #64748b; font-size: 0.8rem; }
+.bof-email-composer { display: grid; gap: 0.75rem; max-width: 820px; }
+.bof-email-field { display: grid; gap: 0.3rem; color: #475569; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+.bof-email-field input, .bof-email-field select, .bof-email-field textarea { letter-spacing: 0; text-transform: none; font-weight: 400; }
+.bof-email-gates { padding: 0.75rem 1rem; border: 1px solid #e2e8f0; border-radius: 6px; background: #f8fafc; font-size: 0.85rem; }
+.bof-email-gates ul { margin: 0.4rem 0 0; padding-left: 1.2rem; color: #475569; }
+.bof-email-thread-drafts { margin-top: 1.5rem; }
+.bof-email-thread-drafts h3 { font-size: 0.95rem; }
+.bof-email-page .bof-email-thread-drafts button { display: block; width: 100%; margin-top: 0.4rem; text-align: left; font-weight: 500; }
+.bof-email-empty-state { display: grid; place-items: center; min-height: 360px; padding: 2rem; color: #64748b; text-align: center; }
+@media (max-width: 900px) {
+  .bof-email-layout { grid-template-columns: 1fr; }
+  .bof-email-sidebar { max-height: 45vh; border-right: 0; border-bottom: 1px solid #dbe4ea; }
+}
+.bof-email-sync-error { color: #b91c1c; }
+.bof-email-empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem; }
+.bof-email-empty-state h2 { margin: 0; }
+.bof-email-empty-state p { margin: 0; }

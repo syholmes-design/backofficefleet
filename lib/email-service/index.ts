@@ -21,3 +21,5 @@ export * from "./sync";
 export * from "./agent-gateway";
 export * from "./partner-directory";
 export * from "./provisioning";
+export * from "./agent-grants";
+export * from "./sync-auth";
