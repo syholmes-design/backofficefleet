@@ -16,6 +16,8 @@
     "test:provision-operator": "node --import ./scripts/lib/ts-alias-loader.mjs --test lib/provisioning/operatorProvision.test.ts",
     "provision:email-mailbox": "npx --yes tsx scripts/provision-email-mailbox.ts",
     "email:agent-grant": "npx --yes tsx scripts/email-agent-grant.ts",
+    "seed:email-preview": "npx --yes tsx scripts/seed-email-preview.ts",
+    "verify:email-preview": "npx --yes tsx scripts/verify-email-preview.ts",
     "test:email-service": "npx --yes tsx --test lib/email-service/__tests__/*.test.ts",
     "test:email-service:db": "npx --yes tsx scripts/run-email-service-db-test.ts",
     "codex:bootstrap": "node scripts/codex-bootstrap.mjs",

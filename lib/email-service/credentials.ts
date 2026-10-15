@@ -29,7 +29,7 @@ export async function storeMailboxCredential(
 /** Server-internal: used by mail transports only. Never return this to a client. */
 export async function loadMailboxSecret(core: EmailCore, mailbox: MailboxConnection, kek: KekProvider): Promise<MailboxSecret> {
   const stored = await core.repo.getCredential(mailbox.id);
-  if (!stored) throw new Error(`No credential stored for mailbox ${mailbox.id}`);
+  if (!stored) throw new Error("No credential stored for this mailbox yet");
   if (stored.aad !== credentialAad(mailbox.id, mailbox.address)) throw new Error("Credential is bound to a different mailbox");
   return { username: stored.username, password: openSecret(stored, kek) };
 }
