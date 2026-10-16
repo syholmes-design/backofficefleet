@@ -82,6 +82,13 @@ Open the Preview URL (Vercel may ask you to sign in to Vercel first) → `/email
 All correspondence is synthetic. Mailboxes point at `mail.preview.invalid` and hold no credential,
 so the Nathson mailbox cannot be contacted. Sending is disabled.
 
+### 2c. Status log
+
+| Date | Event |
+|---|---|
+| 2026-10-16 | `bof-email-preview` initialized by the Preview build (`[email-preview-init] done` confirmed by owner in Vercel build logs) |
+| 2026-10-16 | `EMAIL_PREVIEW_LOGIN_PASSWORD` added (Secret, branch-scoped); Preview rebuilt from this branch so the password is applied to the five preview accounts |
+
 ## 3. Automated verification against the Preview
 
 ```bash
