@@ -144,6 +144,15 @@ describe("agent grants", () => {
     await assert.rejects(issueAgentGrant(repo, { mailbox, createdById: "u-sylvester", folders: ["INBOX.Private"] }), /not synced/);
   });
 
+  it("accepts a caller-chosen token (hash only) and rejects short ones", async () => {
+    const { repo, mailbox } = setup();
+    const chosen = "c".repeat(40);
+    const { token } = await issueAgentGrant(repo, { mailbox, createdById: "u-sylvester", token: chosen });
+    assert.equal(token, chosen);
+    assert.ok(repo.grants.has(hashAgentToken(chosen)));
+    await assert.rejects(issueAgentGrant(repo, { mailbox, createdById: "u-sylvester", token: "short" }), /32 characters/);
+  });
+
   it("revoked grants stop working immediately", async () => {
     const { repo, mailbox, core } = setup();
     const { token, grant } = await issueAgentGrant(repo, { mailbox, createdById: "u-sylvester" });

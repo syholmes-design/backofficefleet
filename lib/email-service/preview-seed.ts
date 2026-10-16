@@ -3,7 +3,7 @@ import { randomBytes } from "node:crypto";
 import type { PrismaClient } from "@prisma/client";
 import { hash } from "bcryptjs";
 
-import { AgentGateway } from "./agent-gateway";
+import { AgentGateway, hashAgentToken } from "./agent-gateway";
 import { issueAgentGrant } from "./agent-grants";
 import { PrismaAuditSink, PrismaEmailRepository } from "./prisma-repository";
 import { partnershipsMailboxSpec } from "./provisioning";
@@ -58,9 +58,27 @@ export interface PreviewAccount {
   description: string;
 }
 
+export interface PreviewSeedOptions {
+  /**
+   * One password for every preview account (e.g. from a branch-scoped Vercel variable).
+   * When omitted, a random password per account is generated and returned once.
+   */
+  password?: string;
+  /**
+   * Caller-chosen Claude connector token (min 32 chars); only its hash is stored. When
+   * omitted, a random token is generated and returned once.
+   */
+  agentToken?: string;
+  /** When no token is supplied, generate one (CLI) or skip the grant entirely (build-time init). */
+  generateAgentToken?: boolean;
+}
+
 export interface PreviewSeedResult {
   accounts: PreviewAccount[];
-  agentToken: string;
+  /** Generated token (only when not supplied by the caller); null if a supplied token was used. */
+  agentToken: string | null;
+  /** False when sample correspondence already existed and was left untouched (idempotent rerun). */
+  sampleDataCreated: boolean;
   partnershipsMailboxId: string;
   fleetMailboxId: string;
 }
@@ -85,7 +103,8 @@ function msg(o: Partial<IncomingMessage> & Pick<IncomingMessage, "messageIdHeade
   };
 }
 
-export async function seedEmailPreview(db: PrismaClient): Promise<PreviewSeedResult> {
+export async function seedEmailPreview(db: PrismaClient, opts: PreviewSeedOptions = {}): Promise<PreviewSeedResult> {
+  if (opts.password !== undefined && opts.password.length < 12) throw new Error("Preview password must be at least 12 characters");
   const roleCodes = ["BOF_OPERATIONS", "FLEET_ADMIN", "DISPATCH", "DRIVER"] as const;
   const roles = Object.fromEntries(
     await Promise.all(
@@ -117,7 +136,7 @@ export async function seedEmailPreview(db: PrismaClient): Promise<PreviewSeedRes
   const userIds: Record<string, string> = {};
   for (const s of specs) {
     const email = `${s.key}@${PREVIEW_EMAIL_DOMAIN}`;
-    const pw = password();
+    const pw = opts.password ?? password();
     const user = await db.user.upsert({
       where: { email },
       create: { email, name: `Preview ${s.key}`, passwordHash: await hash(pw, 10), status: "ACTIVE" },
@@ -170,23 +189,42 @@ export async function seedEmailPreview(db: PrismaClient): Promise<PreviewSeedRes
   const fmb = (await repo.getMailbox(fleetBox.id))!;
   const sig = "\n\nSylvester Holmes\nFounder | BackOfficeFleet\nA Nathson Company\npartnerships@nathson.com";
 
-  await core.ingest(pmb, msg({ direction: "OUTBOUND", folder: "INBOX.Sent", messageIdHeader: "pv-out-checkr@nathson.com", fromAddress: "partnerships@nathson.com", toAddresses: ["partners@checkr.com"], subject: "Partner application: BackOfficeFleet", textBody: `Hello Checkr Partnerships team,\n\nBackOfficeFleet would like to integrate Checkr screenings into our driver qualification workflow.${sig}`, receivedAt: at("2026-10-13T15:00:00Z") }));
-  await core.ingest(pmb, msg({ messageIdHeader: "pv-re-checkr@checkr.com", inReplyTo: "pv-out-checkr@nathson.com", references: ["pv-out-checkr@nathson.com"], fromAddress: "partners@checkr.com", fromName: "Checkr Partnerships (sample)", subject: "Re: Partner application: BackOfficeFleet", textBody: "Hi Sylvester,\n\nThanks for reaching out. Could you share expected monthly screening volume and whether each carrier will hold its own Checkr account?\n\n[Synthetic preview message]", receivedAt: at("2026-10-14T17:20:00Z") }));
-  const samba = await core.ingest(pmb, msg({ messageIdHeader: "pv-intro@sambasafety.com", fromAddress: "bd@sambasafety.com", fromName: "SambaSafety BD (sample)", subject: "Intro call re: continuous MVR monitoring", textBody: "Hello,\n\nWe received your partner request. Are you available Tuesday or Wednesday next week for a 20-minute call?\n\n[Synthetic preview message]", receivedAt: at("2026-10-15T09:05:00Z") }));
-  await core.ingest(pmb, msg({ messageIdHeader: "pv-ticket@dot.gov", fromAddress: "clearinghouse-support@dot.gov", subject: "Your Clearinghouse inquiry (ticket 88)", textBody: "Thank you for contacting the FMCSA Drug & Alcohol Clearinghouse. Your inquiry has been received.\n\n[Synthetic preview message]", receivedAt: at("2026-10-15T11:40:00Z") }));
-  await core.ingest(pmb, msg({ messageIdHeader: "pv-tenstreet@tenstreet.com", fromAddress: "integrations@tenstreet.com", fromName: "Tenstreet Integrations (sample)", subject: "Integration partner program", textBody: "Thanks for your interest. Please complete the attached partner questionnaire.\n\n[Synthetic preview message]", receivedAt: at("2026-10-12T13:00:00Z") }));
-  await core.ingest(fmb, msg({ messageIdHeader: "pv-fleet-a@shipper.preview.invalid", fromAddress: "ops@shipper.preview.invalid", toAddresses: [fmb.address], subject: "Fleet A only: pickup window change", textBody: "This message belongs to Preview Fleet A and must not be visible to other fleets or to BOF staff.", receivedAt: at("2026-10-15T08:00:00Z") }));
+  // Idempotent: sample correspondence and the sample Claude draft are created once.
+  const sampleDataCreated = (await repo.queryMessages(pmb.id, { limit: 1 })).length === 0;
+  let samba: Awaited<ReturnType<typeof core.ingest>> = null;
+  if (sampleDataCreated) {
+    await core.ingest(pmb, msg({ direction: "OUTBOUND", folder: "INBOX.Sent", messageIdHeader: "pv-out-checkr@nathson.com", fromAddress: "partnerships@nathson.com", toAddresses: ["partners@checkr.com"], subject: "Partner application: BackOfficeFleet", textBody: `Hello Checkr Partnerships team,\n\nBackOfficeFleet would like to integrate Checkr screenings into our driver qualification workflow.${sig}`, receivedAt: at("2026-10-13T15:00:00Z") }));
+    await core.ingest(pmb, msg({ messageIdHeader: "pv-re-checkr@checkr.com", inReplyTo: "pv-out-checkr@nathson.com", references: ["pv-out-checkr@nathson.com"], fromAddress: "partners@checkr.com", fromName: "Checkr Partnerships (sample)", subject: "Re: Partner application: BackOfficeFleet", textBody: "Hi Sylvester,\n\nThanks for reaching out. Could you share expected monthly screening volume and whether each carrier will hold its own Checkr account?\n\n[Synthetic preview message]", receivedAt: at("2026-10-14T17:20:00Z") }));
+    samba = await core.ingest(pmb, msg({ messageIdHeader: "pv-intro@sambasafety.com", fromAddress: "bd@sambasafety.com", fromName: "SambaSafety BD (sample)", subject: "Intro call re: continuous MVR monitoring", textBody: "Hello,\n\nWe received your partner request. Are you available Tuesday or Wednesday next week for a 20-minute call?\n\n[Synthetic preview message]", receivedAt: at("2026-10-15T09:05:00Z") }));
+    await core.ingest(pmb, msg({ messageIdHeader: "pv-ticket@dot.gov", fromAddress: "clearinghouse-support@dot.gov", subject: "Your Clearinghouse inquiry (ticket 88)", textBody: "Thank you for contacting the FMCSA Drug & Alcohol Clearinghouse. Your inquiry has been received.\n\n[Synthetic preview message]", receivedAt: at("2026-10-15T11:40:00Z") }));
+    await core.ingest(pmb, msg({ messageIdHeader: "pv-tenstreet@tenstreet.com", fromAddress: "integrations@tenstreet.com", fromName: "Tenstreet Integrations (sample)", subject: "Integration partner program", textBody: "Thanks for your interest. Please complete the attached partner questionnaire.\n\n[Synthetic preview message]", receivedAt: at("2026-10-12T13:00:00Z") }));
+    await core.ingest(fmb, msg({ messageIdHeader: "pv-fleet-a@shipper.preview.invalid", fromAddress: "ops@shipper.preview.invalid", toAddresses: [fmb.address], subject: "Fleet A only: pickup window change", textBody: "This message belongs to Preview Fleet A and must not be visible to other fleets or to BOF staff.", receivedAt: at("2026-10-15T08:00:00Z") }));
+  }
 
-  const { token } = await issueAgentGrant(repo, { mailbox: pmb, createdById: userIds.approver, days: 14 });
-  const agent = (await AgentGateway.fromToken(core, token))!;
-  const draft = await agent.createDraft({
-    threadId: samba!.threadId,
-    inReplyTo: samba!.messageIdHeader,
-    toAddresses: ["bd@sambasafety.com"],
-    subject: "Re: Intro call re: continuous MVR monitoring",
-    textBody: `Hello,\n\nThank you. Tuesday at 2:00 PM ET works well for a 20-minute call.${sig}`,
-  });
-  await agent.requestApproval(draft.id);
+  // Connector grant for the preview: caller-supplied token (hash only) or a generated one.
+  let agentToken: string | null = null;
+  if (opts.agentToken) {
+    if (!(await repo.getAgentGrantByTokenHash(hashAgentToken(opts.agentToken)))) {
+      await issueAgentGrant(repo, { mailbox: pmb, createdById: userIds.approver, days: 14, token: opts.agentToken });
+    }
+  } else if (opts.generateAgentToken !== false) {
+    agentToken = (await issueAgentGrant(repo, { mailbox: pmb, createdById: userIds.approver, days: 14 })).token;
+  }
 
-  return { accounts, agentToken: token, partnershipsMailboxId: pmb.id, fleetMailboxId: fmb.id };
+  if (sampleDataCreated && samba) {
+    // The sample "drafted by Claude" message uses a short-lived internal grant that is revoked at once.
+    const ephemeral = await issueAgentGrant(repo, { mailbox: pmb, createdById: userIds.approver, days: 1 });
+    const agent = (await AgentGateway.fromToken(core, ephemeral.token))!;
+    const draft = await agent.createDraft({
+      threadId: samba.threadId,
+      inReplyTo: samba.messageIdHeader,
+      toAddresses: ["bd@sambasafety.com"],
+      subject: "Re: Intro call re: continuous MVR monitoring",
+      textBody: `Hello,\n\nThank you. Tuesday at 2:00 PM ET works well for a 20-minute call.${sig}`,
+    });
+    await agent.requestApproval(draft.id);
+    await repo.revokeAgentGrant(ephemeral.grant.id, new Date());
+  }
+
+  return { accounts, agentToken, sampleDataCreated, partnershipsMailboxId: pmb.id, fleetMailboxId: fmb.id };
 }

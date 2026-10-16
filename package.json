@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "prisma generate",
     "dev": "next dev",
-    "build": "node scripts/clear-next-cache.mjs && next build && node scripts/ensure-next-chunk-aliases.mjs",
+    "build": "node scripts/vercel-email-preview-init.mjs && node scripts/clear-next-cache.mjs && next build && node scripts/ensure-next-chunk-aliases.mjs",
     "start": "next start",
     "lint": "npm run lint:eslint",
     "lint:next": "next lint",

@@ -30,8 +30,10 @@ async function main() {
     const result = await seedEmailPreview(db);
     console.log("\nPreview accounts (shown once; synthetic, preview database only):\n");
     for (const a of result.accounts) console.log(`  ${a.email.padEnd(42)} ${a.password}   ${a.description}`);
-    console.log("\nPreview Claude connector token (shown once, valid 14 days, preview DB only):\n");
-    console.log(`  ${result.agentToken}`);
+    if (result.agentToken) {
+      console.log("\nPreview Claude connector token (shown once, valid 14 days, preview DB only):\n");
+      console.log(`  ${result.agentToken}`);
+    }
     console.log("\nAll seeded mailboxes point at mail.preview.invalid and have no credential. Sending is disabled.");
   } finally {
     await db.$disconnect();

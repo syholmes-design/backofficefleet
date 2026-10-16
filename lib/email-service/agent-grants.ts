@@ -16,6 +16,8 @@ export interface IssueGrantInput {
   scopes?: AgentScope[];
   folders?: string[];
   domains?: string[];
+  /** Use a caller-chosen token (min 32 chars) instead of generating one. Only its hash is stored. */
+  token?: string;
 }
 
 /**
@@ -38,7 +40,8 @@ export async function issueAgentGrant(
   for (const f of folders) if (!mailbox.syncFolders.includes(f)) throw new Error(`Folder is not synced for this mailbox: ${f}`);
   if (folders.length === 0) throw new Error("At least one folder is required");
 
-  const token = randomBytes(32).toString("base64url");
+  if (input.token !== undefined && input.token.length < 32) throw new Error("token must be at least 32 characters");
+  const token = input.token ?? randomBytes(32).toString("base64url");
   const grant = await repo.createAgentGrant({
     agentId: input.agentId ?? "claude",
     mailboxId: mailbox.id,
