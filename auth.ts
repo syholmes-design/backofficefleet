@@ -4,6 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcryptjs";
 import { NextResponse } from "next/server";
 
+import { ignoreFixedAuthUrlOnVercelPreview } from "@/lib/auth/preview-auth-url";
 import {
   isDatabaseUrlConfigured,
   isDatabaseUrlNotConfiguredError,
@@ -29,6 +30,8 @@ export function authSecretUnavailablePayload() {
 function authSecretUnavailableResponse() {
   return NextResponse.json(authSecretUnavailablePayload(), { status: 503 });
 }
+
+ignoreFixedAuthUrlOnVercelPreview();
 
 const authSecret = getConfiguredAuthSecret();
 
