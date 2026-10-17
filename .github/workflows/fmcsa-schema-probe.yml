@@ -1,0 +1,32 @@
+# TEMPORARY diagnostic (branch claude/loving-allen-zr8loh only): reads FMCSA's public
+# Socrata column metadata so BOF's schema mappings use verified field names.
+# Read-only GETs to data.transportation.gov; no secrets; to be deleted after use.
+name: fmcsa-schema-probe
+on:
+  push:
+    branches: [claude/loving-allen-zr8loh]
+    paths: [.github/workflows/fmcsa-schema-probe.yml]
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Column metadata and sample rows
+        run: |
+          set -u
+          for id in inys-ebih nakq-58th yu5v-wbh6 c5y8-a4uz 3uet-3z4i az4n-8mr2 p2mt-9ige 6eyk-hxee; do
+            echo "=================== DATASET $id ==================="
+            curl -sS --max-time 60 "https://data.transportation.gov/api/views/$id.json" \
+              | jq -r '"NAME: \(.name)\nROWS_UPDATED: \(.rowsUpdatedAt|tostring)\nDESCRIPTION: \(.description // "" | gsub("\n";" ") | .[0:600])", (.columns[] | "COL\t\(.fieldName)\t\(.name)\t\(.dataTypeName)\t\((.description // "") | gsub("[\n\t]";" ") | .[0:200])")' || echo "metadata fetch failed"
+            echo "--- headers ($id)"
+            curl -sS --max-time 60 -D - -o /dev/null "https://data.transportation.gov/resource/$id.json?\$limit=1" | grep -i -E "^(x-soda2-fields|x-soda2-types|last-modified|x-soda2-truth-last-modified):" || true
+          done
+          echo "=================== SAMPLE ROWS: USDOT 80806 (J.B. Hunt, public data) ==================="
+          for q in "inys-ebih|dot_number" "inys-ebih|usdot_number" "yu5v-wbh6|dot_number" "yu5v-wbh6|usdot_number" "c5y8-a4uz|dot_number" "c5y8-a4uz|usdot_number"; do
+            id=${q%%|*}; col=${q#*|}
+            echo "--- $id where $col='80806' (and unquoted)"
+            curl -sS --max-time 60 -G "https://data.transportation.gov/resource/$id.json" --data-urlencode "\$where=$col='80806'" --data-urlencode '$limit=5' | head -c 4000; echo
+            curl -sS --max-time 60 -G "https://data.transportation.gov/resource/$id.json" --data-urlencode "\$where=$col=80806" --data-urlencode '$limit=5' | head -c 4000; echo
+          done
