@@ -262,6 +262,17 @@ export async function updateDriverDocumentRecord(input: {
 
   await evaluateIntakeRequirements(document.driverIntakeId);
 
+  const statusChanged = nextStatus !== document.status;
+  if (statusChanged && (nextStatus === "VERIFIED" || nextStatus === "REJECTED" || nextStatus === "EXPIRED")) {
+    const { reevaluateDriverReadinessAfterDocumentChange } = await import("@/lib/services/readinessReevaluationService");
+    await reevaluateDriverReadinessAfterDocumentChange({
+      sessionUser: input.sessionUser,
+      driverId: document.driverId,
+      driverIntakeId: document.driverIntakeId,
+      fleetId: document.fleetId,
+    }).catch(() => null);
+  }
+
   if (nextStatus === "VERIFIED") {
     await createAuditRecord({
       actorId: input.sessionUser.id,

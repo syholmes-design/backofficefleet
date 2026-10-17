@@ -31,7 +31,13 @@ export type RecruitingV2ActivationReadiness = {
   readinessReasons: string[];
   blockingItems: RecruitingV2ActivationIssue[];
   pendingItems: RecruitingV2ActivationIssue[];
-  nextRequiredAction: "Complete qualification before activation" | "Offer acceptance required" | "Complete onboarding before activation" | "Review Paylocity Handoff Payload" | "Activation not yet implemented";
+  nextRequiredAction:
+    | "Complete qualification before activation"
+    | "Offer acceptance required"
+    | "Complete onboarding before activation"
+    | "Review Paylocity Handoff Payload"
+    | "Activation not yet implemented"
+    | string;
   currentDecision: "NOT READY FOR ACTIVATION" | "READY FOR ACTIVATION" | "ACTIVE";
 };
 

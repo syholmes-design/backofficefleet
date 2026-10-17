@@ -27,6 +27,7 @@ type ProcessPayload = {
     exceptions: { summary: string };
     nextRequiredAction: string;
     brokenHandoffs: string[];
+    settlementEligibility?: { state: string; summary: string; reasons: string[] };
   } | null;
 };
 
@@ -154,6 +155,11 @@ export function LoadProcessIntelligencePanel({ loadId }: { loadId: string }) {
           <p className="mt-1 text-sm text-slate-800">{payload.financeHandoff.invoicing.summary}</p>
           <p className="mt-1 text-sm text-slate-800">{payload.financeHandoff.settlement.summary}</p>
           <p className="mt-1 text-sm text-slate-800">{payload.financeHandoff.exceptions.summary}</p>
+          {payload.financeHandoff.settlementEligibility ? (
+            <p className="mt-2 text-sm font-bold text-slate-950">
+              Settlement eligibility: {payload.financeHandoff.settlementEligibility.state} — {payload.financeHandoff.settlementEligibility.summary}
+            </p>
+          ) : null}
           <p className="mt-2 text-sm font-bold text-slate-950">Next: {payload.financeHandoff.nextRequiredAction}</p>
           {payload.financeHandoff.brokenHandoffs.length > 0 ? (
             <ul className="mt-2 list-disc pl-5 text-sm text-amber-900">

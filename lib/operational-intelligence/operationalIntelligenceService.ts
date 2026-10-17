@@ -402,6 +402,7 @@ async function answerLoadFinance(user: SessionUserLike, fleetId: string, loadRef
     handoff.invoicing.summary,
     handoff.settlement.summary,
     handoff.exceptions.summary,
+    `Settlement eligibility: ${handoff.settlementEligibility.state} — ${handoff.settlementEligibility.summary}`,
     `Next action: ${handoff.nextRequiredAction}`,
   ];
   if (handoff.brokenHandoffs.length > 0) {

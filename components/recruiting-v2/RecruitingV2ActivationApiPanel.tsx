@@ -33,6 +33,13 @@ type ApiPayload = {
   paylocityHandoffPreview: { label: string; status: string; payload: Record<string, unknown> };
   manualActivation: { implemented: boolean; reason: string };
   driverHandoff: { driverId: string; driverIntakeId: string; fleetId: string } | null;
+  driverOperational?: {
+    driverId: string;
+    qualificationStatus: string | null;
+    readinessStatus: string | null;
+    dispatchEligibilityNote: string;
+  } | null;
+  currentRecruitingDecision?: string;
 };
 
 type Props = { candidateId: string };
@@ -136,9 +143,24 @@ export function RecruitingV2ActivationApiPanel({ candidateId }: Props) {
         <div className="rounded-xl border border-teal-800/70 bg-teal-950/20 p-4">
           <p className="text-[10px] font-black uppercase tracking-[0.18em] text-teal-300">Next Required Action</p>
           <h2 className="mt-1 text-xl font-black text-teal-50">{payload.nextRequiredAction}</h2>
-          <p className="mt-2 text-sm text-teal-100">Ready means ready for authorized handoff review. It does not create a Driver or Paylocity employee.</p>
+          <p className="mt-2 text-sm text-teal-100">
+            {payload.activationStatus === "ACTIVE"
+              ? "Administrative activation is complete. Dispatch eligibility is evaluated separately on the Prisma driver file."
+              : "Ready means ready for authorized handoff review. It does not create a Driver or Paylocity employee."}
+          </p>
         </div>
       </div>
+
+      {payload.driverOperational ? (
+        <div className="mt-4 rounded-xl border border-sky-800/70 bg-sky-950/20 p-4">
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-sky-300">Driver operational projection (Prisma)</p>
+          <p className="mt-2 text-sm text-sky-50">
+            Qualification: <strong>{payload.driverOperational.qualificationStatus ?? "NOT EVALUATED"}</strong> · Readiness:{" "}
+            <strong>{payload.driverOperational.readinessStatus ?? "NOT EVALUATED"}</strong>
+          </p>
+          <p className="mt-2 text-xs text-sky-100">{payload.driverOperational.dispatchEligibilityNote}</p>
+        </div>
+      ) : null}
 
       <div className="mt-4 grid gap-3 md:grid-cols-5">
         {[['Qualification', payload.qualificationStatus], ['Offer', payload.offerStatus], ['Onboarding', payload.onboardingStatus], ['Activation Status', payload.activationStatus], ['Activation Stage', payload.activationStage]].map(([label, value]) => (

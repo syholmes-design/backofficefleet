@@ -16,6 +16,8 @@ import {
   readRecruitingV2DriverHandoff,
   RecruitingV2ActivationError,
 } from "@/lib/recruiting-v2/driver-activation-service";
+import { buildRecruitingActivationPresentation } from "@/lib/recruiting-v2/activation-presentation";
+import { loadDriverOperationalProjection } from "@/lib/recruiting-v2/driver-operational-projection";
 import { auth } from "@/auth";
 import type { SessionUserLike } from "@/lib/authorization";
 
@@ -121,7 +123,17 @@ async function getActivationContext(candidateId: string) {
   return { candidate, documentGates, latestInterview, qualification, offer, onboarding, activationReadiness, paylocityPreview };
 }
 
-function activationPayload(context: NonNullable<Awaited<ReturnType<typeof getActivationContext>>>) {
+async function activationPayload(context: NonNullable<Awaited<ReturnType<typeof getActivationContext>>>) {
+  const driverHandoff = readRecruitingV2DriverHandoff(context.candidate.applicationSummary);
+  const driverOperational = await loadDriverOperationalProjection(driverHandoff);
+  const presentation = buildRecruitingActivationPresentation({
+    storedActivationStatus: context.candidate.activationStatus,
+    storedActivationStage: context.candidate.activationStage,
+    activationReadiness: context.activationReadiness,
+    driverHandoff,
+    driverOperational,
+  });
+
   return {
     candidate: {
       id: context.candidate.id,
@@ -134,6 +146,7 @@ function activationPayload(context: NonNullable<Awaited<ReturnType<typeof getAct
       cdlState: context.candidate.cdlState,
       cdlNumberMasked: context.candidate.cdlNumberMasked,
       recordedActivationStage: context.candidate.activationStage,
+      recordedActivationStatus: context.candidate.activationStatus,
       auditTrail: context.candidate.auditTrail,
     },
     position: {
@@ -149,13 +162,17 @@ function activationPayload(context: NonNullable<Awaited<ReturnType<typeof getAct
     qualificationStatus: context.qualification.qualificationSummary.status,
     offerStatus: context.offer.offerStatus,
     onboardingStatus: context.onboarding.onboardingStatus,
-    activationStage: context.activationReadiness.activationStage,
-    activationStatus: context.activationReadiness.activationStatus,
-    activationReadiness: context.activationReadiness,
-    readinessReasons: context.activationReadiness.readinessReasons,
-    blockingItems: context.activationReadiness.blockingItems,
-    pendingItems: context.activationReadiness.pendingItems,
-    nextRequiredAction: context.activationReadiness.nextRequiredAction,
+    activationStage: presentation.activationStage,
+    activationStatus: presentation.administrativeActivationStatus,
+    administrativeActivationStatus: presentation.administrativeActivationStatus,
+    recruitingHandoffEligible: presentation.recruitingHandoffEligible,
+    currentRecruitingDecision: presentation.currentRecruitingDecision,
+    activationReadiness: presentation.activationReadiness,
+    readinessReasons: presentation.activationReadiness.readinessReasons,
+    blockingItems: presentation.activationReadiness.blockingItems,
+    pendingItems: presentation.activationReadiness.pendingItems,
+    nextRequiredAction: presentation.nextRequiredAction,
+    driverOperational: presentation.driverOperational,
     qualificationSummary: context.qualification.qualificationSummary,
     offerMetadata: context.offer,
     onboardingMetadata: context.onboarding,
@@ -176,7 +193,7 @@ function activationPayload(context: NonNullable<Awaited<ReturnType<typeof getAct
       reason:
         "Authorized POST activationStatus=ACTIVE with fleetId creates a Prisma Driver, DriverIntake (QUALIFICATION_REVIEW), and bridges verified recruiting documents into the driver file.",
     },
-    driverHandoff: readRecruitingV2DriverHandoff(context.candidate.applicationSummary),
+    driverHandoff: presentation.driverHandoff,
   };
 }
 
@@ -186,7 +203,7 @@ export async function GET(_request: NextRequest, context: RouteContext) {
   const { candidateId } = await context.params;
   const activationContext = await getActivationContext(candidateId);
   if (!activationContext) return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
-  return NextResponse.json(activationPayload(activationContext));
+  return NextResponse.json(await activationPayload(activationContext));
 }
 
 export async function POST(request: NextRequest, context: RouteContext) {
@@ -207,7 +224,14 @@ export async function POST(request: NextRequest, context: RouteContext) {
   if (body.activationStatus !== undefined && body.activationStatus !== "ACTIVE") {
     return NextResponse.json({ error: "activationStatus can only request ACTIVE through the controlled activation operation" }, { status: 400 });
   }
-  if (body.activationStatus === "ACTIVE" && !activationContext.activationReadiness.ready) {
+  const existingHandoff = readRecruitingV2DriverHandoff(activationContext.candidate.applicationSummary);
+  const alreadyAdministrativelyActive =
+    activationContext.candidate.activationStatus === "ACTIVE" && Boolean(existingHandoff);
+  if (
+    body.activationStatus === "ACTIVE" &&
+    !alreadyAdministrativelyActive &&
+    !activationContext.activationReadiness.ready
+  ) {
     return NextResponse.json({ error: "Activation prerequisites are incomplete; ACTIVE cannot be persisted." }, { status: 400 });
   }
 
@@ -236,7 +260,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     const refreshed = await getActivationContext(candidateId);
     return NextResponse.json(
       {
-        ...activationPayload(refreshed!),
+        ...(await activationPayload(refreshed!)),
         activationResult: result,
       },
       { status: result.idempotent ? 200 : 201 },

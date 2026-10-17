@@ -40,6 +40,11 @@ export type LoadFinanceHandoff = {
   };
   nextRequiredAction: string;
   brokenHandoffs: string[];
+  settlementEligibility: {
+    state: "SETTLEMENT_READY" | "BLOCKED" | "NOT_APPLICABLE" | "INSUFFICIENT_EVIDENCE";
+    reasons: string[];
+    summary: string;
+  };
 };
 
 export function buildLoadFinanceHandoff(load: LoadFinanceSource): LoadFinanceHandoff {
@@ -74,6 +79,40 @@ export function buildLoadFinanceHandoff(load: LoadFinanceSource): LoadFinanceHan
   } else if (livePods.length === 0 && ["IN_TRANSIT", "DELIVERED", "EXCEPTION"].includes(load.status)) {
     nextRequiredAction = "Capture and verify delivery proof to unlock invoice and settlement workflows.";
   }
+
+  const settlementBlockers: string[] = [...brokenHandoffs];
+  if (openExceptions.length > 0) {
+    settlementBlockers.push(`${openExceptions.length} open operating exception(s) must be resolved before settlement.`);
+  }
+  if (held.length > 0) {
+    settlementBlockers.push("One or more LIVE settlements are on HOLD.");
+  }
+  if (verifiedPods.length === 0 && ["DELIVERED", "EXCEPTION", "IN_TRANSIT"].includes(load.status)) {
+    settlementBlockers.push("No verified LIVE proof-of-delivery for this load.");
+  }
+
+  let settlementState: LoadFinanceHandoff["settlementEligibility"]["state"] = "NOT_APPLICABLE";
+  if (load.status === "PLANNED") {
+    settlementState = "NOT_APPLICABLE";
+  } else if (settlementBlockers.length > 0) {
+    settlementState = verifiedPods.length === 0 ? "INSUFFICIENT_EVIDENCE" : "BLOCKED";
+  } else if (
+    liveSettlements.some((row) =>
+      ["REVIEWED", "APPROVED", "PAID", "CLOSED"].includes(row.status),
+    )
+  ) {
+    settlementState = "SETTLEMENT_READY";
+  } else if (liveSettlements.length === 0 && verifiedPods.length > 0 && openExceptions.length === 0) {
+    settlementState = "INSUFFICIENT_EVIDENCE";
+    settlementBlockers.push("Delivery evidence exists but no LIVE settlement row is ready for processing.");
+  }
+
+  const settlementSummary =
+    settlementState === "SETTLEMENT_READY"
+      ? "Prisma rows indicate settlement may proceed (no open blockers detected in this projection)."
+      : settlementState === "NOT_APPLICABLE"
+        ? "Settlement eligibility not evaluated for this load status."
+        : settlementBlockers[0] ?? "Settlement blocked pending operational evidence.";
 
   return {
     dataAuthority: "LIVE",
@@ -116,5 +155,10 @@ export function buildLoadFinanceHandoff(load: LoadFinanceSource): LoadFinanceHan
     },
     nextRequiredAction,
     brokenHandoffs,
+    settlementEligibility: {
+      state: settlementState,
+      reasons: settlementBlockers.slice(0, 8),
+      summary: settlementSummary,
+    },
   };
 }
