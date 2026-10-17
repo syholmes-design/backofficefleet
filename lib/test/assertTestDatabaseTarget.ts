@@ -15,7 +15,7 @@ export const BLOCKED_PRODUCTION_DATABASE_HOST_MARKERS = [
 ] as const;
 
 const ALLOWED_LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1"]);
-const ALLOWED_LOCAL_DATABASE_NAME = "bof_dev";
+const ALLOWED_LOCAL_DATABASE_NAMES = new Set(["bof_dev", "bof_inc5_verify"]);
 
 function parseEnvFile(filePath: string): Record<string, string> {
   if (!existsSync(filePath)) return {};
@@ -69,7 +69,7 @@ export function assertTestDatabaseTarget(connectionString: string | undefined | 
   if (!ALLOWED_LOOPBACK_HOSTS.has(host)) {
     throw new Error(REFUSING_UNSAFE_TEST_DATABASE);
   }
-  if (dbName !== ALLOWED_LOCAL_DATABASE_NAME) {
+  if (!ALLOWED_LOCAL_DATABASE_NAMES.has(dbName)) {
     throw new Error(REFUSING_UNSAFE_TEST_DATABASE);
   }
   if (!/^postgres(ql)?:$/i.test(parsed.protocol)) {

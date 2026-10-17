@@ -11,6 +11,11 @@ test("assertTestDatabaseTarget allows isolated local bof_dev", () => {
   assert.match(url, /bof_dev/);
 });
 
+test("assertTestDatabaseTarget allows isolated local bof_inc5_verify", () => {
+  const url = assertTestDatabaseTarget("postgresql://bof:bof@127.0.0.1:5432/bof_inc5_verify");
+  assert.match(url, /bof_inc5_verify/);
+});
+
 test("assertTestDatabaseTarget refuses production Neon hostname", () => {
   assert.throws(
     () =>
@@ -28,7 +33,7 @@ test("assertTestDatabaseTarget refuses other neon.tech hosts", () => {
   );
 });
 
-test("assertTestDatabaseTarget refuses loopback databases that are not bof_dev", () => {
+test("assertTestDatabaseTarget refuses loopback databases that are not allowlisted", () => {
   assert.throws(
     () => assertTestDatabaseTarget("postgresql://bof:bof@localhost:5432/neondb"),
     (error: Error) => error.message === REFUSING_UNSAFE_TEST_DATABASE,
