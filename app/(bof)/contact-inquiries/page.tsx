@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
 import { isBofStaff } from "@/lib/contact/bofStaffAccess";
-import { ORGANIZATION_TYPES } from "@/lib/contact/contactInquiry";
 import type { SessionUserLike } from "@/lib/authorization";
 import { ContactInquiriesDashboard } from "@/components/contact-inquiries/ContactInquiriesDashboard";
 import { forbidden, redirect } from "next/navigation";
@@ -11,10 +10,6 @@ export const metadata = {
   title: "Customer inquiries | BOF",
   description: "Manage prospective-customer inquiries from initial contact through qualification.",
 };
-
-function organizationLabel(value: string) {
-  return ORGANIZATION_TYPES.find((item) => item.value === value)?.label ?? value;
-}
 
 export default async function ContactInquiriesPage() {
   const session = await auth();
@@ -34,7 +29,7 @@ export default async function ContactInquiriesPage() {
         Track prospective customers from the public contact form through qualification. Use notes and follow-ups to
         document outreach; email is not sent automatically from this workspace.
       </p>
-      <ContactInquiriesDashboard organizationLabel={organizationLabel} />
+      <ContactInquiriesDashboard />
     </main>
   );
 }

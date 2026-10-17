@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { ORGANIZATION_TYPES } from "@/lib/contact/contactInquiry";
+
 type InquiryStatus = "NEW" | "IN_REVIEW" | "CONTACTED" | "QUALIFIED" | "CLOSED";
 
 type StaffMember = { id: string; name: string | null; email: string };
@@ -79,11 +81,17 @@ function fromLocalInputValue(value: string) {
   return date.toISOString();
 }
 
-type Props = {
-  organizationLabel: (value: string) => string;
-};
+function followUpInstant(iso: string | null | undefined) {
+  if (!iso) return null;
+  const time = new Date(iso).getTime();
+  return Number.isNaN(time) ? null : time;
+}
 
-export function ContactInquiriesDashboard({ organizationLabel }: Props) {
+function organizationLabel(value: string) {
+  return ORGANIZATION_TYPES.find((item) => item.value === value)?.label ?? value;
+}
+
+export function ContactInquiriesDashboard() {
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"" | InquiryStatus>("");
   const [sort, setSort] = useState<"createdAt" | "lastActivityAt">("lastActivityAt");
@@ -467,10 +475,18 @@ export function ContactInquiriesDashboard({ organizationLabel }: Props) {
                     type="datetime-local"
                     defaultValue={toLocalInputValue(inquiry.nextFollowUpAt)}
                     key={`follow-${inquiry.id}-${inquiry.nextFollowUpAt ?? "none"}`}
+                    onChange={(event) => {
+                      const next = fromLocalInputValue(event.target.value);
+                      const nextMs = followUpInstant(next);
+                      const currentMs = followUpInstant(inquiry.nextFollowUpAt);
+                      if (nextMs === currentMs) return;
+                      void patchInquiry({ nextFollowUpAt: next });
+                    }}
                     onBlur={(event) => {
                       const next = fromLocalInputValue(event.target.value);
-                      const current = inquiry.nextFollowUpAt;
-                      if (next === current || (!next && !current)) return;
+                      const nextMs = followUpInstant(next);
+                      const currentMs = followUpInstant(inquiry.nextFollowUpAt);
+                      if (nextMs === currentMs) return;
                       void patchInquiry({ nextFollowUpAt: next });
                     }}
                     className="mt-1 w-full rounded-md border border-slate-600 bg-slate-950 px-3 py-2 text-white"
