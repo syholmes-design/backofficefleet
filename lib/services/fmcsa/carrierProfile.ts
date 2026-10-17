@@ -131,3 +131,22 @@ export function qcMobileCarrierProfile(payload: unknown, retrievedAt: Date): Fmc
     retrievedAt: retrievedAt.toISOString(),
   };
 }
+
+/**
+ * QCMobile elements a monitoring result depends on. Each entry lists accepted
+ * names. A profile missing any of them cannot support a CLEAR result.
+ */
+export const QCMOBILE_REQUIRED_ELEMENTS: Array<{ field: string; names: string[] }> = [
+  { field: "dotNumber", names: ["dotNumber"] },
+  { field: "allowedToOperate", names: ["allowedToOperate", "allowToOperate"] },
+  { field: "statusCode", names: ["statusCode"] },
+  { field: "commonAuthorityStatus", names: ["commonAuthorityStatus"] },
+  { field: "bipdInsuranceOnFile", names: ["bipdInsuranceOnFile"] },
+  { field: "bipdRequiredAmount", names: ["bipdRequiredAmount"] },
+];
+
+/** Required QCMobile elements absent (or empty) in a raw carrier element. */
+export function missingQcMobileElements(rawCarrier: Record<string, unknown> | null | undefined): string[] {
+  if (!rawCarrier) return QCMOBILE_REQUIRED_ELEMENTS.map((entry) => entry.field);
+  return QCMOBILE_REQUIRED_ELEMENTS.filter((entry) => readText(rawCarrier, entry.names) === null).map((entry) => entry.field);
+}

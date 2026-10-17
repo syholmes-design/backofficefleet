@@ -932,9 +932,17 @@ model Fleet {
   fmcsaVerifications               FmcsaRegulatoryVerification[]
   sambaFindings                    SambaFinding[]
   emailMailboxes                   EmailMailbox[]
+  /// FMCSA carrier identity of this fleet (the operating motor carrier). Digits only.
+  usdotNumber                      String?
+  /// MC/MX/FF docket, stored with its prefix, e.g. "MC123456".
+  mcNumber                         String?
+  carrierIdentityUpdatedAt         DateTime?
+  fmcsaCarrierSnapshots            FmcsaCarrierSnapshot[]
+  fmcsaMonitoringResults           FmcsaMonitoringResult[]
 
   @@index([status])
   @@index([carrierGroupId, status])
+  @@index([usdotNumber])
 }
 
 model User {
@@ -991,6 +999,7 @@ model User {
   requisitionsRequested               Requisition[]                     @relation("RequisitionRequestingManager")
   requisitionApprovals                RequisitionApproval[]             @relation("RequisitionApprovalReviewer")
   fmcsaVerifications                  FmcsaRegulatoryVerification[]     @relation("FmcsaRegulatoryVerificationActor")
+  fmcsaMonitoringRuns                 FmcsaMonitoringRun[]              @relation("FmcsaMonitoringRunInitiator")
   sambaFindingsCreated                SambaFinding[]                    @relation("SambaFindingCreatedBy")
   sambaFindingsResolved               SambaFinding[]                    @relation("SambaFindingResolvedBy")
   emailApprovals                      EmailApproval[]                   @relation("EmailApprovalApprover")
@@ -1922,6 +1931,105 @@ model FmcsaRegulatoryVerification {
 
   @@index([fleetId, carrierRegistryId, verifiedAt], map: "FmcsaRegVer_fleet_carrier_verified_idx")
   @@index([fleetId, queriedKind, queriedValue, verifiedAt], map: "FmcsaRegVer_fleet_query_verified_idx")
+}
+
+enum FmcsaMonitoringTrigger {
+  MANUAL
+  SCHEDULED
+  CLI
+}
+
+enum FmcsaMonitoringRunStatus {
+  RUNNING
+  COMPLETED
+  COMPLETED_WITH_EXCEPTIONS
+  FAILED
+}
+
+/// CLEAR is only possible with complete, fresh, schema-validated evidence and no alerts.
+enum FmcsaComplianceStatus {
+  CLEAR
+  ATTENTION
+  CRITICAL
+  UNVERIFIED
+  NOT_CONFIGURED
+}
+
+enum FmcsaSnapshotSource {
+  QCMOBILE
+  OPEN_DATA
+}
+
+model FmcsaMonitoringRun {
+  id                 String                   @id @default(cuid())
+  trigger            FmcsaMonitoringTrigger
+  status             FmcsaMonitoringRunStatus @default(RUNNING)
+  initiatedByUserId  String?
+  startedAt          DateTime                 @default(now())
+  finishedAt         DateTime?
+  fleetsChecked      Int                      @default(0)
+  clearCount         Int                      @default(0)
+  attentionCount     Int                      @default(0)
+  criticalCount      Int                      @default(0)
+  unverifiedCount    Int                      @default(0)
+  notConfiguredCount Int                      @default(0)
+  sourcesUsed        Json?
+  schemaValidation   Json?
+  sourceErrors       Json?
+  exceptions         Json?
+  errorMessage       String?
+  initiatedByUser    User?                    @relation("FmcsaMonitoringRunInitiator", fields: [initiatedByUserId], references: [id], onDelete: Restrict)
+  snapshots          FmcsaCarrierSnapshot[]
+  results            FmcsaMonitoringResult[]
+
+  @@index([startedAt])
+  @@index([status, startedAt])
+}
+
+/// Historical FMCSA evidence for one fleet's carrier from one source. Append-only.
+model FmcsaCarrierSnapshot {
+  id              String              @id @default(cuid())
+  runId           String?
+  fleetId         String
+  usdotNumber     String
+  source          FmcsaSnapshotSource
+  retrievedAt     DateTime
+  /// Freshness of the underlying data (dataset last-modified), when known.
+  dataAsOf        DateTime?
+  schemaValidated Boolean             @default(false)
+  complete        Boolean             @default(false)
+  found           Boolean             @default(false)
+  missingFields   Json
+  profile         Json?
+  alerts          Json
+  errorCode       String?
+  createdAt       DateTime            @default(now())
+  run             FmcsaMonitoringRun? @relation(fields: [runId], references: [id], onDelete: Restrict)
+  fleet           Fleet               @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+
+  @@index([fleetId, retrievedAt])
+  @@index([usdotNumber, retrievedAt])
+  @@index([runId])
+}
+
+model FmcsaMonitoringResult {
+  id                 String                @id @default(cuid())
+  runId              String
+  fleetId            String
+  usdotNumber        String?
+  status             FmcsaComplianceStatus
+  reasons            Json
+  alerts             Json
+  changeAlerts       Json
+  qcmobileSnapshotId String?
+  openDataSnapshotId String?
+  evaluatedAt        DateTime              @default(now())
+  run                FmcsaMonitoringRun    @relation(fields: [runId], references: [id], onDelete: Restrict)
+  fleet              Fleet                 @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+
+  @@unique([runId, fleetId])
+  @@index([fleetId, evaluatedAt])
+  @@index([status, evaluatedAt])
 }
 
 enum SambaFindingStatus {

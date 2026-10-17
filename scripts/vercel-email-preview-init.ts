@@ -23,11 +23,16 @@ function fail(msg: string): never {
   process.exit(1);
 }
 
-/** Tables the preview seed itself writes; anything else holding rows means "not our database". */
+/**
+ * Tables the preview seed writes, plus tables written by using the preview (FMCSA carrier
+ * monitoring: public FMCSA data about preview fleets, its findings and verifications).
+ * Anything else holding rows means "not our database".
+ */
 const SEED_TABLES = new Set([
   "User", "Role", "Aggregator", "CarrierGroup", "Fleet", "FleetMembership", "AuditEvent",
   "EmailMailbox", "EmailMailboxCredential", "EmailSyncState", "EmailThread", "EmailMessage",
   "EmailEntityLink", "EmailDraft", "EmailApproval", "EmailAgentGrant",
+  "FmcsaMonitoringRun", "FmcsaCarrierSnapshot", "FmcsaMonitoringResult", "FmcsaRegulatoryVerification", "SambaFinding",
 ]);
 
 function prisma(args: string[]): string {
@@ -131,7 +136,11 @@ async function main() {
       `select conname from pg_constraint where conname in ('EmailMailbox_scope_fleet_check', 'EmailAgentGrant_scopes_check')`,
     );
     if (checks.length !== 2) fail("email safety CHECK constraints are missing");
-    log("migrations applied; schema matches; safety constraints present");
+    const fmcsaChecks = await db.$queryRawUnsafe<Array<{ conname: string }>>(
+      `select conname from pg_constraint where conname in ('Fleet_usdotNumber_format_check', 'Fleet_mcNumber_format_check', 'FmcsaCarrierSnapshot_usdotNumber_format_check', 'FmcsaMonitoringResult_clear_has_no_alerts_check')`,
+    );
+    if (fmcsaChecks.length !== 4) fail("FMCSA monitoring CHECK constraints are missing");
+    log("migrations applied; schema matches; email and FMCSA safety constraints present");
 
     // ── 4. Synthetic preview data (idempotent) ───────────────────────────────
     const password = process.env.EMAIL_PREVIEW_LOGIN_PASSWORD;

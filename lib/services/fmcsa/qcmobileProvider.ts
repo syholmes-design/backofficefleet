@@ -1,5 +1,5 @@
 import { FMCSA_QCMOBILE_BASE_URL, type FmcsaLookupRequest, type FmcsaProviderOutcome, type FmcsaRegulatoryProvider } from "@/lib/services/fmcsa/types";
-import { isEmptyQcMobileContent, normalizeDocket, normalizeQcMobileCarrier, normalizeUsdot } from "@/lib/services/fmcsa/normalize";
+import { isEmptyQcMobileContent, normalizeDocket, normalizeQcMobileCarrier, normalizeUsdot, unwrapQcMobileCarrier } from "@/lib/services/fmcsa/normalize";
 
 const DEFAULT_TIMEOUT_MS = 8000;
 
@@ -118,6 +118,7 @@ export class QcMobileFmcsaProvider implements FmcsaRegulatoryProvider {
         retrievedAt,
         endpointUsed: path,
         carrier,
+        rawCarrier: unwrapQcMobileCarrier(payload),
       };
     } catch (error) {
       const aborted = error instanceof Error && error.name === "AbortError";

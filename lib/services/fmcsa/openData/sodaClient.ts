@@ -22,7 +22,16 @@ export type SodaQuery = {
 };
 
 export type SodaResult =
-  | { ok: true; rows: SodaRow[]; datasetId: string; retrievedAt: Date }
+  | {
+      ok: true;
+      rows: SodaRow[];
+      datasetId: string;
+      retrievedAt: Date;
+      /** Full field list from the X-SODA2-Fields header (rows omit null fields), when sent. */
+      fields: string[] | null;
+      /** Dataset data freshness from X-SODA2-Truth-Last-Modified / Last-Modified, when sent. */
+      lastModified: Date | null;
+    }
   | { ok: false; datasetId: string; errorCode: string; errorMessage: string };
 
 export class SodaClient {
@@ -71,7 +80,14 @@ export class SodaClient {
       if (!Array.isArray(payload)) {
         return { ok: false, datasetId, errorCode: "MALFORMED_RESPONSE", errorMessage: "Expected a JSON array of rows" };
       }
-      return { ok: true, rows: payload as SodaRow[], datasetId, retrievedAt: new Date() };
+      return {
+        ok: true,
+        rows: payload as SodaRow[],
+        datasetId,
+        retrievedAt: new Date(),
+        fields: parseFieldsHeader(response.headers.get("x-soda2-fields")),
+        lastModified: parseDateHeader(response.headers.get("x-soda2-truth-last-modified") ?? response.headers.get("last-modified")),
+      };
     } catch (error) {
       const aborted = error instanceof Error && error.name === "AbortError";
       return {
@@ -84,6 +100,22 @@ export class SodaClient {
       clearTimeout(timer);
     }
   }
+}
+
+export function parseFieldsHeader(value: string | null): string[] | null {
+  if (!value) return null;
+  try {
+    const parsed: unknown = JSON.parse(value);
+    return Array.isArray(parsed) && parsed.every((item) => typeof item === "string") ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+export function parseDateHeader(value: string | null): Date | null {
+  if (!value) return null;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
 /**

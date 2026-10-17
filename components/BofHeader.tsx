@@ -16,6 +16,7 @@ const productNav = [
   { href: "/documents", label: "Documents" },
   { href: "/operational-chat", label: "Conversations" },
   { href: "/email", label: "Email" },
+  { href: "/carrier-monitoring", label: "Carrier Monitoring" },
   { href: "/rf-actions", label: "RF Actions" },
 ] as const;
 

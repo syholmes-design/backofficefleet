@@ -35,6 +35,8 @@ export type FmcsaProviderOutcome = {
   retrievedAt: Date | null;
   endpointUsed: string | null;
   carrier: FmcsaNormalizedCarrier | null;
+  /** Unmodified QCMobile carrier element (public data), for monitoring profiles. Never persisted by verification. */
+  rawCarrier?: Record<string, unknown> | null;
   errorCode?: string;
   errorMessage?: string;
 };

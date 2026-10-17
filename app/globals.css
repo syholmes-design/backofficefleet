@@ -18800,3 +18800,34 @@ a.shipper-portal-story-step:focus-visible,
 .bof-email-empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem; }
 .bof-email-empty-state h2 { margin: 0; }
 .bof-email-empty-state p { margin: 0; }
+
+/* FMCSA carrier monitoring */
+.bof-fmcsa-page { min-height: calc(100vh - 4.5rem); padding: 2rem 1rem 4rem; background: #f1f5f7; color: #0f172a; }
+.bof-fmcsa-shell { width: min(1400px, 100%); margin: 0 auto; }
+.bof-fmcsa-header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1.5rem; padding: 1.5rem 0 1.25rem; }
+.bof-fmcsa-header h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 850; line-height: 1.05; }
+.bof-fmcsa-header p:last-child { max-width: 60rem; margin: 0.6rem 0 0; color: #64748b; }
+.bof-fmcsa-eyebrow { margin: 0 0 0.4rem; color: #0f766e; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.bof-fmcsa-actions { display: flex; gap: 0.6rem; }
+.bof-fmcsa-page button { padding: 0.55rem 0.9rem; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; color: #0f172a; font: inherit; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+.bof-fmcsa-page button:disabled { opacity: 0.5; cursor: not-allowed; }
+.bof-fmcsa-page button.bof-fmcsa-primary { border-color: #0f766e; background: #0f766e; color: #ffffff; }
+.bof-fmcsa-page button.bof-fmcsa-link { margin-left: 0.5rem; padding: 0.1rem 0.4rem; font-size: 0.75rem; }
+.bof-fmcsa-error { padding: 0.75rem 1rem; border: 1px solid #fecaca; border-radius: 6px; background: #fef2f2; color: #991b1b; }
+.bof-fmcsa-meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-bottom: 1rem; color: #334155; font-size: 0.85rem; }
+.bof-fmcsa-meta em { color: #64748b; font-style: normal; }
+.bof-fmcsa-panel { margin-bottom: 1rem; padding: 1rem; overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px; background: #ffffff; }
+.bof-fmcsa-panel h2 { margin: 0 0 0.6rem; font-size: 1rem; }
+.bof-fmcsa-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.bof-fmcsa-table th, .bof-fmcsa-table td { padding: 0.6rem; border-bottom: 1px solid #e2e8f0; text-align: left; vertical-align: top; }
+.bof-fmcsa-table th { color: #475569; font-size: 0.75rem; text-transform: uppercase; }
+.bof-fmcsa-identity { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.bof-fmcsa-identity input { width: 8rem; padding: 0.4rem; border: 1px solid #cbd5e1; border-radius: 4px; font: inherit; }
+.bof-fmcsa-badge { display: inline-block; padding: 0.15rem 0.55rem; border-radius: 999px; font-size: 0.75rem; font-weight: 800; }
+.bof-fmcsa-badge.is-clear { background: #dcfce7; color: #166534; }
+.bof-fmcsa-badge.is-attention { background: #fef3c7; color: #92400e; }
+.bof-fmcsa-badge.is-critical { background: #fee2e2; color: #991b1b; }
+.bof-fmcsa-badge.is-unverified { background: #e2e8f0; color: #334155; }
+.bof-fmcsa-badge.is-not_configured { background: #f1f5f9; color: #64748b; }
+.bof-fmcsa-reasons { margin: 0; padding-left: 1.1rem; color: #334155; }
+.bof-fmcsa-reasons li { margin: 0.15rem 0; }

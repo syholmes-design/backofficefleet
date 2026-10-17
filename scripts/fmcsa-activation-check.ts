@@ -8,8 +8,10 @@
  * and the Socrata app token are not printed, logged or written anywhere.
  */
 import { evaluateCarrierProfile } from "@/lib/services/fmcsa/carrierMonitoring";
-import { qcMobileCarrierProfile } from "@/lib/services/fmcsa/carrierProfile";
+import { missingQcMobileElements, qcMobileCarrierProfile } from "@/lib/services/fmcsa/carrierProfile";
+import { deriveComplianceStatus } from "@/lib/services/fmcsa/complianceStatus";
 import { fetchOpenDataCarrierProfiles } from "@/lib/services/fmcsa/openData/carrierSync";
+import { validateOpenDataSchemas } from "@/lib/services/fmcsa/openData/schemaValidation";
 import { createSodaClientFromEnv } from "@/lib/services/fmcsa/openData/sodaClient";
 import { QcMobileFmcsaProvider } from "@/lib/services/fmcsa/qcmobileProvider";
 import { FMCSA_QCMOBILE_BASE_URL } from "@/lib/services/fmcsa/types";
@@ -33,6 +35,7 @@ async function main() {
   }
 
   const webKey = process.env.FMCSA_QCMOBILE_WEBKEY?.trim();
+  let qcEvidence: Parameters<typeof deriveComplianceStatus>[0]["qcmobile"] = { configured: false, outcome: "SKIPPED", profile: null, missingElements: [] };
   if (webKey) {
     let raw: unknown = null;
     const provider = new QcMobileFmcsaProvider(webKey, async (input, init) => {
@@ -45,6 +48,10 @@ async function main() {
     console.log(`  status ${outcome.status}${outcome.errorCode ? ` (${outcome.errorCode})` : ""}`);
     if (outcome.carrier) console.log(`  carrier ${outcome.carrier.legalName ?? "?"}  allowToOperate=${outcome.carrier.allowToOperate ?? "?"}`);
     const profile = raw ? qcMobileCarrierProfile(raw, new Date()) : null;
+    const missing = outcome.status === "FOUND" ? missingQcMobileElements(outcome.rawCarrier) : [];
+    if (missing.length) console.log(`  missing required elements: ${missing.join(", ")}`);
+    if (outcome.rawCarrier) console.log(`  elements returned: ${Object.keys(outcome.rawCarrier).sort().join(", ")}`);
+    qcEvidence = { configured: true, outcome: outcome.status, errorCode: outcome.errorCode ?? null, profile, missingElements: missing };
     if (profile) {
       console.log("  monitoring profile", JSON.stringify(profile));
       console.log("  alerts", JSON.stringify(evaluateCarrierProfile(profile)));
@@ -53,19 +60,35 @@ async function main() {
     console.log("\nQCMobile skipped: FMCSA_QCMOBILE_WEBKEY not set.");
   }
 
-  const result = await fetchOpenDataCarrierProfiles(createSodaClientFromEnv(), [usdot]);
+  const soda = createSodaClientFromEnv();
+  const schema = await validateOpenDataSchemas(soda);
+  console.log(`\nOpen-data schema validation: ${schema.trusted ? "TRUSTED" : "NOT TRUSTED"}`);
+  for (const report of Object.values(schema.datasets)) {
+    console.log(`  ${report.trusted ? "OK  " : "FAIL"} ${report.name} (${report.datasetId}) fields=${report.fieldsSource} age=${report.ageHours ?? "?"}h`);
+    console.log(`       resolved ${JSON.stringify(report.resolved)}`);
+    for (const issue of report.issues) console.log(`       issue: ${issue}`);
+    // Compare with the alias lists in lib/services/fmcsa/openData/datasets.ts.
+    console.log(`       live fields: ${report.liveFields.join(", ")}`);
+  }
+
+  const result = await fetchOpenDataCarrierProfiles(soda, [usdot], schema);
   console.log("\nOpen data (data.transportation.gov)");
   for (const error of result.errors) console.log(`  ${error.dataset}: ${error.errorCode} ${error.errorMessage}`);
-  for (const profile of result.profiles) {
-    console.log("  monitoring profile", JSON.stringify(profile));
-    console.log("  alerts", JSON.stringify(evaluateCarrierProfile(profile)));
-  }
-  if (result.missing.length) console.log(`  not found: ${result.missing.join(", ")}`);
-  // Column names in lib/services/fmcsa/openData/datasets.ts are unverified;
-  // compare them with what each dataset actually returned.
-  for (const [datasetId, columns] of Object.entries(result.observedColumns)) {
-    console.log(`  columns ${datasetId}: ${columns.join(", ")}`);
-  }
+  console.log(`  coverage ${JSON.stringify(result.coverage[String(Number(usdot))] ?? null)}`);
+  for (const profile of result.profiles) console.log("  monitoring profile", JSON.stringify(profile));
+
+  const decision = deriveComplianceStatus({
+    usdotNumber: String(Number(usdot)),
+    qcmobile: qcEvidence,
+    openData: {
+      schemaTrusted: schema.trusted,
+      schemaIssues: Object.values(schema.datasets).flatMap((d) => d.issues),
+      coverage: result.coverage[String(Number(usdot))] ?? null,
+      profile: result.profiles[0] ?? null,
+    },
+  });
+  console.log(`\nCompliance decision: ${decision.status}`);
+  for (const reason of decision.reasons) console.log(`  - ${reason}`);
 }
 
 main().catch((error) => {

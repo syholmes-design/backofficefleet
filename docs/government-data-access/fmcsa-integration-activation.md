@@ -1,5 +1,7 @@
 # FMCSA integrations: activation readiness (2026-10-17)
 
+> **Phase 3 update:** R1–R3 below are now built on the development branch, and the Preview database will receive them on the next Preview build. Open-data schemas are validated live before results are trusted. See [`phase3-preview-implementation.md`](phase3-preview-implementation.md).
+
 ## 1. QCMobile (live carrier lookup): code verified, needs your key
 
 **What exists** (`lib/services/fmcsa/`):
