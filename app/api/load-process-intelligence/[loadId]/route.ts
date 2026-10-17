@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import { getLoadProcessIntelligence } from "@/lib/load-process-intelligence";
+import { getUnifiedLoadProcessView } from "@/lib/load-process-unified-read-model";
 import { isDatabaseUrlNotConfiguredError, prisma, prismaUnavailablePayload } from "@/lib/prisma";
 import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
@@ -36,7 +37,8 @@ export async function GET(_request: Request, context: { params: Promise<{ loadId
       liveOnly: true,
     });
     if (!processIntelligence) return NextResponse.json({ error: "Load not found" }, { status: 404 });
-    return NextResponse.json(processIntelligence);
+    const unifiedProcess = await getUnifiedLoadProcessView(actor!, allowed.fleetId, allowed.id);
+    return NextResponse.json({ ...processIntelligence, unifiedProcess });
   } catch (error) {
     if (isDatabaseUrlNotConfiguredError(error)) {
       return NextResponse.json(prismaUnavailablePayload(), { status: 503 });

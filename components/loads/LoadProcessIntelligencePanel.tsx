@@ -15,6 +15,11 @@ type ProcessPayload = {
   variants: { status: string };
   throughput: { reason: string; loadCreatedToDelivery: string | null; loadCreatedToPod: string | null; podToInvoice: string | null; invoiceToSettlement: string | null };
   bottlenecks: { status: string };
+  unifiedProcess?: {
+    nextUnifiedAction: string;
+    spine: { reconstructable: boolean; persistedEventTypes: string[] };
+    operatingProcess: { eventCount: number; exceptionCount: number } | null;
+  } | null;
   financeHandoff: {
     deliveryEvidence: { summary: string };
     invoicing: { summary: string };
@@ -129,6 +134,18 @@ export function LoadProcessIntelligencePanel({ loadId }: { loadId: string }) {
         <article className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-4"><p className="text-[10px] font-black uppercase tracking-wider text-slate-500">Throughput</p><p className="mt-2 break-words text-sm text-slate-700">{hasActualHistory ? (payload.conformance.throughputTime ?? payload.throughput.reason) : "INSUFFICIENT EVENT HISTORY"}</p></article>
         <article className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-4"><p className="text-[10px] font-black uppercase tracking-wider text-slate-500">Bottleneck analysis</p><p className="mt-2 break-words text-sm text-slate-700">{payload.bottlenecks.status}</p></article>
       </div>
+
+      {payload.unifiedProcess ? (
+        <div className="mt-4 min-w-0 rounded-xl border border-slate-200 bg-white p-4">
+          <p className="text-[10px] font-black uppercase tracking-wider text-slate-500">Unified process spine</p>
+          <p className="mt-2 text-sm text-slate-800">
+            Operating process events: {payload.unifiedProcess.operatingProcess?.eventCount ?? 0} · Exceptions:{" "}
+            {payload.unifiedProcess.operatingProcess?.exceptionCount ?? 0} · Reconstructable:{" "}
+            {payload.unifiedProcess.spine.reconstructable ? "yes" : "no"}
+          </p>
+          <p className="mt-2 text-sm font-bold text-slate-950">Unified next action: {payload.unifiedProcess.nextUnifiedAction}</p>
+        </div>
+      ) : null}
 
       {payload.financeHandoff ? (
         <div className="mt-4 min-w-0 rounded-xl border border-teal-200 bg-teal-50/60 p-4">

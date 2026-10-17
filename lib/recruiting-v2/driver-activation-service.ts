@@ -9,6 +9,7 @@ import {
   evaluateRecruitingV2ActivationReadiness,
   normalizeRecruitingV2OnboardingSummary,
 } from "@/lib/recruiting-v2/activation-engine";
+import { runPostActivationQualificationAndReadiness } from "@/lib/recruiting-v2/post-activation-evaluation";
 import { authorizedFleetAccess } from "@/lib/services/intakeService";
 
 const ACTIVATION_ROLE_CODES = [
@@ -139,6 +140,19 @@ export async function activateRecruitingV2Candidate(input: {
       select: { id: true, fleetId: true },
     });
     if (driver) {
+      let postActivationEvaluation = null;
+      const latestReadiness = await prisma.driverReadinessScore.findFirst({
+        where: { driverId: driver.id, driverIntakeId: existingHandoff.driverIntakeId, fleetId: existingHandoff.fleetId },
+        orderBy: [{ evaluatedAt: "desc" }, { createdAt: "desc" }],
+      });
+      if (!latestReadiness) {
+        postActivationEvaluation = await runPostActivationQualificationAndReadiness(
+          input.sessionUser,
+          driver.id,
+          existingHandoff.driverIntakeId,
+          existingHandoff.fleetId,
+        );
+      }
       return {
         idempotent: true as const,
         handoff: existingHandoff,
@@ -146,6 +160,7 @@ export async function activateRecruitingV2Candidate(input: {
         driverIntakeId: existingHandoff.driverIntakeId,
         dispatchReadinessHref: `/drivers/${driver.id}/safety`,
         driverHref: `/drivers/${driver.id}`,
+        postActivationEvaluation,
       };
     }
   }
@@ -321,6 +336,13 @@ export async function activateRecruitingV2Candidate(input: {
     return { driver, intake, handoff };
   });
 
+  const postActivationEvaluation = await runPostActivationQualificationAndReadiness(
+    input.sessionUser,
+    result.driver.id,
+    result.intake.id,
+    fleetId,
+  );
+
   return {
     idempotent: false as const,
     handoff: result.handoff,
@@ -329,5 +351,6 @@ export async function activateRecruitingV2Candidate(input: {
     dispatchReadinessHref: `/drivers/${result.driver.id}/safety`,
     driverHref: `/drivers/${result.driver.id}`,
     activationReadiness,
+    postActivationEvaluation,
   };
 }
