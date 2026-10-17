@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import type { SessionUserLike } from "@/lib/authorization";
+import { getUnifiedLoadProcessView } from "@/lib/load-process-unified-read-model";
 import { getTenantLoadProcess } from "@/lib/process-intelligence/operating-event-service";
 import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
 import { ProcessIntelligenceError } from "@/lib/process-intelligence/types";
@@ -14,13 +15,11 @@ export async function GET(request: Request, context: { params: Promise<{ loadId:
   if (!fleetId) return NextResponse.json({ error: "fleetId is required" }, { status: 422 });
 
   try {
-    const reconstruction = await getTenantLoadProcess(
-      getOperatingProcessStore(),
-      session.user as SessionUserLike,
-      fleetId,
-      loadId,
-    );
+    const actor = session.user as SessionUserLike;
+    const reconstruction = await getTenantLoadProcess(getOperatingProcessStore(), actor, fleetId, loadId);
+    const unifiedProcess = await getUnifiedLoadProcessView(actor, fleetId, reconstruction.loadId);
     return NextResponse.json({
+      unifiedProcess,
       dataAuthority: reconstruction.dataAuthority,
       loadId: reconstruction.loadId,
       fleetId: reconstruction.fleetId,

@@ -66,7 +66,6 @@ export async function recordOperatingProcessEvent(
   options?: { authorizedFleetId?: string },
 ) {
   if (options?.authorizedFleetId) {
-    if (!user?.id) throw new ProcessIntelligenceError("AUTH_REQUIRED", 401);
     if (options.authorizedFleetId !== input.fleetId) {
       throw new ProcessIntelligenceError("TENANT_ACCESS_DENIED", 403);
     }

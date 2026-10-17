@@ -140,6 +140,13 @@ export const BOF_PAGE_REGISTRY: Record<string, BofPageRegistryItem> = {
     routeFile: "app/(bof)/dispatch/page.tsx",
     primaryComponent: "DispatchPage",
   },
+  fleetMap: {
+    label: "Fleet map",
+    url: "/fleet-map",
+    type: "DISPATCH",
+    routeFile: "app/(bof)/fleet-map/page.tsx",
+    primaryComponent: "FleetVisibilityMapClient",
+  },
   dispatchPickup: {
     label: "Pickup authorization",
     url: "/dispatch/pickup",

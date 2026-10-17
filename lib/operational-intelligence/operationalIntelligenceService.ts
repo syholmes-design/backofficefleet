@@ -14,6 +14,7 @@ import { listDriverOperationalSummaries } from "@/lib/services/driverOperational
 import { listAccessibleLiveSettlements } from "@/lib/services/settlementReadService";
 import { buildLoadFinanceHandoff } from "@/lib/load-finance-handoff";
 import { isDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
+import { answerTelematicsQuestion } from "@/lib/fleet-visibility/telematics-intelligence";
 
 export class OperationalIntelligenceError extends Error {
   statusCode: number;
@@ -485,18 +486,6 @@ function answerPayroll(): OperationalIntelligenceAnswer {
   };
 }
 
-function answerTelematics(): OperationalIntelligenceAnswer {
-  return {
-    intent: "TELEMATICS",
-    question: "",
-    dataAuthority: "UNAVAILABLE",
-    answer: "Live GPS/telematics is not connected to BOF operational intelligence. Use load status, dispatch assignment, and delivery/proof records instead.",
-    citations: [],
-    recommendations: [{ label: "Open dispatch", href: "/dispatch", claimClass: "RECOMMENDATION", executable: false }],
-    limitations: ["Marketing and customer portal map views may show DEMO/simulated tracking."],
-  };
-}
-
 function answerGeneralHelp(): OperationalIntelligenceAnswer {
   return {
     intent: "GENERAL_HELP",
@@ -550,7 +539,7 @@ export async function answerOperationalQuestion(
       base = answerPayroll();
       break;
     case "TELEMATICS":
-      base = answerTelematics();
+      base = await answerTelematicsQuestion(user, fleetId, question);
       break;
     default:
       base = answerGeneralHelp();

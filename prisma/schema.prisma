@@ -587,6 +587,43 @@ enum OperatingProcessEventType {
   INVOICE_PAID
   INVOICE_CLOSED
   PAYMENT_RECORDED
+  VEHICLE_LOCATION_RECORDED
+  GEOFENCE_PICKUP_APPROACHING
+  GEOFENCE_PICKUP_ARRIVED
+  GEOFENCE_PICKUP_DEPARTED
+  GEOFENCE_DELIVERY_APPROACHING
+  GEOFENCE_DELIVERY_ARRIVED
+  GEOFENCE_DELIVERY_DEPARTED
+  DELIVERY_RISK_ASSESSED
+}
+
+enum TelematicsProvider {
+  SAMSARA
+  MOTIVE
+  GEOTAB
+  GENERIC_WEBHOOK
+  STANDALONE_CELLULAR
+  DRIVER_MOBILE
+}
+
+enum LocationObservationKind {
+  LIVE
+  SYNTHETIC_TEST
+}
+
+enum LoadStopKind {
+  PICKUP
+  DELIVERY
+}
+
+enum DeliveryProgressStatus {
+  ON_SCHEDULE
+  POTENTIALLY_DELAYED
+  DELIVERY_AT_RISK
+  APPOINTMENT_MISSED
+  LOCATION_UNAVAILABLE
+  LOCATION_STALE
+  ARRIVED_AT_DESTINATION
 }
 
 enum OperatingActorType {
@@ -931,6 +968,11 @@ model Fleet {
   requisitions                     Requisition[]
   fmcsaVerifications               FmcsaRegulatoryVerification[]
   sambaFindings                    SambaFinding[]
+  telematicsDeviceLinks            TelematicsDeviceLink[]
+  telematicsIngestCredentials      TelematicsIngestCredential[]
+  vehicleLocationObservations      VehicleLocationObservation[]
+  loadStopGeographies              LoadStopGeography[]
+  loadMovementAssessments          LoadMovementAssessment[]
 
   @@index([status])
   @@index([carrierGroupId, status])
@@ -1182,6 +1224,7 @@ model Driver {
   trainingAssignments              TrainingAssignment[]
   trainingCertifications           TrainingCertification[]
   settlements                      Settlement[]
+  vehicleLocationObservations      VehicleLocationObservation[]
 
   @@index([fleetId, status])
   @@index([email])
@@ -1603,6 +1646,9 @@ model Load {
   settlements              Settlement[]
   invoices                 Invoice[]
   invoicePayments          InvoicePayment[]
+  loadStopGeographies      LoadStopGeography[]
+  loadMovementAssessments  LoadMovementAssessment[]
+  vehicleLocationObservations VehicleLocationObservation[]
 
   @@index([fleetId, status])
   @@index([fleetId, pickupWindowStart])
@@ -1629,6 +1675,8 @@ model Equipment {
   conditionThreads        ConditionThread[]     @relation("ConditionThreadEquipment")
   conditionEvents         ConditionEvent[]      @relation("ConditionEventEquipment")
   operationalEvidence     OperationalEvidence[] @relation("OperationalEvidenceEquipment")
+  telematicsDeviceLinks   TelematicsDeviceLink[]
+  vehicleLocationObservations VehicleLocationObservation[]
 
   @@unique([fleetId, unitNumber])
   @@index([fleetId, equipmentType, status])
@@ -2967,4 +3015,106 @@ model ContactInquiryActivity {
   actor        User?                      @relation("ContactInquiryActivityActor", fields: [actorUserId], references: [id], onDelete: SetNull)
 
   @@index([inquiryId, createdAt])
+}
+
+model TelematicsDeviceLink {
+  id                 String             @id @default(cuid())
+  fleetId            String
+  equipmentId        String
+  provider           TelematicsProvider
+  providerDeviceId   String
+  providerVehicleId  String?
+  label              String?
+  isActive           Boolean            @default(true)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  fleet              Fleet              @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  equipment          Equipment          @relation(fields: [equipmentId], references: [id], onDelete: Restrict)
+
+  @@unique([fleetId, provider, providerDeviceId])
+  @@index([fleetId, equipmentId])
+}
+
+model TelematicsIngestCredential {
+  id                       String             @id @default(cuid())
+  fleetId                  String
+  provider                 TelematicsProvider
+  label                    String?
+  secretHash                 String
+  webhookSigningSecretHash   String?
+  revokedAt                DateTime?
+  lastUsedAt               DateTime?
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+  fleet                    Fleet              @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+
+  @@index([fleetId, provider])
+  @@index([fleetId, revokedAt])
+}
+
+model VehicleLocationObservation {
+  id                    String                  @id @default(cuid())
+  fleetId               String
+  equipmentId           String?
+  driverId              String?
+  loadId                String?
+  provider              TelematicsProvider
+  providerDeviceId      String?
+  observationKind       LocationObservationKind   @default(LIVE)
+  latitude              Float
+  longitude             Float
+  observedAt            DateTime
+  ingestedAt            DateTime                @default(now())
+  movementStatus        String?
+  speedMph              Float?
+  headingDegrees        Float?
+  accuracyMeters        Float?
+  sourceReliability     String?
+  idempotencyKey        String
+  fleet                 Fleet                   @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  equipment             Equipment?              @relation(fields: [equipmentId], references: [id], onDelete: SetNull)
+  load                  Load?                   @relation(fields: [loadId], references: [id], onDelete: SetNull)
+  driver                Driver?                 @relation(fields: [driverId], references: [id], onDelete: SetNull)
+
+  @@unique([fleetId, idempotencyKey])
+  @@index([fleetId, equipmentId, observedAt(sort: Desc)])
+  @@index([fleetId, loadId, observedAt(sort: Desc)])
+  @@index([fleetId, observedAt(sort: Desc)])
+}
+
+model LoadStopGeography {
+  id           String       @id @default(cuid())
+  fleetId      String
+  loadId       String
+  stopKind     LoadStopKind
+  latitude     Float
+  longitude    Float
+  geocodeLabel String?
+  sourceSystem String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  fleet        Fleet        @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  load         Load         @relation(fields: [loadId], references: [id], onDelete: Restrict)
+
+  @@unique([fleetId, loadId, stopKind])
+  @@index([fleetId, loadId])
+}
+
+model LoadMovementAssessment {
+  id                      String                 @id @default(cuid())
+  fleetId                 String
+  loadId                  String
+  equipmentId             String?
+  progressStatus          DeliveryProgressStatus
+  distanceToDeliveryMiles Float?
+  estimatedArrivalAt      DateTime?
+  etaConfidenceNote       String?
+  lastObservationId       String?
+  assessedAt              DateTime               @default(now())
+  updatedAt               DateTime               @updatedAt
+  fleet                   Fleet                  @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  load                    Load                   @relation(fields: [loadId], references: [id], onDelete: Restrict)
+
+  @@unique([fleetId, loadId])
+  @@index([fleetId, progressStatus])
 }

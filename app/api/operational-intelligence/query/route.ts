@@ -5,6 +5,7 @@ import {
   answerOperationalQuestion,
   OperationalIntelligenceError,
 } from "@/lib/operational-intelligence/operationalIntelligenceService";
+import { fleetVisibilityErrorResponse } from "@/lib/fleet-visibility/fleet-api-response";
 import type { OperatingRecordType } from "@/lib/services/operatingRecordService";
 
 export async function POST(request: Request) {
@@ -32,6 +33,8 @@ export async function POST(request: Request) {
     const answer = await answerOperationalQuestion(session.user as SessionUserLike, fleetId, question, body.context);
     return NextResponse.json(answer);
   } catch (error) {
+    const fleetMapped = fleetVisibilityErrorResponse(error);
+    if (fleetMapped) return fleetMapped;
     if (error instanceof OperationalIntelligenceError) {
       return NextResponse.json({ error: error.message }, { status: error.statusCode });
     }

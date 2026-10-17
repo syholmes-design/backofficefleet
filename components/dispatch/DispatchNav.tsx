@@ -9,6 +9,7 @@ import {
   FileInput,
   LayoutGrid,
   Link2,
+  MapPin,
   UserPlus,
 } from "lucide-react";
 import type { DispatchNavId } from "@/types/dispatch";
@@ -30,6 +31,7 @@ const PRIMARY_ITEMS: NavItem[] = [
 
 const SECONDARY_ITEMS: NavItem[] = [
   { id: "intake", label: "Load Intake", icon: FileInput, href: "/dispatch/intake" },
+  { id: "intake", label: "Fleet map (GPS)", icon: MapPin, href: "/fleet-map" },
 ];
 
 function activeItemId(pathname: string, view: string | null): NavItem["id"] {

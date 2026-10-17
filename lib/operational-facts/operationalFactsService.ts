@@ -1,5 +1,6 @@
-import { prisma } from "@/lib/prisma";
 import { buildLoadFinanceHandoff } from "@/lib/load-finance-handoff";
+import { isGpsStorageUnavailable } from "@/lib/fleet-visibility/gps-storage";
+import { prisma } from "@/lib/prisma";
 export type DriverOperationalFacts = {
   dataAuthority: "LIVE";
   driverId: string;
@@ -15,6 +16,11 @@ export type LoadOperationalFacts = {
   referenceNumber: string | null;
   loadStatus: string;
   financeHandoff: ReturnType<typeof buildLoadFinanceHandoff>;
+  movementAssessment: {
+    progressStatus: string;
+    estimatedArrivalAt: string | null;
+    etaConfidenceNote: string | null;
+  } | null;
 };
 
 export async function getDriverOperationalFacts(driverId: string, fleetId: string): Promise<DriverOperationalFacts | null> {
@@ -64,11 +70,31 @@ export async function getLoadOperationalFacts(loadId: string, fleetId: string): 
   if (!load) return null;
 
   const financeHandoff = buildLoadFinanceHandoff(load);
+  let movement: {
+    progressStatus: string;
+    estimatedArrivalAt: Date | null;
+    etaConfidenceNote: string | null;
+  } | null = null;
+  try {
+    movement = await prisma.loadMovementAssessment.findUnique({
+      where: { fleetId_loadId: { fleetId, loadId: load.id } },
+      select: { progressStatus: true, estimatedArrivalAt: true, etaConfidenceNote: true },
+    });
+  } catch (error) {
+    if (!isGpsStorageUnavailable(error)) throw error;
+  }
   return {
     dataAuthority: "LIVE",
     loadId: load.id,
     referenceNumber: load.referenceNumber,
     loadStatus: load.status,
     financeHandoff,
+    movementAssessment: movement
+      ? {
+          progressStatus: movement.progressStatus,
+          estimatedArrivalAt: movement.estimatedArrivalAt?.toISOString() ?? null,
+          etaConfidenceNote: movement.etaConfidenceNote,
+        }
+      : null,
   };
 }
