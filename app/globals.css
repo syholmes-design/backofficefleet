@@ -7367,11 +7367,15 @@ a.bof-mkt-cc-mock-kpi:focus-visible {
   letter-spacing: 0;
 }
 
-.bof-home-hero h1 {
+.bof-home-hero:not(.bof-home-hero--services) h1 {
   max-width: 13ch;
   color: #ffffff;
   font-size: 3.05rem;
   text-wrap: balance;
+}
+
+.bof-home-hero--services h1 {
+  color: #ffffff;
 }
 
 .bof-home-hero__lead {
@@ -9017,10 +9021,11 @@ a.bof-home-workflow__step:focus-visible .bof-home-workflow__evidence {
 }
 
 .bof-home-hero--services h1 {
-  max-width: 22ch;
-  font-size: clamp(1.85rem, 3.2vw + 0.5rem, 2.65rem);
-  line-height: 1.12;
+  max-width: min(100%, 22rem);
+  font-size: clamp(1.85rem, 2.4vw + 0.75rem, 2.75rem);
+  line-height: 1.14;
   letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 .bof-home-hero__subhead {
@@ -9353,9 +9358,14 @@ a.bof-home-workflow__step:focus-visible .bof-home-workflow__evidence {
     padding-bottom: 3rem;
   }
 
-  .bof-home-hero h1 {
+  .bof-home-hero:not(.bof-home-hero--services) h1 {
     font-size: 2.35rem;
     max-width: 14ch;
+  }
+
+  .bof-home-hero--services h1 {
+    font-size: clamp(1.75rem, 5vw, 2.15rem);
+    max-width: min(100%, 20rem);
   }
 
   .bof-home-demo-strip__inner {
@@ -9380,10 +9390,14 @@ a.bof-home-workflow__step:focus-visible .bof-home-workflow__evidence {
     padding-top: 3rem;
   }
 
-  .bof-home-hero h1,
+  .bof-home-hero:not(.bof-home-hero--services) h1,
   .bof-home-section-head h2,
   .bof-home-section--soft .bof-mkt-title {
     font-size: 1.85rem;
+  }
+
+  .bof-home-hero--services h1 {
+    font-size: 1.75rem;
   }
 
   .bof-home-hero__lead {
