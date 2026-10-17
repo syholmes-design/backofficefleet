@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
   serverExternalPackages: ["@prisma/adapter-pg", "@prisma/client"],
+  experimental: {
+    authInterrupts: true,
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

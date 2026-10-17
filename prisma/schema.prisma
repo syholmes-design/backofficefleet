@@ -992,6 +992,8 @@ model User {
   fmcsaVerifications                  FmcsaRegulatoryVerification[]     @relation("FmcsaRegulatoryVerificationActor")
   sambaFindingsCreated                SambaFinding[]                    @relation("SambaFindingCreatedBy")
   sambaFindingsResolved               SambaFinding[]                    @relation("SambaFindingResolvedBy")
+  contactInquiriesAssigned            ContactInquiry[]                  @relation("ContactInquiryAssignedTo")
+  contactInquiryActivities            ContactInquiryActivity[]          @relation("ContactInquiryActivityActor")
 
   @@index([status])
 }
@@ -2908,4 +2910,61 @@ model TrainingCertification {
 
   @@index([fleetId, outcome, certifiedAt])
   @@index([driverId, outcome])
+}
+
+enum ContactInquiryStatus {
+  NEW
+  IN_REVIEW
+  CONTACTED
+  QUALIFIED
+  CLOSED
+}
+
+enum ContactInquiryActivityType {
+  NOTE
+  STATUS_CHANGE
+  ASSIGNMENT
+  FOLLOW_UP
+}
+
+/// Prospective BOF customer inquiry. Not a driver application, fleet record, or audit event.
+model ContactInquiry {
+  id               String                @id @default(cuid())
+  fullName         String
+  companyName      String
+  email            String
+  phone            String?
+  organizationType String
+  services         String[]
+  message          String
+  department       String?
+  status           ContactInquiryStatus  @default(NEW)
+  assignedToUserId String?
+  nextFollowUpAt   DateTime?
+  lastActivityAt   DateTime              @default(now())
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+  assignedTo       User?                 @relation("ContactInquiryAssignedTo", fields: [assignedToUserId], references: [id], onDelete: SetNull)
+  activities       ContactInquiryActivity[]
+
+  @@index([createdAt])
+  @@index([email, createdAt])
+  @@index([status])
+  @@index([assignedToUserId])
+  @@index([nextFollowUpAt])
+  @@index([lastActivityAt])
+}
+
+model ContactInquiryActivity {
+  id           String                     @id @default(cuid())
+  inquiryId    String
+  activityType ContactInquiryActivityType
+  description  String
+  actorUserId  String?
+  metadata     Json?
+  createdAt    DateTime                   @default(now())
+  inquiry      ContactInquiry             @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+  actor        User?                      @relation("ContactInquiryActivityActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([inquiryId, createdAt])
 }
