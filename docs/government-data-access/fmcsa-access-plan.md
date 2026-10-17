@@ -38,10 +38,15 @@ relying on them. Nothing has been sent, submitted or paid.
 | PSP (operated by NIC Federal) | PSP Customer Service **877-642-9499** (Mon–Thu 8–6, Fri 8–5 ET) | Printed on the PSP ISP agreement and enrollment form; no PSP email found (**verify**) |
 | Drug & Alcohol Clearinghouse | **clearinghouse@dot.gov**, Help Desk **844-955-0207** | CDLIS contact page and FMCSA contact page (official) |
 | Medical program / National Registry | **FMCSAMedical@dot.gov** | National Registry final rule (official, dated; **verify**) |
-| FMCSA Contact Center (general, registration/Motus) | 1-877-254-5365 and web form | FMCSA contact page (official) |
+| FMCSA Contact Center (registration, licensing, insurance, Motus) | **1-800-832-5660**, Mon–Fri 8am–8pm ET; web form | FMCSA contact page (official). The earlier 1-877 number here was not confirmed; use this one. |
+| Motus "Supporting Company" role | Job aid: fmcsa.dot.gov/registration/motus-supporting-company-job-aid | May let BOF act for affiliated carriers inside Motus (**verify** scope) |
+| AAMVA (CDLIS employer inquiry through a third party; DLDV identity checks) | aamva.org products and services catalog (private rate schedule, Oct 2026) | Licence identity checks and CDLIS employer queries; fees apply |
 | FMCSA HQ | 1200 New Jersey Ave SE, Washington, DC 20590 | Official |
 
 ## 4. Risks and open questions
+- **Licensing & Insurance moved to Motus (2026-05-14).** The legacy L&I open datasets are frozen.
+  BOF reads authority and insurance from the new Motus datasets (see
+  `fmcsa-integration-activation.md`).
 - **Motus cutover (2026-05-14):** a trade report describes public feeds, QCMobile included,
   temporarily missing some carrier data after the cutover. BOF should cross-check QCMobile against
   census data and ask FMCSA (draft F7).

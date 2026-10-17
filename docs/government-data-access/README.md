@@ -20,6 +20,9 @@ capability on authoritative sources. Carriers that work with BOF authorize BOF t
 | [`fmcsa-access-plan.md`](fmcsa-access-plan.md) | FMCSA programs, access routes, multi-carrier model, costs, technical requirements, contacts |
 | [`outreach-register.md`](outreach-register.md) | Structured register: contacts, requirements, correspondence, responses, next actions |
 | [`drafts/`](drafts/) | Individualized correspondence awaiting approval |
+| [`fmcsa-integration-activation.md`](fmcsa-integration-activation.md) | QCMobile and open-data integration readiness and activation steps |
+| [`state-mvr-plan.md`](state-mvr-plan.md) | State MVR access and monitoring plan: OH, MI, GA, MO |
+| [`driver-intelligence-roadmap.md`](driver-intelligence-roadmap.md) | Build-vs-buy, roadmap, registrations to obtain, prioritized development tasks |
 
 ## Phases
 1. **FMCSA** (this deliverable): public carrier data (QCMobile, open data), PSP as an Industry

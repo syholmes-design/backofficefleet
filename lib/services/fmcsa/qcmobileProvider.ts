@@ -1,5 +1,5 @@
 import { FMCSA_QCMOBILE_BASE_URL, type FmcsaLookupRequest, type FmcsaProviderOutcome, type FmcsaRegulatoryProvider } from "@/lib/services/fmcsa/types";
-import { normalizeDocket, normalizeQcMobileCarrier, normalizeUsdot } from "@/lib/services/fmcsa/normalize";
+import { isEmptyQcMobileContent, normalizeDocket, normalizeQcMobileCarrier, normalizeUsdot } from "@/lib/services/fmcsa/normalize";
 
 const DEFAULT_TIMEOUT_MS = 8000;
 
@@ -50,7 +50,7 @@ export class QcMobileFmcsaProvider implements FmcsaRegulatoryProvider {
           carrier: null,
         };
       }
-      if (response.status === 401) {
+      if (response.status === 401 || response.status === 403) {
         return {
           status: "UNAVAILABLE",
           provenance: "UNAVAILABLE",
@@ -85,6 +85,18 @@ export class QcMobileFmcsaProvider implements FmcsaRegulatoryProvider {
           carrier: null,
           errorCode: "MALFORMED_RESPONSE",
           errorMessage: "QCMobile response was not JSON",
+        };
+      }
+
+      // QCMobile answers an unknown identifier with HTTP 200 and an empty
+      // content element rather than a 404.
+      if (isEmptyQcMobileContent(payload)) {
+        return {
+          status: "NOT_FOUND",
+          provenance: "LIVE",
+          retrievedAt,
+          endpointUsed: path,
+          carrier: null,
         };
       }
 

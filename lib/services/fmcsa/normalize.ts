@@ -50,6 +50,12 @@ export function unwrapQcMobileCarrier(payload: unknown): Record<string, unknown>
   return null;
 }
 
+export function isEmptyQcMobileContent(payload: unknown): boolean {
+  if (!isRecord(payload) || !("content" in payload)) return false;
+  const content = payload.content;
+  return content === null || (Array.isArray(content) && content.length === 0);
+}
+
 export function normalizeQcMobileCarrier(payload: unknown): FmcsaNormalizedCarrier | null {
   const carrier = unwrapQcMobileCarrier(payload);
   if (!carrier) return null;
@@ -65,7 +71,7 @@ export function normalizeQcMobileCarrier(payload: unknown): FmcsaNormalizedCarri
     dbaName,
     allowToOperate: readString(carrier, ["allowToOperate", "allowedToOperate"]),
     outOfService: readString(carrier, ["outOfService"]),
-    outOfServiceDate: readString(carrier, ["outOfServiceDate"]),
+    outOfServiceDate: readString(carrier, ["outOfServiceDate", "oosDate"]),
   };
 }
 
