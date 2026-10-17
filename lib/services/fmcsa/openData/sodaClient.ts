@@ -7,11 +7,19 @@
  * errors or logs.
  */
 export const DOT_OPEN_DATA_BASE_URL = "https://data.transportation.gov/resource";
+/** Official dataset metadata (column display names, API field names, descriptions). */
+export const DOT_OPEN_DATA_METADATA_URL = "https://data.transportation.gov/api/views";
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 const DATASET_ID = /^[a-z0-9]{4}-[a-z0-9]{4}$/;
 
 export type SodaRow = Record<string, unknown>;
+
+export type SodaColumn = { fieldName: string; name: string; description: string | null; dataTypeName: string | null };
+
+export type SodaMetadataResult =
+  | { ok: true; datasetId: string; name: string | null; columns: SodaColumn[]; rowsUpdatedAt: Date | null }
+  | { ok: false; datasetId: string; errorCode: string; errorMessage: string };
 
 export type SodaQuery = {
   select?: string;
@@ -51,6 +59,30 @@ export class SodaClient {
     if (query.limit !== undefined) url.searchParams.set("$limit", String(query.limit));
     if (query.offset !== undefined) url.searchParams.set("$offset", String(query.offset));
     return url;
+  }
+
+  /** Official column metadata for a dataset (public; token sent as a header only). */
+  async metadata(datasetId: string): Promise<SodaMetadataResult> {
+    if (!DATASET_ID.test(datasetId)) return { ok: false, datasetId, errorCode: "INVALID_QUERY", errorMessage: `Invalid Socrata dataset id: ${datasetId}` };
+    const headers: Record<string, string> = { Accept: "application/json" };
+    if (this.appToken) headers["X-App-Token"] = this.appToken;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), this.timeoutMs);
+    try {
+      const response = await this.fetchImpl(new URL(`${DOT_OPEN_DATA_METADATA_URL}/${datasetId}.json`), {
+        method: "GET",
+        headers,
+        signal: controller.signal,
+        cache: "no-store",
+      });
+      if (!response.ok) return { ok: false, datasetId, errorCode: `HTTP_${response.status}`, errorMessage: `Metadata request returned HTTP ${response.status}` };
+      return parseMetadata(datasetId, await response.json().catch(() => null));
+    } catch (error) {
+      const aborted = error instanceof Error && error.name === "AbortError";
+      return { ok: false, datasetId, errorCode: aborted ? "TIMEOUT" : "NETWORK_ERROR", errorMessage: aborted ? "Metadata request timed out" : "Metadata request failed" };
+    } finally {
+      clearTimeout(timer);
+    }
   }
 
   async query(datasetId: string, query: SodaQuery): Promise<SodaResult> {
@@ -100,6 +132,27 @@ export class SodaClient {
       clearTimeout(timer);
     }
   }
+}
+
+export function parseMetadata(datasetId: string, payload: unknown): SodaMetadataResult {
+  const record = payload as { name?: unknown; columns?: unknown; rowsUpdatedAt?: unknown } | null;
+  if (!record || !Array.isArray(record.columns)) {
+    return { ok: false, datasetId, errorCode: "MALFORMED_METADATA", errorMessage: "Dataset metadata has no column list" };
+  }
+  const columns: SodaColumn[] = [];
+  for (const raw of record.columns as Array<Record<string, unknown>>) {
+    if (typeof raw?.fieldName !== "string" || typeof raw?.name !== "string") continue;
+    // Socrata system columns (":id", ":updated_at", ...) are not data.
+    if (raw.fieldName.startsWith(":")) continue;
+    columns.push({
+      fieldName: raw.fieldName,
+      name: raw.name,
+      description: typeof raw.description === "string" ? raw.description : null,
+      dataTypeName: typeof raw.dataTypeName === "string" ? raw.dataTypeName : null,
+    });
+  }
+  const updated = typeof record.rowsUpdatedAt === "number" ? new Date(record.rowsUpdatedAt * 1000) : null;
+  return { ok: true, datasetId, name: typeof record.name === "string" ? record.name : null, columns, rowsUpdatedAt: updated };
 }
 
 export function parseFieldsHeader(value: string | null): string[] | null {

@@ -42,7 +42,7 @@ test("profiles merge census, Motus and OOS rows and drive monitoring alerts", as
         { dot_number: "1234567", legal_name: "Example Freight LLC", status_code: "A", power_units: "10", total_drivers: "12", mcs150_date: "20240101" },
       ],
       [FMCSA_DATASETS.MOTUS_CARRIER.id]: [
-        { usdot_number: "1234567", common_stat: "A", bipd_req: "750000", bipd_file: "0" },
+        { usdot_number: "1234567", op_auth_type: "COMMON", op_auth_status: "ACTIVE", min_cov_amount: "750", bipd_file: "0" },
       ],
       [FMCSA_DATASETS.OUT_OF_SERVICE_ORDERS.id]: [
         { dot_number: "1234567", oos_date: "2026-09-30T00:00:00.000", oos_reason: "New Entrant", status: "ACTIVE" },

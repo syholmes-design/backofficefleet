@@ -18831,3 +18831,11 @@ a.shipper-portal-story-step:focus-visible,
 .bof-fmcsa-badge.is-not_configured { background: #f1f5f9; color: #64748b; }
 .bof-fmcsa-reasons { margin: 0; padding-left: 1.1rem; color: #334155; }
 .bof-fmcsa-reasons li { margin: 0.15rem 0; }
+.bof-fmcsa-identity { align-items: flex-start; }
+.bof-fmcsa-field { display: flex; flex-direction: column; gap: 0.2rem; }
+.bof-fmcsa-field label { color: #475569; font-size: 0.72rem; font-weight: 700; }
+.bof-fmcsa-field input[aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
+.bof-fmcsa-field-error { max-width: 12rem; color: #b91c1c; font-size: 0.75rem; }
+.bof-fmcsa-field-actions { display: flex; gap: 0.35rem; align-self: flex-end; }
+.bof-fmcsa-mapping { margin-top: 0.3rem; color: #475569; font-size: 0.78rem; }
+.bof-fmcsa-mapping code { font-size: 0.75rem; }

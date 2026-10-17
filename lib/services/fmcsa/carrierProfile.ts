@@ -24,6 +24,8 @@ export type FmcsaCarrierProfile = {
   brokerAuthority: FmcsaAuthorityStatus | null;
   bipdInsuranceOnFileUsd: number | null;
   bipdInsuranceRequiredUsd: number | null;
+  /** USD (QCMobile, converted from thousands) or as published by FMCSA open data (units per FMCSA's dictionary). */
+  insuranceAmountUnit?: "USD" | "FMCSA_PUBLISHED";
   safetyRating: string | null;
   safetyRatingDate: string | null;
   powerUnits: number | null;
@@ -122,6 +124,7 @@ export function qcMobileCarrierProfile(payload: unknown, retrievedAt: Date): Fmc
     brokerAuthority: parseAuthorityStatus(readText(carrier, ["brokerAuthorityStatus"])),
     bipdInsuranceOnFileUsd: thousands(["bipdInsuranceOnFile"]),
     bipdInsuranceRequiredUsd: thousands(["bipdRequiredAmount"]),
+    insuranceAmountUnit: "USD",
     safetyRating: readText(carrier, ["safetyRating"]),
     safetyRatingDate: toIsoDate(readText(carrier, ["safetyRatingDate"])),
     powerUnits: readNumber(carrier, ["totalPowerUnits"]),

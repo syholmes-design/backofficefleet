@@ -53,7 +53,11 @@ export const FMCSA_DATASETS: Record<FmcsaDatasetKey, FmcsaDataset> = {
   },
 };
 
-/** Alias lists for the fields BOF reads. First present wins. */
+/**
+ * API field-name candidates for each field BOF reads (first present wins).
+ * Used only where official column metadata is unavailable and the field does
+ * not require metadata confirmation (see DATASET_FIELD_SPECS).
+ */
 export const COLUMN_ALIASES = {
   usdot: ["dot_number", "usdot_number", "usdot"],
   legalName: ["legal_name", "name_legal"],
@@ -62,12 +66,44 @@ export const COLUMN_ALIASES = {
   powerUnits: ["power_units", "nbr_power_unit", "tot_pwr"],
   drivers: ["total_drivers", "driver_total", "tot_drs"],
   mcs150Date: ["mcs150_date", "mcs_150_date"],
-  commonAuthority: ["common_stat", "common_authority_status", "common_status"],
-  contractAuthority: ["contract_stat", "contract_authority_status", "contract_status"],
-  brokerAuthority: ["broker_stat", "broker_authority_status", "broker_status"],
-  bipdRequired: ["bipd_req", "bipd_required", "bipd_required_amount"],
-  bipdOnFile: ["bipd_file", "bipd_on_file", "bipd_insurance_on_file"],
+  docketNumber: ["docket_number"],
+  opAuthType: ["op_auth_type"],
+  opAuthStatus: ["op_auth_status"],
+  bipdRequired: ["min_cov_amount"],
+  bipdOnFile: ["bipd_file"],
   oosDate: ["oos_date", "out_of_service_date"],
   oosReason: ["oos_reason", "out_of_service_reason"],
   oosStatus: ["status", "oos_status"],
 } as const;
+
+/**
+ * Official column display names (the "Column Name" FMCSA publishes in each
+ * dataset's metadata at /api/views/<id>.json). Matching on these, then using
+ * the API field name FMCSA assigns, avoids guessing field names: Socrata API
+ * names can differ from display names (one Motus dataset exposes OP_AUTH_TYPE
+ * as "mod_col_1").
+ *
+ * Motus restructured authority data (2026-05-14): one row per operating
+ * authority with OP_AUTH_TYPE and OP_AUTH_STATUS, replacing the legacy
+ * per-type columns (COMMON_STAT, CONTRACT_STAT, BROKER_STAT). Insurance is
+ * MIN_COV_AMOUNT (minimum BI&PD coverage required) and BIPD_FILE (BI&PD
+ * coverage on file). Names from the dataset pages on data.transportation.gov;
+ * confirmed at runtime against live metadata before use.
+ */
+export const OFFICIAL_COLUMN_NAMES: Partial<Record<keyof typeof COLUMN_ALIASES, string[]>> = {
+  usdot: ["DOT_NUMBER", "USDOT_NUMBER"],
+  legalName: ["LEGAL_NAME"],
+  dbaName: ["DBA_NAME"],
+  usdotStatus: ["STATUS_CODE"],
+  powerUnits: ["POWER_UNITS"],
+  drivers: ["TOTAL_DRIVERS"],
+  mcs150Date: ["MCS150_DATE"],
+  docketNumber: ["DOCKET_NUMBER"],
+  opAuthType: ["OP_AUTH_TYPE"],
+  opAuthStatus: ["OP_AUTH_STATUS"],
+  bipdRequired: ["MIN_COV_AMOUNT"],
+  bipdOnFile: ["BIPD_FILE"],
+  oosDate: ["OOS_DATE"],
+  oosReason: ["OOS_REASON"],
+  oosStatus: ["STATUS"],
+};

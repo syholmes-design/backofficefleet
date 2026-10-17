@@ -8,6 +8,7 @@ import { fetchOpenDataCarrierProfiles } from "@/lib/services/fmcsa/openData/carr
 import { FMCSA_DATASETS } from "@/lib/services/fmcsa/openData/datasets";
 import { probeDatasetSchema, validateOpenDataSchemas } from "@/lib/services/fmcsa/openData/schemaValidation";
 import { SodaClient } from "@/lib/services/fmcsa/openData/sodaClient";
+import { fmcsaFetchDouble } from "@/lib/services/fmcsa/openData/sodaTestDouble";
 import { normalizeDocketInput, normalizeUsdotInput, schedulingState } from "@/lib/services/fmcsa/monitoringService";
 import { isAuthorizedMonitoringToken } from "@/lib/services/fmcsa/routeSupport";
 
@@ -155,43 +156,36 @@ test("QCMobile required elements are checked", () => {
 
 // ── Schema validation ──────────────────────────────────────────────────────
 
-const LIVE_FIELDS: Record<string, string[]> = {
-  [FMCSA_DATASETS.COMPANY_CENSUS.id]: ["dot_number", "legal_name", "dba_name", "status_code", "mcs150_date", "power_units", "total_drivers"],
-  [FMCSA_DATASETS.MOTUS_CARRIER.id]: ["usdot_number", "docket_number", "common_stat", "contract_stat", "broker_stat", "bipd_req", "bipd_file"],
-  [FMCSA_DATASETS.OUT_OF_SERVICE_ORDERS.id]: ["dot_number", "oos_date", "oos_reason", "status"],
-};
-
 function sodaMock(options: { fields?: Record<string, string[] | null>; lastModified?: string | null; rows?: Record<string, unknown[]> } = {}) {
-  return (async (input: string | URL | Request) => {
-    const id = /resource\/([a-z0-9-]+)\.json/.exec(String(input))?.[1] ?? "";
-    const headers = new Headers();
-    const fields = options.fields && id in options.fields ? options.fields[id] : LIVE_FIELDS[id];
-    if (fields) headers.set("X-SODA2-Fields", JSON.stringify(fields));
-    const lastModified = options.lastModified === undefined ? "Fri, 16 Oct 2026 06:00:00 GMT" : options.lastModified;
-    if (lastModified) headers.set("Last-Modified", lastModified);
-    return new Response(JSON.stringify(options.rows?.[id] ?? []), { status: 200, headers });
-  }) as typeof fetch;
+  // Field-list overrides become served-field overrides on the shared FMCSA double.
+  return fmcsaFetchDouble({ servedFields: options.fields, lastModified: options.lastModified, rows: options.rows });
 }
 
 test("schema validation resolves live columns from the field header", async () => {
   const report = await validateOpenDataSchemas(new SodaClient(null, sodaMock()), NOW);
   assert.equal(report.trusted, true);
   assert.equal(report.datasets.MOTUS_CARRIER.resolved.bipdOnFile, "bipd_file");
+  assert.equal(report.datasets.MOTUS_CARRIER.resolved.bipdRequired, "min_cov_amount");
   assert.equal(report.datasets.COMPANY_CENSUS.fieldsSource, "HEADER");
 });
 
 test("schema validation fails closed on missing columns, unknown or stale freshness", async () => {
   const missing = await probeDatasetSchema(
-    new SodaClient(null, sodaMock({ fields: { [FMCSA_DATASETS.MOTUS_CARRIER.id]: ["usdot_number", "common_stat"] } })),
+    new SodaClient(null, sodaMock({ fields: { [FMCSA_DATASETS.MOTUS_CARRIER.id]: ["dot_number", "op_auth_type", "op_auth_status"] } })),
     "MOTUS_CARRIER",
     NOW,
   );
   assert.equal(missing.trusted, false);
   assert.deepEqual(missing.missingRequired, ["bipdRequired", "bipdOnFile"]);
 
-  const unknownAge = await probeDatasetSchema(new SodaClient(null, sodaMock({ lastModified: null })), "COMPANY_CENSUS", NOW);
+  // No Last-Modified header and no official metadata: freshness unknown.
+  const unknownAge = await probeDatasetSchema(new SodaClient(null, fmcsaFetchDouble({ lastModified: null, metadataStatus: 503 })), "COMPANY_CENSUS", NOW);
   assert.equal(unknownAge.trusted, false);
   assert.ok(unknownAge.issues.some((issue) => issue.includes("freshness unknown")));
+
+  // The header missing but official metadata present: metadata rowsUpdatedAt is used.
+  const fromMetadata = await probeDatasetSchema(new SodaClient(null, fmcsaFetchDouble({ lastModified: null })), "COMPANY_CENSUS");
+  assert.equal(fromMetadata.fresh, true);
 
   const stale = await probeDatasetSchema(new SodaClient(null, sodaMock({ lastModified: "Mon, 05 Oct 2026 00:00:00 GMT" })), "COMPANY_CENSUS", NOW);
   assert.equal(stale.trusted, false);
@@ -205,7 +199,7 @@ test("sync with a validated schema reads only the resolved columns and reports c
   const fetchImpl = sodaMock({
     rows: {
       [FMCSA_DATASETS.COMPANY_CENSUS.id]: [{ dot_number: "1234567", legal_name: "Example Freight LLC", status_code: "A", mcs150_date: "20260115" }],
-      [FMCSA_DATASETS.MOTUS_CARRIER.id]: [{ usdot_number: "1234567", common_stat: "A", bipd_req: "750000", bipd_file: "1000000" }],
+      [FMCSA_DATASETS.MOTUS_CARRIER.id]: [{ dot_number: "1234567", op_auth_type: "COMMON", op_auth_status: "ACTIVE", min_cov_amount: "750", bipd_file: "1000" }],
     },
   });
   const client = new SodaClient(null, fetchImpl);

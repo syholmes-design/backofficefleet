@@ -27,6 +27,8 @@ export type OpenDataEvidence = {
   schemaIssues: string[];
   coverage: OpenDataCoverage | null;
   profile: FmcsaCarrierProfile | null;
+  /** Interpretation gaps (e.g. unrecognized Motus authority values); any gap blocks CLEAR. */
+  evidenceIssues?: string[];
 };
 
 export type ComplianceInput = {
@@ -72,6 +74,7 @@ function openDataCompleteness(evidence: OpenDataEvidence | null): { complete: bo
     if (coverage.motus !== "FOUND") reasons.push(`Motus carrier (authority and insurance): ${coverage.motus === "ERROR" ? "query failed" : "carrier not found"}.`);
     if (coverage.outOfServiceOrders !== "QUERIED") reasons.push("Out-of-service order query failed; absence of an order cannot be confirmed.");
   }
+  for (const issue of evidence.evidenceIssues ?? []) reasons.push(`Motus authority/insurance: ${issue}.`);
   const profile = evidence.profile;
   if (profile) {
     if (profile.usdotStatus === null) reasons.push("USDOT status is not reported.");

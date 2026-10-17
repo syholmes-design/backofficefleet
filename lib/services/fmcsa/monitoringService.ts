@@ -3,6 +3,7 @@ import { Prisma, type FmcsaComplianceStatus, type FmcsaMonitoringTrigger, type S
 import { getMemberships, requireFleetAccess, type SessionUserLike } from "@/lib/authorization";
 import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
+import { validateDocketInput, validateUsdotInput } from "@/lib/services/fmcsa/carrierIdentity";
 import type { CarrierAlert } from "@/lib/services/fmcsa/carrierMonitoring";
 import { missingQcMobileElements, qcMobileCarrierProfile, type FmcsaCarrierProfile } from "@/lib/services/fmcsa/carrierProfile";
 import { deriveComplianceStatus, effectiveStatus, type ComplianceDecision, type QcMobileEvidence } from "@/lib/services/fmcsa/complianceStatus";
@@ -54,20 +55,18 @@ export function accessibleFleetIds(user: SessionUserLike, roles: readonly string
 
 // ── Carrier identity ──────────────────────────────────────────────────────
 
+export { DOCKET_FORMAT_MESSAGE, USDOT_FORMAT_MESSAGE } from "@/lib/services/fmcsa/carrierIdentity";
+
 export function normalizeUsdotInput(value: unknown): string | null {
-  if (value === null || value === undefined || value === "") return null;
-  const text = String(value).trim().replace(/^USDOT\s*#?\s*/i, "").replace(/^DOT\s*#?\s*/i, "");
-  if (!/^\d{1,8}$/.test(text)) throw httpError(422, "USDOT number must be 1–8 digits");
-  const digits = String(Number(text));
-  if (digits === "0") throw httpError(422, "USDOT number must be 1–8 digits");
-  return digits;
+  const result = validateUsdotInput(value);
+  if (!result.ok) throw httpError(422, result.message, { field: "usdotNumber" });
+  return result.value;
 }
 
 export function normalizeDocketInput(value: unknown): string | null {
-  if (value === null || value === undefined || value === "") return null;
-  const match = /^(MC|MX|FF)[\s-]*#?\s*(\d{1,8})$/i.exec(String(value).trim());
-  if (!match) throw httpError(422, "Docket must look like MC123456, MX123456 or FF123456");
-  return `${match[1].toUpperCase()}${String(Number(match[2]))}`;
+  const result = validateDocketInput(value);
+  if (!result.ok) throw httpError(422, result.message, { field: "mcNumber" });
+  return result.value;
 }
 
 export async function setFleetCarrierIdentity(
@@ -282,7 +281,8 @@ export async function runFmcsaMonitoring(
         // Open data.
         const odProfile = openData?.profiles.find((p) => p.usdot === usdot) ?? null;
         const coverage = openData?.coverage[usdot] ?? null;
-        const odEvidence = { schemaTrusted: Boolean(schema?.trusted), schemaIssues, coverage, profile: odProfile };
+        const motusEvidence = openData?.motusEvidence[usdot] ?? null;
+        const odEvidence = { schemaTrusted: Boolean(schema?.trusted), schemaIssues, coverage, profile: odProfile, evidenceIssues: motusEvidence?.issues ?? [] };
         const decisionPreview = deriveComplianceStatus({ usdotNumber: usdot, qcmobile: qcEvidence, openData: odEvidence, now: now() });
         const odSnap = await prisma.fmcsaCarrierSnapshot.create({
           data: {
@@ -295,7 +295,10 @@ export async function runFmcsaMonitoring(
             schemaValidated: Boolean(schema?.trusted),
             complete: decisionPreview.openDataComplete,
             found: Boolean(odProfile),
-            missingFields: json(coverage ? Object.entries(coverage).filter(([, v]) => v !== "FOUND" && v !== "QUERIED").map(([k, v]) => `${k}:${v}`) : ["no-coverage"]),
+            missingFields: json({
+              coverageGaps: coverage ? Object.entries(coverage).filter(([, v]) => v !== "FOUND" && v !== "QUERIED").map(([k, v]) => `${k}:${v}`) : ["no-coverage"],
+              motus: motusEvidence,
+            }),
             profile: odProfile ? json(odProfile) : Prisma.JsonNull,
             alerts: json([]),
             errorCode: coverage ? null : "NO_COVERAGE",

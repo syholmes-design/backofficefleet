@@ -72,14 +72,20 @@ export function evaluateCarrierProfile(profile: FmcsaCarrierProfile, now: Date =
     alerts.push(alert(profile, "USDOT_INACTIVE", "HIGH", "The USDOT number is inactive."));
   }
 
-  // For-hire carriers hold common and/or contract authority. Only alert when
-  // the source reports an authority record that is no longer active.
-  for (const [label, status] of [
+  // For-hire carriers hold common and/or contract authority. Alert only when the
+  // source reports a for-hire authority that is no longer active AND none is
+  // active: an old inactive authority alongside an active one (common in the
+  // Motus per-authority history) is not a compliance problem.
+  const forHire = [
     ["Common", profile.commonAuthority],
     ["Contract", profile.contractAuthority],
-  ] as const) {
-    if (status === "INACTIVE" || status === "REVOKED") {
-      alerts.push(alert(profile, "OPERATING_AUTHORITY_INACTIVE", "HIGH", `${label} operating authority is ${status.toLowerCase()}.`, null, status));
+  ] as const;
+  const anyActive = forHire.some(([, status]) => status === "ACTIVE");
+  if (!anyActive) {
+    for (const [label, status] of forHire) {
+      if (status === "INACTIVE" || status === "REVOKED") {
+        alerts.push(alert(profile, "OPERATING_AUTHORITY_INACTIVE", "HIGH", `${label} operating authority is ${status.toLowerCase()}.`, null, status));
+      }
     }
   }
 
@@ -94,7 +100,9 @@ export function evaluateCarrierProfile(profile: FmcsaCarrierProfile, now: Date =
         profile,
         "BIPD_INSURANCE_BELOW_REQUIRED",
         "HIGH",
-        `BIPD liability insurance on file ($${profile.bipdInsuranceOnFileUsd.toLocaleString("en-US")}) is below the required $${profile.bipdInsuranceRequiredUsd.toLocaleString("en-US")}.`,
+        profile.insuranceAmountUnit === "FMCSA_PUBLISHED"
+          ? `BI&PD coverage on file (${profile.bipdInsuranceOnFileUsd.toLocaleString("en-US")}) is below the required minimum (${profile.bipdInsuranceRequiredUsd.toLocaleString("en-US")}), as published by FMCSA.`
+          : `BIPD liability insurance on file ($${profile.bipdInsuranceOnFileUsd.toLocaleString("en-US")}) is below the required $${profile.bipdInsuranceRequiredUsd.toLocaleString("en-US")}.`,
         String(profile.bipdInsuranceRequiredUsd),
         String(profile.bipdInsuranceOnFileUsd),
       ),

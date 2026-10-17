@@ -139,3 +139,11 @@ test("QCMobile 200 with empty content is NOT_FOUND, and 403 is an auth failure",
   assert.equal(outcome.errorCode, "AUTH_FAILED");
   assert.equal(JSON.stringify(outcome).includes("test-key"), false);
 });
+
+test("an inactive authority alongside an active for-hire authority is not an alert", () => {
+  assert.deepEqual(evaluateCarrierProfile(profile({ commonAuthority: "ACTIVE", contractAuthority: "INACTIVE" }), NOW), []);
+  assert.deepEqual(
+    evaluateCarrierProfile(profile({ commonAuthority: "INACTIVE", contractAuthority: "INACTIVE" }), NOW).map((a) => a.code),
+    ["OPERATING_AUTHORITY_INACTIVE", "OPERATING_AUTHORITY_INACTIVE"],
+  );
+});

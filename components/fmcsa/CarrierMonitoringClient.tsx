@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+import { identityFieldErrors, type IdentityField } from "@/lib/services/fmcsa/carrierIdentity";
+
 type Status = "CLEAR" | "ATTENTION" | "CRITICAL" | "UNVERIFIED" | "NOT_CONFIGURED";
 type Alert = { code: string; severity: string; message: string };
 
@@ -24,7 +26,19 @@ type FleetRow = {
 
 type SchemaReport = {
   trusted: boolean;
-  datasets: Record<string, { name: string; datasetId: string; trusted: boolean; issues: string[]; fieldsSource: string; ageHours: number | null }>;
+  datasets: Record<
+    string,
+    {
+      name: string;
+      datasetId: string;
+      trusted: boolean;
+      issues: string[];
+      fieldsSource: string;
+      ageHours: number | null;
+      fieldResolution?: Record<string, { column: string; verifiedBy: string; officialName: string | null }>;
+      officialColumns?: Array<{ fieldName: string; name: string; description: string | null }>;
+    }
+  >;
 };
 
 type Overview = {
@@ -62,6 +76,7 @@ export function CarrierMonitoringClient() {
   const [editing, setEditing] = useState<string | null>(null);
   const [usdot, setUsdot] = useState("");
   const [mc, setMc] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<IdentityField, string>>>({});
 
   const load = useCallback(async () => {
     const response = await fetch("/api/fmcsa/monitoring", { cache: "no-store" });
@@ -88,16 +103,25 @@ export function CarrierMonitoringClient() {
   }
 
   async function saveIdentity(fleetId: string) {
-    setBusy(true);
     setError(null);
+    const local = identityFieldErrors({ usdotNumber: usdot, mcNumber: mc });
+    setFieldErrors(local);
+    if (Object.keys(local).length) return;
+    setBusy(true);
     const response = await fetch("/api/fmcsa/carrier-identity", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ fleetId, usdotNumber: usdot || null, mcNumber: mc || null }),
     });
     const body = await response.json().catch(() => ({}));
-    if (!response.ok) setError(body.error ?? `Save failed (${response.status})`);
-    else setEditing(null);
+    if (!response.ok) {
+      // Field errors go beside the field; anything else to the page banner.
+      if (body.field === "usdotNumber" || body.field === "mcNumber") setFieldErrors({ [body.field as IdentityField]: body.error });
+      else setError(body.error ?? `Save failed (${response.status})`);
+    } else {
+      setEditing(null);
+      setFieldErrors({});
+    }
     await load();
     setBusy(false);
   }
@@ -151,12 +175,62 @@ export function CarrierMonitoringClient() {
                       <td>{row.fleet.name}</td>
                       <td>
                         {editing === row.fleet.id ? (
-                          <div className="bof-fmcsa-identity">
-                            <input aria-label="USDOT number" placeholder="USDOT" value={usdot} onChange={(e) => setUsdot(e.target.value)} />
-                            <input aria-label="MC number" placeholder="MC123456" value={mc} onChange={(e) => setMc(e.target.value)} />
-                            <button type="button" onClick={() => saveIdentity(row.fleet.id)} disabled={busy}>Save</button>
-                            <button type="button" onClick={() => setEditing(null)}>Cancel</button>
-                          </div>
+                          <form
+                            className="bof-fmcsa-identity"
+                            noValidate
+                            onSubmit={(event) => {
+                              event.preventDefault();
+                              void saveIdentity(row.fleet.id);
+                            }}
+                          >
+                            <div className="bof-fmcsa-field">
+                              <label htmlFor={`usdot-${row.fleet.id}`}>USDOT number</label>
+                              <input
+                                id={`usdot-${row.fleet.id}`}
+                                inputMode="numeric"
+                                placeholder="80806"
+                                value={usdot}
+                                aria-invalid={Boolean(fieldErrors.usdotNumber)}
+                                aria-describedby={fieldErrors.usdotNumber ? `usdot-error-${row.fleet.id}` : undefined}
+                                onChange={(e) => {
+                                  setUsdot(e.target.value);
+                                  setFieldErrors((current) => ({ ...current, usdotNumber: undefined }));
+                                }}
+                              />
+                              {fieldErrors.usdotNumber ? (
+                                <span id={`usdot-error-${row.fleet.id}`} className="bof-fmcsa-field-error">{fieldErrors.usdotNumber}</span>
+                              ) : null}
+                            </div>
+                            <div className="bof-fmcsa-field">
+                              <label htmlFor={`mc-${row.fleet.id}`}>MC / MX / FF docket</label>
+                              <input
+                                id={`mc-${row.fleet.id}`}
+                                placeholder="MC135797"
+                                value={mc}
+                                aria-invalid={Boolean(fieldErrors.mcNumber)}
+                                aria-describedby={fieldErrors.mcNumber ? `mc-error-${row.fleet.id}` : undefined}
+                                onChange={(e) => {
+                                  setMc(e.target.value);
+                                  setFieldErrors((current) => ({ ...current, mcNumber: undefined }));
+                                }}
+                              />
+                              {fieldErrors.mcNumber ? (
+                                <span id={`mc-error-${row.fleet.id}`} className="bof-fmcsa-field-error">{fieldErrors.mcNumber}</span>
+                              ) : null}
+                            </div>
+                            <div className="bof-fmcsa-field-actions">
+                              <button type="submit" disabled={busy}>Save</button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEditing(null);
+                                  setFieldErrors({});
+                                }}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </form>
                         ) : (
                           <>
                             {row.fleet.usdotNumber ? `USDOT ${row.fleet.usdotNumber}` : "—"}
@@ -166,6 +240,7 @@ export function CarrierMonitoringClient() {
                                 type="button"
                                 className="bof-fmcsa-link"
                                 onClick={() => {
+                                  setFieldErrors({});
                                   setEditing(row.fleet.id);
                                   setUsdot(row.fleet.usdotNumber ?? "");
                                   setMc(row.fleet.mcNumber ?? "");
@@ -213,6 +288,27 @@ export function CarrierMonitoringClient() {
                       <strong>{dataset.trusted ? "OK" : "FAIL"}</strong> {dataset.name} ({dataset.datasetId}) · fields from {dataset.fieldsSource}
                       {dataset.ageHours !== null ? ` · ${dataset.ageHours} h old` : ""}
                       {dataset.issues.length ? ` — ${dataset.issues.join("; ")}` : ""}
+                      {dataset.fieldResolution && Object.keys(dataset.fieldResolution).length ? (
+                        <div className="bof-fmcsa-mapping">
+                          Mapped:{" "}
+                          {Object.entries(dataset.fieldResolution)
+                            .map(([field, r]) => `${field} → ${r.column}${r.verifiedBy === "OFFICIAL_METADATA" ? ` (official: ${r.officialName})` : " (field name)"}`)
+                            .join("; ")}
+                        </div>
+                      ) : null}
+                      {!dataset.trusted && dataset.officialColumns?.length ? (
+                        <details className="bof-fmcsa-mapping">
+                          <summary>FMCSA official columns ({dataset.officialColumns.length})</summary>
+                          <ul>
+                            {dataset.officialColumns.map((column) => (
+                              <li key={column.fieldName}>
+                                <code>{column.name}</code> → <code>{column.fieldName}</code>
+                                {column.description ? ` — ${column.description.slice(0, 160)}` : ""}
+                              </li>
+                            ))}
+                          </ul>
+                        </details>
+                      ) : null}
                     </li>
                   ))}
                 </ul>

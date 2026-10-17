@@ -18,7 +18,7 @@ const USDOT = String(1_000_000 + (parseInt(suffix, 16) % 8_000_000));
 
 const LIVE_FIELDS: Record<string, string[]> = {
   [FMCSA_DATASETS.COMPANY_CENSUS.id]: ["dot_number", "legal_name", "status_code", "mcs150_date", "power_units", "total_drivers"],
-  [FMCSA_DATASETS.MOTUS_CARRIER.id]: ["usdot_number", "common_stat", "bipd_req", "bipd_file"],
+  [FMCSA_DATASETS.MOTUS_CARRIER.id]: ["dot_number", "docket_number", "op_auth_type", "op_auth_status", "min_cov_amount", "bipd_file"],
   [FMCSA_DATASETS.OUT_OF_SERVICE_ORDERS.id]: ["dot_number", "oos_date", "oos_reason", "status"],
 };
 
@@ -26,6 +26,12 @@ type World = { lastModified: string | null; commonStat: string; oos: unknown[] }
 
 function soda(world: World) {
   return new SodaClient(null, (async (input: string | URL | Request) => {
+    // Official column metadata (no rowsUpdatedAt, so freshness tests rely on Last-Modified).
+    const meta = /\/api\/views\/([a-z0-9-]+)\.json/.exec(String(input));
+    if (meta) {
+      const columns = (LIVE_FIELDS[meta[1]] ?? []).map((fieldName) => ({ fieldName, name: fieldName.toUpperCase() }));
+      return new Response(JSON.stringify({ name: meta[1], columns }), { status: 200 });
+    }
     const id = /resource\/([a-z0-9-]+)\.json/.exec(String(input))?.[1] ?? "";
     const headers = new Headers({ "X-SODA2-Fields": JSON.stringify(LIVE_FIELDS[id] ?? []) });
     if (world.lastModified) headers.set("Last-Modified", world.lastModified);
@@ -34,7 +40,7 @@ function soda(world: World) {
     if (!probe && id === FMCSA_DATASETS.COMPANY_CENSUS.id) {
       rows = [{ dot_number: USDOT, legal_name: "Preview Test Freight LLC", status_code: "A", mcs150_date: "20260301", power_units: "10" }];
     } else if (!probe && id === FMCSA_DATASETS.MOTUS_CARRIER.id) {
-      rows = [{ usdot_number: USDOT, common_stat: world.commonStat, bipd_req: "750000", bipd_file: "1000000" }];
+      rows = [{ dot_number: USDOT, docket_number: "MC135797", op_auth_type: "COMMON", op_auth_status: world.commonStat === "A" ? "ACTIVE" : "INACTIVE", min_cov_amount: "750", bipd_file: "1000" }];
     } else if (!probe && id === FMCSA_DATASETS.OUT_OF_SERVICE_ORDERS.id) {
       rows = world.oos;
     }

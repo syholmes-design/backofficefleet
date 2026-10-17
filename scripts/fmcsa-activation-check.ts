@@ -69,6 +69,7 @@ async function main() {
     for (const issue of report.issues) console.log(`       issue: ${issue}`);
     // Compare with the alias lists in lib/services/fmcsa/openData/datasets.ts.
     console.log(`       live fields: ${report.liveFields.join(", ")}`);
+    for (const column of report.officialColumns) console.log(`       official column: ${column.name} -> ${column.fieldName} :: ${(column.description ?? "").slice(0, 120)}`);
   }
 
   const result = await fetchOpenDataCarrierProfiles(soda, [usdot], schema);
@@ -76,6 +77,8 @@ async function main() {
   for (const error of result.errors) console.log(`  ${error.dataset}: ${error.errorCode} ${error.errorMessage}`);
   console.log(`  coverage ${JSON.stringify(result.coverage[String(Number(usdot))] ?? null)}`);
   for (const profile of result.profiles) console.log("  monitoring profile", JSON.stringify(profile));
+  const motusEvidence = result.motusEvidence[String(Number(usdot))] ?? null;
+  if (motusEvidence) console.log("  motus authority rows", JSON.stringify(motusEvidence));
 
   const decision = deriveComplianceStatus({
     usdotNumber: String(Number(usdot)),
@@ -85,6 +88,7 @@ async function main() {
       schemaIssues: Object.values(schema.datasets).flatMap((d) => d.issues),
       coverage: result.coverage[String(Number(usdot))] ?? null,
       profile: result.profiles[0] ?? null,
+      evidenceIssues: motusEvidence?.issues ?? [],
     },
   });
   console.log(`\nCompliance decision: ${decision.status}`);

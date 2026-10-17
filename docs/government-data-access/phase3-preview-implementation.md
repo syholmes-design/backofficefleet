@@ -95,3 +95,23 @@ Network note: this sandbox cannot reach FMCSA or Vercel hosts, so the **live** s
 4. Back up production (Neon branch), then run `prisma migrate deploy`. The migration is additive; review it first.
 5. Enter real fleets' USDOT/MC numbers.
 6. Decide on scheduling. Production scheduling needs a code change to `schedulingState()` and a cron entry.
+
+## 6. Preview remediation (2026-10-17): Motus schema
+
+**Live finding** (Preview test, J.B. Hunt USDOT 80806 / MC135797): Motus Carrier – All With History (`inys-ebih`) failed validation. The fields BOF expected (`commonAuthority`, `bipdRequired`) were missing; Census and OOS passed; QCMobile was not configured. The carrier was correctly shown as Unverified.
+
+**Cause.** BOF mapped Motus to the legacy Licensing & Insurance layout, which had one column per authority type (`COMMON_STAT`, `BIPD_REQ`). Motus has a different model:
+- **One row per operating authority**, with `OP_AUTH_TYPE` and `OP_AUTH_STATUS`.
+- Insurance as `MIN_COV_AMOUNT` (minimum BI&PD coverage required) and `BIPD_FILE` (BI&PD coverage on file).
+
+These column names come from FMCSA's dataset pages on data.transportation.gov. This environment could not read FMCSA's metadata directly: the sandbox is blocked, and GitHub Actions is unavailable because of an account billing lock.
+
+**Fix: field names are no longer guessed.**
+- **Mapping from official metadata.** Schema validation reads FMCSA's official column metadata (`/api/views/<id>.json`). It matches each authority and insurance field by its official column name, then uses the API field name FMCSA assigned. Socrata API names can differ from display names; one Motus dataset exposes `OP_AUTH_TYPE` as `mod_col_1`.
+- **No fallback for authority and insurance fields.** They need this metadata confirmation. A field-name match alone is not accepted, and the API must also serve the column.
+- **Authority from the per-authority rows.** Common, contract and broker authority are derived from those rows. Only plainly worded values are accepted (e.g. COMMON, BROKER, ACTIVE, INACTIVE). Any other value stays **unrecognized**: the carrier remains Unverified, and the run lists the values it saw. This works without FMCSA's data dictionary PDF, which could not be read from here.
+- **Insurance comparison.** Insurance is taken from active authority rows and compared only with itself, in FMCSA's published units. If the two figures differ by about 1000×, they are treated as different units: Unverified, not an alert.
+- **Inactive authority alert.** It now fires only when the carrier has **no** active for-hire authority. Old inactive authorities sitting beside an active one were producing false alerts.
+- **Fallback if Motus cannot supply the evidence:** QCMobile (authority and insurance elements), which needs the free webKey.
+- **Identity form.** Validation errors now appear beside the affected field. The same rules run in the browser and the API, and the API returns the `field` with a 422.
+- **Regression tests.** `lib/services/fmcsa/openData/motusSchema.test.ts`, plus updated suites.
