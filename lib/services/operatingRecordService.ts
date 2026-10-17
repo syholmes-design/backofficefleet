@@ -96,6 +96,18 @@ const evidenceSelect = Prisma.validator<Prisma.OperationalEvidenceSelect>()({
   updatedAt: true,
 });
 
+const settlementSelect = Prisma.validator<Prisma.SettlementSelect>()({
+  id: true,
+  fleetId: true,
+  loadId: true,
+  driverId: true,
+  status: true,
+  holdReason: true,
+  netAmount: true,
+  settlementDate: true,
+  updatedAt: true,
+});
+
 const conditionSelect = Prisma.validator<Prisma.ConditionThreadSelect>()({
   id: true,
   fleetId: true,
@@ -157,6 +169,19 @@ export async function getAuthorizedOperatingRecord(
     return { tenantId, recordType, recordId, title: `Load ${record.referenceNumber ?? record.id}`, snapshot: asIsoSnapshot(record), route: `/loads/${record.id}` };
   }
 
+  if (recordType === "SETTLEMENT") {
+    const record = await prisma.settlement.findFirst({ where: { id: recordId, fleetId: tenantId }, select: settlementSelect });
+    if (!record) throw new OperatingRecordError("Record not found", 404);
+    return {
+      tenantId,
+      recordType,
+      recordId,
+      title: `Settlement ${record.status} · load ${record.loadId}`,
+      snapshot: asIsoSnapshot(record),
+      route: `/settlements?loadId=${encodeURIComponent(record.loadId)}`,
+    };
+  }
+
   if (recordType === "DRIVER") {
     const record = await prisma.driver.findFirst({ where: { id: recordId, fleetId: tenantId }, select: driverSelect });
     if (!record) throw new OperatingRecordError("Record not found", 404);
@@ -198,6 +223,22 @@ export async function listAuthorizedOperatingRecords(
   if (recordType === "LOAD") {
     const records = await prisma.load.findMany({ where: { fleetId: tenantId }, orderBy: { updatedAt: "desc" }, take: limit, select: loadSelect });
     return records.map((record) => ({ tenantId, recordType, recordId: record.id, title: `Load ${record.referenceNumber ?? record.id}`, snapshot: asIsoSnapshot(record), route: `/loads/${record.id}` }));
+  }
+  if (recordType === "SETTLEMENT") {
+    const records = await prisma.settlement.findMany({
+      where: { fleetId: tenantId, lifecycleClass: "LIVE" },
+      orderBy: { updatedAt: "desc" },
+      take: limit,
+      select: settlementSelect,
+    });
+    return records.map((record) => ({
+      tenantId,
+      recordType,
+      recordId: record.id,
+      title: `Settlement ${record.status} · load ${record.loadId}`,
+      snapshot: asIsoSnapshot(record),
+      route: `/settlements?loadId=${encodeURIComponent(record.loadId)}`,
+    }));
   }
   if (recordType === "DRIVER") {
     const records = await prisma.driver.findMany({ where: { fleetId: tenantId }, orderBy: [{ lastName: "asc" }, { firstName: "asc" }], take: limit, select: driverSelect });

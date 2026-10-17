@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useState } from "react";
+import { OperationalIntelligencePanel } from "@/components/operational-chat/OperationalIntelligencePanel";
 
 type Thread = {
   id: string;
@@ -20,7 +22,26 @@ type Thread = {
 
 type Props = { initialFleetId: string; initialRecordType?: string; initialRecordId?: string };
 
-const RECORD_TYPES = new Set(["LOAD", "DRIVER", "DOCUMENT_REQUEST", "PROOF", "EXCEPTION", "SAFETY_EVENT", "COMPLIANCE_ISSUE", "MAINTENANCE_ISSUE"]);
+const RECORD_TYPES = new Set([
+  "LOAD",
+  "DRIVER",
+  "DOCUMENT_REQUEST",
+  "PROOF",
+  "EXCEPTION",
+  "SAFETY_EVENT",
+  "COMPLIANCE_ISSUE",
+  "MAINTENANCE_ISSUE",
+  "SETTLEMENT",
+]);
+
+const RECORD_TYPE_OPTIONS = [
+  "LOAD",
+  "DRIVER",
+  "SETTLEMENT",
+  "DOCUMENT_REQUEST",
+  "PROOF",
+  "EXCEPTION",
+] as const;
 
 function threadTypeForRecord(recordType: string) {
   if (recordType === "LOAD") return "LOAD_THREAD";
@@ -49,7 +70,22 @@ export function OperationalChatClient({ initialFleetId, initialRecordType, initi
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editingBody, setEditingBody] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [recordOptions, setRecordOptions] = useState<Array<{ recordId: string; title: string; route: string }>>([]);
   const selected = threads.find((thread) => thread.id === selectedId) ?? null;
+
+  useEffect(() => {
+    if (!fleetId.trim() || !recordType || !RECORD_TYPE_OPTIONS.includes(recordType as (typeof RECORD_TYPE_OPTIONS)[number])) {
+      setRecordOptions([]);
+      return;
+    }
+    fetch(`/api/operating-records?fleetId=${encodeURIComponent(fleetId)}&recordType=${encodeURIComponent(recordType)}&limit=25`, { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) return [];
+        return response.json() as Promise<Array<{ recordId: string; title: string; route: string }>>;
+      })
+      .then((rows) => setRecordOptions(rows))
+      .catch(() => setRecordOptions([]));
+  }, [fleetId, recordType]);
 
   const loadThreads = useCallback(async () => {
     if (!fleetId.trim()) return;
@@ -134,25 +170,47 @@ export function OperationalChatClient({ initialFleetId, initialRecordType, initi
           <label className="bof-chat-fleet-selector">Authorized fleet ID<input value={fleetId} onChange={(event) => setFleetId(event.target.value)} /></label>
         </header>
         {error ? <p className="bof-chat-error" role="alert">{error}</p> : null}
-        <div className="bof-chat-layout">
+        <div className="bof-chat-layout bof-chat-layout--integrated">
           <aside className="bof-chat-sidebar">
             <div className="bof-chat-sidebar-head"><h2>Conversations</h2><span>{threads.length}</span></div>
             <form className="bof-chat-new-thread" onSubmit={createThread}>
               <input aria-label="Conversation subject" placeholder="New conversation subject" value={newSubject} onChange={(event) => setNewSubject(event.target.value)} required />
               {hasRecordContext ? <p className="bof-chat-linked-record">Linked to {recordType.replaceAll("_", " ").toLowerCase()}: <strong>{recordId}</strong></p> : <select aria-label="Conversation type" value={newType} onChange={(event) => setNewType(event.target.value)}><option value="GENERAL_INTERNAL_THREAD">General internal</option><option value="LOAD_THREAD">Load</option><option value="DRIVER_THREAD">Driver</option><option value="DOCUMENT_THREAD">Document</option><option value="EXCEPTION_THREAD">Exception</option><option value="SAFETY_COMPLIANCE_THREAD">Safety / compliance</option><option value="SETTLEMENT_THREAD">Settlement</option><option value="MAINTENANCE_THREAD">Maintenance</option></select>}
               <select aria-label="Conversation visibility" value={newVisibility} onChange={(event) => setNewVisibility(event.target.value)}><option value="INTERNAL">Internal only</option><option value="CUSTOMER_VISIBLE">Customer visible</option></select>
-              {!hasRecordContext ? <div className="bof-chat-record-fields"><input aria-label="Record type" placeholder="Record type" value={recordType} onChange={(event) => setRecordType(event.target.value)} /><input aria-label="Record ID" placeholder="Record ID" value={recordId} onChange={(event) => setRecordId(event.target.value)} /></div> : null}
+              {!hasRecordContext ? (
+                <div className="bof-chat-record-fields">
+                  <select aria-label="Record type" value={recordType} onChange={(event) => { setRecordType(event.target.value); setRecordId(""); }}>
+                    <option value="">Link to record (optional)</option>
+                    {RECORD_TYPE_OPTIONS.map((type) => (
+                      <option key={type} value={type}>{type.replaceAll("_", " ")}</option>
+                    ))}
+                  </select>
+                  {recordType ? (
+                    <select aria-label="Record" value={recordId} onChange={(event) => setRecordId(event.target.value)}>
+                      <option value="">Select authorized record</option>
+                      {recordOptions.map((row) => (
+                        <option key={row.recordId} value={row.recordId}>{row.title}</option>
+                      ))}
+                    </select>
+                  ) : null}
+                </div>
+              ) : null}
               <button type="submit">Create conversation</button>
             </form>
             <div className="bof-chat-thread-list">{threads.map((thread) => <button key={thread.id} type="button" className={thread.id === selectedId ? "is-selected" : ""} onClick={() => { setSelectedId(thread.id); void markRead(thread.id); }}><strong>{thread.subject}</strong><span>{thread.type.replaceAll("_", " ")} · {thread.status}</span><small>{thread.messages.length} messages {thread.unreadCount ? `· ${thread.unreadCount} unread` : ""}</small></button>)}{threads.length === 0 ? <p className="bof-chat-empty">No authorized conversations for this fleet.</p> : null}</div>
           </aside>
           <section className="bof-chat-conversation" aria-label="Operational conversation">
             {selected ? <>
-              <header className="bof-chat-context"><div><span className={`bof-chat-status bof-chat-status--${selected.status.toLowerCase()}`}>{selected.status}</span><h2>{selected.subject}</h2><p>{selected.type.replaceAll("_", " ")} · {selected.visibility === "INTERNAL" ? "Internal only" : "Customer visible"}</p></div><div className="bof-chat-context-actions"><button type="button" onClick={resolveThread} disabled={selected.status === "RESOLVED"}>Resolve</button><button type="button" onClick={() => markRead(selected.id)}>Mark read</button></div><dl><div><dt>Record</dt><dd>{selected.citations[0]?.title ?? (selected.recordType && selected.recordId ? `${selected.recordType}: ${selected.recordId}` : "Not associated")}</dd></div><div><dt>Owner</dt><dd>{selected.ownerId ?? "Unassigned"}</dd></div><div><dt>Next action</dt><dd>{selected.nextAction ?? "Not set"}</dd></div></dl></header>
+              <header className="bof-chat-context"><div><span className={`bof-chat-status bof-chat-status--${selected.status.toLowerCase()}`}>{selected.status}</span><h2>{selected.subject}</h2><p>{selected.type.replaceAll("_", " ")} · {selected.visibility === "INTERNAL" ? "Internal only" : "Customer visible"}</p></div><div className="bof-chat-context-actions"><button type="button" onClick={resolveThread} disabled={selected.status === "RESOLVED"}>Resolve</button><button type="button" onClick={() => markRead(selected.id)}>Mark read</button></div><dl><div><dt>Record</dt><dd>{selected.citations[0]?.route ? <Link href={selected.citations[0].route}>{selected.citations[0].title}</Link> : selected.citations[0]?.title ?? (selected.recordType && selected.recordId ? `${selected.recordType}: ${selected.recordId}` : "Not associated")}</dd></div><div><dt>Owner</dt><dd>{selected.ownerId ?? "Unassigned"}</dd></div><div><dt>Next action</dt><dd>{selected.nextAction ?? "Not set"}</dd></div></dl></header>
               <div className="bof-chat-messages">{selected.messages.map((message) => <article key={message.id} className={`bof-chat-message bof-chat-message--${message.visibility.toLowerCase()}`}><div className="bof-chat-message-meta"><strong>{message.sender.name ?? message.sender.email}</strong><span>{message.visibility === "INTERNAL" ? "Internal" : "Customer visible"} · {formatDate(message.createdAt)}</span></div>{editingMessageId === message.id ? <div className="bof-chat-message-edit"><textarea value={editingBody} onChange={(event) => setEditingBody(event.target.value)} /><div><button type="button" onClick={() => void editMessage(message.id)}>Save edit</button><button type="button" onClick={() => { setEditingMessageId(null); setEditingBody(""); }}>Cancel</button></div></div> : <><p>{message.deletedAt ? "Message deleted" : message.body}{message.editedAt && !message.deletedAt ? " (edited)" : ""}</p>{!message.deletedAt ? <div className="bof-chat-message-actions"><button type="button" onClick={() => { setEditingMessageId(message.id); setEditingBody(message.body); }}>Edit</button><button type="button" onClick={() => void deleteMessage(message.id)}>Delete</button></div> : null}</>}</article>)}{selected.messages.length === 0 ? <p className="bof-chat-empty">No messages yet. Start the operational record here.</p> : null}</div>
               <form className="bof-chat-composer" onSubmit={sendMessage}><textarea value={body} onChange={(event) => setBody(event.target.value)} placeholder={selected.visibility === "INTERNAL" ? "Write an internal operational update..." : "Write a customer-visible update..."} /><button type="submit">Send message</button></form>
             </> : <div className="bof-chat-empty-state"><span>BOF</span><h2>Select an authorized conversation</h2><p>Choose a conversation or create one linked to a durable operational record.</p></div>}
           </section>
+          <OperationalIntelligencePanel
+            fleetId={fleetId}
+            recordType={selected?.recordType ?? initialRecordType}
+            recordId={selected?.recordId ?? initialRecordId}
+          />
         </div>
       </div>
     </main>

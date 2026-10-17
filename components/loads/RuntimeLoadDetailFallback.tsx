@@ -81,7 +81,7 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
         : "RELEASED / READY";
   const dispatchGateReason = operating?.releaseSummary ?? "Canonical operating state is not available for this load.";
   const maintenanceBlocker = operating?.blockers.find((row) => row.source === "maintenance");
-  const conversationHref = `/operational-chat?recordType=LOAD&recordId=${encodeURIComponent(rawLoad.id)}`;
+  const conversationHref = `/operational-chat?fleetId=demo-fleet&recordType=LOAD&recordId=${encodeURIComponent(rawLoad.id)}`;
   const exceptionHref = `/dispatch?view=exceptions&loadId=${encodeURIComponent(rawLoad.id)}`;
   const maintenanceHref = load.assetId && allMaintenanceAssetIds().includes(load.assetId) ? `/maintenance/${load.assetId}` : "/maintenance";
 
