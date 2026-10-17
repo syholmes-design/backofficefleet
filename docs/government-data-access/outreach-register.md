@@ -20,6 +20,7 @@ Log each send and reply with its date. Keep private contact names and anything s
 | S2 | Georgia DDS Bulk MVR | mvr@dds.ga.gov | Bulk Requestor role; batch web service spec; fees; private-detective licence question | $100 setup; $7/$9 per record; 4-yr retention | [draft](drafts/S2-georgia-dds-bulk-mvr.md) | drafted | | | Counsel reviews the rule 375-3-8 question (legal-review Q13); then approve and send | You + counsel |
 | S3 | Ohio BMV Records Request Unit | BMVRecords@dps.ohio.gov, (614) 752-7548 (**verify**) | Record account for an agent of multiple carriers; electronic/batch options | $5/record; letterhead request + BMV 1173 | [draft](drafts/S3-ohio-bmv-record-account.md) | drafted | | | Approve and send | You approve |
 | S4 | Missouri DOR Driver License Record Center | dlrecords@dor.mo.gov, 573-526-2407 | DPPA access code (Form 4678); batch/monitoring options; bulk policy | ~$2.82/record; 5-yr recipient log | [draft](drafts/S4-missouri-dor-driver-records.md) | drafted | | | Approve and send | You approve |
+| A1 | AAMVA (CDLIS third-party employer verification; DLDV) | CustomerService@aamva.org or the "Business with AAMVA" form; 703-522-4200; 4401 Wilson Blvd Ste 700, Arlington VA | Service-provider eligibility for multiple carriers; enrollment, consent, audit, connectivity, fees; regional introductions | Product exists (private rate schedule); NDA before pricing; fees suspended since 10/2023 | [draft](drafts/A1-aamva-cdlis-service-provider.md) | drafted | | | Approve and send; **no NDA without approval** | You approve |
 
 Full state findings: [`state-mvr-plan.md`](state-mvr-plan.md). Roadmap and the registrations list: [`driver-intelligence-roadmap.md`](driver-intelligence-roadmap.md).
 
@@ -40,3 +41,4 @@ Full state findings: [`state-mvr-plan.md`](state-mvr-plan.md). Roadmap and the r
 - 2026-10-16: FMCSA research complete; F1–F5 drafted. Nothing sent. SambaSafety removed from scope (owner decision).
 - 2026-10-17: State MVR research (OH, MI, GA, MO) and FMCSA open-data/Motus research complete. Register rows F6–F7 and S1–S4 added. Nothing sent.
 - 2026-10-17: Phase 3: state inquiries S1–S4 and F6 drafted; F1–F4 finalized. Nothing sent.
+- 2026-10-17: Interstate/AAMVA research, 50-state matrix, ENS survey and access strategy complete. A1 (AAMVA) drafted. Nothing sent.

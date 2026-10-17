@@ -22,6 +22,10 @@ capability on authoritative sources. Carriers that work with BOF authorize BOF t
 | [`drafts/`](drafts/) | Individualized correspondence awaiting approval |
 | [`fmcsa-integration-activation.md`](fmcsa-integration-activation.md) | QCMobile and open-data integration readiness and activation steps |
 | [`phase3-preview-implementation.md`](phase3-preview-implementation.md) | Phase 3: carrier identity, monitoring tables (migration docs), workflow, Preview test steps |
+| [`state-mvr-matrix-50.md`](state-mvr-matrix-50.md) | 50-state + DC MVR access matrix (evidence-graded) |
+| [`interstate-access-report.md`](interstate-access-report.md) | AAMVA (CDLIS, S2S, NDR, DLDV), interstate/regional programs, employer notification services |
+| [`access-strategy.md`](access-strategy.md) | Individual vs interstate vs hybrid, authorization sequence, cost comparison |
+| [`research/`](research/) | Raw research notes with sources |
 | [`state-mvr-plan.md`](state-mvr-plan.md) | State MVR access and monitoring plan: OH, MI, GA, MO |
 | [`driver-intelligence-roadmap.md`](driver-intelligence-roadmap.md) | Build-vs-buy, roadmap, registrations to obtain, prioritized development tasks |
 | [`legal-review-questions.md`](legal-review-questions.md) | Questions for counsel (FCRA, DPPA, state law, FMCSA programs, consent, retention, security, contracts) |
