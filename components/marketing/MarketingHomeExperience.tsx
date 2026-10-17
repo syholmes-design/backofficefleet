@@ -141,66 +141,90 @@ function DemoMetric({
   );
 }
 
+const HERO_PROOF = [
+  "Recruiting & onboarding",
+  "Qualification & compliance",
+  "Dispatch administration",
+  "Documentation & vault",
+  "Settlements & payroll support",
+] as const;
+
 const HERO_PATH = [
-  ["1", "What we do", "#what-we-do"],
-  ["2", "We save you money", "#we-save-you-money"],
-  ["3", "Assess the operation", "#assess-the-operation"],
-  ["4", "Demo the difference", "#demo-the-difference"],
+  ["Capabilities", "#capabilities"],
+  ["Trip lifecycle", "#trip-lifecycle"],
+  ["Savings model", "#we-save-you-money"],
+  ["Contact BOF", "/contact"],
 ] as const;
 
 export function MarketingHomeHeroExperience() {
   return (
-    <section id="hero" className="bof-home-hero bof-home-hero--focus" aria-labelledby="bof-mkt-hero-heading">
-      <div className="bof-mkt-container bof-home-hero__content">
-        <div className="bof-home-hero__copy">
-          <p className="bof-home-eyebrow">BackOfficeFleet · CONTROL • COMPLY • CLEAR</p>
-          <h1 id="bof-mkt-hero-heading">The Operating Layer for Transportation Businesses</h1>
-          <p className="text-xl font-semibold leading-8 text-white md:text-2xl">
-            Connect the systems, people, proof, and decisions that keep transportation moving.
-          </p>
-          <p className="bof-home-hero__lead">
-            BOF gives carriers, private fleets, and aggregator networks one operating environment for readiness,
-            load execution, compliance, exceptions, documentation, settlements, and cash flow. Dispatch stays with
-            the carrier. BOF does not become the broker or the marketplace.
-          </p>
-          <div className="bof-home-hero__ctas" aria-label="Primary actions">
-            <Link href="#what-we-do" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-              What we do
-            </Link>
-            <Link href="#demo-the-difference" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-              Demo the difference
-            </Link>
+    <>
+      <section id="hero" className="bof-home-hero bof-home-hero--services" aria-labelledby="bof-mkt-hero-heading">
+        <div className="bof-mkt-container bof-home-hero__content bof-home-hero__content--services">
+          <div className="bof-home-hero__copy">
+            <p className="bof-home-eyebrow">Outsourced transportation back-office operations</p>
+            <h1 id="bof-mkt-hero-heading">Enterprise back-office operations for aggregators and carriers</h1>
+            <p className="bof-home-hero__subhead">
+              BackOfficeFleet performs centralized recruiting, compliance, dispatch administration, documentation,
+              safety, settlements, and financial support—so networks scale without duplicating admin teams.
+            </p>
+            <p className="bof-home-hero__lead">
+              Dispatch stays with the carrier. BOF does not become the broker, marketplace, or motor carrier of record.
+              Technology supports our operators; the service is managed back-office execution.
+            </p>
+            <ul className="bof-home-proof-list" aria-label="Core service areas">
+              {HERO_PROOF.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+            <div className="bof-home-hero__ctas" aria-label="Primary actions">
+              <Link href="/contact" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+                Contact BOF
+              </Link>
+              <Link href="#capabilities" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+                View capabilities
+              </Link>
+            </div>
+            <nav className="bof-home-hero__ctas" aria-label="Homepage sections">
+              <Link href="/aggregators" className="bof-home-hero__text-link">
+                For aggregators
+              </Link>
+              <Link href="#demo-the-difference" className="bof-home-hero__text-link">
+                See sample workflows
+              </Link>
+              <Link href="#we-save-you-money" className="bof-home-hero__text-link">
+                Savings estimate
+              </Link>
+            </nav>
           </div>
-          <nav className="bof-home-hero__ctas" aria-label="Homepage sections">
-            <Link href="#we-save-you-money" className="bof-home-hero__text-link">Savings estimate</Link>
-            <Link href="#assess-the-operation" className="bof-home-hero__text-link">Assess the operation</Link>
-            <Link href="/aggregators" className="bof-home-hero__text-link">For aggregators</Link>
-          </nav>
+          <figure className="bof-home-hero__figure">
+            <div className="bof-home-hero__visual-media">
+              <Image
+                src="/approved/bofhero.png"
+                alt="Commercial truck on a highway at sunrise, representing active fleet operations"
+                fill
+                priority
+                sizes="(max-width: 959px) 92vw, 46vw"
+                className="bof-home-hero__image"
+              />
+            </div>
+            <figcaption className="bof-home-hero__caption">
+              Field operations stay with your carriers. BOF runs the back office that keeps them qualified, documented,
+              and paid.
+            </figcaption>
+          </figure>
         </div>
-        <div className="bof-home-hero__visual">
-          <div className="bof-home-hero__visual-media">
-            <Image
-              src="/approved/bofhero.png"
-              alt="Professional truck driver operating on the road at sunrise"
-              fill
-              priority
-              sizes="(max-width: 959px) 100vw, 42vw"
-              className="bof-home-hero__image"
-            />
-          </div>
-          <ol className="bof-home-hero__path" aria-label="Continue through the site">
-            {HERO_PATH.map(([step, label, href]) => (
-              <li key={href}>
-                <Link href={href}>
-                  <span>{step}</span>
-                  {label}
-                </Link>
-              </li>
-            ))}
-          </ol>
+      </section>
+      <nav className="bof-home-hero-strip" aria-label="Explore the homepage">
+        <div className="bof-mkt-container bof-home-hero-strip__inner">
+          {HERO_PATH.map(([label, href]) => (
+            <Link key={href} href={href}>
+              {label}
+            </Link>
+          ))}
         </div>
-      </div>
-    </section>
+      </nav>
+    </>
   );
 }
 
@@ -235,8 +259,8 @@ export function MarketingHomeLifecycle() {
       <div className="bof-mkt-container">
         <div className="bof-home-section-head">
           <p className="bof-home-eyebrow">What BOF operates</p>
-          <h2 id="what-bof-operates-heading">The operating environment behind every movement</h2>
-          <p>One enforced record from readiness through cash — not five disconnected tools.</p>
+          <h2 id="what-bof-operates-heading">Administrative work tied to each movement</h2>
+          <p>From readiness through cash—one accountable record instead of disconnected admin queues.</p>
         </div>
         <ol className="bof-home-timeline">
           {LIFECYCLE.map((item, index) => (
@@ -280,7 +304,7 @@ export function MarketingHomeCommandPreview() {
         rows={CC_ROWS}
         headingId="demo-command-heading"
         title="Information becomes action when the operating layer owns the next move."
-        lead="The Command Center is where transportation signals become accountable decisions, not just another dashboard. This preview uses existing BOF demo routes. It is not a live production fleet feed."
+        lead="Supporting technology helps BOF operators see signals and assign next actions. This preview uses existing BOF demo routes—it is not a live production fleet feed."
         demoHref="/dashboard"
         demoLabel="Open the demo lobby"
         statusBadge="Demo snapshot"

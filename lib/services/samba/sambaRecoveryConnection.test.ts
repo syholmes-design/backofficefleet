@@ -42,10 +42,13 @@ test("samba context rejects demo operational keys before it reads records", () =
 test("restored settlements and website connections remain in place", () => {
   const settlements = read("components/settlements-payroll/SettlementsPayrollPageClient.tsx");
   const home = read("components/marketing/MarketingHomeAccountable.tsx");
+  const homeOps = read("components/marketing/MarketingHomeOperations.tsx");
   const header = read("components/BofHeader.tsx");
   assert.match(settlements, /\/api\/dispatch\/settlements/);
   assert.doesNotMatch(settlements, /SettlementsPayrollShell/);
   assert.match(home, /id="what-we-do"/);
+  assert.match(homeOps, /id="capabilities"/);
+  assert.match(home, /MarketingHomeCapabilities/);
   assert.match(home, /id="we-save-you-money"/);
   assert.match(home, /id="assess-the-operation"/);
   assert.match(header, /productLogoHref/);

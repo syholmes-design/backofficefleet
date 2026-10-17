@@ -9,9 +9,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "BackOfficeFleet | The Operating Layer for Transportation Businesses",
+  title: "BackOfficeFleet | Outsourced Transportation Back-Office Operations",
   description:
-    "BackOfficeFleet connects the systems, people, proof, and decisions that keep transportation moving.",
+    "BackOfficeFleet provides outsourced back-office operations for transportation aggregators, affiliated carriers, and fleet operators—recruiting through settlements with trained staff and supporting technology.",
 };
 
 export { default } from "@/components/marketing/MarketingHomeAccountable";
