@@ -5,6 +5,7 @@ import { classifyOperationalIntent, extractLoadReference } from "@/lib/operation
 
 test("classifyOperationalIntent routes settlement and readiness questions", () => {
   assert.equal(classifyOperationalIntent("Why is this settlement on hold?"), "SETTLEMENT_HOLDS");
+  assert.equal(classifyOperationalIntent("What is the POD and invoice handoff on load L004?"), "LOAD_FINANCE");
   assert.equal(classifyOperationalIntent("Which drivers are not dispatch ready?"), "DRIVER_READINESS");
   assert.equal(classifyOperationalIntent("What is payroll status this week?"), "PAYROLL_STATUS");
   assert.equal(classifyOperationalIntent("Where is the truck on load L004?"), "TELEMATICS");

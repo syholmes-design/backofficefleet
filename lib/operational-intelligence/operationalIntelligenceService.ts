@@ -4,7 +4,6 @@ import type {
   OperationalIntelligenceAnswer,
   OperationalIntelligenceContext,
   OperationalIntelligenceCitation,
-  OperationalIntelligenceRecommendation,
 } from "@/lib/operational-intelligence/types";
 import { getTenantLoadProcess } from "@/lib/process-intelligence/operating-event-service";
 import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
@@ -13,6 +12,7 @@ import { prisma } from "@/lib/prisma";
 import { getAuthorizedOperatingRecord } from "@/lib/services/operatingRecordService";
 import { listDriverOperationalSummaries } from "@/lib/services/driverOperationalReadModelService";
 import { listAccessibleLiveSettlements } from "@/lib/services/settlementReadService";
+import { buildLoadFinanceHandoff } from "@/lib/load-finance-handoff";
 import { isDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
 
 export class OperationalIntelligenceError extends Error {
@@ -360,6 +360,68 @@ async function answerLoadLifecycle(
   };
 }
 
+async function answerLoadFinance(user: SessionUserLike, fleetId: string, loadRef: string | null): Promise<OperationalIntelligenceAnswer> {
+  if (!loadRef) {
+    return {
+      intent: "LOAD_FINANCE",
+      question: "",
+      dataAuthority: "UNAVAILABLE",
+      answer: "Specify a load reference (for example L001) to review POD, invoice, settlement, and exception handoffs from LIVE Prisma rows.",
+      citations: [],
+      recommendations: [{ label: "Browse loads", href: "/loads", claimClass: "RECOMMENDATION", executable: false }],
+      limitations: [],
+    };
+  }
+
+  const load = await prisma.load.findFirst({
+    where: { fleetId, OR: [{ id: loadRef }, { referenceNumber: loadRef }] },
+    include: {
+      proofsOfDelivery: true,
+      invoices: true,
+      settlements: true,
+      operatingExceptions: true,
+    },
+  });
+
+  if (!load) {
+    return {
+      intent: "LOAD_FINANCE",
+      question: "",
+      dataAuthority: "UNAVAILABLE",
+      answer: `Load ${loadRef} was not found in fleet ${fleetId} LIVE data.`,
+      citations: [],
+      recommendations: [],
+      limitations: [],
+    };
+  }
+
+  const handoff = buildLoadFinanceHandoff(load);
+  const record = await getAuthorizedOperatingRecord(user, fleetId, "LOAD", load.id);
+  const lines = [
+    handoff.deliveryEvidence.summary,
+    handoff.invoicing.summary,
+    handoff.settlement.summary,
+    handoff.exceptions.summary,
+    `Next action: ${handoff.nextRequiredAction}`,
+  ];
+  if (handoff.brokenHandoffs.length > 0) {
+    lines.push(`Broken handoffs: ${handoff.brokenHandoffs.join(" ")}`);
+  }
+
+  return {
+    intent: "LOAD_FINANCE",
+    question: "",
+    dataAuthority: "LIVE",
+    answer: `Load-to-finance handoff for ${load.referenceNumber ?? load.id} (${handoff.loadStatus}):\n${lines.join("\n")}`,
+    citations: [rec("LOAD", load.id, record.title, record.route)],
+    recommendations: [
+      { label: "Open process intelligence", href: `/loads/${load.id}#process-intelligence`, claimClass: "RECOMMENDATION", executable: false },
+      { label: "Open settlements", href: "/settlements", claimClass: "RECOMMENDATION", executable: false },
+    ],
+    limitations: ["Uses the same financeHandoff projection as GET /api/load-process-intelligence/{loadId}."],
+  };
+}
+
 async function answerLoadStatus(user: SessionUserLike, fleetId: string, loadRef: string | null): Promise<OperationalIntelligenceAnswer> {
   if (!loadRef) {
     return {
@@ -476,6 +538,9 @@ export async function answerOperationalQuestion(
       break;
     case "LOAD_LIFECYCLE":
       base = await answerLoadLifecycle(user, fleetId, loadRef);
+      break;
+    case "LOAD_FINANCE":
+      base = await answerLoadFinance(user, fleetId, loadRef);
       break;
     case "LOAD_STATUS":
       base = await answerLoadStatus(user, fleetId, loadRef);

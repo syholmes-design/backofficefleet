@@ -7,6 +7,7 @@ export type OperationalIntent =
   | "MISSING_DOCUMENTS"
   | "OPEN_EXCEPTIONS"
   | "LOAD_LIFECYCLE"
+  | "LOAD_FINANCE"
   | "LOAD_STATUS"
   | "PAYROLL_STATUS"
   | "TELEMATICS"
@@ -32,6 +33,7 @@ export function classifyOperationalIntent(question: string): OperationalIntent {
   if (/at risk|deliver(y|ies) (at )?risk|late load|loads? (at )?risk/.test(q)) return "LOADS_AT_RISK";
   if (/missing doc|document(s)? missing|dqf|credential/.test(q)) return "MISSING_DOCUMENTS";
   if (/exception|unresolved|open issue|condition thread/.test(q)) return "OPEN_EXCEPTIONS";
+  if (/pod|proof of delivery|invoice|finance handoff|delivery evidence|load to cash|settlement on load/.test(q)) return "LOAD_FINANCE";
   if (/lifecycle|what happened|history|timeline|status of load/.test(q)) return "LOAD_LIFECYCLE";
   if (/status of|where is.*load|find load/.test(q)) return "LOAD_STATUS";
   return "GENERAL_HELP";

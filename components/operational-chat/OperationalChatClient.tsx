@@ -71,6 +71,7 @@ export function OperationalChatClient({ initialFleetId, initialRecordType, initi
   const [editingBody, setEditingBody] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [recordOptions, setRecordOptions] = useState<Array<{ recordId: string; title: string; route: string }>>([]);
+  const [notificationUnread, setNotificationUnread] = useState(0);
   const selected = threads.find((thread) => thread.id === selectedId) ?? null;
 
   useEffect(() => {
@@ -97,9 +98,18 @@ export function OperationalChatClient({ initialFleetId, initialRecordType, initi
     if (!selectedId && nextThreads[0]) setSelectedId(nextThreads[0].id);
   }, [fleetId, hasRecordContext, recordId, recordType, selectedId]);
 
+  const loadNotifications = useCallback(async () => {
+    if (!fleetId.trim()) return;
+    const response = await fetch(`/api/operational-chat/notifications?fleetId=${encodeURIComponent(fleetId)}&limit=20`, { cache: "no-store" });
+    if (!response.ok) return;
+    const body = await response.json() as { unreadCount?: number };
+    setNotificationUnread(body.unreadCount ?? 0);
+  }, [fleetId]);
+
   useEffect(() => {
     loadThreads().catch((reason: unknown) => setError(reason instanceof Error ? reason.message : "Unable to load conversations"));
-  }, [loadThreads]);
+    void loadNotifications();
+  }, [loadThreads, loadNotifications]);
 
   async function createThread(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -130,6 +140,7 @@ export function OperationalChatClient({ initialFleetId, initialRecordType, initi
       const message = await response.json();
       setThreads((current) => current.map((thread) => thread.id === selected.id ? { ...thread, messages: [...thread.messages, message], updatedAt: new Date().toISOString() } : thread));
       setBody("");
+      void loadNotifications();
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Unable to send message");
     }
@@ -172,7 +183,7 @@ export function OperationalChatClient({ initialFleetId, initialRecordType, initi
         {error ? <p className="bof-chat-error" role="alert">{error}</p> : null}
         <div className="bof-chat-layout bof-chat-layout--integrated">
           <aside className="bof-chat-sidebar">
-            <div className="bof-chat-sidebar-head"><h2>Conversations</h2><span>{threads.length}</span></div>
+            <div className="bof-chat-sidebar-head"><h2>Conversations</h2><span>{threads.length}{notificationUnread > 0 ? ` · ${notificationUnread} notify` : ""}</span></div>
             <form className="bof-chat-new-thread" onSubmit={createThread}>
               <input aria-label="Conversation subject" placeholder="New conversation subject" value={newSubject} onChange={(event) => setNewSubject(event.target.value)} required />
               {hasRecordContext ? <p className="bof-chat-linked-record">Linked to {recordType.replaceAll("_", " ").toLowerCase()}: <strong>{recordId}</strong></p> : <select aria-label="Conversation type" value={newType} onChange={(event) => setNewType(event.target.value)}><option value="GENERAL_INTERNAL_THREAD">General internal</option><option value="LOAD_THREAD">Load</option><option value="DRIVER_THREAD">Driver</option><option value="DOCUMENT_THREAD">Document</option><option value="EXCEPTION_THREAD">Exception</option><option value="SAFETY_COMPLIANCE_THREAD">Safety / compliance</option><option value="SETTLEMENT_THREAD">Settlement</option><option value="MAINTENANCE_THREAD">Maintenance</option></select>}

@@ -11,6 +11,13 @@ import {
   evaluateRecruitingV2ActivationReadiness,
   normalizeRecruitingV2OnboardingSummary,
 } from "@/lib/recruiting-v2/activation-engine";
+import {
+  activateRecruitingV2Candidate,
+  readRecruitingV2DriverHandoff,
+  RecruitingV2ActivationError,
+} from "@/lib/recruiting-v2/driver-activation-service";
+import { auth } from "@/auth";
+import type { SessionUserLike } from "@/lib/authorization";
 
 type RouteContext = { params: Promise<{ candidateId: string }> };
 
@@ -165,9 +172,11 @@ function activationPayload(context: NonNullable<Awaited<ReturnType<typeof getAct
       payload: context.paylocityPreview,
     },
     manualActivation: {
-      implemented: false,
-      reason: "Activation not yet implemented because Recruiting V2 does not have an authorization model for driver activation.",
+      implemented: true,
+      reason:
+        "Authorized POST activationStatus=ACTIVE with fleetId creates a Prisma Driver, DriverIntake (QUALIFICATION_REVIEW), and bridges verified recruiting documents into the driver file.",
     },
+    driverHandoff: readRecruitingV2DriverHandoff(context.candidate.applicationSummary),
   };
 }
 
@@ -202,11 +211,40 @@ export async function POST(request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: "Activation prerequisites are incomplete; ACTIVE cannot be persisted." }, { status: 400 });
   }
 
-  return NextResponse.json(
-    {
-      error: "Activation not yet implemented because Recruiting V2 does not have an authorization model for driver activation.",
-      activationReadiness: activationContext.activationReadiness,
-    },
-    { status: 501 },
-  );
+  if (body.activationStatus !== "ACTIVE") {
+    return NextResponse.json(
+      {
+        error: "Only activationStatus=ACTIVE is supported for driver handoff.",
+        activationReadiness: activationContext.activationReadiness,
+      },
+      { status: 422 },
+    );
+  }
+
+  const fleetId = typeof body.fleetId === "string" ? body.fleetId.trim() : "";
+  if (!fleetId) {
+    return NextResponse.json({ error: "fleetId is required to activate a driver into a fleet tenant." }, { status: 422 });
+  }
+
+  const session = await auth();
+  try {
+    const result = await activateRecruitingV2Candidate({
+      sessionUser: session?.user as SessionUserLike,
+      candidateCode: candidateId,
+      fleetId,
+    });
+    const refreshed = await getActivationContext(candidateId);
+    return NextResponse.json(
+      {
+        ...activationPayload(refreshed!),
+        activationResult: result,
+      },
+      { status: result.idempotent ? 200 : 201 },
+    );
+  } catch (error) {
+    if (error instanceof RecruitingV2ActivationError) {
+      return NextResponse.json({ error: error.message, activationReadiness: activationContext.activationReadiness }, { status: error.statusCode });
+    }
+    throw error;
+  }
 }

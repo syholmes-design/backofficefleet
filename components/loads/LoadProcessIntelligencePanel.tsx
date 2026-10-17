@@ -15,6 +15,14 @@ type ProcessPayload = {
   variants: { status: string };
   throughput: { reason: string; loadCreatedToDelivery: string | null; loadCreatedToPod: string | null; podToInvoice: string | null; invoiceToSettlement: string | null };
   bottlenecks: { status: string };
+  financeHandoff: {
+    deliveryEvidence: { summary: string };
+    invoicing: { summary: string };
+    settlement: { summary: string; heldCount: number; holdReasons: string[] };
+    exceptions: { summary: string };
+    nextRequiredAction: string;
+    brokenHandoffs: string[];
+  } | null;
 };
 
 function formatActivity(value: string) {
@@ -121,6 +129,24 @@ export function LoadProcessIntelligencePanel({ loadId }: { loadId: string }) {
         <article className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-4"><p className="text-[10px] font-black uppercase tracking-wider text-slate-500">Throughput</p><p className="mt-2 break-words text-sm text-slate-700">{hasActualHistory ? (payload.conformance.throughputTime ?? payload.throughput.reason) : "INSUFFICIENT EVENT HISTORY"}</p></article>
         <article className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-4"><p className="text-[10px] font-black uppercase tracking-wider text-slate-500">Bottleneck analysis</p><p className="mt-2 break-words text-sm text-slate-700">{payload.bottlenecks.status}</p></article>
       </div>
+
+      {payload.financeHandoff ? (
+        <div className="mt-4 min-w-0 rounded-xl border border-teal-200 bg-teal-50/60 p-4">
+          <p className="text-[10px] font-black uppercase tracking-wider text-teal-800">Load-to-finance handoff (LIVE)</p>
+          <p className="mt-2 text-sm text-slate-800">{payload.financeHandoff.deliveryEvidence.summary}</p>
+          <p className="mt-1 text-sm text-slate-800">{payload.financeHandoff.invoicing.summary}</p>
+          <p className="mt-1 text-sm text-slate-800">{payload.financeHandoff.settlement.summary}</p>
+          <p className="mt-1 text-sm text-slate-800">{payload.financeHandoff.exceptions.summary}</p>
+          <p className="mt-2 text-sm font-bold text-slate-950">Next: {payload.financeHandoff.nextRequiredAction}</p>
+          {payload.financeHandoff.brokenHandoffs.length > 0 ? (
+            <ul className="mt-2 list-disc pl-5 text-sm text-amber-900">
+              {payload.financeHandoff.brokenHandoffs.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="mt-4 min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-4">
         <p className="text-[10px] font-black uppercase tracking-wider text-slate-500">Deviation summary</p>

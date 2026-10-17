@@ -187,6 +187,79 @@ export async function createOperationalChatMessage(user: SessionUserLike, fleetI
   return { ...message, deletedAt: null };
 }
 
+export async function listOperationalChatNotifications(user: SessionUserLike, fleetId: string, limit = 30) {
+  accessOrThrow(user, fleetId);
+  const userId = getUserId(user);
+  const rows = await prisma.operationalChatNotification.findMany({
+    where: { tenantId: fleetId, userId },
+    orderBy: [{ readAt: "asc" }, { createdAt: "desc" }],
+    take: Math.min(Math.max(limit, 1), 100),
+  });
+  const threadIds = [...new Set(rows.map((row) => row.threadId))];
+  const messageIds = [...new Set(rows.map((row) => row.messageId).filter((value): value is string => Boolean(value)))];
+  const [threads, messages] = await Promise.all([
+    threadIds.length
+      ? prisma.operationalChatThread.findMany({
+          where: { id: { in: threadIds }, tenantId: fleetId },
+          select: { id: true, subject: true, recordType: true, recordId: true },
+        })
+      : Promise.resolve([]),
+    messageIds.length
+      ? prisma.operationalChatMessage.findMany({
+          where: { id: { in: messageIds }, tenantId: fleetId },
+          select: { id: true, body: true, createdAt: true, sender: { select: { name: true, email: true } } },
+        })
+      : Promise.resolve([]),
+  ]);
+  const threadById = new Map(threads.map((thread) => [thread.id, thread]));
+  const messageById = new Map(messages.map((message) => [message.id, message]));
+  const unreadCount = rows.filter((row) => !row.readAt).length;
+  return {
+    unreadCount,
+    notifications: rows.map((row) => {
+      const thread = threadById.get(row.threadId);
+      const message = row.messageId ? messageById.get(row.messageId) : undefined;
+      return {
+        id: row.id,
+        kind: row.kind,
+        readAt: row.readAt?.toISOString() ?? null,
+        createdAt: row.createdAt.toISOString(),
+        threadId: row.threadId,
+        messageId: row.messageId,
+        threadSubject: thread?.subject ?? null,
+        threadRecordType: thread?.recordType ?? null,
+        threadRecordId: thread?.recordId ?? null,
+        messagePreview: message?.body?.slice(0, 240) ?? null,
+        senderLabel: message?.sender?.name ?? message?.sender?.email ?? null,
+      };
+    }),
+  };
+}
+
+export async function markOperationalChatNotificationsRead(
+  user: SessionUserLike,
+  fleetId: string,
+  notificationIds?: string[],
+) {
+  accessOrThrow(user, fleetId);
+  const userId = getUserId(user);
+  const where = {
+    tenantId: fleetId,
+    userId,
+    readAt: null as null,
+    ...(notificationIds && notificationIds.length > 0 ? { id: { in: notificationIds } } : {}),
+  };
+  const result = await prisma.operationalChatNotification.updateMany({
+    where,
+    data: { readAt: new Date() },
+  });
+  await audit(user, fleetId, AuditAction.UPDATED, "OperationalChatNotification", null, {
+    markedRead: result.count,
+    scoped: Boolean(notificationIds?.length),
+  });
+  return { markedRead: result.count };
+}
+
 export async function markOperationalChatThreadRead(user: SessionUserLike, fleetId: string, threadId: string) {
   const userId = getUserId(user);
   const thread = await getOperationalChatThread(user, fleetId, threadId);

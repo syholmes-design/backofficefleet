@@ -32,6 +32,7 @@ type ApiPayload = {
   documentGateSummary: { total: number; blocked: number; open: number; satisfied: number };
   paylocityHandoffPreview: { label: string; status: string; payload: Record<string, unknown> };
   manualActivation: { implemented: boolean; reason: string };
+  driverHandoff: { driverId: string; driverIntakeId: string; fleetId: string } | null;
 };
 
 type Props = { candidateId: string };
@@ -63,6 +64,9 @@ function auditRows(value: unknown) {
 export function RecruitingV2ActivationApiPanel({ candidateId }: Props) {
   const [payload, setPayload] = useState<ApiPayload | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [fleetId, setFleetId] = useState("");
+  const [activating, setActivating] = useState(false);
+  const [activationMessage, setActivationMessage] = useState<string | null>(null);
 
   const loadActivation = useCallback(async () => {
     setError(null);
@@ -79,6 +83,34 @@ export function RecruitingV2ActivationApiPanel({ candidateId }: Props) {
   useEffect(() => {
     void loadActivation();
   }, [loadActivation]);
+
+  async function activateDriver() {
+    if (!fleetId.trim()) {
+      setActivationMessage("Enter the target fleet ID for driver activation.");
+      return;
+    }
+    setActivating(true);
+    setActivationMessage(null);
+    setError(null);
+    const response = await fetch(`/api/recruiting-v2/activation/${encodeURIComponent(candidateId)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ activationStatus: "ACTIVE", fleetId: fleetId.trim() }),
+    });
+    const body = await response.json();
+    setActivating(false);
+    if (!response.ok) {
+      setActivationMessage(body?.error ?? "Activation failed");
+      return;
+    }
+    setPayload(body as ApiPayload);
+    const result = body?.activationResult as { driverHref?: string; driverId?: string } | undefined;
+    setActivationMessage(
+      result?.driverHref
+        ? `Driver activated. Open ${result.driverId ?? "driver file"} from the driver hub.`
+        : "Driver activation completed.",
+    );
+  }
 
   if (error) return <p className="mt-5 rounded-md border border-amber-700 bg-amber-950/30 px-3 py-2 text-sm text-amber-100">{error}</p>;
   if (!payload) return <p className="mt-5 text-sm text-slate-400">Loading activation readiness...</p>;
@@ -178,12 +210,30 @@ export function RecruitingV2ActivationApiPanel({ candidateId }: Props) {
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <article className="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
           <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Driver handoff</p>
-          <p className="mt-2 text-sm text-slate-300">Recruiting V2 Candidate to future Driver creation / activation to existing BOF Driver, Driver Vault, DQF, and Dispatch Eligibility. No Driver record is created here.</p>
+          <p className="mt-2 text-sm text-slate-300">{payload.manualActivation.reason}</p>
+          {payload.driverHandoff ? (
+            <div className="mt-3 grid gap-2 text-sm text-teal-100">
+              <p>Driver: <Link href={`/drivers/${payload.driverHandoff.driverId}`} className="font-black underline">{payload.driverHandoff.driverId}</Link></p>
+              <p>Intake: {payload.driverHandoff.driverIntakeId}</p>
+              <p>Fleet: {payload.driverHandoff.fleetId}</p>
+            </div>
+          ) : (
+            <div className="mt-3 grid gap-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                Target fleet ID
+                <input className="mt-1 w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white" value={fleetId} onChange={(event) => setFleetId(event.target.value)} placeholder="demo-fleet or authorized fleet id" />
+              </label>
+              <button type="button" disabled={!payload.activationReadiness.ready || activating || payload.activationStatus === "ACTIVE"} onClick={() => void activateDriver()} className="rounded-md border border-teal-600 bg-teal-900/40 px-3 py-2 text-xs font-black text-teal-50 hover:bg-teal-900/60 disabled:opacity-50">
+                {activating ? "Activating..." : payload.activationStatus === "ACTIVE" ? "Already active" : "Activate driver in fleet"}
+              </button>
+              {activationMessage ? <p className="text-sm text-amber-100">{activationMessage}</p> : null}
+            </div>
+          )}
         </article>
         <article className="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Manual activation behavior</p>
-          <p className="mt-2 text-sm text-slate-300">{payload.manualActivation.reason}</p>
-          <span className="mt-3 inline-flex rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-xs font-black text-slate-300">Activation not implemented</span>
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Dispatch readiness</p>
+          <p className="mt-2 text-sm text-slate-300">After activation, dispatch eligibility is evaluated from the Prisma driver file, intake requirements, and readiness projections—not from recruiting status alone.</p>
+          {payload.driverHandoff ? <Link href={`/drivers/${payload.driverHandoff.driverId}/safety`} className="mt-3 inline-flex text-xs font-black text-teal-200 underline">Open dispatch readiness review</Link> : null}
         </article>
         <article className="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
           <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Audit trail</p>

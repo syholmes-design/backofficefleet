@@ -1,3 +1,4 @@
+import { buildLoadFinanceHandoff } from "@/lib/load-finance-handoff";
 import { prisma } from "@/lib/prisma";
 import demoData from "@/lib/demo-data.json";
 
@@ -735,5 +736,16 @@ export async function getLoadProcessIntelligence(
       correctiveActions: persistedLoad?.operatingCorrectiveActions.map((item) => ({ id: item.id, type: item.actionType, status: item.status })) ?? [],
       sourceSystem: persistedLoad?.sourceSystem ?? (demoLoad && "intakeSourceType" in demoLoad ? demoLoad.intakeSourceType : null),
     },
+    financeHandoff: persistedLoad
+      ? buildLoadFinanceHandoff({
+          id: persistedLoad.id,
+          status: persistedLoad.status,
+          referenceNumber: persistedLoad.referenceNumber,
+          proofsOfDelivery: persistedLoad.proofsOfDelivery,
+          invoices: persistedLoad.invoices,
+          settlements: persistedLoad.settlements,
+          operatingExceptions: persistedLoad.operatingExceptions,
+        })
+      : null,
   };
 }
