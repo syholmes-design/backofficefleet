@@ -33,7 +33,8 @@ function assessmentMessage(params: Record<string, string | string[] | undefined>
   if (first(params.source) !== "assessment") return undefined;
   const track = getAssessmentTrack(first(params.track));
   if (!track) return undefined;
-  const score = Number(first(params.score));
+  const rawScore = first(params.score);
+  const score = rawScore ? Number(rawScore) : Number.NaN;
   const category = first(params.category);
   const risks = first(params.risks)
     .split("|")

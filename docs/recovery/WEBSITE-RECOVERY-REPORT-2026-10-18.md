@@ -121,8 +121,8 @@ Homepage
 
 The full table is in [`B-connectivity-matrix-table.md`](B-connectivity-matrix-table.md). Its columns are: Source page | Link label | Destination | State | Current behavior | Required correction.
 
-- Run: 339 distinct links from every public marketing page, the recovered pages and the assessment family, each opened in Chromium as an anonymous visitor.
-- Results: **331 OK, 0 broken, 0 dead ends, 8 PRIVACY.**
+- Run: 338 distinct links from every public marketing page, the recovered pages and the assessment family, each opened in Chromium as an anonymous visitor.
+- Results: **330 OK, 0 broken, 0 dead ends, 8 PRIVACY.** (Re-run after the review fixes.)
 
 | State | Rows | Detail |
 |---|---|---|
@@ -336,3 +336,17 @@ These are pre-existing and were not introduced by this branch.
 See [`independent-review.md`](independent-review.md).
 
 This was **one** separate review, by a separate agent that did not write the code. It is not six reviews. No claim of multiple independent approvals is made.
+
+### How the review findings were handled
+
+| ID | Finding | Resolution |
+|---|---|---|
+| M1 | Hub H2 reads as a development note | **Owner decision** (C-1). Left verbatim, because rewording it would misrepresent recovered text. |
+| M2 | Widget section headings invisible on 3 pages | **Fixed.** A scoped `.bof-legacy .reveal` override in `app/globals.css`. The three headings were confirmed visible (opacity 1) in the browser. |
+| m1 | Committed `.pyc` | **Fixed.** Removed, and `__pycache__/` added to `.gitignore`. |
+| m2 | Remaining links to live-only pages | **Fixed.** `/loads*` now goes to `/demo/loads`, and `/dispatch?view=exceptions` and the body links to `/dispatch` and `/command-center` go to their `/demo/*` versions. `/drivers` and `/dispatch/intake` now go to sign-in with the matching callback. `/drivers` is not sent to `/demo/drivers` because of F-1. |
+| m3 | "Live" labels on demo destinations | **Fixed.** Product cards now read "(demonstration)", "(sign in)" and "Sample driver documents". The driver-experience buttons now read "Sign in to pre-trip" and "View sample driver documents". |
+| m4 | About 1 MB scoped CSS, render-blocking, `max-age=0` | **Open** (F-11). It is 136 KB gzipped. Pruning and cache headers are proposed follow-up work. |
+| m5 | Recovered stylesheet and widget globals persist after client-side navigation | **Accepted.** The stylesheet is scoped under `.bof-legacy`, so it has no effect on other pages, and the widget globals are inert without their mount points. |
+| m6 | Empty score pre-fills "Score: 0%" | **Fixed.** An empty score is now treated as absent; checked in the browser. |
+| — | Archive banner and `data-recovered-source` expose commit hashes | **Accepted.** Archive pages are unlinked and `noindex`, and the hashes are provenance for owner review. They can be removed at release if preferred. |

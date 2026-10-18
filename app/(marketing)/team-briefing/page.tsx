@@ -64,7 +64,7 @@ export default function TeamBriefingPage() {
           </p>
           <p>
             Live product surfaces:{" "}
-            <Link href="/drivers">Drivers</Link>, <Link href="/safety">Safety</Link>,{" "}
+            <Link href="/api/auth/signin?callbackUrl=%2Fdrivers">Drivers</Link>, <Link href="/safety">Safety</Link>,{" "}
             <Link href="/documents">Documents</Link>.
           </p>
         </article>
@@ -132,7 +132,7 @@ export default function TeamBriefingPage() {
               Load intake
               <span>Start the record before dispatch.</span>
             </Link>
-            <Link href="/loads">
+            <Link href="/demo/loads">
               Loads
               <span>Open the working load in the fleet workspace.</span>
             </Link>

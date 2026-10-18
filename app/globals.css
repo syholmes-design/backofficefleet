@@ -19224,3 +19224,5 @@ a.shipper-portal-story-step:focus-visible,
 .bof-recovered-archive-banner { padding: 0.75rem 1rem; background: #fef3c7; color: #78350f; font-size: 0.85rem; text-align: center; }
 .bof-recovered-related { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem; max-width: 72rem; margin: 0 auto; padding: 1.25rem 1rem; font-size: 0.92rem; color: #334155; }
 .bof-recovered-related a { color: #0f766e; font-weight: 600; }
+/* Recovered pages: site.js scroll-reveal is not loaded, and widgets inject .reveal sections after mount. */
+.bof-legacy .reveal { opacity: 1 !important; transform: none !important; }

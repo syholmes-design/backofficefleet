@@ -33,10 +33,10 @@ export default function DriverExperiencePage() {
 
       <div className="mt-10 flex flex-wrap gap-3">
         <a href={BOF_RUNTIME_LINKS.pretrip} className="inline-flex rounded-md bg-teal-700 px-5 py-3 text-sm font-semibold text-white hover:bg-teal-800">
-          Open pre-trip runtime
+          Sign in to pre-trip
         </a>
         <a href={BOF_RUNTIME_LINKS.vault} className="inline-flex rounded-md border border-teal-700 px-5 py-3 text-sm font-semibold text-teal-800 hover:bg-teal-50">
-          Open driver vault runtime
+          View sample driver documents
         </a>
         <Link href="/assessment" className="inline-flex rounded-md border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">
           Start assessment

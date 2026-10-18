@@ -210,7 +210,7 @@ export default function HowBofWorksPage() {
                   LOAD INTAKE
                 </h2>
               </div>
-              <Link href="/dispatch/intake" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              <Link href="/api/auth/signin?callbackUrl=%2Fdispatch%2Fintake" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
                 OPEN LOAD INTAKE &rarr;
               </Link>
             </div>
@@ -230,7 +230,7 @@ export default function HowBofWorksPage() {
                   LOAD, DRIVER &amp; EQUIPMENT MATCH
                 </h2>
               </div>
-              <Link href="/loads/L001" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              <Link href="/demo/loads" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
                 SEE THE ASSIGNMENT &rarr;
               </Link>
             </div>
@@ -310,7 +310,7 @@ export default function HowBofWorksPage() {
                   IN-TRANSIT TRACKING
                 </h2>
               </div>
-              <Link href="/loads/L001" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              <Link href="/demo/loads" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
                 FOLLOW THE LOAD &rarr;
               </Link>
             </div>
@@ -330,7 +330,7 @@ export default function HowBofWorksPage() {
                   DELIVERY &amp; POST-TRIP CLOSEOUT
                 </h2>
               </div>
-              <Link href="/loads/L001" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              <Link href="/demo/loads" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
                 OPEN POST-TRIP &rarr;
               </Link>
             </div>

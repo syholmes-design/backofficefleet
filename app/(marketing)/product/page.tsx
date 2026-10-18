@@ -20,9 +20,9 @@ export default function ProductPage() {
 
       <section className="mt-10 grid gap-4 md:grid-cols-2">
         {[
-          { title: "Dispatch", body: "Live assignment and movement control", href: BOF_RUNTIME_LINKS.dispatch },
-          { title: "Pre-Trip", body: "Checklist and defect enforcement", href: BOF_RUNTIME_LINKS.pretrip },
-          { title: "Driver Vault", body: "Driver-owned documents and authorization", href: BOF_RUNTIME_LINKS.vault },
+          { title: "Dispatch", body: "Assignment and movement control (demonstration)", href: BOF_RUNTIME_LINKS.dispatch },
+          { title: "Pre-Trip", body: "Checklist and defect enforcement (sign in)", href: BOF_RUNTIME_LINKS.pretrip },
+          { title: "Driver Vault", body: "Sample driver documents and authorization", href: BOF_RUNTIME_LINKS.vault },
           { title: "Command Center", body: "Operational risk and owner queue", href: BOF_RUNTIME_LINKS.commandCenter },
         ].map((item) => (
           <a key={item.title} href={item.href} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:border-teal-400">

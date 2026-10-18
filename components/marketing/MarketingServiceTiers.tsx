@@ -38,7 +38,7 @@ const TIERS: readonly Tier[] = [
       "BOF Vault integration for driver-controlled document readiness",
     ],
     ctaLabel: "Review HR Readiness",
-    href: "/drivers",
+    href: "/api/auth/signin?callbackUrl=%2Fdrivers",
   },
   {
     tierLabel: "Tier 3",

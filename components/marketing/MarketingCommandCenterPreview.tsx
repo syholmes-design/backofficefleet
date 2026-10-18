@@ -24,7 +24,7 @@ const DEFAULT_ROWS: readonly CcMockRow[] = [
     meta: "L001 proof packet needs closeout",
     val: "L001",
     valClass: "bof-mkt-cc-mock-kpi-val--warn",
-    href: "/loads/L001",
+    href: "/demo/loads",
   },
   {
     label: "Settlement",

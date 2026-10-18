@@ -50,8 +50,8 @@ export const FLEET_INTELLIGENCE_ARTICLES: FleetIntelligenceArticle[] = [
     relatedLinks: [
       { label: "Open Command Center", href: "/demo/command-center" },
       { label: "Open Dispatch", href: "/demo/dispatch" },
-      { label: "Open Loads", href: "/loads" },
-      { label: "Review Driver Records", href: "/drivers" },
+      { label: "Open Loads", href: "/demo/loads" },
+      { label: "Review Driver Records", href: "/api/auth/signin?callbackUrl=%2Fdrivers" },
       { label: "Open Documents", href: "/documents" },
     ],
     sections: [
@@ -90,7 +90,7 @@ export const FLEET_INTELLIGENCE_ARTICLES: FleetIntelligenceArticle[] = [
         heading: "What BOF already connects",
         paragraphs: [
           "BackOfficeFleet already keeps transportation work as related operating records rather than as disconnected files. A canonical Driver identity can carry qualification and readiness. An ACTIVE DispatchAssignment can bind a driver to a load, assign a tractor, and optionally assign a trailer. The load-to-equipment relationship exists through that assignment, not as a label on a document. Trip-release evaluation can produce RELEASED, BLOCKED, HOLD, or CONDITIONALLY_RELEASED from assignment, driver readiness, equipment status, and pre-trip completeness. Execution, delivery/POD, and operating-exception records can remain attached to the load after movement.",
-          "That chain already answers a back-office question: which driver and equipment are assigned to this load? [Dispatch](/dispatch) and [Loads](/loads) are where that assignment is made and read. Driver qualification and readiness live with [driver records](/drivers). The [Command Center](/command-center) consumes LIVE operating-spine counts of loads, equipment, and settlement holds. [Documents](/documents), the [Driver Vault](/documents/vault), and [BOF Vault](/bof-vault) hold records and evidence. [Safety](/safety) and [carrier](/carriers) surfaces keep compliance and fleet identity in the same product, not in a separate binder.",
+          "That chain already answers a back-office question: which driver and equipment are assigned to this load? [Dispatch](/demo/dispatch) and [Loads](/loads) are where that assignment is made and read. Driver qualification and readiness live with [driver records](/drivers). The [Command Center](/demo/command-center) consumes LIVE operating-spine counts of loads, equipment, and settlement holds. [Documents](/documents), the [Driver Vault](/documents/vault), and [BOF Vault](/bof-vault) hold records and evidence. [Safety](/safety) and [carrier](/carriers) surfaces keep compliance and fleet identity in the same product, not in a separate binder.",
           "That is document-connected operations. It is not yet physical pickup control. BOF can currently say who was assigned. It cannot currently prove that the person standing at the dock is that driver, that the physical tractor or trailer is the assigned equipment, that a shipper-facing pickup authorization or secure pickup code was issued, or that a dock-side RELEASE or STOP was decided against those physical facts.",
         ],
       },
@@ -156,7 +156,7 @@ export const FLEET_INTELLIGENCE_ARTICLES: FleetIntelligenceArticle[] = [
     relatedLinks: [
       { label: "Open Command Center", href: "/demo/command-center" },
       { label: "Open Dispatch Board", href: "/demo/dispatch" },
-      { label: "Open Exception Queue", href: "/dispatch?view=exceptions" },
+      { label: "Open Exception Queue", href: "/demo/dispatch?view=exceptions" },
     ],
     sections: [
       {
@@ -186,7 +186,7 @@ export const FLEET_INTELLIGENCE_ARTICLES: FleetIntelligenceArticle[] = [
         heading: "How BOF connects the operating picture",
         paragraphs: [
           "The operating model is to keep the load, the delivery appointment, truck location, ETA, driver status, and the operations response on one thread—then document the exception instead of reconstructing it after the fact.",
-          "Some of that thread already exists in the BOF product experience. [Dispatch](/dispatch) already carries the load, pickup and delivery times, assigned driver, demo movement/ETA context, and an [exception queue](/dispatch?view=exceptions). The [Command Center](/command-center) already turns blocked or at-risk work into an owned queue with a recommended next action.",
+          "Some of that thread already exists in the BOF product experience. [Dispatch](/demo/dispatch) already carries the load, pickup and delivery times, assigned driver, demo movement/ETA context, and an [exception queue](/demo/dispatch?view=exceptions). The [Command Center](/demo/command-center) already turns blocked or at-risk work into an owned queue with a recommended next action.",
           "Other signals are demonstrated in the demo rather than claimed as live production feeds: map position and ETA on Dispatch are derived from demo route progress, not a live GPS network. Weather, traffic, and HOS appear in demo operating context where they are available in the scenario. They are not presented here as live third-party integrations.",
           "Automatic detection of a delivery-at-risk exception from a live GPS-to-appointment deviation, and automatic driver or receiver notification from that exception, is the conceptual operating model described below—not a current live BOF engine.",
         ],
@@ -224,7 +224,7 @@ export const FLEET_INTELLIGENCE_ARTICLES: FleetIntelligenceArticle[] = [
       {
         heading: "Where this already shows up in BOF",
         paragraphs: [
-          "You do not need a new module to see the pattern. Open the [Dispatch board](/dispatch) for the load, appointment window, driver assignment, and demo location/ETA context. Open the [exception queue](/dispatch?view=exceptions) for how BOF already attaches an exception to a load and keeps a reason on the record. Open the [Command Center](/command-center) for the owner queue: what needs attention, why it matters, and who acts next.",
+          "You do not need a new module to see the pattern. Open the [Dispatch board](/demo/dispatch) for the load, appointment window, driver assignment, and demo location/ETA context. Open the [exception queue](/demo/dispatch?view=exceptions) for how BOF already attaches an exception to a load and keeps a reason on the record. Open the [Command Center](/demo/command-center) for the owner queue: what needs attention, why it matters, and who acts next.",
           "Those experiences demonstrate exception thinking, movement context, and operational ownership. They do not demonstrate a live GPS-to-appointment Delivery-at-Risk engine. The card above is a conceptual example of how that exception should read if and when that operating model is fully connected.",
         ],
       },
@@ -319,7 +319,7 @@ export const FLEET_INTELLIGENCE_ARTICLES: FleetIntelligenceArticle[] = [
     category: "Compliance Modernization",
     date: "May 22, 2026",
     relatedLinks: [
-      { label: "Review Driver Readiness", href: "/drivers" },
+      { label: "Review Driver Readiness", href: "/api/auth/signin?callbackUrl=%2Fdrivers" },
       { label: "Open Command Center", href: "/demo/command-center" },
     ],
     sections: [

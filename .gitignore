@@ -45,3 +45,4 @@ yarn-error.log*
 
 # Office lock files
 .~lock.*#
+__pycache__/
