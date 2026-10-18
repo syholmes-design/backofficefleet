@@ -296,7 +296,7 @@ export function ComplianceDashboardV4() {
             <div className="min-w-0">
               <h1 className="flex items-center gap-3 text-2xl font-bold text-white sm:text-3xl">
                 <Shield className="w-8 h-8 text-blue-400" />
-                <span className="min-w-0 break-words">Compliance & Document Action Center (V4)</span>
+                <span className="min-w-0 break-words">Compliance & Document Action Center</span>
               </h1>
               <p className="mt-2 max-w-3xl text-slate-400">
                 Fix the &quot;Needs Review but why?&quot; problem - Clear compliance actions and document requirements from V4 workbook

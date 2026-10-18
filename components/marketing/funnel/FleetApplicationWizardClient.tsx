@@ -133,7 +133,7 @@ export function FleetApplicationWizardClient() {
             <Link href="/fleet-savings" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
               Share savings model internally
             </Link>
-            <Link href="/book-assessment" className="bof-mkt-funnel-entry-text">
+            <Link href="/assessment" className="bof-mkt-funnel-entry-text">
               Return to full assessment →
             </Link>
           </div>

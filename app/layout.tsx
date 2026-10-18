@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ConditionalHeader } from "@/components/ConditionalHeader";
 import { BofDebugBanner } from "@/components/debug/BofDebugBanner";
+import { PublicDemoLinkGuard } from "@/components/security/PublicDemoLinkGuard";
 import "./globals.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Dancing_Script } from "next/font/google";
@@ -31,6 +32,7 @@ export default function RootLayout({
         <ConditionalHeader />
         {children}
         <BofDebugBanner />
+        <PublicDemoLinkGuard />
       </body>
     </html>
   );

@@ -80,7 +80,7 @@ export function BofHeader() {
   ) {
     return null;
   }
-  const marketingOnlyHeader = ["/", "/for-hire-carriers", "/private-fleets", "/government", "/company", "/aggregators", "/qa", "/bof-vault", "/how-bof-works", "/team-briefing", "/careers", "/business-operations", "/fleet-savings", "/book-assessment", "/assessment", "/apply", "/investors", "/blog", "/contact", "/product", "/driver-experience", "/fleet-operations", "/founding-fleet", "/what-we-do", "/what-we-do/people-hr", "/what-we-do/finance", "/what-we-do/operations-compliance", "/what-we-do/procurement-savings"].some((route) => pathname === route || pathname.startsWith(`${route}/`));
+  const marketingOnlyHeader = ["/", "/for-hire-carriers", "/private-fleets", "/government", "/company", "/aggregators", "/qa", "/bof-vault", "/how-bof-works", "/team-briefing", "/careers", "/business-operations", "/services", "/interactive-demo", "/fleet-savings", "/book-assessment", "/assessment", "/apply", "/investors", "/blog", "/contact", "/product", "/driver-experience", "/fleet-operations", "/founding-fleet", "/what-we-do", "/what-we-do/people-hr", "/what-we-do/finance", "/what-we-do/operations-compliance", "/what-we-do/procurement-savings"].some((route) => pathname === route || pathname.startsWith(`${route}/`));
   const isActiveProductNav = (href: string) => {
     if (!mounted) return false;
     if (href === "/dispatch") return pathname === "/dispatch" || pathname.startsWith("/dispatch/") || pathname.startsWith("/pretrip/") || pathname.startsWith("/trip-release/");

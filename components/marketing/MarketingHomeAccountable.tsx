@@ -102,6 +102,11 @@ export default function MarketingHomeAccountable() {
             <p>The assessment validates each step and shows a completion summary. There is no verified public intake service on this site, so the answers are stored in this browser and are not sent to BOF. Use the summary with your BOF contact, or continue to the qualification page.</p>
           </div>
           <FleetAssessmentWizardClient embedded />
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href="/assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              Take the Assessment
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -232,7 +237,7 @@ export default function MarketingHomeAccountable() {
               </div>
             ))}
           </div>
-          <Link href="/book-assessment" className="mt-8 inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">Request a BOF Assessment</Link>
+          <Link href="/assessment" className="mt-8 inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">Take the Assessment</Link>
         </div>
       </section>
 
@@ -256,7 +261,7 @@ export default function MarketingHomeAccountable() {
           <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-300">Use the contact inquiry form to describe your operation. BOF routes qualified requests through the same intake workflow used for customer inquiries—no separate lead form.</p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Link href="/contact" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">Contact BOF</Link>
-            <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">Request a BOF assessment</Link>
+            <Link href="/assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">Take the Assessment</Link>
             <Link href="/aggregators" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">Aggregator overview</Link>
           </div>
         </div>

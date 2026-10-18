@@ -139,3 +139,24 @@ test("sign-in redirect keeps the destination, drops RSC markers and stays relati
     "/api/auth/signin?callbackUrl=%2Fdispatch%3Fview%3Dexceptions",
   );
 });
+
+test("public demo pages send anonymous visitors to demonstrations, never to private records", async () => {
+  const { publicDemoTarget } = await import("./public-demo-links");
+  assert.equal(publicDemoTarget("/loads/L001"), "/demo/loads");
+  assert.equal(publicDemoTarget("/dispatch?view=exceptions&loadId=L003"), "/demo/dispatch?view=exceptions&loadId=L003");
+  assert.equal(publicDemoTarget("/drivers/DRV-001/safety"), "/demo/drivers");
+  assert.equal(publicDemoTarget("/documents/vault/DRV-001"), "/documents");
+  assert.equal(publicDemoTarget("/carriers/CAR-002"), "/interactive-demo/carriers");
+  // Public pages and API routes are left alone.
+  assert.equal(publicDemoTarget("/demo/loads"), null);
+  assert.equal(publicDemoTarget("/services/dispatch"), null);
+  assert.equal(publicDemoTarget("/api/auth/signin"), null);
+  assert.equal(publicDemoTarget("https://example.com/loads/L001"), null);
+  // Every mapped destination is itself public.
+  const { isPublicRoute } = await import("./route-access");
+  for (const href of ["/loads/L1", "/pretrip/L1", "/trip-release/L1", "/maintenance/T-1", "/dispatch/intake", "/load-intake", "/command-center", "/dispatch/command-center", "/settlements/workbook", "/fleet-financials", "/portals/driver/DRV-1", "/portals/customer", "/safety/training", "/recruiting", "/operational-chat"]) {
+    const target = publicDemoTarget(href);
+    assert.ok(target, href);
+    assert.ok(isPublicRoute(target.split("?")[0]), `${href} -> ${target}`);
+  }
+});

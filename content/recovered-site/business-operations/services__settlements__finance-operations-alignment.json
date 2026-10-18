@@ -1,0 +1,33 @@
+{
+"route": "/services/settlements/finance-operations-alignment",
+"generation": "fork-20260819",
+"source": {
+"commit": "e901e6cb",
+"path": "recovered/fork-restored-20260819/settlements/finance-operations-alignment/index.html",
+"label": "Recovered fork, 2026-08-19 (recovered/fork-restored-20260819)"
+},
+"merges": [],
+"ownerRemovals": [],
+"title": "Settlement Finance and Operations Alignment | BackOfficeFleet",
+"description": "",
+"bodyClass": "visual-refresh cinematic-site cinematic-narrative gap-page",
+"mainClass": "",
+"mainId": "",
+"mainData": {},
+"ownerReplacements": [
+{
+"from": "A working session qualifies",
+"to": "The BOF assessment qualifies",
+"count": 1
+},
+{
+"from": "superseded booking link",
+"to": "Take the Assessment →",
+"count": 1
+}
+],
+"html": "<section class=\"cinematic-masthead cinematic-masthead--photo settlements-family-masthead\" aria-labelledby=\"gap-title\"><picture class=\"cinematic-masthead__media\"><img src=\"/recovered-assets/fork-20260819/assets/images/cinematic/settlements-finance-operations-alignment-hero-v1-png.webp\" alt=\"An operations manager and finance specialist match the same load evidence before closeout.\" width=\"1680\" height=\"945\" loading=\"eager\" decoding=\"async\" fetchpriority=\"high\"></picture><div aria-hidden=\"true\" class=\"cinematic-masthead__veil\"></div><div aria-hidden=\"true\" class=\"cinematic-masthead__texture\"></div><div class=\"cinematic-masthead__content\"><p class=\"cinematic-hero__eyebrow\">Settlement proof</p><h1 id=\"gap-title\">Use the same operating facts before financial closeout.</h1><p>BOF connects delivered work, operating exceptions, proof packet, approved adjustments, settlement state, responsible owners, and the next action shared by operations and finance.</p><a class=\"cinematic-hero__cta\" href=\"/assessment\">Take the Assessment &rarr;</a></div></section>\n<section class=\"section cinematic-detail-proof\"><div class=\"cinematic-proof-grid\"><article class=\"cinematic-proof-card reveal\"><h3>Source record</h3><p>Operating record, delivery evidence, receipts, approved rate or pay inputs, exceptions, adjustment support, and accountable owners.</p></article><article class=\"cinematic-proof-card reveal\"><h3>Review path</h3><p>Operations and finance review the same source facts, missing support, dispute state, approval context, and unresolved responsibility.</p></article><article class=\"cinematic-proof-card reveal\"><h3>Decision-ready output</h3><p>A shared closeout record with proof, approved outcome supplied by the fleet, open exceptions, owners, and next action.</p></article></div></section>\n<section class=\"section gap-process\"><div class=\"section-head reveal\"><p class=\"eyebrow\">How the work moves</p><h2>The record keeps the exception, owner, and consequence visible.</h2><p>Financial closeout does not proceed on a different version of the facts than the operating team.</p></div><ol class=\"gap-step-list\"><li class=\"gap-step reveal\"><span>01</span><div><h3>Open the source record</h3><p>Operating record, delivery evidence, receipts, approved rate or pay inputs, exceptions, adjustment support, and accountable owners.</p></div></li><li class=\"gap-step reveal\"><span>02</span><div><h3>Review the operating question</h3><p>Operations and finance review the same source facts, missing support, dispute state, approval context, and unresolved responsibility.</p></div></li><li class=\"gap-step reveal\"><span>03</span><div><h3>Name the exception and owner</h3><p>Unresolved evidence is assigned to a responsible person with a clear request, review state, and condition that must be satisfied before the record moves.</p></div></li><li class=\"gap-step reveal\"><span>04</span><div><h3>Carry the outcome forward</h3><p>A shared closeout record with proof, approved outcome supplied by the fleet, open exceptions, owners, and next action. Financial closeout does not proceed on a different version of the facts than the operating team.</p></div></li></ol></section>\n<section class=\"section gap-boundary\"><div class=\"gap-boundary__copy reveal\"><p class=\"eyebrow\">Qualification</p><h2>Administrative support stays inside a defined boundary.</h2><p>BOF supports administrative alignment and does not provide accounting, tax, payroll, lending, collection, or fiduciary services.</p></div><ul class=\"gap-boundary__list reveal\"><li>Public screens, records, statuses, and integration examples are static or synthetic unless a page explicitly states an authorized live capability.</li><li>The fleet, carrier, employer, agency, customer, and qualified professionals retain their operating, legal, safety, regulatory, and financial authority.</li><li>BOF does not guarantee release, acceptance, compliance, payment, collection, savings, audit, safety, or financial outcomes.</li><li>The BOF assessment qualifies the record set, responsible owner, service boundary, intended output, and appropriate next action.</li></ul></section>\n<section class=\"section gap-related\"><div class=\"section-head reveal\"><p class=\"eyebrow\">Direct routes</p><h2>Continue with the route that answers the next buyer question.</h2></div><div class=\"gap-related-grid\"><article class=\"gap-related-card reveal\"><h3>Billing &amp; AR Control</h3><p>Continue with the supporting route and inspect the record, boundary, and accountable next action in context.</p><a href=\"/business-operations/customer-billing/billing-ar-control\">Open route &rarr;</a></article>\n<article class=\"gap-related-card reveal\"><h3>Settlement Record Accountability</h3><p>Continue with the supporting route and inspect the record, boundary, and accountable next action in context.</p><a href=\"/services/settlements/single-record-accountability\">Open route &rarr;</a></article>\n<article class=\"gap-related-card reveal\"><h3>Proof Packets &amp; Cash Flow</h3><p>Continue with the supporting route and inspect the record, boundary, and accountable next action in context.</p><a href=\"/blog\">Open route &rarr;</a></article></div></section>",
+"inlineScripts": [],
+"widgetScripts": [],
+"archive": false
+}

@@ -1,0 +1,25 @@
+{
+"route": "/interactive-demo/loading",
+"generation": "static-20260729",
+"source": {
+"commit": "66929e67",
+"path": "Website/interactive-demo/loading/index.html",
+"label": "Static BOF site, 2026-07-29 (origin/codex/public-site-deployment-candidate)"
+},
+"merges": [],
+"ownerRemovals": [],
+"title": "Opening Partner TMS Release Review | BackOfficeFleet",
+"description": "BOF is opening the Partner TMS import review and preparing the release queue.",
+"bodyClass": "product-demo-body",
+"mainClass": "control-demo-main",
+"mainId": "",
+"mainData": {
+"data-app-state": "loading",
+"data-demo-loader": ""
+},
+"ownerReplacements": [],
+"html": "<section class=\"app-loading-screen session-loader\" data-shell-region=\"session-loader\" aria-live=\"polite\" aria-label=\"BOF Control Center loading\">\n      <div class=\"loading-console\">\n        <div class=\"terminal-dots\" aria-hidden=\"true\"><span></span><span></span><span></span></div>\n        <img src=\"/recovered-assets/static-20260729/assets/brand/bof-design-system-2/svg/header-lockup.svg\" alt=\"BackOfficeFleet\">\n        <h2>Opening BOF Partner Review</h2>\n        <p data-loading-target=\"message\">Checking workspace access and Partner TMS import queue.</p>\n        <div class=\"loading-progress\" aria-hidden=\"true\"><span></span></div>\n        <ol class=\"loading-checks\">\n          <li>Fleet workspace loaded</li>\n          <li>Partner TMS import TMS-LD-10482 selected</li>\n          <li>BOF-RR-10482 release file opened</li>\n          <li>Driver and carrier records attached</li>\n          <li>Document pane prepared</li>\n        </ol>\n      </div>\n    </section>",
+"inlineScripts": [],
+"widgetScripts": [],
+"archive": false
+}

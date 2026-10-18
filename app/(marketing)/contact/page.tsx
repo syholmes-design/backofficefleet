@@ -10,10 +10,10 @@ export const metadata: Metadata = {
     "Contact BackOfficeFleet with an operational question about readiness, dispatch, pre-trip, vault, or implementation path.",
 };
 
+// "Fleet operations working session" was removed: superseded by the assessment (docs/governance/superseded-decisions.md).
 const CONTACT_TOPICS = [
-  { label: "Operational readiness assessment", href: "mailto:demo@backofficefleet.com?subject=BOF%20Assessment%20Request" },
-  { label: "Investor conversation", href: "mailto:demo@backofficefleet.com?subject=BOF%20Investor%20Inquiry" },
-  { label: "Fleet operations working session", href: "mailto:demo@backofficefleet.com?subject=BOF%20Working%20Session" },
+  { label: "Operational readiness assessment", href: "/assessment", action: "Take the Assessment →" },
+  { label: "Investor conversation", href: "mailto:demo@backofficefleet.com?subject=BOF%20Investor%20Inquiry", action: "Email BOF →" },
 ];
 
 type ContactSearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -70,7 +70,7 @@ export default async function ContactPage({ searchParams }: { searchParams?: Con
           {CONTACT_TOPICS.map((item) => (
             <a key={item.label} href={item.href} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:border-teal-400">
               <span className="text-base font-semibold text-slate-900">{item.label}</span>
-              <span className="mt-1 block text-sm text-teal-700">Email BOF →</span>
+              <span className="mt-1 block text-sm text-teal-700">{item.action}</span>
             </a>
           ))}
         </section>

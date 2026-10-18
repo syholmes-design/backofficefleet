@@ -35,9 +35,13 @@ GENERATIONS = {
     "static-20260729": {"commit": "66929e67", "root": "Website", "label": "Static BOF site, 2026-07-29 (origin/codex/public-site-deployment-candidate)"},
     "static-20260701": {"commit": "46b2c464", "root": "Website", "label": "Static BOF site, 2026-07-01 (origin/feature/cta-language-cleanup)"},
     "fork-20260819": {"commit": "e901e6cb", "root": "recovered/fork-restored-20260819", "label": "Recovered fork, 2026-08-19 (recovered/fork-restored-20260819)"},
+    "static-20260710": {"commit": "7333dacf", "root": "Website", "label": "Static BOF site, 2026-07-10 (redesign deploy; richest Dispatch, Drivers, Safety, Settlements explainers)"},
+    "static-20260720": {"commit": "db03d3be", "root": "Website", "label": "Static BOF site, 2026-07-20 (richest Documents explainer)"},
 }
 
 S29 = "static-20260729"
+S10 = "static-20260710"
+S20 = "static-20260720"
 FORK = "fork-20260819"
 
 
@@ -97,15 +101,70 @@ PAGES = {
     "/business-operations/archive/pay-exception-control-2026-08-19": src(FORK, f"{BO}/payroll-administration/pay-exception-control/index.html"),
 }
 
+# Service explainers (the historical /dispatch, /drivers, /documents, /safety, /settlements and /fleet
+# pages). Those URLs now belong to the signed-in platform, so the explainers live under /services.
+# Each route uses the richest historical version (word counts compared across generations; see the
+# preservation report); the other generations' versions of the main pages are kept as archive pages.
+SERVICE_PAGES = {
+    "/services/dispatch": src(S10, "dispatch/index.html"),
+    "/services/drivers": src(S10, "drivers/index.html"),
+    "/services/safety": src(S10, "safety/index.html"),
+    "/services/settlements": src(S10, "settlements/index.html"),
+    "/services/documents": src(S20, "documents/index.html"),
+    "/services/fleet": src(FORK, "fleet/index.html"),
+    **{f"/services/drivers/{p}": src(FORK, f"drivers/{p}/index.html") for p in [
+        "onboarding", "compliance-documents", "communication", "settlements-payments"]},
+    **{f"/services/settlements/{p}": src(FORK, f"settlements/{p}/index.html") for p in [
+        "audit-trail", "exception-visibility", "finance-operations-alignment", "single-record-accountability"]},
+    **{f"/services/archive/{p}-2026-08-19": src(FORK, f"{p}/index.html") for p in [
+        "dispatch", "drivers", "documents", "safety", "settlements"]},
+}
+
+# The 2026-07-29 interactive product demo (fictional records; route-driven by interactive-demo-routes.js).
+DEMO = "interactive-demo"
+DEMO_PAGES = {
+    f"/{DEMO}": src(S29, f"{DEMO}/index.html"),
+    **{f"/{DEMO}/{p}": src(S29, f"{DEMO}/{p}/index.html") for p in [
+        "start", "loading", "load-queue", "dispatch", "drivers", "drivers/document-intake", "documents", "carriers",
+        "safety", "settlements", "reports", "alerts", "settings",
+        *[f"drivers/drv-{n:03d}" for n in range(1, 13)]]},
+}
+PAGES.update(SERVICE_PAGES)
+PAGES.update(DEMO_PAGES)
+
+# Owner-directed replacements (2026-10-18): "Book a Working Session" and its variants are superseded
+# by the BOF assessment (docs/governance/superseded-decisions.md). Applied to every recovered page;
+# each replacement made is recorded on the page and in the recovery report.
+OWNER_REPLACEMENTS = [
+    ("A working session qualifies", "The BOF assessment qualifies"),
+    (re.compile(r'<a([^>]*?) href="[^"]*"([^>]*)>\s*(?:Book a workflow review|Request a working session|Book a working session|Book a demo|Book a Demo)\s*(?:&rarr;|→)?\s*</a>'),
+     r'<a\1 href="/assessment"\2>Take the Assessment &rarr;</a>'),
+]
+
+# Page-script adaptations (documented; behaviour otherwise verbatim).
+#  - interactive-demo-routes.js compared routes with a trailing slash (static hosting); Next.js
+#    serves them without one, so currentPath() appends it.
+JS_ADAPTATIONS = {
+    "/assets/js/interactive-demo-routes.js": [
+        ('return (forcedPath || window.location.pathname).replace(/\\/index\\.html$/, "/");',
+         'return (forcedPath || window.location.pathname).replace(/\\/index\\.html$/, "/").replace(/([^/])$/, "$1/");'),
+    ],
+}
+
+# The control-room demo (/interactive-demo) ran from the historical site.js, which also rewrote the
+# site header/footer. Only its interactive-demo block (from `var interactiveDemo =` to the end) is
+# published, as interactive-demo-app.js; the shell code is not loaded.
+SITE_JS_DEMO_BLOCK = {"gen": S29, "out": "/assets/js/interactive-demo-app.js", "start": "  var interactiveDemo = document.querySelector(\"[data-interactive-demo]\");"}
+
 # Historical public links that have no page in the recovered set, mapped to the
 # current site's equivalent destination (verified to exist). Decisions documented
 # in the report. Keys are normalized paths (no trailing slash).
 LINK_MAP = {
-    "/scenario-walkthrough": "/book-assessment",
-    "/book-demo": "/contact",
-    "/book-a-demo": "/contact",
+    "/scenario-walkthrough": "/assessment",
+    "/book-demo": "/assessment",
+    "/book-a-demo": "/assessment",
     "/contact": "/contact",
-    "/assessment": "/book-assessment",
+    "/assessment": "/assessment",
     "/customer-demo": "/dashboard",
     "/demo": "/dashboard",
     "/dashboard": "/dashboard",
@@ -113,15 +172,18 @@ LINK_MAP = {
     "/command-center/issue": "/demo/command-center",
     "/aggregator-command-center": "/aggregators",
     "/aggregators": "/aggregators",
-    "/drivers": "/demo/drivers",
-    "/drivers/onboarding": "/business-operations/driver-onboarding",
-    "/drivers/compliance-documents": "/documents",
-    "/drivers/settlements-payments": "/demo/settlements",
-    "/dispatch": "/demo/dispatch",
-    "/workflows/dispatch-assignment": "/demo/dispatch",
-    "/settlements": "/demo/settlements",
-    "/documents": "/documents",
-    "/safety": "/safety",
+    "/drivers": "/services/drivers",
+    "/drivers/onboarding": "/services/drivers/onboarding",
+    "/drivers/compliance-documents": "/services/drivers/compliance-documents",
+    "/drivers/settlements-payments": "/services/drivers/settlements-payments",
+    "/drivers/communication": "/services/drivers/communication",
+    "/dispatch": "/services/dispatch",
+    "/workflows/dispatch-assignment": "/services/dispatch",
+    "/settlements": "/services/settlements",
+    "/documents": "/services/documents",
+    "/safety": "/services/safety",
+    "/safety-compliance": "/services/safety",
+    "/fleet": "/services/fleet",
     "/bof-vault": "/bof-vault",
     "/company": "/company",
     "/about": "/company",
@@ -134,16 +196,27 @@ LINK_MAP = {
     "/operations-record": "/demo/command-center",
     "/operational-intelligence": "/demo/command-center",
     "/capacity-intelligence": "/demo/dispatch",
-    "/carrier-readiness": "/carriers",
+    "/carrier-readiness": "/interactive-demo/carriers",
     "/executive-demo": "/dashboard",
     "/animated-demo-business": "/dashboard",
     "/workflows": "/how-bof-works",
     "/workflows/bills-of-lading": "/documents",
     "/workflows/proof-of-delivery": "/documents",
     "/workflows/factoring-packet-preparation": "/demo/settlements",
-    "/settlements/exception-visibility": "/demo/settlements",
-    "/settlements/single-record-accountability": "/demo/settlements",
-    "/settlements/finance-operations-alignment": "/demo/settlements",
+    "/settlements/exception-visibility": "/services/settlements/exception-visibility",
+    "/settlements/audit-trail": "/services/settlements/audit-trail",
+    "/settlements/single-record-accountability": "/services/settlements/single-record-accountability",
+    "/carriers": "/interactive-demo/carriers",
+    "/customer-portal/load-intake": "/customer-portal/load-intake",
+    "/dispatch/load-intake": "/customer-portal/load-intake",
+    "/operations-record/compliance-hold-1931": "/demo/command-center",
+    "/operations-record/delivery-proof-1907": "/demo/command-center",
+    "/operations-record/release-readiness-1842": "/demo/command-center",
+    "/resources/proof-packets-and-cash-flow": "/blog",
+    "/trust-governance": "/company",
+    "/workflows/claims-documentation": "/rf-actions",
+    "/workflows/customer-communication": "/customer-portal",
+    "/settlements/finance-operations-alignment": "/services/settlements/finance-operations-alignment",
 }
 
 ASSET_EXT = re.compile(r"\.(png|jpe?g|webp|gif|svg|ico|mp4|webm|mp3|pdf|json|js|css|html|docx?|xlsx?|csv|txt|woff2?|ttf)$", re.I)
@@ -249,6 +322,50 @@ def strip_script_tags(fragment):
     return re.sub(r"(?is)<script\b[^>]*>.*?</script>", "", fragment)
 
 
+# Historical files that held original personal values: the committed copy was de-identified with the
+# security pipeline (docs/security/SECURITY-REMEDIATION-2026-10-18.md) and must not be overwritten
+# with the historical bytes.
+DEIDENTIFIED_ASSETS = {
+    "static-20260720/assets/documents/file-cabinet/sample-master-services-agreement.pdf",
+}
+# Historical 1080p videos re-encoded for web delivery (H.264 CRF 28, same resolution, length and
+# content; 159 MB -> 70 MB). The committed copies are kept rather than the historical bytes.
+WEB_ENCODED_ASSETS = {
+    *(f"static-20260710/assets/videos/{v}.mp4" for v in ["bof-settlements-readiness", "bof-driver-vault", "bof-customer-portal-load-intake"]),
+    "fork-20260819/assets/videos/bof-fleet-owner.mp4",
+}
+
+# Privacy guard: recovered content must stay fictional. Fails the run on consumer e-mail domains or
+# SSN-shaped numbers; the full original-value scan is run separately (see docs/security/).
+PRIVACY_PATTERNS = [
+    re.compile(r"[A-Za-z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|icloud|live|msn|comcast|att)\.(?:com|net)", re.I),
+    re.compile(r"(?<![\d-])\d{3}-\d{2}-\d{4}(?![\d-])"),
+]
+
+
+def check_privacy(where, text):
+    for pat in PRIVACY_PATTERNS:
+        m = pat.search(text)
+        if m:
+            raise SystemExit(f"privacy guard: {where} contains a value shaped like personal data ({pat.pattern[:30]}...)")
+
+
+def stamp_sample(png):
+    """Mark a historical demo licence image as a fictional sample (bottom band, original otherwise unchanged)."""
+    import io
+    from PIL import Image, ImageDraw, ImageFont
+    im = Image.open(io.BytesIO(png)).convert("RGB")
+    d = ImageDraw.Draw(im)
+    h = max(24, im.height // 18)
+    d.rectangle([0, im.height - h, im.width, im.height], fill=(176, 0, 32))
+    font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", int(h * 0.62))
+    label = "SAMPLE - FICTIONAL RECORD - NOT A REAL LICENSE"
+    d.text(((im.width - d.textlength(label, font=font)) / 2, im.height - h + h * 0.16), label, fill="white", font=font)
+    out = io.BytesIO()
+    im.save(out, format="PNG", optimize=True)
+    return out.getvalue()
+
+
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     routes = set(PAGES.keys())
@@ -256,6 +373,7 @@ def main():
     assets_needed = {}  # (gen, asset path) -> set(routes)
     link_report = {}  # normalized link -> {"resolved": x, "from": set()}
     merge_log = []
+    replace_log = []
 
     for route, spec in PAGES.items():
         gen = GENERATIONS[spec["gen"]]
@@ -304,14 +422,14 @@ def main():
                 return url
             if not url.startswith("/"):
                 url = urljoin(page_url, url)
-            if url.startswith("/assets/"):
+            if url.startswith(("/assets/", "/video-assets/")):
                 clean = url.split("?")[0].split("#")[0]
                 assets_needed.setdefault((gen_key, clean), set()).add(route)
                 return prefix + url
             if url.startswith("/") and not url.startswith("//"):
                 path = norm_path(url)
                 frag = ("#" + url.split("#", 1)[1]) if "#" in url else ""
-                if ASSET_EXT.search(path) and not path.startswith("/business-operations"):
+                if ASSET_EXT.search(path) and not path.startswith(("/business-operations", "/services", "/interactive-demo")):
                     resolved = LINK_MAP.get(path)
                     entry = link_report.setdefault(path, {"resolved": resolved, "from": set()})
                     entry["from"].add(route)
@@ -342,7 +460,12 @@ def main():
             name = os.path.basename(path)
             if not path.startswith("/"):
                 path = urljoin(page_url, path)
-            if name in ("site.js", "bof-supabase-config.js", "cinematic-nav.js", "fork-path-v2.js"):
+            if name in ("bof-supabase-config.js", "cinematic-nav.js", "fork-path-v2.js"):
+                continue
+            if name == "site.js":
+                # Only the control-room demo needs site.js, and only its interactive-demo block.
+                if parts["main_attrs"].get("data-interactive-demo") is not None:
+                    widget_scripts.append(prefix + SITE_JS_DEMO_BLOCK["out"])
                 continue
             assets_needed.setdefault((spec["gen"], path), set()).add(route)
             widget_scripts.append(prefix + path)
@@ -356,6 +479,20 @@ def main():
             content = content.replace(snippet, "")
             removals.append(snippet)
 
+        replacements = []
+        for old, new in OWNER_REPLACEMENTS:
+            if isinstance(old, str):
+                n = content.count(old)
+                content = content.replace(old, new)
+                label = old
+            else:
+                content, n = old.subn(new, content)
+                label = "superseded booking link"
+            if n:
+                replacements.append({"from": label, "to": text_of(new) if not isinstance(old, str) else new, "count": n})
+                replace_log.append((route, label, n))
+        check_privacy(route, content + "\n".join(scripts))
+
         key = route.strip("/").replace("/", "__") or "index"
         page = {
             "route": route,
@@ -368,10 +505,13 @@ def main():
             "bodyClass": parts["body_class"],
             "mainClass": parts["main_attrs"].get("class", ""),
             "mainId": parts["main_attrs"].get("id", ""),
+            # data-* attributes of the original <main>: mount points for the page's own scripts.
+            "mainData": {k: (v or "") for k, v in parts["main_attrs"].items() if k.startswith("data-")},
+            "ownerReplacements": replacements,
             "html": content,
             "inlineScripts": scripts,
             "widgetScripts": widget_scripts,
-            "archive": route.startswith("/business-operations/archive/"),
+            "archive": "/archive/" in route,
         }
         with open(os.path.join(OUT_DIR, f"{key}.json"), "w") as fh:
             json.dump(page, fh, ensure_ascii=False, indent=0)
@@ -381,10 +521,46 @@ def main():
         json.dump(manifest, fh, indent=1)
 
     # Copy every referenced asset from its generation (Git history or recovered tree).
+    # Assets named inside widget scripts (image and data paths built in JS) are needed too.
+    pending = [k for k in assets_needed if k[1].endswith((".js", ".json"))]
+    while pending:
+        gen_key, path = pending.pop()
+        g = GENERATIONS[gen_key]
+        if path == SITE_JS_DEMO_BLOCK["out"]:
+            data = git_show(GENERATIONS[SITE_JS_DEMO_BLOCK["gen"]]["commit"], f"{g['root']}/assets/js/site.js")
+        else:
+            data = git_show(g["commit"], f"{g['root']}{path}")
+        for ref in set(re.findall(rb'["\'](/assets/[A-Za-z0-9_./-]+)', data or b"")):
+            ref = ref.decode()
+            if ASSET_EXT.search(ref):
+                refs = [ref]
+            elif ref.count("/") >= 5:
+                # A path prefix completed at runtime (e.g. ".../licenses/license-" + id + ".png"): copy its files.
+                tree = subprocess.run(["git", "-C", ROOT, "ls-tree", "-r", "--name-only", g["commit"], f"{g['root']}{os.path.dirname(ref)}/"],
+                                      capture_output=True, text=True).stdout.split()
+                refs = [t[len(g["root"]):] for t in tree if t[len(g["root"]):].startswith(ref) and ASSET_EXT.search(t)]
+            else:
+                refs = []
+            for r in refs:
+                key = (gen_key, r)
+                if key not in assets_needed:
+                    assets_needed[key] = {"(script)"}
+                    if r.endswith((".js", ".json")):
+                        pending.append(key)
+
     copied, missing = 0, []
     for (gen_key, path), used_by in sorted(assets_needed.items()):
         gen = GENERATIONS[gen_key]
-        data = git_show(gen["commit"], f"{gen['root']}{path}")
+        if path == SITE_JS_DEMO_BLOCK["out"]:
+            site = git_show(gen["commit"], f"{gen['root']}/assets/js/site.js").decode()
+            start = site.index(SITE_JS_DEMO_BLOCK["start"])
+            block = site[start:].rstrip()
+            assert block.endswith("})();")
+            head = site[:site.index("\n", site.index("var reducedMotion"))]  # IIFE opener + reducedMotion
+            data = (f"/* Recovered from {gen['commit']}:{gen['root']}/assets/js/site.js: interactive-demo block only. */\n"
+                    + head + "\n" + block + "\n").encode()
+        else:
+            data = git_show(gen["commit"], f"{gen['root']}{path}")
         if data is None:
             # Fall back to any later generation copy of the same asset path.
             for other in ("static-20260729", "fork-20260819"):
@@ -395,8 +571,8 @@ def main():
         if data is None:
             missing.append((gen_key, path, sorted(used_by)))
             continue
-        if path.endswith(".js"):
-            # Recovered widget scripts reference their data by absolute /assets/ path.
+        if path.endswith((".js", ".json")):
+            # Recovered widget scripts (and their data files) reference assets by absolute /assets/ path.
             data = re.sub(rb'(["\'])/assets/', lambda m: m.group(1) + f"/recovered-assets/{gen_key}/assets/".encode(), data)
             # Page links inside widget scripts follow the same verified link map as page markup.
             def map_js_link(m):
@@ -404,7 +580,21 @@ def main():
                 target = LINK_MAP.get(path)
                 return m.group(1) + (target.encode() if target else m.group(2)) + m.group(1)
             data = re.sub(rb'(["\'])(/(?!recovered-assets|assets|rest/)[a-z][a-z0-9/_?=.-]*)\1', map_js_link, data)
+            for old, new in JS_ADAPTATIONS.get(path, []):
+                if data.count(old.encode()) != 1:
+                    raise SystemExit(f"JS adaptation not found exactly once in {path}: {old[:60]}")
+                data = data.replace(old.encode(), new.encode())
+            check_privacy(f"{gen_key}{path}", data.decode("utf-8", "replace"))
+        if path.endswith(".json"):
+            check_privacy(f"{gen_key}{path}", data.decode("utf-8", "replace"))
+        if re.search(r"/images/documents/drivers/licenses/license-[^/]+\.png$", path):
+            data = stamp_sample(data)
         dest = os.path.join(ASSET_OUT, gen_key, path.lstrip("/"))
+        if f"{gen_key}{path}" in DEIDENTIFIED_ASSETS | WEB_ENCODED_ASSETS:
+            if not os.path.exists(dest):
+                raise SystemExit(f"processed copy missing: {gen_key}{path}")
+            copied += 1
+            continue
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         with open(dest, "wb") as fh:
             fh.write(data)
@@ -424,6 +614,15 @@ def main():
     lines += ["", "## Owner-directed removals (not shown on the public page)", "", "| Route | Removed recovered markup |", "|---|---|"]
     for route, snippets in OWNER_REMOVALS.items():
         lines += [f"| `{route}` | `{sn}` |" for sn in snippets]
+    lines += ["", "## Owner-directed replacements (superseded calls to action)", "", "| Route | Replaced | Count |", "|---|---|---|"]
+    for route, label, n in replace_log:
+        lines.append(f"| `{route}` | {label} | {n} |")
+    lines += ["", "## Script adaptations", "",
+              f"- `{SITE_JS_DEMO_BLOCK['out']}`: the interactive-demo block of the historical `site.js` (the rest of that file rewrote the old site header and footer).",
+              *[f"- `{p}`: `{o}` → `{n}`" for p, subs in JS_ADAPTATIONS.items() for o, n in subs],
+              "- Historical demo licence images are stamped `SAMPLE - FICTIONAL RECORD` when copied.",
+              *[f"- `{a}`: de-identified copy (original personal values removed); not overwritten." for a in sorted(DEIDENTIFIED_ASSETS)],
+              *[f"- `{a}`: re-encoded for web delivery (same resolution, length and content); not overwritten." for a in sorted(WEB_ENCODED_ASSETS)]]
     lines += ["", f"## Assets: {copied} copied, {len(missing)} missing", ""]
     for gen_key, path, used in missing:
         lines.append(f"- MISSING `{gen_key}{path}` (used by {', '.join(used)})")

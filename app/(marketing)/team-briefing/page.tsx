@@ -63,8 +63,8 @@ export default function TeamBriefingPage() {
             can be found before the truck is asked to roll.
           </p>
           <p>
-            Live product surfaces:{" "}
-            <Link href="/api/auth/signin?callbackUrl=%2Fdrivers">Drivers</Link>, <Link href="/safety">Safety</Link>,{" "}
+            Product demonstrations (fictional records):{" "}
+            <Link href="/interactive-demo/drivers">Drivers</Link>, <Link href="/safety">Safety</Link>,{" "}
             <Link href="/documents">Documents</Link>.
           </p>
         </article>
@@ -152,7 +152,7 @@ export default function TeamBriefingPage() {
             makes the decision visible.
           </p>
           <p>
-            Live product surface: <Link href="/api/auth/signin?callbackUrl=%2Fdispatch">Dispatch</Link>.
+            Product demonstration: <Link href="/interactive-demo/dispatch">Dispatch</Link>.
           </p>
         </article>
 
@@ -174,7 +174,7 @@ export default function TeamBriefingPage() {
             slogan. It shows where the fleet already pays for the gap between systems.
           </p>
           <p>
-            Live surface: <Link href="/book-assessment">Operating assessment</Link>.
+            Live surface: <Link href="/assessment">Operating assessment</Link>.
           </p>
         </article>
 
@@ -192,7 +192,7 @@ export default function TeamBriefingPage() {
               How BOF works
               <span>Sixteen-step product walkthrough.</span>
             </Link>
-            <Link href="/api/auth/signin?callbackUrl=%2Fdispatch">
+            <Link href="/interactive-demo/dispatch">
               Dispatch
               <span>Release and operating board.</span>
             </Link>

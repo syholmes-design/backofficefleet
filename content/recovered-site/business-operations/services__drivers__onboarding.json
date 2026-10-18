@@ -1,0 +1,33 @@
+{
+"route": "/services/drivers/onboarding",
+"generation": "fork-20260819",
+"source": {
+"commit": "e901e6cb",
+"path": "recovered/fork-restored-20260819/drivers/onboarding/index.html",
+"label": "Recovered fork, 2026-08-19 (recovered/fork-restored-20260819)"
+},
+"merges": [],
+"ownerRemovals": [],
+"title": "Driver Onboarding | BackOfficeFleet",
+"description": "",
+"bodyClass": "visual-refresh cinematic-site cinematic-narrative gap-page",
+"mainClass": "",
+"mainId": "",
+"mainData": {},
+"ownerReplacements": [
+{
+"from": "A working session qualifies",
+"to": "The BOF assessment qualifies",
+"count": 1
+},
+{
+"from": "superseded booking link",
+"to": "Take the Assessment →",
+"count": 1
+}
+],
+"html": "<section class=\"cinematic-masthead cinematic-masthead--photo gap-masthead driver-family-masthead\" aria-labelledby=\"gap-title\"><picture class=\"cinematic-masthead__media\"><img alt=\"New driver and onboarding lead completing a practical equipment handoff before assignment\" decoding=\"async\" fetchpriority=\"high\" height=\"1024\" src=\"/recovered-assets/fork-20260819/assets/images/cinematic/drivers-onboarding-hero-v1-png.webp\" width=\"1536\"/></picture><div aria-hidden=\"true\" class=\"cinematic-masthead__veil\"></div><div aria-hidden=\"true\" class=\"cinematic-masthead__texture\"></div><div class=\"cinematic-masthead__content\"><p class=\"cinematic-hero__eyebrow\">Driver readiness</p><h1 id=\"gap-title\">Carry onboarding evidence into the first assignment decision.</h1><p>BOF connects fleet-defined onboarding records, acknowledgements, training evidence, requests, review states, exceptions, owners, and readiness handoff.</p><a class=\"cinematic-hero__cta\" href=\"/assessment\">Take the Assessment &rarr;</a></div></section>\n<section class=\"section cinematic-detail-proof\"><div class=\"cinematic-proof-grid\"><article class=\"cinematic-proof-card reveal\"><h3>Source record</h3><p>Application and identity records, credentials, policy acknowledgements, training evidence, equipment or role assignment, and fleet-specific requirements.</p></article><article class=\"cinematic-proof-card reveal\"><h3>Review path</h3><p>The record is checked for required items, dates, missing fields, current versions, acknowledgements, unresolved questions, and responsible owner.</p></article><article class=\"cinematic-proof-card reveal\"><h3>Decision-ready output</h3><p>An onboarding readiness state with supporting evidence, open items, clearance condition, owner, and assignment handoff.</p></article></div></section>\n<section class=\"section gap-process\"><div class=\"section-head reveal\"><p class=\"eyebrow\">How the work moves</p><h2>The record keeps the exception, owner, and consequence visible.</h2><p>The operating effect of an incomplete onboarding record is visible to the responsible team before work proceeds.</p></div><ol class=\"gap-step-list\"><li class=\"gap-step reveal\"><span>01</span><div><h3>Open the source record</h3><p>Application and identity records, credentials, policy acknowledgements, training evidence, equipment or role assignment, and fleet-specific requirements.</p></div></li><li class=\"gap-step reveal\"><span>02</span><div><h3>Review the operating question</h3><p>The record is checked for required items, dates, missing fields, current versions, acknowledgements, unresolved questions, and responsible owner.</p></div></li><li class=\"gap-step reveal\"><span>03</span><div><h3>Name the exception and owner</h3><p>Unresolved evidence is assigned to a responsible person with a clear request, review state, and condition that must be satisfied before the record moves.</p></div></li><li class=\"gap-step reveal\"><span>04</span><div><h3>Carry the outcome forward</h3><p>An onboarding readiness state with supporting evidence, open items, clearance condition, owner, and assignment handoff. The operating effect of an incomplete onboarding record is visible to the responsible team before work proceeds.</p></div></li></ol></section>\n<section class=\"section gap-boundary\"><div class=\"gap-boundary__copy reveal\"><p class=\"eyebrow\">Qualification</p><h2>Administrative support stays inside a defined boundary.</h2><p>BOF provides administrative support and does not act as employer, recruiter, legal adviser, safety authority, or qualification decision-maker.</p></div><ul class=\"gap-boundary__list reveal\"><li>Public screens, records, statuses, and integration examples are static or synthetic unless a page explicitly states an authorized live capability.</li><li>The fleet, carrier, employer, agency, customer, and qualified professionals retain their operating, legal, safety, regulatory, and financial authority.</li><li>BOF does not guarantee release, acceptance, compliance, payment, collection, savings, audit, safety, or financial outcomes.</li><li>The BOF assessment qualifies the record set, responsible owner, service boundary, intended output, and appropriate next action.</li></ul></section>\n<section class=\"section gap-related\"><div class=\"section-head reveal\"><p class=\"eyebrow\">Direct routes</p><h2>Continue with the route that answers the next buyer question.</h2></div><div class=\"gap-related-grid\"><article class=\"gap-related-card reveal\"><h3>Onboarding Readiness</h3><p>Continue with the supporting route and inspect the record, boundary, and accountable next action in context.</p><a href=\"/business-operations/driver-onboarding/assignment-readiness\">Open route &rarr;</a></article>\n<article class=\"gap-related-card reveal\"><h3>Driver Compliance Documents</h3><p>Continue with the supporting route and inspect the record, boundary, and accountable next action in context.</p><a href=\"/services/drivers/compliance-documents\">Open route &rarr;</a></article>\n<article class=\"gap-related-card reveal\"><h3>Dispatch Assignment</h3><p>Continue with the supporting route and inspect the record, boundary, and accountable next action in context.</p><a href=\"/services/dispatch\">Open route &rarr;</a></article></div></section>",
+"inlineScripts": [],
+"widgetScripts": [],
+"archive": false
+}

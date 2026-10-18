@@ -1,0 +1,1783 @@
+{
+ "note": "Approved-content baseline. Update only for owner-approved changes (docs/governance/CONTENT-PRESERVATION-POLICY.md).",
+ "updated": "2026-10-18",
+ "recovered": {
+  "/business-operations": {
+   "words": 1882,
+   "headings": [
+    "Business Operations",
+    "Five operating areas, one accountable workflow.",
+    "HR Workforce",
+    "Accounting",
+    "Treasury",
+    "Finance",
+    "Payroll",
+    "A practical desk for the work behind the fleet.",
+    "Payroll, AR, AP, fuel, maintenance, and cash flow are worked from one operating queue.",
+    "SET-1907 held for POD and renewal evidence",
+    "TMS-LD-10482 rate, BOL, and POD packet tracked",
+    "CAR-204 renewal evidence attached to watch rows",
+    "BOF-2064 ready row has unit, route, HOS, and proof status",
+    "Packet completeness drives invoice, factoring, settlement, and payment timing.",
+    "The office can see what changed, who owns it, and what happens next.",
+    "Workforce and onboarding",
+    "Payroll and accounting exceptions",
+    "Treasury and cash visibility",
+    "Vendor and record control",
+    "Excise Taxes Federal Compliance",
+    "Accounting Financial Operations",
+    "ERP Workflow Integration",
+    "Human Resources DOT Compliance",
+    "Payroll Driver Compensation",
+    "Fleet Maintenance Assets",
+    "Safety Management SMS",
+    "Insurance COI Tracking",
+    "Fuel Management Cost Control",
+    "Owner-Operator Management",
+    "Operating Authority FMCSA Portal",
+    "Cash Flow Factoring Strategy",
+    "Legal Contract Management",
+    "Technology Stack Integration",
+    "Business operations keeps payroll, vendors, billing, records, and executive follow-up connected to live work.",
+    "HR Tier",
+    "Driver Onboarding",
+    "Accounting Finance",
+    "Payroll Administration",
+    "Customer Billing",
+    "Accounts Receivable",
+    "Document Management",
+    "Operational Reporting",
+    "Office follow-up by record, owner, due date, and consequence",
+    "People Operations",
+    "Financial Administration",
+    "Vendor and Administrative Records",
+    "Reports and Controls",
+    "Every issue needs a reason, owner, due date, operational consequence, and clearance path.",
+    "Why is the item not ready?",
+    "Who owns the next action?",
+    "What fleet decision is affected?",
+    "What clears the hold?",
+    "Review the administrative workspace without leaving the public page path behind."
+   ],
+   "assets": [
+    "/recovered-assets/static-20260729/assets/images/dashboard-mockups/bof-business-operations-command.webp"
+   ],
+   "scripts": []
+  },
+  "/business-operations/driver-onboarding": {
+   "words": 309,
+   "headings": [
+    "Turn a driver candidate into assignment readiness.",
+    "The handoff is successful only when dispatch can rely on the file.",
+    "Assignment readiness is the operating test.",
+    "Know whether the driver can actually be assigned.",
+    "Every onboarding step should point to the next operating action.",
+    "Application intake",
+    "DQF handoff",
+    "Payroll setup",
+    "Assignment release"
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/document-management": {
+   "words": 200,
+   "headings": [
+    "Make office records easy to find, review, and act on.",
+    "A document without purpose becomes a hiding place.",
+    "Documents should support an operating decision, not disappear into a folder.",
+    "Record classification",
+    "Review status",
+    "Retention visibility",
+    "Workflow handoff",
+    "Classify, review, and route records to the workflow that needs them."
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/operational-reporting": {
+   "words": 254,
+   "headings": [
+    "Show leadership what is ready, blocked, aging, and owned.",
+    "The best report tells the office what to do next.",
+    "Turn status reporting into accountable follow-up.",
+    "Reports should tell the office what needs attention next.",
+    "Readiness summary",
+    "Owner queues",
+    "Aging work",
+    "Leadership review",
+    "Roll up ready, review, and blocked signals.",
+    "Show how long work has been waiting."
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/customer-billing": {
+   "words": 193,
+   "headings": [
+    "Turn completed work into a billing-ready packet.",
+    "An invoice should not outrun its packet.",
+    "Invoices should be backed by the record a customer can review.",
+    "Invoice support",
+    "Billing holds",
+    "Customer packet status",
+    "Settlement connection",
+    "Review the packet before receivables inherit the problem."
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/accounts-receivable": {
+   "words": 197,
+   "headings": [
+    "Show why money is still open.",
+    "Aging without reason creates noise.",
+    "The office needs to know why money is still open.",
+    "Aging and owner",
+    "Dispute context",
+    "Factoring packet context",
+    "Leadership visibility",
+    "Separate normal aging from fixable blockers."
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/payroll-administration": {
+   "words": 262,
+   "headings": [
+    "Make pay support traceable to the record behind it.",
+    "Visibility first, payroll authority second.",
+    "Explain every payroll support question by record, reason, and owner.",
+    "Pay support should never be separated from the operating record.",
+    "Driver pay support",
+    "Contractor packet status",
+    "Exception ownership",
+    "Careful support language",
+    "Connect pay questions to the trip.",
+    "Show packet readiness before follow-up."
+   ],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/bof-data-loader.js",
+    "/recovered-assets/static-20260729/assets/js/bof-demo-state.js",
+    "/recovered-assets/static-20260729/assets/js/bof-driver-pay-profiles.js"
+   ]
+  },
+  "/business-operations/accounting-finance": {
+   "words": 842,
+   "headings": [
+    "Give finance the operating record behind the number.",
+    "Finance needs source context and service capacity, not another disconnected report.",
+    "Separate the work by the question the office is trying to answer.",
+    "Know which bill, receipt, deduction, or approval needs attention.",
+    "See what is ready, held, aging, disputed, or missing support.",
+    "Click the finance status, then inspect the packet reason and clearance route.",
+    "Ready packet: BOF-2064",
+    "A trucking finance page has to show why the money is moving, waiting, or blocked.",
+    "Do not let receivables inherit a weak packet.",
+    "Make aging explainable before escalation.",
+    "Keep vendor bills tied to operating approval.",
+    "Separate what is ready from what is waiting on the office.",
+    "Finance work is stronger when it can see the record behind the number.",
+    "Bookkeeping coordination",
+    "AP and vendor follow-up",
+    "AR and invoice readiness",
+    "Cash-flow visibility"
+   ],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/bof-data-loader.js",
+    "/recovered-assets/static-20260729/assets/js/bof-demo-state.js",
+    "/recovered-assets/static-20260729/assets/js/bof-driver-pay-profiles.js"
+   ]
+  },
+  "/business-operations/hr-tier": {
+   "words": 889,
+   "headings": [
+    "Run trucking HR as an operating control center.",
+    "People records must answer one question: can this worker safely and reliably support the fleet?",
+    "Build the people operation around the work that actually slows fleets down.",
+    "Handle people issues before they become dispatch, safety, or retention problems.",
+    "Move applicants from interest to assignment readiness with fewer handoff gaps.",
+    "Keep pay and benefits support visible without turning BOF into a legal or payroll authority.",
+    "Make training, readiness, retention, and leadership follow-up visible in one place.",
+    "Click the HR status, then inspect why the worker record is ready, under review, at risk, or blocked.",
+    "Ready worker file: Daniel Kim",
+    "A trucking HR page has to answer more than whether a form exists.",
+    "Document the issue without losing the operating consequence.",
+    "Keep candidate movement tied to assignment demand.",
+    "Give workers a clean support path for pay and benefit questions.",
+    "Turn training, coaching, and friction into visible management work.",
+    "The HR Tier works when every issue has a record, owner, consequence, and next action."
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/accounting": {
+   "words": 406,
+   "headings": [
+    "Accounting Financial Operations for Trucking",
+    "What Makes Trucking Accounting Different",
+    "Chart of Accounts Built Around Freight",
+    "Factoring, AR, and Billing Packets",
+    "AR/AP Operating Control",
+    "Finance Clearance Path"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-006-billing-packet-requirements.pdf",
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-007-document-retention-standard.pdf"
+   ],
+   "scripts": []
+  },
+  "/business-operations/cash-flow": {
+   "words": 241,
+   "headings": [
+    "Cash Flow Factoring Strategy",
+    "13-Week Cash Flow Model",
+    "Path Out of Factoring"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-006-billing-packet-requirements.pdf"
+   ],
+   "scripts": []
+  },
+  "/business-operations/erp": {
+   "words": 399,
+   "headings": [
+    "ERP Workflow Integration for Fleets",
+    "Load-to-Cash Workflow",
+    "Asset and Vendor Workflow",
+    "Escalation Rules"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-002-pre-trip-evidence-standard.pdf",
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-003-hos-escalation-procedure.pdf",
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-004-cargo-and-seal-verification.pdf",
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-006-billing-packet-requirements.pdf",
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-007-document-retention-standard.pdf"
+   ],
+   "scripts": []
+  },
+  "/business-operations/excise-taxes": {
+   "words": 353,
+   "headings": [
+    "Excise Taxes Federal Fleet Compliance",
+    "The Excise Tax Landscape for Motor Carriers",
+    "Core Tax Work BOF Tracks",
+    "Clearance Workflow"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-007-document-retention-standard.pdf"
+   ],
+   "scripts": []
+  },
+  "/business-operations/fleet-maintenance": {
+   "words": 196,
+   "headings": [
+    "Fleet Maintenance Asset Management",
+    "Maintenance Records That Affect Release",
+    "Breakdown Response Workflow"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-007-document-retention-standard.pdf"
+   ],
+   "scripts": []
+  },
+  "/business-operations/fuel-management": {
+   "words": 185,
+   "headings": [
+    "Fuel Management Cost Control",
+    "Where Fuel Control Breaks",
+    "Route and Fuel Decision Record"
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/human-resources": {
+   "words": 516,
+   "headings": [
+    "Human Resources DOT Compliance for Motor Carriers",
+    "What Makes Trucking HR Different",
+    "The Driver Qualification File",
+    "DOT Drug Alcohol Testing Program",
+    "Onboarding-to-Dispatch Workflow",
+    "Ongoing Monitoring Calendar"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-001-driver-qualification-policy.pdf",
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-007-document-retention-standard.pdf"
+   ],
+   "scripts": []
+  },
+  "/business-operations/insurance": {
+   "words": 176,
+   "headings": [
+    "Insurance Management COI Tracking",
+    "The Carrier Insurance Stack",
+    "COI and Renewal Workflow"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-008-access-and-data-governance.pdf"
+   ],
+   "scripts": []
+  },
+  "/business-operations/legal-contracts": {
+   "words": 169,
+   "headings": [
+    "Legal Contract Management",
+    "Contract Library by Operating Risk",
+    "Contract Clearance Path"
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/operating-authority": {
+   "words": 160,
+   "headings": [
+    "Operating Authority FMCSA Portal Management",
+    "Authority Health Checklist",
+    "Authority Clearance Path"
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/owner-operator": {
+   "words": 187,
+   "headings": [
+    "Owner-Operator Leased Contractor Management",
+    "The Owner-Operator Record",
+    "Aggregator and Carrier-Specific Rules"
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/payroll": {
+   "words": 522,
+   "headings": [
+    "Payroll Driver Compensation for Motor Carriers",
+    "The Trucking Compensation Landscape",
+    "Driver Compensation Models",
+    "Per-Mile",
+    "Percentage of Load",
+    "Day Rate / Hourly",
+    "1099 Owner-Operator",
+    "Owner-Operator Settlement Deductions",
+    "Multi-State Payroll and Per-Diem Support",
+    "Payroll-to-Settlement Reconciliation"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-001-driver-qualification-policy.pdf",
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-006-billing-packet-requirements.pdf",
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-007-document-retention-standard.pdf"
+   ],
+   "scripts": []
+  },
+  "/business-operations/safety-sms": {
+   "words": 214,
+   "headings": [
+    "Safety Management SMS Compliance",
+    "What the Safety Page Must Answer",
+    "SMS BASIC Review"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-005-claims-and-incident-response.pdf"
+   ],
+   "scripts": []
+  },
+  "/business-operations/technology": {
+   "words": 197,
+   "headings": [
+    "Technology Stack Integration Management",
+    "Technology Fragmentation Record",
+    "Integration Clearance Path"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260729/assets/documents/policies/bof-pol-008-access-and-data-governance.pdf"
+   ],
+   "scripts": []
+  },
+  "/business-operations/driver-onboarding/assignment-readiness": {
+   "words": 109,
+   "headings": [
+    "Release drivers only when the operating file can support the work.",
+    "Ready means more than paperwork received.",
+    "Group the required signals.",
+    "Show exactly why release is delayed."
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/document-management/records-control": {
+   "words": 107,
+   "headings": [
+    "Classify records by the work they support.",
+    "Every file needs type, owner, status, and use.",
+    "Group records by workflow.",
+    "Send record issues to the right owner."
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/operational-reporting/owner-queue-reporting": {
+   "words": 114,
+   "headings": [
+    "Make every blocker belong to someone.",
+    "Reports should reduce ambiguity, not preserve it.",
+    "Group work by who can move it.",
+    "Use aging and consequence to prioritize."
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/customer-billing/billing-packet-control": {
+   "words": 109,
+   "headings": [
+    "Confirm the proof before the invoice leaves the office.",
+    "Ready, review, blocked, disputed, or released.",
+    "Group every customer-facing support item.",
+    "Make the hold explainable."
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/accounts-receivable/aging-dispute-control": {
+   "words": 108,
+   "headings": [
+    "Make every open invoice explainable.",
+    "Reason codes make follow-up faster.",
+    "Group open invoices by urgency and reason.",
+    "Connect the dispute to the packet."
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/payroll-administration/pay-exception-control": {
+   "words": 113,
+   "headings": [
+    "Turn pay exceptions into reviewable support records.",
+    "Every exception needs a reason code and owner.",
+    "Group load, receipt, rate, approval, and note.",
+    "Assign the next action."
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/accounting-finance/ap-vendor-control": {
+   "words": 120,
+   "headings": [
+    "Keep vendor questions tied to approvals and operating proof.",
+    "Do not pay, dispute, or delay without seeing the source record.",
+    "Group the bill with the support.",
+    "Make unresolved questions assignable."
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/accounting-finance/cash-flow-review": {
+   "words": 114,
+   "headings": [
+    "See what is ready to move and what is holding cash back.",
+    "Aging is more useful when the office can see the reason.",
+    "Explain why an invoice remains open.",
+    "Turn cash-flow concern into follow-up work."
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/hr-tier/recruiting-onboarding": {
+   "words": 410,
+   "headings": [
+    "Move driver and staff candidates into readiness with fewer handoff gaps.",
+    "Candidate interest becomes operating value only when the file can support the assignment.",
+    "Move candidates from interest to first-load readiness with every handoff visible.",
+    "Lead: RCR-118"
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/hr-tier/compensation-benefits": {
+   "words": 170,
+   "headings": [
+    "Keep pay and benefit support tied to the records behind it.",
+    "BOF organizes visibility; it does not make payroll, tax, legal, or benefits determinations.",
+    "Make the reason for a pay question visible.",
+    "Show where enrollment or worker support stands."
+   ],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/bof-data-loader.js",
+    "/recovered-assets/static-20260729/assets/js/bof-demo-state.js",
+    "/recovered-assets/static-20260729/assets/js/bof-driver-pay-profiles.js"
+   ]
+  },
+  "/business-operations/hr-tier/talent-management": {
+   "words": 182,
+   "headings": [
+    "Turn training and retention signals into visible operating work.",
+    "Retention improves when the office can see where a good worker is getting stuck.",
+    "Know what training is complete, expiring, or blocking work.",
+    "Make coaching follow-up visible without overcomplicating the record.",
+    "Spot repeated friction before the person leaves.",
+    "Support internal growth with evidence."
+   ],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/bof-data-loader.js",
+    "/recovered-assets/static-20260729/assets/js/bof-demo-state.js",
+    "/recovered-assets/static-20260729/assets/js/bof-driver-pay-profiles.js"
+   ]
+  },
+  "/business-operations/hr-tier/employee-relations": {
+   "words": 170,
+   "headings": [
+    "Keep people issues visible before they become operating drag.",
+    "Every issue needs a fact pattern, owner, and next review point.",
+    "Capture the concern clearly.",
+    "Separate HR review from fleet consequence."
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/document-records-control": {
+   "words": 396,
+   "headings": [
+    "Control the document lifecycle without losing the operating context.",
+    "Source record",
+    "Review path",
+    "Decision-ready output",
+    "The record keeps the exception, owner, and consequence visible.",
+    "Open the source record",
+    "Review the operating question",
+    "Name the exception and owner",
+    "Carry the outcome forward",
+    "Administrative support stays inside a defined boundary.",
+    "Continue with the route that answers the next buyer question.",
+    "Documents",
+    "Bills of Lading",
+    "Driver Compliance Documents"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/business-operations-document-records-control-hero-v1-png.webp"
+   ],
+   "scripts": []
+  },
+  "/business-operations/customer-billing/billing-ar-control": {
+   "words": 393,
+   "headings": [
+    "Make packet readiness and dispute ownership visible.",
+    "Source record",
+    "Review path",
+    "Decision-ready output",
+    "The record keeps the exception, owner, and consequence visible.",
+    "Open the source record",
+    "Review the operating question",
+    "Name the exception and owner",
+    "Carry the outcome forward",
+    "Administrative support stays inside a defined boundary.",
+    "Continue with the route that answers the next buyer question.",
+    "Proof of Delivery",
+    "Factoring Packets",
+    "Finance Operations Alignment"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/business-operations--customer-billing--billing-ar-control-desktop.webp"
+   ],
+   "scripts": []
+  },
+  "/business-operations/archive/command-center-2026-07-01": {
+   "words": 1540,
+   "headings": [
+    "Run the HR and Finance office behind the operation.",
+    "Company infrastructure snapshot",
+    "Business Operations Command Center",
+    "Workforce administration",
+    "Financial coordination",
+    "Back-office gaps affect daily work.",
+    "BOF keeps recruiting, onboarding, records, benefits, and training visible.",
+    "June payroll cycle",
+    "14 records in process",
+    "Enrollment coverage",
+    "92 / 100",
+    "Driver and worker onboarding becomes a visible administrative path.",
+    "Policy, certificate, renewal, and claim status stay tied to the business record.",
+    "19 active policies",
+    "4 renewals inside 45 days",
+    "42 certificates current",
+    "87 / 100",
+    "BOF helps carrier networks grow without building every administrative department from scratch.",
+    "12 packets in review",
+    "7 records need follow-up",
+    "42 certificates current",
+    "5 claim packets open",
+    "38 packets ready",
+    "18 active tasks",
+    "BOF helps coordinate the documents required for funding review.",
+    "Ready packets",
+    "Needs admin follow-up",
+    "Settlement connection",
+    "Accounting and bookkeeping support become operating context, not a separate mystery.",
+    "Executives see financial pressure beside administrative readiness.",
+    "$1.84M",
+    "$74K",
+    "+9%",
+    "12 open over 30",
+    "91 / 100"
+   ],
+   "assets": [],
+   "scripts": []
+  },
+  "/business-operations/archive/business-office-2026-08-19": {
+   "words": 611,
+   "headings": [
+    "Run the business behind the fleet with the same discipline as the road.",
+    "Run the HR and Finance office behind the operation.",
+    "Dispatch, safety, and settlement records feed HR and Finance work.",
+    "HR Tier",
+    "Accounting Finance",
+    "Finance Tier",
+    "Payroll Administration",
+    "Customer Billing",
+    "Accounts Receivable",
+    "Document Management",
+    "Operational Reporting",
+    "Move from the business office overview to the question that needs an answer.",
+    "Make every invoice explainable.",
+    "Release drivers when the file supports the work.",
+    "Turn settlement questions into support records.",
+    "Make every blocker belong to someone.",
+    "Open the office process that needs clearer control.",
+    "Accounting Finance Coordination",
+    "Billing AR Control",
+    "Onboarding Readiness",
+    "Pay Exception Control",
+    "Document Records Control",
+    "Owner Queue Reporting"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/business-operations-worktable-desktop-v2-png.webp",
+    "/recovered-assets/fork-20260819/assets/images/photos/site-pass/21-fleet-office-record-clerk.webp"
+   ],
+   "scripts": []
+  },
+  "/business-operations/archive/assignment-readiness-2026-08-19": {
+   "words": 397,
+   "headings": [
+    "Connect onboarding records to the next assignment decision.",
+    "Source record",
+    "Review path",
+    "Decision-ready output",
+    "The record keeps the exception, owner, and consequence visible.",
+    "Open the source record",
+    "Review the operating question",
+    "Name the exception and owner",
+    "Carry the outcome forward",
+    "Administrative support stays inside a defined boundary.",
+    "Continue with the route that answers the next buyer question.",
+    "Driver Onboarding",
+    "Driver Compliance Documents",
+    "Dispatch Assignment"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/business-operations--driver-onboarding--assignment-readiness-desktop.webp"
+   ],
+   "scripts": []
+  },
+  "/business-operations/archive/owner-queue-reporting-2026-08-19": {
+   "words": 437,
+   "headings": [
+    "Turn unresolved work into a decision-ready owner queue.",
+    "Source record",
+    "Review path",
+    "Decision-ready output",
+    "The record keeps the exception, owner, and consequence visible.",
+    "Open the source record",
+    "Review the operating question",
+    "Name the exception and owner",
+    "Carry the outcome forward",
+    "Administrative support stays inside a defined boundary.",
+    "Continue with the route that answers the next buyer question.",
+    "operational intelligence",
+    "dashboard",
+    "Operations Record",
+    "Exception Owner Queue"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/documents/public-safe/exception-owner-queue.html",
+    "/recovered-assets/fork-20260819/assets/images/cinematic/business-operations--operational-reporting--owner-queue-reporting-desktop.webp"
+   ],
+   "scripts": []
+  },
+  "/business-operations/archive/pay-exception-control-2026-08-19": {
+   "words": 406,
+   "headings": [
+    "Give every pay exception evidence, ownership, and a review state.",
+    "Source record",
+    "Review path",
+    "Decision-ready output",
+    "The record keeps the exception, owner, and consequence visible.",
+    "Open the source record",
+    "Review the operating question",
+    "Name the exception and owner",
+    "Carry the outcome forward",
+    "Administrative support stays inside a defined boundary.",
+    "Continue with the route that answers the next buyer question.",
+    "Driver Settlements Payments",
+    "Settlement Exception Visibility",
+    "Settlement Record Accountability"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/business-operations--payroll-administration--pay-exception-control-desktop.webp"
+   ],
+   "scripts": []
+  },
+  "/services/dispatch": {
+   "words": 1669,
+   "headings": [
+    "Dispatch Operations Command Center",
+    "Dispatch Manager Operating View",
+    "Can move after review",
+    "Must wait on",
+    "Record owner",
+    "Dispatch action",
+    "See how customer load intake becomes an operating record.",
+    "Dispatch release depends on more than the BOL image.",
+    "Example Proof Packet Ready to Release",
+    "Example Proof Packet At Risk",
+    "Example Proof Packet Blocked",
+    "Every release decision shows what clears the load and what blocks the move.",
+    "Pre-Trip Release",
+    "Route / Lane Review",
+    "Equipment Readiness",
+    "Driver Assignment",
+    "Dispatch sees allowed, warning, review, and blocked in plain language.",
+    "Allowed",
+    "Warning",
+    "Review",
+    "Blocked",
+    "Dispatch proof is supported by document-handling controls.",
+    "Data classified",
+    "ELD/mobile controlled",
+    "Review trail required",
+    "Security governed",
+    "Every release state has a record, owner, and action.",
+    "Dispatch Review Decision TMS-LD-10482",
+    "Dispatch Watch Decision BOF-1907",
+    "Dispatch Hold Decision BOF-1931",
+    "Load enters board",
+    "Records are checked",
+    "Owner action is named",
+    "Release with confidence",
+    "Who uses this",
+    "What it shows",
+    "Operational consequence",
+    "What happens next",
+    "Dispatch decisions need the record trail beside the load trail.",
+    "Exception report review",
+    "Field proof check",
+    "Record clerk desk",
+    "Yard operations check"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260710/assets/images/photos/site-pass/17-dock-seal-photo-review.webp",
+    "/recovered-assets/static-20260710/assets/images/photos/site-pass/19-owner-exception-report-review.webp",
+    "/recovered-assets/static-20260710/assets/images/photos/site-pass/21-fleet-office-record-clerk.webp",
+    "/recovered-assets/static-20260710/assets/images/photos/site-pass/22-carrier-yard-operations-lead.webp",
+    "/recovered-assets/static-20260710/assets/images/video-posters/bof-customer-portal-load-intake.jpg",
+    "/recovered-assets/static-20260710/assets/videos/bof-customer-portal-load-intake.mp4"
+   ],
+   "scripts": []
+  },
+  "/services/drivers": {
+   "words": 1809,
+   "headings": [
+    "Driver Command Center",
+    "Driver Operating View",
+    "Driver profiles show readiness, assigned work, and the reason a record needs attention.",
+    "M. Alvarez Dallas base",
+    "J. Carter Tulsa base",
+    "T. Brooks Little Rock base",
+    "HR onboarding handoff",
+    "Driver documents become readiness signals before dispatch depends on them.",
+    "Driver Documents DQF",
+    "Business Operations Handoff",
+    "Credential Review Renewal Risk",
+    "See how BOF keeps driver readiness reviewable.",
+    "Driver roster cards make readiness, DQF status, and document coverage visible without exposing private records.",
+    "Demo Driver 01 M. Alvarez",
+    "Demo Driver 02 J. Carter",
+    "Demo Driver 03 T. Brooks",
+    "Each driver record has the paperwork a fleet owner expects to inspect.",
+    "Demo Credential Panel",
+    "Sample Readiness Card",
+    "Safe Demo Data Rule",
+    "Ready example",
+    "Watch example",
+    "Hold example",
+    "Every driver status explains the BOF release consequence.",
+    "Ready Driver Packet DRV-2048",
+    "Watch Driver Context DRV-1187",
+    "Driver Credential Hold DRV-3301",
+    "Driver Eligibility Summary",
+    "Who uses this",
+    "Next action",
+    "Driver readiness includes how records are accessed and submitted.",
+    "Acceptable use",
+    "Password and authentication",
+    "Mobile Device and ELD",
+    "Remote access and communications",
+    "Driver readiness should look like a real file, not a placeholder profile.",
+    "Driver file BOF assessment",
+    "Settlement hold context",
+    "Seal photo review",
+    "File binder station"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260710/assets/images/photos/site-pass/15-driver-file-working-session.webp",
+    "/recovered-assets/static-20260710/assets/images/photos/site-pass/16-settlement-hold-desk.webp",
+    "/recovered-assets/static-20260710/assets/images/photos/site-pass/17-dock-seal-photo-review.webp",
+    "/recovered-assets/static-20260710/assets/images/photos/site-pass/18-file-binder-scan-station.webp",
+    "/recovered-assets/static-20260710/assets/images/profiles/drivers/driver-ref-001.jpg",
+    "/recovered-assets/static-20260710/assets/images/profiles/drivers/driver-ref-002.jpg",
+    "/recovered-assets/static-20260710/assets/images/profiles/drivers/driver-ref-003.jpg",
+    "/recovered-assets/static-20260710/assets/images/video-posters/bof-driver-vault.jpg",
+    "/recovered-assets/static-20260710/assets/videos/bof-driver-vault.mp4"
+   ],
+   "scripts": []
+  },
+  "/services/safety": {
+   "words": 1205,
+   "headings": [
+    "Safety Compliance Command Center",
+    "Safety Operating View",
+    "Before, during, and after the trip, safety records stay connected to operations.",
+    "Pre-Trip Documents",
+    "Pre-Trip Photos",
+    "During Trip",
+    "After Trip",
+    "Cargo Securement",
+    "Safety Event Workflow",
+    "Compliance Records",
+    "Safety review is stronger when trip evidence, route risk, and incident follow-up stay connected.",
+    "Driver Safety Review",
+    "HOS / ELD Review Concepts",
+    "Route Risk / Weather / Traffic",
+    "Camera Events / Incident Review",
+    "Claims Evidence",
+    "Post-Trip Review",
+    "Safety review becomes more useful when every panel shows evidence, owner, and operating consequence.",
+    "Pre-Trip Proof Panel",
+    "In-Route Review Panel",
+    "Claims Evidence Handoff",
+    "Safety work is useful when it names the driver, blocker, owner, and dispatch consequence.",
+    "Safety Hold Evidence BOF-1931",
+    "Why dispatch waits",
+    "Why finance waits",
+    "Credential hold",
+    "Document watch item",
+    "Clear driver file",
+    "Safety review should be visible enough for dispatch, ownership, and finance to trust.",
+    "Safety meeting record review",
+    "Compliance board",
+    "Driver file audit"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260710/assets/images/photos/site-pass/05-driver-file-audit-tabletop.webp",
+    "/recovered-assets/static-20260710/assets/images/photos/site-pass/09-safety-compliance-wall-board.webp",
+    "/recovered-assets/static-20260710/assets/images/photos/site-pass/26-safety-meeting-record-review.webp"
+   ],
+   "scripts": []
+  },
+  "/services/settlements": {
+   "words": 2134,
+   "headings": [
+    "Settlements Billing Command Center",
+    "Packet Readiness View",
+    "See How BOF Organizes Settlement Readiness",
+    "Settlement readiness depends on proof, billing support, driver review, and cash-flow context.",
+    "Example Proof Packet",
+    "Sample Settlement Evidence Packet",
+    "Example Billing Packet",
+    "A settlement packet starts with the load record, not a loose pay formula.",
+    "Every settlement status explains the pay rule, packet condition, and operating blocker.",
+    "BOF can show the pay basis, formula, support documents, and exception state before release.",
+    "One settlement screen can separate employee payroll coordination from independent contractor settlement review.",
+    "Employee Payroll Coordination",
+    "Independent Contractor Settlement",
+    "Settlement Packet Preview",
+    "Pay lines",
+    "Documents",
+    "Pay lines",
+    "Missing",
+    "Pay lines",
+    "Issue",
+    "Pay lines",
+    "Documents",
+    "Held money should show the reason, owner, and downstream cash-flow impact.",
+    "Missing lumper receipt",
+    "Unresolved safety hold",
+    "Claim evidence incomplete",
+    "Payroll exception",
+    "Contractor document missing",
+    "Detention approval pending",
+    "Deduction note missing",
+    "Classification review needed",
+    "Missing POD",
+    "Missing lumper receipt",
+    "Safety hold",
+    "Detention approval pending",
+    "Contractor document missing",
+    "Settlement documents also explain invoice readiness and receivables follow-through.",
+    "Packet readiness",
+    "Receivables view",
+    "Careful role language"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260710/assets/images/video-posters/bof-settlements-readiness.jpg",
+    "/recovered-assets/static-20260710/assets/videos/bof-settlements-readiness.mp4",
+    "/recovered-assets/static-20260710/video-assets/settlements/screenshots/scene-02-settlement-gaps.png",
+    "/recovered-assets/static-20260710/video-assets/settlements/screenshots/scene-04-driver-pay-deductions.png",
+    "/recovered-assets/static-20260710/video-assets/settlements/screenshots/scene-05-billing-factoring-packet.png"
+   ],
+   "scripts": []
+  },
+  "/services/documents": {
+   "words": 1512,
+   "headings": [
+    "BOF turns TMS load documents into release evidence.",
+    "Document control has to cover the whole fleet office, not only one load packet.",
+    "Driver Qualification Files",
+    "Secondary Driver Documents",
+    "BOF Vault Intake Workbench",
+    "Carrier Registry",
+    "Dispatch Load Operations",
+    "Safety / Claims / Insurance",
+    "Contracts / Customer / Legal",
+    "Policies SOPs",
+    "Finance / Settlements / Back Office",
+    "Training Knowledge Base",
+    "HR / Talent / Performance",
+    "Bring forward the old demo's strongest proof: actual documents a fleet office would recognize.",
+    "Master Services Agreement",
+    "Insurance Notice Letter",
+    "Claims, Proof Packet Insurance Escalation SOP",
+    "Imported packet",
+    "Ready records",
+    "Record to confirm",
+    "Document consequence",
+    "The right records stay connected to the TMS release decision.",
+    "Driver qualification file",
+    "Trip release packet",
+    "Carrier insurance certificate",
+    "BOL photo review",
+    "Trip Release Packet TMS-LD-10482",
+    "Driver Qualification File Summary DRV-2048",
+    "Carrier Packet Release Summary CAR-118",
+    "The document view also shows why some work waits.",
+    "Watch Packet BOF-1907",
+    "Hold Packet BOF-1931",
+    "Delivery proof should be large enough to inspect, not just listed as attached.",
+    "POD-1907 delivery proof",
+    "Dock and cargo photo packet",
+    "Operational documents are backed by written controls.",
+    "AI Use Governance",
+    "ELD Mobile Security",
+    "Vendor Access",
+    "Incident Response Continuity",
+    "Document control looks stronger when the paperwork feels handled.",
+    "Scanner station",
+    "Document requests",
+    "Audit-ready folders",
+    "Warehouse proof review"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260720/assets/documents/file-cabinet/sample-claims-proof-packet-insurance-escalation-sop.pdf",
+    "/recovered-assets/static-20260720/assets/documents/file-cabinet/sample-insurance-notice-letter.html",
+    "/recovered-assets/static-20260720/assets/documents/file-cabinet/sample-master-services-agreement.pdf",
+    "/recovered-assets/static-20260720/assets/images/animations/heroes/hero-documents-control.webp",
+    "/recovered-assets/static-20260720/assets/images/illustrations/document-control-illustration.webp",
+    "/recovered-assets/static-20260720/assets/images/photos/pod-bol-proof-packet.webp",
+    "/recovered-assets/static-20260720/assets/images/photos/site-pass/11-paperwork-scanner-station.webp",
+    "/recovered-assets/static-20260720/assets/images/photos/site-pass/12-document-request-workflow.webp",
+    "/recovered-assets/static-20260720/assets/images/photos/site-pass/13-government-contract-record-review.webp",
+    "/recovered-assets/static-20260720/assets/images/photos/site-pass/14-private-fleet-proof-review.webp"
+   ],
+   "scripts": []
+  },
+  "/services/fleet": {
+   "words": 1990,
+   "headings": [
+    "See the whole fleet before one exception becomes a lost day.",
+    "See how BOF organizes fleet back-office pressure.",
+    "Load state",
+    "Readiness support",
+    "Owner",
+    "Release result",
+    "BOF reviews the load at the start, middle, and end of the trip.",
+    "No load releases until the driver, carrier, equipment, cargo, route, facility, and commercial packet are ready. No load closes until delivery proof, asset return, claim review, settlement, billing, and archive are complete.",
+    "Start readiness review",
+    "Middle readiness review",
+    "End readiness review",
+    "Before the load releases, every gate gets an operating consequence.",
+    "DVIR handling",
+    "Load packet readiness",
+    "While the load is active, BOF keeps watch items attached to the trip.",
+    "The load does not close just because it delivered.",
+    "Post-trip defect review",
+    "Billing/factoring readiness",
+    "TMS-LD-10482 carries the complete TMS-to-BOF release picture.",
+    "TMS-LD-10482 Load Detail Dallas to Memphis",
+    "The load view shows consequence, not just status.",
+    "Driver ready",
+    "Lane reviewed",
+    "Records organized",
+    "The load view also explains why work waits.",
+    "Watch Load Readiness BOF-1907",
+    "Held Load Readiness BOF-1931",
+    "TMS-LD-10482 is not blocked by safety or carrier readiness.",
+    "Ready records",
+    "Remaining action"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/fleet-dawn-readiness-desktop-v2-png.webp",
+    "/recovered-assets/fork-20260819/assets/images/video-posters/bof-fleet-owner.jpg",
+    "/recovered-assets/fork-20260819/assets/videos/bof-fleet-owner.mp4"
+   ],
+   "scripts": []
+  },
+  "/services/drivers/onboarding": {
+   "words": 394,
+   "headings": [
+    "Carry onboarding evidence into the first assignment decision.",
+    "Source record",
+    "Review path",
+    "Decision-ready output",
+    "The record keeps the exception, owner, and consequence visible.",
+    "Open the source record",
+    "Review the operating question",
+    "Name the exception and owner",
+    "Carry the outcome forward",
+    "Administrative support stays inside a defined boundary.",
+    "Continue with the route that answers the next buyer question.",
+    "Onboarding Readiness",
+    "Driver Compliance Documents",
+    "Dispatch Assignment"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/drivers-onboarding-hero-v1-png.webp"
+   ],
+   "scripts": []
+  },
+  "/services/drivers/compliance-documents": {
+   "words": 403,
+   "headings": [
+    "Keep driver-document gaps tied to assignment readiness.",
+    "Source record",
+    "Review path",
+    "Decision-ready output",
+    "The record keeps the exception, owner, and consequence visible.",
+    "Open the source record",
+    "Review the operating question",
+    "Name the exception and owner",
+    "Carry the outcome forward",
+    "Administrative support stays inside a defined boundary.",
+    "Continue with the route that answers the next buyer question.",
+    "Driver Onboarding",
+    "Document Records Control",
+    "Dispatch Assignment"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/drivers-compliance-documents-hero-v1-png.webp"
+   ],
+   "scripts": []
+  },
+  "/services/drivers/communication": {
+   "words": 387,
+   "headings": [
+    "Make driver follow-up accountable to a record.",
+    "Source record",
+    "Review path",
+    "Decision-ready output",
+    "The record keeps the exception, owner, and consequence visible.",
+    "Open the source record",
+    "Review the operating question",
+    "Name the exception and owner",
+    "Carry the outcome forward",
+    "Administrative support stays inside a defined boundary.",
+    "Continue with the route that answers the next buyer question.",
+    "Driver Compliance Documents",
+    "Driver Onboarding",
+    "Customer Communication"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/drivers-communication-hero-v1-png.webp"
+   ],
+   "scripts": []
+  },
+  "/services/drivers/settlements-payments": {
+   "words": 407,
+   "headings": [
+    "Give driver-facing pay questions a traceable support record.",
+    "Source record",
+    "Review path",
+    "Decision-ready output",
+    "The record keeps the exception, owner, and consequence visible.",
+    "Open the source record",
+    "Review the operating question",
+    "Name the exception and owner",
+    "Carry the outcome forward",
+    "Administrative support stays inside a defined boundary.",
+    "Continue with the route that answers the next buyer question.",
+    "Pay Exception Control",
+    "Settlement Exception Visibility",
+    "Settlement Audit Trail"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/drivers-settlements-payments-hero-v1-png.webp"
+   ],
+   "scripts": []
+  },
+  "/services/settlements/audit-trail": {
+   "words": 417,
+   "headings": [
+    "Trace the decision from delivery evidence through adjustment and closeout.",
+    "Source record",
+    "Review path",
+    "Decision-ready output",
+    "The record keeps the exception, owner, and consequence visible.",
+    "Open the source record",
+    "Review the operating question",
+    "Name the exception and owner",
+    "Carry the outcome forward",
+    "Administrative support stays inside a defined boundary.",
+    "Continue with the route that answers the next buyer question.",
+    "Settlement Exception Visibility",
+    "Driver Settlements Payments",
+    "Pay Exception Control"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/settlements-audit-trail-hero-v1-png.webp"
+   ],
+   "scripts": []
+  },
+  "/services/settlements/exception-visibility": {
+   "words": 445,
+   "headings": [
+    "Keep missing, disputed, and held settlement items accountable.",
+    "Source record",
+    "Review path",
+    "Decision-ready output",
+    "The record keeps the exception, owner, and consequence visible.",
+    "Open the source record",
+    "Review the operating question",
+    "Name the exception and owner",
+    "Carry the outcome forward",
+    "Administrative support stays inside a defined boundary.",
+    "Continue with the route that answers the next buyer question.",
+    "Settlement Audit Trail",
+    "Driver Settlements Payments",
+    "Pay Exception Control",
+    "Exception Owner Queue"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/documents/public-safe/exception-owner-queue.html",
+    "/recovered-assets/fork-20260819/assets/images/cinematic/settlements-exception-visibility-hero-v1-png.webp"
+   ],
+   "scripts": []
+  },
+  "/services/settlements/finance-operations-alignment": {
+   "words": 404,
+   "headings": [
+    "Use the same operating facts before financial closeout.",
+    "Source record",
+    "Review path",
+    "Decision-ready output",
+    "The record keeps the exception, owner, and consequence visible.",
+    "Open the source record",
+    "Review the operating question",
+    "Name the exception and owner",
+    "Carry the outcome forward",
+    "Administrative support stays inside a defined boundary.",
+    "Continue with the route that answers the next buyer question.",
+    "Billing AR Control",
+    "Settlement Record Accountability",
+    "Proof Packets Cash Flow"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/settlements-finance-operations-alignment-hero-v1-png.webp"
+   ],
+   "scripts": []
+  },
+  "/services/settlements/single-record-accountability": {
+   "words": 424,
+   "headings": [
+    "Connect delivery, proof, adjustment, owner, and next action.",
+    "Source record",
+    "Review path",
+    "Decision-ready output",
+    "The record keeps the exception, owner, and consequence visible.",
+    "Open the source record",
+    "Review the operating question",
+    "Name the exception and owner",
+    "Carry the outcome forward",
+    "Administrative support stays inside a defined boundary.",
+    "Continue with the route that answers the next buyer question.",
+    "Settlement Audit Trail",
+    "Finance Operations Alignment",
+    "Operations Record"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/settlements-single-record-accountability-hero-v1-png.webp"
+   ],
+   "scripts": []
+  },
+  "/services/archive/dispatch-2026-08-19": {
+   "words": 870,
+   "headings": [
+    "Release the load with evidence, not optimism.",
+    "Can move after review",
+    "Must wait on",
+    "Record owner",
+    "Dispatch action",
+    "Dispatch release depends on more than the BOL image.",
+    "Example Proof Packet Ready to Release",
+    "Example Proof Packet At Risk",
+    "Example Proof Packet Blocked",
+    "Every release decision shows what clears the load and what blocks the move.",
+    "Pre-Trip Release",
+    "Route / Lane Review",
+    "Equipment Readiness",
+    "Driver Assignment",
+    "Dispatch sees allowed, warning, review, and blocked in plain language.",
+    "Allowed",
+    "Warning",
+    "Review",
+    "Blocked",
+    "Dispatch proof is supported by document-handling controls.",
+    "Data classified",
+    "ELD/mobile controlled",
+    "Review trail required",
+    "Security governed"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/dispatch-release-desk-desktop-v2-png.webp"
+   ],
+   "scripts": []
+  },
+  "/services/archive/drivers-2026-08-19": {
+   "words": 1458,
+   "headings": [
+    "A driver file should answer the dispatch question immediately.",
+    "Driver profiles show readiness, assigned work, and the reason a record needs attention.",
+    "M. Alvarez Dallas base",
+    "J. Carter Tulsa base",
+    "T. Brooks Little Rock base",
+    "HR onboarding handoff",
+    "Driver documents become readiness signals before dispatch depends on them.",
+    "Driver Documents DQF",
+    "Business Operations Handoff",
+    "Credential Review Renewal Risk",
+    "Driver roster cards make readiness, DQF status, and document coverage visible without exposing private records.",
+    "Demo Driver 01 M. Alvarez",
+    "Demo Driver 02 J. Carter",
+    "Demo Driver 03 T. Brooks",
+    "Each driver record has the paperwork a fleet owner expects to inspect.",
+    "Demo Credential Panel",
+    "Sample Readiness Card",
+    "Safe Demo Data Rule",
+    "Ready example",
+    "Watch example",
+    "Hold example",
+    "Every driver status explains the BOF release consequence.",
+    "Ready Driver Packet DRV-2048",
+    "Watch Driver Context DRV-1187",
+    "Driver Credential Hold DRV-3301",
+    "Separate the driver questions that require different evidence and owners.",
+    "Driver Communication",
+    "Compliance Documents",
+    "Driver Onboarding",
+    "Settlements Payments"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/drivers-pretrip-connection-desktop-v3-png.webp",
+    "/recovered-assets/fork-20260819/assets/images/profiles/drivers/driver-ref-001-natural.jpg",
+    "/recovered-assets/fork-20260819/assets/images/profiles/drivers/driver-ref-002-natural.jpg",
+    "/recovered-assets/fork-20260819/assets/images/profiles/drivers/driver-ref-003-natural.jpg"
+   ],
+   "scripts": []
+  },
+  "/services/archive/documents-2026-08-19": {
+   "words": 1065,
+   "headings": [
+    "Every critical document should have a status, an owner, and a consequence.",
+    "Imported packet",
+    "Ready records",
+    "Record to confirm",
+    "Document consequence",
+    "The right records stay connected to the TMS release decision.",
+    "Driver qualification file",
+    "Trip release packet",
+    "Carrier insurance certificate",
+    "BOL photo review",
+    "Trip Release Packet TMS-LD-10482",
+    "Driver Qualification File Summary DRV-2048",
+    "Carrier Packet Release Summary CAR-118",
+    "The document view also shows why some work waits.",
+    "Watch Packet BOF-1907",
+    "Hold Packet BOF-1931",
+    "Delivery proof should be large enough to inspect, not just listed as attached.",
+    "POD-1907 delivery proof",
+    "Dock and cargo photo packet",
+    "Operational documents are backed by written controls.",
+    "AI Use Governance",
+    "ELD Mobile Security",
+    "Vendor Access",
+    "Incident Response Continuity",
+    "Document control looks stronger when the paperwork feels handled.",
+    "Scanner station",
+    "Document requests",
+    "Audit-ready folders",
+    "Warehouse proof review"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/documents-dock-proof-capture-desktop-v3-png.webp",
+    "/recovered-assets/fork-20260819/assets/images/photos/pod-bol-proof-packet.webp",
+    "/recovered-assets/fork-20260819/assets/images/photos/site-pass/11-paperwork-scanner-station.webp",
+    "/recovered-assets/fork-20260819/assets/images/photos/site-pass/12-document-request-workflow.webp",
+    "/recovered-assets/fork-20260819/assets/images/photos/site-pass/13-government-contract-record-review.webp",
+    "/recovered-assets/fork-20260819/assets/images/photos/site-pass/14-private-fleet-proof-review.webp"
+   ],
+   "scripts": []
+  },
+  "/services/archive/safety-2026-08-19": {
+   "words": 1150,
+   "headings": [
+    "Move safety evidence closer to the moment it matters.",
+    "Before, during, and after the trip, safety records stay connected to operations.",
+    "Pre-Trip Documents",
+    "Pre-Trip Photos",
+    "During Trip",
+    "After Trip",
+    "Cargo Securement",
+    "Safety Event Workflow",
+    "Compliance Records",
+    "Safety review is stronger when trip evidence, route risk, and incident follow-up stay connected.",
+    "Driver Safety Review",
+    "HOS / ELD Review Concepts",
+    "Route Risk / Weather / Traffic",
+    "Camera Events / Incident Review",
+    "Claims Evidence",
+    "Post-Trip Review",
+    "Safety review becomes more useful when every panel shows evidence, owner, and operating consequence.",
+    "Pre-Trip Proof Panel",
+    "In-Route Review Panel",
+    "Claims Evidence Handoff",
+    "Safety work is useful when it names the driver, blocker, owner, and dispatch consequence.",
+    "Safety Hold Evidence BOF-1931",
+    "Why dispatch waits",
+    "Why finance waits",
+    "Credential hold",
+    "Document watch item",
+    "Clear driver file",
+    "Safety review should be visible enough for dispatch, ownership, and finance to trust.",
+    "Safety meeting record review",
+    "Compliance board",
+    "Driver file audit",
+    "Safety record support does not replace regulated responsibility.",
+    "Safety Compliance Proof",
+    "Claims Documentation",
+    "Policies Procedures"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/safety-terminal-inspection-desktop-v2-png.webp",
+    "/recovered-assets/fork-20260819/assets/images/photos/site-pass/05-driver-file-audit-tabletop.webp",
+    "/recovered-assets/fork-20260819/assets/images/photos/site-pass/09-safety-compliance-wall-board.webp",
+    "/recovered-assets/fork-20260819/assets/images/photos/site-pass/26-safety-meeting-record-review.webp"
+   ],
+   "scripts": []
+  },
+  "/services/archive/settlements-2026-08-19": {
+   "words": 1741,
+   "headings": [
+    "Close the trip with a packet everyone can defend.",
+    "Settlement readiness depends on proof, billing support, driver review, and cash-flow context.",
+    "Example Proof Packet",
+    "Sample Settlement Evidence Packet",
+    "Example Billing Packet",
+    "Every settlement status explains the pay rule, packet condition, and operating blocker.",
+    "BOF can show the pay basis, formula, support documents, and exception state before release.",
+    "Settlement Packet Preview",
+    "Pay lines",
+    "Documents",
+    "Pay lines",
+    "Missing",
+    "Pay lines",
+    "Issue",
+    "Pay lines",
+    "Documents",
+    "Held money should show the reason, owner, and downstream cash-flow impact.",
+    "Missing lumper receipt",
+    "Unresolved safety hold",
+    "Claim evidence incomplete",
+    "Payroll exception",
+    "Contractor document missing",
+    "Detention approval pending",
+    "Deduction note missing",
+    "Classification review needed",
+    "Missing POD",
+    "Missing lumper receipt",
+    "Safety hold",
+    "Detention approval pending",
+    "Contractor document missing",
+    "Trace the closeout question through a dedicated record.",
+    "Audit Trail",
+    "Exception Visibility",
+    "Finance Operations Alignment",
+    "Single-Record Accountability"
+   ],
+   "assets": [
+    "/recovered-assets/fork-20260819/assets/images/cinematic/settlements-trip-closeout-desktop-v3-png.webp",
+    "/recovered-assets/fork-20260819/video-assets/settlements/screenshots/scene-02-settlement-gaps.png",
+    "/recovered-assets/fork-20260819/video-assets/settlements/screenshots/scene-04-driver-pay-deductions.png",
+    "/recovered-assets/fork-20260819/video-assets/settlements/screenshots/scene-05-billing-factoring-packet.png"
+   ],
+   "scripts": []
+  },
+  "/interactive-demo": {
+   "words": 1200,
+   "headings": [
+    "Load Queue",
+    "Source Load Board",
+    "TMS-LD-10482 / CLV-10482",
+    "Release desk operating view",
+    "Fleet owner view",
+    "TMS-LD-10482",
+    "Dispatch Consequence",
+    "Next Action",
+    "People On This Record",
+    "Bill of Lading Review",
+    "Document History",
+    "Actions",
+    "Review Path",
+    "Source Records",
+    "Current Review Trail",
+    "Release Packet - TMS-LD-10482",
+    "Readiness Checklist",
+    "Release Decision",
+    "Handoff Preview",
+    "Inspectable Record Items",
+    "Record Detail",
+    "Activity Lines",
+    "Audit Trail (Recent)"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260729/assets/brand/bof-design-system-2/svg/header-lockup.svg",
+    "/recovered-assets/static-20260729/assets/images/profiles/drivers/driver-ref-001.jpg",
+    "/recovered-assets/static-20260729/assets/images/profiles/drivers/driver-ref-002.jpg",
+    "/recovered-assets/static-20260729/assets/images/profiles/drivers/driver-ref-003.jpg",
+    "/recovered-assets/static-20260729/assets/images/profiles/drivers/driver-ref-004.jpg",
+    "/recovered-assets/static-20260729/assets/images/profiles/drivers/driver-ref-005.jpg",
+    "/recovered-assets/static-20260729/assets/images/profiles/drivers/driver-ref-006.jpg",
+    "/recovered-assets/static-20260729/assets/images/profiles/optimized/carrier-ops-png.webp",
+    "/recovered-assets/static-20260729/assets/images/profiles/optimized/operations-lead-png.webp"
+   ],
+   "scripts": []
+  },
+  "/interactive-demo/start": {
+   "words": 165,
+   "headings": [
+    "Delta Advanced Trucking record-backed release review"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260729/assets/brand/bof-design-system-2/svg/header-lockup.svg"
+   ],
+   "scripts": []
+  },
+  "/interactive-demo/loading": {
+   "words": 32,
+   "headings": [
+    "Opening BOF Partner Review"
+   ],
+   "assets": [
+    "/recovered-assets/static-20260729/assets/brand/bof-design-system-2/svg/header-lockup.svg"
+   ],
+   "scripts": []
+  },
+  "/interactive-demo/load-queue": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/dispatch": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/drivers": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/drivers/document-intake": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js",
+    "/recovered-assets/static-20260729/assets/js/vault-document-intake.js"
+   ]
+  },
+  "/interactive-demo/documents": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/carriers": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/safety": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/settlements": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/reports": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/alerts": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/settings": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/drivers/drv-001": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/drivers/drv-002": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/drivers/drv-003": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/drivers/drv-004": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/drivers/drv-005": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/drivers/drv-006": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/drivers/drv-007": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/drivers/drv-008": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/drivers/drv-009": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/drivers/drv-010": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/drivers/drv-011": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  },
+  "/interactive-demo/drivers/drv-012": {
+   "words": 0,
+   "headings": [],
+   "assets": [],
+   "scripts": [
+    "/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js"
+   ]
+  }
+ },
+ "routes": [
+  "/",
+  "/aggregators",
+  "/apply",
+  "/assessment",
+  "/assessment/bof-vault",
+  "/assessment/for-hire-carriers",
+  "/assessment/government-fleets",
+  "/assessment/private-fleets",
+  "/blog",
+  "/blog/[slug]",
+  "/bof-vault",
+  "/bof-vault/accountability-oversight",
+  "/bof-vault/administrative-actions",
+  "/bof-vault/continuity-history",
+  "/bof-vault/exceptions-disputes",
+  "/bof-vault/identity-access",
+  "/bof-vault/intake",
+  "/bof-vault/records-documentation",
+  "/bof-vault/verification-evidence",
+  "/book-assessment",
+  "/business-operations/[[...slug]]",
+  "/careers",
+  "/company",
+  "/contact",
+  "/customer-portal",
+  "/customer-portal/assignment",
+  "/customer-portal/billing",
+  "/customer-portal/documents",
+  "/customer-portal/load-intake",
+  "/customer-portal/quotes",
+  "/customer-portal/shipments",
+  "/customer-portal/tracking",
+  "/demo/command-center",
+  "/demo/dispatch",
+  "/demo/drivers",
+  "/demo/loads",
+  "/demo/scenario",
+  "/demo/settlements",
+  "/driver-experience",
+  "/fleet-operations",
+  "/fleet-savings",
+  "/for-hire-carriers",
+  "/founding-fleet",
+  "/government",
+  "/government/county-operations",
+  "/government/emergency-services",
+  "/government/infrastructure-capital-projects",
+  "/government/municipal-services",
+  "/government/municipal-services/fleet-equipment",
+  "/government/municipal-services/maintenance-inspection",
+  "/government/municipal-services/maintenance-inspection/accountability-documentation",
+  "/government/municipal-services/maintenance-inspection/completion-documentation",
+  "/government/municipal-services/maintenance-inspection/continuity-documentation",
+  "/government/municipal-services/maintenance-inspection/exception-documentation",
+  "/government/municipal-services/maintenance-inspection/inspection-documentation",
+  "/government/municipal-services/maintenance-inspection/maintenance-work-orders",
+  "/government/municipal-services/maintenance-inspection/operational-records",
+  "/government/municipal-services/maintenance-inspection/readiness-documentation",
+  "/government/municipal-services/maintenance-inspection/visibility-documentation",
+  "/government/municipal-services/management-visibility",
+  "/government/municipal-services/safety-incidents-exceptions",
+  "/government/municipal-services/service-documentation",
+  "/government/municipal-services/workforce-administration",
+  "/government/municipal-services/workforce-administration/assignment-documentation",
+  "/government/municipal-services/workforce-administration/certification-tracking",
+  "/government/municipal-services/workforce-administration/qualification-evidence",
+  "/government/municipal-services/workforce-administration/training-documentation",
+  "/government/public-works",
+  "/government/solid-waste",
+  "/government/state-dot",
+  "/government/transit",
+  "/government/utilities",
+  "/how-bof-works",
+  "/interactive-demo/[[...slug]]",
+  "/investors",
+  "/private-fleets",
+  "/private-fleets/driver-management",
+  "/private-fleets/fleet-growth-back-office",
+  "/private-fleets/maintenance-administration",
+  "/private-fleets/safety-risk",
+  "/private-fleets/settlements-payroll",
+  "/product",
+  "/qa",
+  "/services/[[...slug]]",
+  "/team-briefing",
+  "/what-we-do",
+  "/what-we-do/finance",
+  "/what-we-do/operations-compliance",
+  "/what-we-do/people-hr",
+  "/what-we-do/procurement-savings"
+ ]
+}

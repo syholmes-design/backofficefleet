@@ -241,7 +241,7 @@ export function MaintenanceDashboardV4() {
             <div>
               <h1 className="text-3xl font-bold text-white flex items-center gap-3">
                 <Wrench className="w-8 h-8 text-blue-400" />
-                Maintenance Command Center (V4)
+                Maintenance Command Center
               </h1>
               <p className="text-slate-400 mt-2">
                 Operating readiness uses listMaintenanceAssetSummaries / equipment spine (DEMO). Workbook work orders stay REFERENCE.

@@ -1,0 +1,10 @@
+---
+description: BOF content preservation (owner directive)
+alwaysApply: true
+---
+No AI agent may remove, abbreviate, simplify, replace, or materially diminish previously approved BOF
+content, functionality, imagery, or workflows without explicit owner authorization.
+
+Read docs/governance/CONTENT-PRESERVATION-POLICY.md and docs/governance/superseded-decisions.md before
+editing public pages, demos, recovered content or the assessment. Run `npm run check:preservation`
+before committing. "Book a Working Session" is superseded by "Take the Assessment" (/assessment).

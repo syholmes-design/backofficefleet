@@ -141,19 +141,21 @@ function DemoMetric({
   );
 }
 
+/** The five service areas: each opens its service page, which leads on to the detail pages and demos. */
 const HERO_PROOF = [
-  "Recruiting & onboarding",
-  "Qualification & compliance",
-  "Dispatch administration",
-  "Documentation & vault",
-  "Settlements & payroll support",
+  ["Recruiting & onboarding", "/business-operations/driver-onboarding"],
+  ["Qualification & compliance", "/services/drivers"],
+  ["Dispatch administration", "/services/dispatch"],
+  ["Documentation & vault", "/services/documents"],
+  ["Settlements & payroll support", "/services/settlements"],
 ] as const;
 
 const HERO_PATH = [
   ["Capabilities", "#capabilities"],
   ["Trip lifecycle", "#trip-lifecycle"],
-  ["Savings model", "#we-save-you-money"],
-  ["Contact BOF", "/contact"],
+  ["Savings model", "/fleet-savings"],
+  ["Interactive demo", "/interactive-demo"],
+  ["Take the Assessment", "/assessment"],
 ] as const;
 
 export function MarketingHomeHeroExperience() {
@@ -173,12 +175,19 @@ export function MarketingHomeHeroExperience() {
               Technology supports our operators; the service is managed back-office execution.
             </p>
             <ul className="bof-home-proof-list" aria-label="Core service areas">
-              {HERO_PROOF.map((item) => (
-                <li key={item}>{item}</li>
+              {HERO_PROOF.map(([label, href]) => (
+                <li key={href}>
+                  <Link href={href} data-testid="home-service-card">
+                    {label} <span aria-hidden="true">→</span>
+                  </Link>
+                </li>
               ))}
             </ul>
             <div className="bof-home-hero__ctas" aria-label="Primary actions">
-              <Link href="/contact" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              <Link href="/assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary" data-testid="home-take-assessment">
+                Take the Assessment
+              </Link>
+              <Link href="/contact" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
                 Contact BOF
               </Link>
               <Link href="#capabilities" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">

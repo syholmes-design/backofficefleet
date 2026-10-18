@@ -210,7 +210,7 @@ export default function HowBofWorksPage() {
                   LOAD INTAKE
                 </h2>
               </div>
-              <Link href="/api/auth/signin?callbackUrl=%2Fdispatch%2Fintake" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              <Link href="/customer-portal/load-intake" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
                 OPEN LOAD INTAKE &rarr;
               </Link>
             </div>
@@ -270,7 +270,7 @@ export default function HowBofWorksPage() {
                   PRE-TRIP INSPECTION
                 </h2>
               </div>
-              <Link href="/api/auth/signin?callbackUrl=%2Fpretrip%2FL009" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              <Link href="/demo/loads" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
                 OPEN PRE-TRIP &rarr;
               </Link>
             </div>
@@ -388,7 +388,7 @@ export default function HowBofWorksPage() {
             BOF connects the entire lifecycle — from workforce need and recruiting through dispatch, delivery, proof, and settlement.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/book-assessment" className="inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+            <Link href="/assessment" className="inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
               Request a BOF Assessment
             </Link>
             <Link href="/demo/command-center" className="inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">

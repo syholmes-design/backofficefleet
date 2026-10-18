@@ -7406,6 +7406,31 @@ a.bof-mkt-cc-mock-kpi:focus-visible {
   padding: 0.55rem 0.75rem;
 }
 
+.bof-home-proof-list li:has(> a) {
+  padding: 0;
+}
+
+.bof-home-proof-list a {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  color: inherit;
+  text-decoration: none;
+  transition: background-color 150ms ease;
+}
+
+.bof-home-proof-list a:hover {
+  background: rgba(14, 116, 144, 0.45);
+}
+
+.bof-home-proof-list a:focus-visible {
+  outline: 3px solid #7dd3fc;
+  outline-offset: 2px;
+}
+
 .bof-home-hero__ctas {
   display: flex;
   flex-wrap: wrap;
@@ -9347,6 +9372,30 @@ a.bof-home-workflow__step:focus-visible .bof-home-workflow__evidence {
   font-weight: 700;
   line-height: 1.45;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.bof-home-capability-grid > li > a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.bof-home-capability-grid > li > a::after {
+  content: " →";
+  color: #0e7490;
+}
+
+.bof-home-capability-grid > li > a:hover,
+.bof-home-capability-grid > li > a:focus-visible {
+  color: #0e7490;
+  text-decoration: underline;
+}
+
+.bof-home-trip-phase__demo {
+  display: inline-block;
+  margin-top: 0.85rem;
+  color: #0e7490;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 @media (min-width: 960px) {
@@ -19224,5 +19273,6 @@ a.shipper-portal-story-step:focus-visible,
 .bof-recovered-archive-banner { padding: 0.75rem 1rem; background: #fef3c7; color: #78350f; font-size: 0.85rem; text-align: center; }
 .bof-recovered-related { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem; max-width: 72rem; margin: 0 auto; padding: 1.25rem 1rem; font-size: 0.92rem; color: #334155; }
 .bof-recovered-related a { color: #0f766e; font-weight: 600; }
+.bof-demo-notice { margin: 0; padding: 0.5rem 1rem; background: #ecfdf5; color: #065f46; font-size: 0.85rem; text-align: center; }
 /* Recovered pages: site.js scroll-reveal is not loaded, and widgets inject .reveal sections after mount. */
 .bof-legacy .reveal { opacity: 1 !important; transform: none !important; }

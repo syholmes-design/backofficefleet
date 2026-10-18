@@ -259,13 +259,13 @@ export function DispatchBoardScreen({
     <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
       <OpsModuleMasthead
         eyebrow={demoMode ? "Dispatch triage" : "Dispatch"}
-        title={demoMode ? "CRITICAL · MAJOR · MINOR" : "Dispatch board"}
+        title={demoMode ? "Dispatch triage: critical, major and minor issues" : "Dispatch board"}
         description={
           demoMode
             ? "Operational urgency is separate from load readiness. Canonical gates still decide whether a load can move; this board ranks how serious the open issue is."
             : "Loads, assignments, and delivery status for your fleet."
         }
-        imageSrc="/generated/marketing/dispatch-command-center-hero-photo.png"
+        imageSrc="/generated/marketing/dispatch-command-center-hero.png"
         imageAlt="Dispatch command workspace"
         imagePosition="center right"
         chips={

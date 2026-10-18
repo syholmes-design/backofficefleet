@@ -1,0 +1,33 @@
+{
+"route": "/services/settlements/single-record-accountability",
+"generation": "fork-20260819",
+"source": {
+"commit": "e901e6cb",
+"path": "recovered/fork-restored-20260819/settlements/single-record-accountability/index.html",
+"label": "Recovered fork, 2026-08-19 (recovered/fork-restored-20260819)"
+},
+"merges": [],
+"ownerRemovals": [],
+"title": "Settlement Single-Record Accountability | BackOfficeFleet",
+"description": "",
+"bodyClass": "visual-refresh cinematic-site cinematic-narrative gap-page",
+"mainClass": "",
+"mainId": "",
+"mainData": {},
+"ownerReplacements": [
+{
+"from": "A working session qualifies",
+"to": "The BOF assessment qualifies",
+"count": 1
+},
+{
+"from": "superseded booking link",
+"to": "Take the Assessment →",
+"count": 1
+}
+],
+"html": "<section class=\"cinematic-masthead cinematic-masthead--photo settlements-family-masthead\" aria-labelledby=\"gap-title\"><picture class=\"cinematic-masthead__media\"><img src=\"/recovered-assets/fork-20260819/assets/images/cinematic/settlements-single-record-accountability-hero-v1-png.webp\" alt=\"A closeout owner receives the final document for one organized settlement record binder.\" width=\"1680\" height=\"945\" loading=\"eager\" decoding=\"async\" fetchpriority=\"high\"></picture><div aria-hidden=\"true\" class=\"cinematic-masthead__veil\"></div><div aria-hidden=\"true\" class=\"cinematic-masthead__texture\"></div><div class=\"cinematic-masthead__content\"><p class=\"cinematic-hero__eyebrow\">Settlement proof</p><h1 id=\"gap-title\">Connect delivery, proof, adjustment, owner, and next action.</h1><p>BOF gives each settlement one accountable record for the delivered work, supporting proof, rate or pay inputs, adjustments, questions, decisions, responsible owners, and downstream action.</p><a class=\"cinematic-hero__cta\" href=\"/assessment\">Take the Assessment &rarr;</a></div></section>\n<section class=\"section cinematic-detail-proof\"><div class=\"cinematic-proof-grid\"><article class=\"cinematic-proof-card reveal\"><h3>Source record</h3><p>Load or work record, delivery proof, rate or pay basis supplied by the fleet, receipts, deductions, advances, adjustments, and questions.</p></article><article class=\"cinematic-proof-card reveal\"><h3>Review path</h3><p>The record is reviewed for source match, supporting evidence, exception state, owner, approved disposition supplied by the fleet, and clearance condition.</p></article><article class=\"cinematic-proof-card reveal\"><h3>Decision-ready output</h3><p>A ready, watch, or hold settlement record with evidence, chronology, decision, owner, and next move.</p></article></div></section>\n<section class=\"section gap-process\"><div class=\"section-head reveal\"><p class=\"eyebrow\">How the work moves</p><h2>The record keeps the exception, owner, and consequence visible.</h2><p>The settlement does not lose its operating context as it moves between delivery, billing, payroll, finance, and driver follow-up.</p></div><ol class=\"gap-step-list\"><li class=\"gap-step reveal\"><span>01</span><div><h3>Open the source record</h3><p>Load or work record, delivery proof, rate or pay basis supplied by the fleet, receipts, deductions, advances, adjustments, and questions.</p></div></li><li class=\"gap-step reveal\"><span>02</span><div><h3>Review the operating question</h3><p>The record is reviewed for source match, supporting evidence, exception state, owner, approved disposition supplied by the fleet, and clearance condition.</p></div></li><li class=\"gap-step reveal\"><span>03</span><div><h3>Name the exception and owner</h3><p>Unresolved evidence is assigned to a responsible person with a clear request, review state, and condition that must be satisfied before the record moves.</p></div></li><li class=\"gap-step reveal\"><span>04</span><div><h3>Carry the outcome forward</h3><p>A ready, watch, or hold settlement record with evidence, chronology, decision, owner, and next move. The settlement does not lose its operating context as it moves between delivery, billing, payroll, finance, and driver follow-up.</p></div></li></ol></section>\n<section class=\"section gap-boundary\"><div class=\"gap-boundary__copy reveal\"><p class=\"eyebrow\">Qualification</p><h2>Administrative support stays inside a defined boundary.</h2><p>BOF organizes administrative records and does not act as employer, payroll provider, bank, factor, accountant, tax adviser, or payment processor.</p></div><ul class=\"gap-boundary__list reveal\"><li>Public screens, records, statuses, and integration examples are static or synthetic unless a page explicitly states an authorized live capability.</li><li>The fleet, carrier, employer, agency, customer, and qualified professionals retain their operating, legal, safety, regulatory, and financial authority.</li><li>BOF does not guarantee release, acceptance, compliance, payment, collection, savings, audit, safety, or financial outcomes.</li><li>The BOF assessment qualifies the record set, responsible owner, service boundary, intended output, and appropriate next action.</li></ul></section>\n<section class=\"section gap-related\"><div class=\"section-head reveal\"><p class=\"eyebrow\">Direct routes</p><h2>Continue with the route that answers the next buyer question.</h2></div><div class=\"gap-related-grid\"><article class=\"gap-related-card reveal\"><h3>Settlement Audit Trail</h3><p>Continue with the supporting route and inspect the record, boundary, and accountable next action in context.</p><a href=\"/services/settlements/audit-trail\">Open route &rarr;</a></article>\n<article class=\"gap-related-card reveal\"><h3>Finance &amp; Operations Alignment</h3><p>Continue with the supporting route and inspect the record, boundary, and accountable next action in context.</p><a href=\"/services/settlements/finance-operations-alignment\">Open route &rarr;</a></article>\n<article class=\"gap-related-card reveal\"><h3>Operations Record</h3><p>Continue with the supporting route and inspect the record, boundary, and accountable next action in context.</p><a href=\"/demo/command-center\">Open route &rarr;</a></article></div></section>",
+"inlineScripts": [],
+"widgetScripts": [],
+"archive": false
+}

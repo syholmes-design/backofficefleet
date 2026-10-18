@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { PlatformCapabilityLinks, type PlatformCapabilityKey } from "@/components/recovered-site/PlatformCapabilityLinks";
-import { RecoveredPageScripts } from "@/components/recovered-site/RecoveredPageScripts";
-import { loadRecoveredPage, recoveredEntry, recoveredRoutes } from "@/lib/recovered-site/business-operations";
+import type { PlatformCapabilityKey } from "@/components/recovered-site/PlatformCapabilityLinks";
+import { RecoveredPageView } from "@/components/recovered-site/RecoveredPageView";
+import { loadRecoveredPage, recoveredEntry, recoveredRoutes, recoveredSlug } from "@/lib/recovered-site/business-operations";
 
 /**
  * Business Operations: BOF's original pages recovered verbatim from Git history
@@ -14,18 +13,14 @@ export const dynamicParams = false;
 
 type Params = { slug?: string[] };
 
-/** "fork-20260819" -> "2026-08-19" */
-function versionDate(generation: string) {
-  const digits = generation.match(/(\d{4})(\d{2})(\d{2})$/);
-  return digits ? `${digits[1]}-${digits[2]}-${digits[3]}` : "earlier version";
-}
+const SECTION = "/business-operations";
 
 function routeFor(slug: string[] | undefined) {
-  return ["/business-operations", ...(slug ?? [])].join("/");
+  return [SECTION, ...(slug ?? [])].join("/");
 }
 
 export function generateStaticParams(): Params[] {
-  return recoveredRoutes().map((route) => ({ slug: route.split("/").slice(2).filter(Boolean) }));
+  return recoveredRoutes(SECTION).map((route) => ({ slug: recoveredSlug(route, SECTION) }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
@@ -75,40 +70,13 @@ export default async function RecoveredBusinessOperationsPage({ params }: { para
   const route = routeFor(slug);
   const page = await loadRecoveredPage(route);
   if (!page) notFound();
-  const capabilities = CAPABILITIES_BY_ROUTE[route];
-
   return (
-    <>
-      <link rel="stylesheet" href={`/recovered-assets/${page.generation}/scoped.css`} precedence="default" />
-      {page.archive ? (
-        <div className="bof-recovered-archive-banner" role="note">
-          Archived historical version ({versionDate(page.generation)}), kept for owner review and not linked from the public
-          site.
-        </div>
-      ) : null}
-      {/* Provenance (commit and path) stays in docs/recovery/, not in public markup. */}
-      <div className="bof-legacy" data-recovered-route={route}>
-        <div className={`bof-legacy-body ${page.bodyClass}`}>
-          <div
-            className={`bof-legacy-main ${page.mainClass}`}
-            id={page.mainId || undefined}
-            // Verbatim recovered markup from this repository's history (not user input).
-            dangerouslySetInnerHTML={{ __html: page.html }}
-          />
-        </div>
-      </div>
-      {RELATED_BY_ROUTE[route] ? (
-        <nav className="bof-recovered-related" aria-label="Related Business Operations pages">
-          <span>Related Business Operations pages:</span>
-          {RELATED_BY_ROUTE[route].map(([label, href]) => (
-            <Link key={href} href={href}>
-              {label} →
-            </Link>
-          ))}
-        </nav>
-      ) : null}
-      {capabilities ? <PlatformCapabilityLinks keys={capabilities} currentRoute={route} /> : null}
-      <RecoveredPageScripts inlineScripts={page.inlineScripts} widgetScripts={page.widgetScripts} />
-    </>
+    <RecoveredPageView
+      page={page}
+      route={route}
+      related={RELATED_BY_ROUTE[route]}
+      relatedLabel="Related Business Operations pages"
+      capabilities={CAPABILITIES_BY_ROUTE[route]}
+    />
   );
 }

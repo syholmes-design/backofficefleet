@@ -22,13 +22,13 @@ const INCLUDED = [
   {
     title: "Driver Portal",
     body: "Assignments, readiness, trip documents, settlement review, and controlled driver communication.",
-    href: "/portals/driver",
+    href: "/interactive-demo/drivers",
     icon: <IconShield />,
   },
   {
     title: "Customer Portal",
     body: "Shipment visibility, proof, exceptions, and invoice readiness in a customer-safe view.",
-    href: "/portals/customer",
+    href: "/customer-portal",
     icon: <IconLoadProof />,
   },
   {

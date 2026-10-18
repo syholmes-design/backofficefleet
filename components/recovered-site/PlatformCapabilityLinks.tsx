@@ -2,8 +2,8 @@ import Link from "next/link";
 
 /**
  * Connects Business Operations explanations to the existing BOF platform.
- * Each capability offers a public demonstration (synthetic data, no sign-in)
- * and a sign-in path to the live, tenant-scoped workspace.
+ * Each capability offers two public demonstrations (fictional records, no sign-in).
+ * Real customer records stay in the signed-in, tenant-scoped workspace.
  * Destinations are existing routes; nothing here duplicates an operational system.
  */
 export const PLATFORM_CAPABILITIES = {
@@ -11,19 +11,19 @@ export const PLATFORM_CAPABILITIES = {
     title: "Driver Onboarding",
     body: "Applicant intake, document collection, qualification review and administrative activation, kept as separate lifecycle states.",
     demo: { href: "/business-operations/hr-tier/recruiting-onboarding", label: "Try the recruiting and onboarding workspace (sample candidates)" },
-    live: { href: "/api/auth/signin?callbackUrl=%2Frecruiting", label: "Sign in to recruiting and onboarding" },
+    second: { href: "/interactive-demo/drivers/document-intake", label: "Walk through driver document intake" },
   },
   "driver-compliance-documents": {
     title: "Driver Compliance Documents",
     body: "Driver qualification file documents with review status, expirations and the gaps that block assignment readiness.",
     demo: { href: "/documents", label: "Open the driver file cabinet (sample documents)" },
-    live: { href: "/api/auth/signin?callbackUrl=%2Fdrivers", label: "Sign in to driver records" },
+    second: { href: "/interactive-demo/drivers", label: "Open the driver files demo" },
   },
   "dispatch-assignment": {
     title: "Dispatch Assignment",
     body: "Assignment decisions gated by driver qualification, readiness and document evidence before a load is released.",
     demo: { href: "/demo/dispatch", label: "View the dispatch demonstration" },
-    live: { href: "/api/auth/signin?callbackUrl=%2Fdispatch", label: "Sign in to dispatch" },
+    second: { href: "/interactive-demo/dispatch", label: "Open the interactive dispatch board" },
   },
 } as const;
 
@@ -46,8 +46,8 @@ export function PlatformCapabilityLinks({
           {heading ?? "See this work in the operating platform."}
         </h2>
         <p className="bof-capabilities-note">
-          Demonstrations use synthetic records and need no sign-in. Live workspaces require a BOF account and show only the
-          fleets you are authorized to see.
+          Demonstrations use fictional records and need no sign-in. Customer workspaces with real records require a BOF
+          account and show only the fleets you are authorized to see.
         </p>
         <div className="bof-capabilities-grid">
           {keys.map((key) => {
@@ -64,14 +64,19 @@ export function PlatformCapabilityLinks({
                       {cap.demo.label} →
                     </Link>
                   )}
-                  <a href={cap.live.href} className="bof-capability-live">
-                    {cap.live.label}
-                  </a>
+                  <Link href={cap.second.href} className="bof-capability-live">
+                    {cap.second.label} →
+                  </Link>
                 </div>
               </article>
             );
           })}
         </div>
+        <p className="bof-capabilities-note">
+          <Link href="/assessment" className="bof-capability-demo">
+            Take the Assessment →
+          </Link>
+        </p>
       </div>
     </section>
   );

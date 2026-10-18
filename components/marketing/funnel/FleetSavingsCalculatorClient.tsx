@@ -318,7 +318,7 @@ export function FleetSavingsCalculatorClient({ embedded = false }: { embedded?: 
                 ))}
               </ul>
               <div className="bof-mkt-funnel-actions bof-mkt-funnel-actions--stack">
-                <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+                <Link href="/assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
                   Take The Assessment
                 </Link>
                 <Link href="/apply" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">

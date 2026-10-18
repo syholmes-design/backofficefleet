@@ -169,7 +169,7 @@ export default function ForHireCarriersPage() {
         ctas={
           <>
             <Link
-              href="/book-assessment"
+              href="/assessment"
               className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary"
             >
               Book Fleet Assessment
@@ -364,7 +364,7 @@ export default function ForHireCarriersPage() {
         title="See the carrier-grade BOF command center on your data"
         lead="Book a fleet assessment. We map dispatch risk, credential drift, and settlement pressure—then show how BOF would govern it in production."
       >
-        <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+        <Link href="/assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
           Book Fleet Assessment
         </Link>
         <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">

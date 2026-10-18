@@ -1,0 +1,33 @@
+{
+"route": "/services/drivers/communication",
+"generation": "fork-20260819",
+"source": {
+"commit": "e901e6cb",
+"path": "recovered/fork-restored-20260819/drivers/communication/index.html",
+"label": "Recovered fork, 2026-08-19 (recovered/fork-restored-20260819)"
+},
+"merges": [],
+"ownerRemovals": [],
+"title": "Driver Communication | BackOfficeFleet",
+"description": "",
+"bodyClass": "visual-refresh cinematic-site cinematic-narrative gap-page",
+"mainClass": "",
+"mainId": "",
+"mainData": {},
+"ownerReplacements": [
+{
+"from": "A working session qualifies",
+"to": "The BOF assessment qualifies",
+"count": 1
+},
+{
+"from": "superseded booking link",
+"to": "Take the Assessment →",
+"count": 1
+}
+],
+"html": "<section class=\"cinematic-masthead cinematic-masthead--photo gap-masthead driver-family-masthead\" aria-labelledby=\"gap-title\"><picture class=\"cinematic-masthead__media\"><img alt=\"Professional driver making a recorded terminal check-in beside a parked tractor\" decoding=\"async\" fetchpriority=\"high\" height=\"1024\" src=\"/recovered-assets/fork-20260819/assets/images/cinematic/drivers-communication-hero-v1-png.webp\" width=\"1536\"/></picture><div aria-hidden=\"true\" class=\"cinematic-masthead__veil\"></div><div aria-hidden=\"true\" class=\"cinematic-masthead__texture\"></div><div class=\"cinematic-masthead__content\"><p class=\"cinematic-hero__eyebrow\">Driver readiness</p><h1 id=\"gap-title\">Make driver follow-up accountable to a record.</h1><p>BOF connects a driver request or update to its purpose, responsible owner, acknowledgement state, escalation path, supporting record, and next action.</p><a class=\"cinematic-hero__cta\" href=\"/assessment\">Take the Assessment &rarr;</a></div></section>\n<section class=\"section cinematic-detail-proof\"><div class=\"cinematic-proof-grid\"><article class=\"cinematic-proof-card reveal\"><h3>Source record</h3><p>Driver-related operating event, approved facts, requested document or action, responsible owner, due context, and communication status.</p></article><article class=\"cinematic-proof-card reveal\"><h3>Review path</h3><p>The record distinguishes requested, sent, acknowledged, unresolved, and escalated states and keeps the supporting evidence nearby.</p></article><article class=\"cinematic-proof-card reveal\"><h3>Decision-ready output</h3><p>A traceable communication item with purpose, owner, status, evidence, expected action, and operating consequence.</p></article></div></section>\n<section class=\"section gap-process\"><div class=\"section-head reveal\"><p class=\"eyebrow\">How the work moves</p><h2>The record keeps the exception, owner, and consequence visible.</h2><p>Unanswered or unclear follow-up stays visible before it becomes a dispatch, payroll, document, or settlement issue.</p></div><ol class=\"gap-step-list\"><li class=\"gap-step reveal\"><span>01</span><div><h3>Open the source record</h3><p>Driver-related operating event, approved facts, requested document or action, responsible owner, due context, and communication status.</p></div></li><li class=\"gap-step reveal\"><span>02</span><div><h3>Review the operating question</h3><p>The record distinguishes requested, sent, acknowledged, unresolved, and escalated states and keeps the supporting evidence nearby.</p></div></li><li class=\"gap-step reveal\"><span>03</span><div><h3>Name the exception and owner</h3><p>Unresolved evidence is assigned to a responsible person with a clear request, review state, and condition that must be satisfied before the record moves.</p></div></li><li class=\"gap-step reveal\"><span>04</span><div><h3>Carry the outcome forward</h3><p>A traceable communication item with purpose, owner, status, evidence, expected action, and operating consequence. Unanswered or unclear follow-up stays visible before it becomes a dispatch, payroll, document, or settlement issue.</p></div></li></ol></section>\n<section class=\"section gap-boundary\"><div class=\"gap-boundary__copy reveal\"><p class=\"eyebrow\">Qualification</p><h2>Administrative support stays inside a defined boundary.</h2><p>BOF is not presented as a messaging carrier, employer, dispatch authority, or emergency communication system.</p></div><ul class=\"gap-boundary__list reveal\"><li>Public screens, records, statuses, and integration examples are static or synthetic unless a page explicitly states an authorized live capability.</li><li>The fleet, carrier, employer, agency, customer, and qualified professionals retain their operating, legal, safety, regulatory, and financial authority.</li><li>BOF does not guarantee release, acceptance, compliance, payment, collection, savings, audit, safety, or financial outcomes.</li><li>The BOF assessment qualifies the record set, responsible owner, service boundary, intended output, and appropriate next action.</li></ul></section>\n<section class=\"section gap-related\"><div class=\"section-head reveal\"><p class=\"eyebrow\">Direct routes</p><h2>Continue with the route that answers the next buyer question.</h2></div><div class=\"gap-related-grid\"><article class=\"gap-related-card reveal\"><h3>Driver Compliance Documents</h3><p>Continue with the supporting route and inspect the record, boundary, and accountable next action in context.</p><a href=\"/services/drivers/compliance-documents\">Open route &rarr;</a></article>\n<article class=\"gap-related-card reveal\"><h3>Driver Onboarding</h3><p>Continue with the supporting route and inspect the record, boundary, and accountable next action in context.</p><a href=\"/services/drivers/onboarding\">Open route &rarr;</a></article>\n<article class=\"gap-related-card reveal\"><h3>Customer Communication</h3><p>Continue with the supporting route and inspect the record, boundary, and accountable next action in context.</p><a href=\"/customer-portal\">Open route &rarr;</a></article></div></section>",
+"inlineScripts": [],
+"widgetScripts": [],
+"archive": false
+}

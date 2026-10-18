@@ -26,10 +26,12 @@ export const PUBLIC_MARKETING_SEGMENTS = [
   "founding-fleet",
   "government",
   "how-bof-works",
+  "interactive-demo",
   "investors",
   "private-fleets",
   "product",
   "qa",
+  "services",
   "team-briefing",
   "what-we-do",
 ] as const;

@@ -8,6 +8,17 @@ All BOF engineering work must comply with:
 
 That document defines the business model, six-agent collaboration model, authoritative-data standards, security boundaries, production verification requirements, and independent engineering judgment expectations.
 
+## Content preservation (owner directive, binding on every agent)
+
+No AI agent may remove, abbreviate, simplify, replace, or materially diminish previously approved BOF
+content, functionality, imagery, or workflows without explicit owner authorization. This applies to
+Claude, Cursor, GitHub Copilot, Google Antigravity, Codex and any future tool.
+
+- Policy: [docs/governance/CONTENT-PRESERVATION-POLICY.md](docs/governance/CONTENT-PRESERVATION-POLICY.md)
+- Superseded decisions (do not reintroduce, e.g. "Book a Working Session" → "Take the Assessment"):
+  [docs/governance/superseded-decisions.md](docs/governance/superseded-decisions.md)
+- Check before committing: `npm run check:preservation` (manifest: `docs/governance/preservation-manifest.json`)
+
 ## Quick pointers
 
 | Topic | Document / location |

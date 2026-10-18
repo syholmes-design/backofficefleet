@@ -20,6 +20,8 @@ const GENERATIONS = {
   "static-20260729": { commit: "66929e67", root: "Website", sheets: ["/assets/css/styles.css"] },
   "static-20260701": { commit: "46b2c464", root: "Website", sheets: ["/assets/css/styles.css"] },
   "fork-20260819": { commit: "e901e6cb", root: "recovered/fork-restored-20260819", sheets: ["/assets/css/styles.css", "/assets/css/cinematic-site.css"] },
+  "static-20260710": { commit: "7333dacf", root: "Website", sheets: ["/assets/css/styles.css"] },
+  "static-20260720": { commit: "db03d3be", root: "Website", sheets: ["/assets/css/styles.css"] },
 };
 
 function gitShow(commit, file) {
@@ -60,6 +62,17 @@ for (const file of readdirSync(CONTENT_DIR)) {
   const set = (usedClasses[page.generation] ??= new Set());
   for (const m of page.html.matchAll(/class="([^"]*)"/g)) m[1].split(/\s+/).forEach((c) => c && set.add(c));
   `${page.bodyClass} ${page.mainClass}`.split(/\s+/).forEach((c) => c && set.add(c));
+  // Widget scripts (e.g. the interactive demo) build their markup at runtime: count their class names too.
+  for (const script of page.widgetScripts) {
+    let js = "";
+    try {
+      js = readFileSync(path.join(ROOT, "public", script), "utf8");
+    } catch {
+      continue;
+    }
+    for (const m of js.matchAll(/class=\\?["']([^"'\\]*)/g)) m[1].split(/\s+/).forEach((c) => c && set.add(c));
+    for (const m of js.matchAll(/classList\.(?:add|toggle)\(["']([^"']+)["']/g)) set.add(m[1]);
+  }
 }
 
 function ruleCanMatch(rule, gen) {

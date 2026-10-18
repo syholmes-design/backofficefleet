@@ -19,22 +19,23 @@ const WHY_OUTSOURCE = [
 ] as const;
 
 export const BOF_SERVICE_CAPABILITIES = [
-  "Driver recruiting and onboarding",
-  "Driver qualification and compliance",
-  "Fleet activation and operational readiness",
-  "Dispatch and load administration",
-  "Document collection and management",
-  "Safety and regulatory administration",
-  "Settlement processing",
-  "Payroll and financial administration",
-  "Accounting and bookkeeping support",
-  "Operational exception management",
-  "Customer communications and administrative support",
+  ["Driver recruiting and onboarding", "/business-operations/driver-onboarding"],
+  ["Driver qualification and compliance", "/services/drivers/compliance-documents"],
+  ["Fleet activation and operational readiness", "/services/fleet"],
+  ["Dispatch and load administration", "/services/dispatch"],
+  ["Document collection and management", "/services/documents"],
+  ["Safety and regulatory administration", "/services/safety"],
+  ["Settlement processing", "/services/settlements"],
+  ["Payroll and financial administration", "/business-operations/payroll-administration"],
+  ["Accounting and bookkeeping support", "/business-operations/accounting-finance"],
+  ["Operational exception management", "/business-operations/operational-reporting"],
+  ["Customer communications and administrative support", "/customer-portal"],
 ] as const;
 
 const TRIP_PHASES = [
   {
     phase: "Pre-trip",
+    demo: ["See pre-trip load status", "/demo/loads"],
     summary: "People, equipment, and paperwork are ready before freight moves.",
     items: [
       "Driver qualification and credential tracking",
@@ -45,6 +46,7 @@ const TRIP_PHASES = [
   },
   {
     phase: "In-route",
+    demo: ["Open the interactive dispatch board", "/interactive-demo/dispatch"],
     summary: "Coordination and evidence stay connected while the load is active.",
     items: [
       "Operational coordination and status follow-through",
@@ -55,6 +57,7 @@ const TRIP_PHASES = [
   },
   {
     phase: "Post-trip",
+    demo: ["See settlement holds and proof", "/demo/settlements"],
     summary: "Close the movement in finance and reporting—not in scattered inboxes.",
     items: [
       "Proof-of-delivery and packet administration",
@@ -121,8 +124,10 @@ export function MarketingHomeCapabilities() {
           </p>
         </div>
         <ul className="bof-home-capability-grid">
-          {BOF_SERVICE_CAPABILITIES.map((item) => (
-            <li key={item}>{item}</li>
+          {BOF_SERVICE_CAPABILITIES.map(([item, href]) => (
+            <li key={item}>
+              <Link href={href}>{item}</Link>
+            </li>
           ))}
         </ul>
       </div>
@@ -152,6 +157,9 @@ export function MarketingHomeTripPhases() {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+              <Link href={block.demo[1]} className="bof-home-trip-phase__demo">
+                {block.demo[0]} →
+              </Link>
             </article>
           ))}
         </div>

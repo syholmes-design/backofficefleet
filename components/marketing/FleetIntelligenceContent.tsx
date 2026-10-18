@@ -51,7 +51,7 @@ export const FLEET_INTELLIGENCE_ARTICLES: FleetIntelligenceArticle[] = [
       { label: "Open Command Center", href: "/demo/command-center" },
       { label: "Open Dispatch", href: "/demo/dispatch" },
       { label: "Open Loads", href: "/demo/loads" },
-      { label: "Review Driver Records", href: "/api/auth/signin?callbackUrl=%2Fdrivers" },
+      { label: "Review Driver Records", href: "/interactive-demo/drivers" },
       { label: "Open Documents", href: "/documents" },
     ],
     sections: [
@@ -319,7 +319,7 @@ export const FLEET_INTELLIGENCE_ARTICLES: FleetIntelligenceArticle[] = [
     category: "Compliance Modernization",
     date: "May 22, 2026",
     relatedLinks: [
-      { label: "Review Driver Readiness", href: "/api/auth/signin?callbackUrl=%2Fdrivers" },
+      { label: "Review Driver Readiness", href: "/interactive-demo/drivers" },
       { label: "Open Command Center", href: "/demo/command-center" },
     ],
     sections: [
@@ -506,7 +506,7 @@ export function FleetIntelligenceIndexPage() {
             Explore the operating system or apply to help shape the Founding Fleet Program.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+            <Link href="/assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
               Request a BOF Assessment
             </Link>
             <Link href="/demo/command-center" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
@@ -583,7 +583,7 @@ export function FleetIntelligenceArticlePage({ article }: { article: FleetIntell
         <div className="bof-mkt-container rounded-[2rem] border border-white/10 bg-white/5 p-8 text-center md:p-12">
           <h2>Turn this thinking into an enforced operating system.</h2>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+            <Link href="/assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
               Request a BOF Assessment
             </Link>
             <Link href="/demo/command-center" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">

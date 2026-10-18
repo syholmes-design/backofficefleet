@@ -1,0 +1,27 @@
+{
+"route": "/interactive-demo/drivers/document-intake",
+"generation": "static-20260729",
+"source": {
+"commit": "66929e67",
+"path": "Website/interactive-demo/drivers/document-intake/index.html",
+"label": "Static BOF site, 2026-07-29 (origin/codex/public-site-deployment-candidate)"
+},
+"merges": [],
+"ownerRemovals": [],
+"title": "BOF Vault Document Intake | BOF Control Center",
+"description": "",
+"bodyClass": "product-demo-body",
+"mainClass": "",
+"mainId": "",
+"mainData": {
+"data-demo-route-page": ""
+},
+"ownerReplacements": [],
+"html": "",
+"inlineScripts": [],
+"widgetScripts": [
+"/recovered-assets/static-20260729/assets/js/interactive-demo-routes.js",
+"/recovered-assets/static-20260729/assets/js/vault-document-intake.js"
+],
+"archive": false
+}

@@ -35,6 +35,16 @@ const businessOperations = [
   ["Accounting & Finance", "/business-operations/accounting-finance"],
 ] as const;
 
+const services = [
+  ["Dispatch Administration", "/services/dispatch"],
+  ["Driver Qualification & Readiness", "/services/drivers"],
+  ["Documentation & Vault", "/services/documents"],
+  ["Safety & Compliance", "/services/safety"],
+  ["Settlements & Payroll Support", "/services/settlements"],
+  ["Fleet Operations", "/services/fleet"],
+  ["Interactive demo", "/interactive-demo"],
+] as const;
+
 const documents = [
   ["Documents", "/documents"],
   ["Company Operations Vault", "/documents/company-operations-vault"],
@@ -47,7 +57,7 @@ const moreSite = [
   ["Founding Fleet", "/founding-fleet"],
 ] as const;
 
-type MenuName = "sectors" | "what-we-do" | "business-operations" | "documents" | "more";
+type MenuName = "sectors" | "services" | "what-we-do" | "business-operations" | "documents" | "more";
 type MenuLink = readonly [string, string];
 
 function MenuLinks({ links, onSelect }: { links: readonly MenuLink[]; onSelect: () => void }) {
@@ -93,7 +103,7 @@ export function MarketingNavigation() {
           </Link>
 
           <div className="hidden shrink-0 items-center gap-2 xl:flex">
-            <HeaderLink href="/book-assessment?source=header-marketing" label="Request a BOF Assessment" active={isActive("/book-assessment")} />
+            <HeaderLink href="/assessment" label="Take the Assessment" active={isActive("/assessment")} />
             <a
               href={BOF_RUNTIME_LINKS.dashboard}
               className="inline-flex shrink-0 whitespace-nowrap rounded-md bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700"
@@ -116,6 +126,7 @@ export function MarketingNavigation() {
         <div className="hidden w-full flex-wrap items-center gap-x-0.5 gap-y-1 border-t border-gray-100 py-1.5 xl:flex">
           <DesktopMenu label="Sectors" name="sectors" links={sectors} openMenu={openMenu} onToggle={toggleMenu} onSelect={closeMenus} />
           <HeaderLink href="/how-bof-works" label="How BOF Works" active={isActive("/how-bof-works")} />
+          <DesktopMenu label="Services" name="services" links={services} openMenu={openMenu} onToggle={toggleMenu} onSelect={closeMenus} />
           <DesktopMenu label="What We Do" name="what-we-do" links={whatWeDo} openMenu={openMenu} onToggle={toggleMenu} onSelect={closeMenus} />
           <DesktopMenu label="Business Operations" name="business-operations" links={businessOperations} openMenu={openMenu} onToggle={toggleMenu} onSelect={closeMenus} />
           <DesktopMenu label="Documents" name="documents" links={documents} openMenu={openMenu} onToggle={toggleMenu} onSelect={closeMenus} />
@@ -128,6 +139,7 @@ export function MarketingNavigation() {
         {isMobileMenuOpen ? (
           <div className="border-t border-gray-200 py-3 xl:hidden">
             <MobileMenuGroup label="Sectors" links={sectors} onSelect={closeMobileMenu} />
+            <MobileMenuGroup label="Services" links={services} onSelect={closeMobileMenu} />
             <MobileMenuGroup label="What We Do" links={whatWeDo} onSelect={closeMobileMenu} />
             <MobileMenuGroup label="Business Operations" links={businessOperations} onSelect={closeMobileMenu} />
             <MobileMenuGroup label="Documents" links={documents} onSelect={closeMobileMenu} />
@@ -137,7 +149,7 @@ export function MarketingNavigation() {
               <MobileLink href="/qa" label="Q&A" onSelect={closeMobileMenu} />
               <MobileLink href="/company" label="Who Are We?" onSelect={closeMobileMenu} />
               <MobileLink href="/blog" label="Insights" onSelect={closeMobileMenu} />
-              <MobileLink href="/book-assessment?source=header-marketing" label="Request a BOF Assessment" onSelect={closeMobileMenu} />
+              <MobileLink href="/assessment" label="Take the Assessment" onSelect={closeMobileMenu} />
               <a href={BOF_RUNTIME_LINKS.dashboard} className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white" onClick={closeMobileMenu}>
                 See BOF in Action
               </a>

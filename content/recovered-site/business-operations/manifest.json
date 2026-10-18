@@ -292,5 +292,320 @@
   "description": "",
   "generation": "fork-20260819",
   "archive": true
+ },
+ "/services/dispatch": {
+  "key": "services__dispatch",
+  "title": "Dispatch Board | BackOfficeFleet",
+  "description": "BOF dispatch board showing TMS imported load movement, release records, blockers, owners, and next actions.",
+  "generation": "static-20260710",
+  "archive": false
+ },
+ "/services/drivers": {
+  "key": "services__drivers",
+  "title": "Driver Readiness | BackOfficeFleet",
+  "description": "BOF driver eligibility view for TMS imported loads with credentials, document health, safety status, dispatch eligibility, and next actions.",
+  "generation": "static-20260710",
+  "archive": false
+ },
+ "/services/safety": {
+  "key": "services__safety",
+  "title": "Safety Command Center | BackOfficeFleet",
+  "description": "BOF safety command page for driver risk, dispatch blocks, credential status, evidence packets, settlement holds, claims exposure, and coaching actions.",
+  "generation": "static-20260710",
+  "archive": false
+ },
+ "/services/settlements": {
+  "key": "services__settlements",
+  "title": "Settlements Command Center | BackOfficeFleet",
+  "description": "BOF settlement workflow support for trucking settlement documents, driver pay calculations, contractor settlement statements, POD billing delays, factoring packet readiness, and cash-flow visibility.",
+  "generation": "static-20260710",
+  "archive": false
+ },
+ "/services/documents": {
+  "key": "services__documents",
+  "title": "Document Control | BackOfficeFleet",
+  "description": "BOF document control for TMS imported loads, release packets, driver records, carrier packet status, and review-ready transportation paperwork.",
+  "generation": "static-20260720",
+  "archive": false
+ },
+ "/services/fleet": {
+  "key": "services__fleet",
+  "title": "Load Readiness | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": false
+ },
+ "/services/drivers/onboarding": {
+  "key": "services__drivers__onboarding",
+  "title": "Driver Onboarding | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": false
+ },
+ "/services/drivers/compliance-documents": {
+  "key": "services__drivers__compliance-documents",
+  "title": "Driver Compliance Documents | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": false
+ },
+ "/services/drivers/communication": {
+  "key": "services__drivers__communication",
+  "title": "Driver Communication | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": false
+ },
+ "/services/drivers/settlements-payments": {
+  "key": "services__drivers__settlements-payments",
+  "title": "Driver Settlements and Payments | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": false
+ },
+ "/services/settlements/audit-trail": {
+  "key": "services__settlements__audit-trail",
+  "title": "Settlement Audit Trail | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": false
+ },
+ "/services/settlements/exception-visibility": {
+  "key": "services__settlements__exception-visibility",
+  "title": "Settlement Exception Visibility | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": false
+ },
+ "/services/settlements/finance-operations-alignment": {
+  "key": "services__settlements__finance-operations-alignment",
+  "title": "Settlement Finance and Operations Alignment | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": false
+ },
+ "/services/settlements/single-record-accountability": {
+  "key": "services__settlements__single-record-accountability",
+  "title": "Settlement Single-Record Accountability | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": false
+ },
+ "/services/archive/dispatch-2026-08-19": {
+  "key": "services__archive__dispatch-2026-08-19",
+  "title": "Dispatch Board | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": true
+ },
+ "/services/archive/drivers-2026-08-19": {
+  "key": "services__archive__drivers-2026-08-19",
+  "title": "Driver Readiness | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": true
+ },
+ "/services/archive/documents-2026-08-19": {
+  "key": "services__archive__documents-2026-08-19",
+  "title": "Document Control | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": true
+ },
+ "/services/archive/safety-2026-08-19": {
+  "key": "services__archive__safety-2026-08-19",
+  "title": "Safety Command Center | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": true
+ },
+ "/services/archive/settlements-2026-08-19": {
+  "key": "services__archive__settlements-2026-08-19",
+  "title": "Settlements Command Center | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": true
+ },
+ "/interactive-demo": {
+  "key": "interactive-demo",
+  "title": "Try Partner TMS Release Review | BackOfficeFleet",
+  "description": "Enter a BOF control-center session for Partner TMS import TMS-LD-10482, inspect BOF-RR-10482, open records, and make the release decision.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/start": {
+  "key": "interactive-demo__start",
+  "title": "Start Partner TMS Release Review | BackOfficeFleet",
+  "description": "Start a BOF control-center preview for a Partner TMS import release review.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/loading": {
+  "key": "interactive-demo__loading",
+  "title": "Opening Partner TMS Release Review | BackOfficeFleet",
+  "description": "BOF is opening the Partner TMS import review and preparing the release queue.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/load-queue": {
+  "key": "interactive-demo__load-queue",
+  "title": "Load Queue | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/dispatch": {
+  "key": "interactive-demo__dispatch",
+  "title": "Dispatch Board | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/drivers": {
+  "key": "interactive-demo__drivers",
+  "title": "Driver Records | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/drivers/document-intake": {
+  "key": "interactive-demo__drivers__document-intake",
+  "title": "BOF Vault Document Intake | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/documents": {
+  "key": "interactive-demo__documents",
+  "title": "Document Records | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/carriers": {
+  "key": "interactive-demo__carriers",
+  "title": "Carrier Packets | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/safety": {
+  "key": "interactive-demo__safety",
+  "title": "Safety & Compliance | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/settlements": {
+  "key": "interactive-demo__settlements",
+  "title": "Settlements | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/reports": {
+  "key": "interactive-demo__reports",
+  "title": "Reports | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/alerts": {
+  "key": "interactive-demo__alerts",
+  "title": "Alerts | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/settings": {
+  "key": "interactive-demo__settings",
+  "title": "Settings | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/drivers/drv-001": {
+  "key": "interactive-demo__drivers__drv-001",
+  "title": "DRV-001 Driver File | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/drivers/drv-002": {
+  "key": "interactive-demo__drivers__drv-002",
+  "title": "DRV-002 Driver File | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/drivers/drv-003": {
+  "key": "interactive-demo__drivers__drv-003",
+  "title": "DRV-003 Driver File | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/drivers/drv-004": {
+  "key": "interactive-demo__drivers__drv-004",
+  "title": "DRV-004 Driver File | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/drivers/drv-005": {
+  "key": "interactive-demo__drivers__drv-005",
+  "title": "DRV-005 Driver File | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/drivers/drv-006": {
+  "key": "interactive-demo__drivers__drv-006",
+  "title": "DRV-006 Driver File | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/drivers/drv-007": {
+  "key": "interactive-demo__drivers__drv-007",
+  "title": "DRV-007 Driver File | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/drivers/drv-008": {
+  "key": "interactive-demo__drivers__drv-008",
+  "title": "DRV-008 Driver File | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/drivers/drv-009": {
+  "key": "interactive-demo__drivers__drv-009",
+  "title": "DRV-009 Driver File | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/drivers/drv-010": {
+  "key": "interactive-demo__drivers__drv-010",
+  "title": "DRV-010 Driver File | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/drivers/drv-011": {
+  "key": "interactive-demo__drivers__drv-011",
+  "title": "DRV-011 Driver File | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/interactive-demo/drivers/drv-012": {
+  "key": "interactive-demo__drivers__drv-012",
+  "title": "DRV-012 Driver File | BOF Control Center",
+  "description": "",
+  "generation": "static-20260729",
+  "archive": false
  }
 }

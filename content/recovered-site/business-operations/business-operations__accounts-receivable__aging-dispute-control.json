@@ -13,6 +13,8 @@
 "bodyClass": "premium-site page-business-operations",
 "mainClass": "workflow-dashboard-page business-ops-content-page",
 "mainId": "",
+"mainData": {},
+"ownerReplacements": [],
 "html": "<section class=\"section page-hero business-ops-detail-hero\"><div class=\"reveal\"><p class=\"eyebrow\">Accounts Receivable / Aging &amp; Dispute Control</p><h1>Make every open invoice explainable.</h1><p>Open AR should show amount, age, customer, packet status, dispute category, factoring support, last touch, next touch, and owner.</p><div class=\"actions\"><a class=\"button primary\" href=\"/business-operations/accounts-receivable\">Accounts Receivable</a><a class=\"button secondary\" href=\"/business-operations/customer-billing\">Customer Billing</a></div></div><aside class=\"ops-brief-card reveal\"><p class=\"eyebrow\">Review logic</p><h2>Reason codes make follow-up faster.</h2><p>Missing POD, rate mismatch, detention approval, claim review, customer reference gap, and normal aging each need different action.</p></aside></section>\n<section class=\"section\"><div class=\"ops-detail-grid\"><article class=\"ops-detail-card reveal\"><span>Aging buckets</span><h3>Group open invoices by urgency and reason.</h3><p>Current, watch, follow-up, disputed, blocked, and escalated buckets help the office act without losing context.</p></article><article class=\"ops-detail-card reveal\"><span>Dispute evidence</span><h3>Connect the dispute to the packet.</h3><p>Customer notes, proof documents, rate support, claim evidence, and owner follow-up stay attached to the invoice record.</p></article></div></section>",
 "inlineScripts": [],
 "widgetScripts": [],
