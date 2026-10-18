@@ -15,7 +15,7 @@
 | 2. Authentication | A central, deny-by-default session gate (`middleware.ts`) now protects every private operating page and API. Public marketing, assessments, demonstrations and the two public submission forms stay open. 88 live HTTP/browser checks pass, including 16 bypass attempts (file extensions, encodings, RSC headers, the CVE-2025-29927 header). |
 | 3. Recruiting tenant isolation | Every Recruiting V2 candidate query is now restricted in the database query to the user's fleets, their aggregator's affiliated fleets, or (for BOF staff) all fleets. Cross-fleet activation is blocked. 8 database tests and 8 live HTTP tenancy checks pass. |
 | 4. Public presentation | The developer-style hub heading is removed (recorded as an owner-directed removal). Commit identifiers no longer appear in public markup. The original stylesheet and recovered design are unchanged. |
-| 5. Verification | Full regression suite: no new failures, and one previously failing validator now passes. Recovered-content fidelity is intact. Website browser checks 87/87. Link matrix 338/338 OK. **Two independent review rounds rejected earlier versions** of this work, for privacy leaks and a gate bypass. Every finding is fixed and re-verified with stronger checks, and a third round reviewed the result (section 7). |
+| 5. Verification | Full regression suite: no new failures, and one previously failing validator now passes. Recovered-content fidelity is intact. Website browser checks 87/87. Link matrix 338/338 OK. **Two independent review rounds rejected earlier versions** of this work, for privacy leaks and a gate bypass. Every finding is fixed and re-verified with stronger checks. A third review round **approved with conditions**: no blocker or major findings, and the conditions are the Git-history decision plus two minor items, both fixed (section 7). |
 
 ---
 
@@ -265,7 +265,7 @@ The scanner searches for every original value in every format the replacements c
 
 ## 7. Independent review
 
-Each review was performed by a separate agent that did not write the code. Two review rounds took place on the security changes, one on the first version and one on the fixes. This is not a claim of multiple independent approvals of the same work.
+Each review was performed by a separate agent that did not write the code. Three review rounds took place on the security changes: the first version, the round-1 fixes and the round-2 fixes. Each round is one review. This is not a claim of multiple independent approvals of the same work.
 
 ### Round 1: verdict REJECT
 
@@ -297,10 +297,30 @@ The redacted report is [`independent-security-review-2.md`](independent-security
 | m3 | `/generated/*.ext` paths are public static files, but missing files are rewritten to the private `/api/bof-generated` handler. | Accepted and documented: that handler checks the session itself (anonymous request returns 401). |
 | m4 | A candidate with tenant B and an activation hand-off to A was visible to both fleets. | Fixed. Only `applicationSummary.tenant.fleetId` grants access, and activation records the tenant fleet if missing. New test 6b. |
 
-### Round 3: review of the round-2 fixes
+### Round 3 (commit `a6e8e60d`): verdict APPROVE WITH CONDITIONS
 
-See [`independent-security-review-3.md`](independent-security-review-3.md).
+The redacted report is [`independent-security-review-3.md`](independent-security-review-3.md). It contains no original values: the reviewer scanned it, and the strict document scan finds 0. There were no BLOCKER or MAJOR findings, and every round-2 finding was confirmed fixed.
+
+**What the reviewer checked, with its own tools:**
+- **Repository:** 3,956 tracked files, 0 originals. The scanner covered UTF-8, Latin-1 and UTF-16, URL-encoding, HTML entities, base64 and gzip, ZIP contents, inflated PDF streams, PDF-escaped strings and hex strings, every workbook cell, and image metadata.
+- **Build output:** 2,077 files, 0 originals.
+- **Live anonymous crawl:** 2,330 URLs, 0 originals.
+- **Visual check:** all rebuilt PDFs and the 70 card images.
+- **Gate:** 119 live bypass probes, none reaching private content.
+- **Tenancy:** the hand-off edge case tested live.
+- **Recovered content:** unchanged apart from the owner-directed heading removal.
+
+| ID | Condition or finding | Resolution |
+|---|---|---|
+| Condition 1 | The originals remain in the public Git history (round-1 B3), including commit `7b233ac4`. | Owner decision (section 6). |
+| m1 / condition 2 | This report claimed a third review before one existed, and the round counts disagreed. | Fixed in this revision. |
+| m2 | Activation filled in the tenant fleet only when no `tenant` object existed, not when `tenant` existed without a `fleetId`. It failed closed (platform staff only). | Fixed: `driver-activation-service.ts` now sets `tenant.fleetId` whenever no tenant fleet is recorded. |
+| Informational | TRACE returns a generic Next.js 500 with no data. Business addresses (pickup, delivery, banks) remain. Some public pages reference preview and hero images that were already missing before this branch. | No change; framework behaviour or pre-existing. |
 
 ## 8. Owner preview
 
-See the Vercel Preview link reported for the pushed commit (the `bof-web` project). The sandbox cannot open `*.vercel.app`, so the Preview was not inspected from here.
+Vercel builds a **bof-web Preview** for every commit pushed to this branch. The link appears on the commit's "Vercel – bof-web" status on GitHub, and the latest one is reported in the hand-off message.
+- **Sign-in:** the Preview uses the Preview environment's own `AUTH_SECRET` and database. Without an `AUTH_SECRET` the new gate fails closed: private pages return 503, and public pages still work.
+- **Deployment protection:** each Preview URL may require you to be signed in to Vercel.
+- **Not inspected from here:** the sandbox cannot open `*.vercel.app`.
+- **Other Vercel projects:** `backofficefleet-demo` and `v0-backofficefleet` are also connected to the repository, and they fail on the base commit too.

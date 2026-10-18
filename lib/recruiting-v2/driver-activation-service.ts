@@ -78,7 +78,8 @@ function mergeApplicationSummaryHandoff(
       : {};
   // The tenant fleet is what scopes the candidate (lib/recruiting-v2/candidate-access.ts); record it
   // when activation happens on a candidate that had none.
-  const tenant = base.tenant && typeof base.tenant === "object" && !Array.isArray(base.tenant) ? base.tenant : { fleetId: handoff.fleetId };
+  const existingTenant = base.tenant && typeof base.tenant === "object" && !Array.isArray(base.tenant) ? (base.tenant as Record<string, unknown>) : {};
+  const tenant = candidateTenantFleetId(applicationSummary) ? existingTenant : { ...existingTenant, fleetId: handoff.fleetId };
   return { ...base, tenant, recruitingV2DriverHandoff: handoff } as Prisma.InputJsonValue;
 }
 
