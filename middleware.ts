@@ -46,6 +46,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Everything except Next.js internals and static files (paths ending in a file extension).
-  matcher: ["/((?!_next/static|_next/image|_next/data|favicon\\.ico|.*\\.[A-Za-z0-9]+$).*)"],
+  // Everything except Next.js build assets. Files under public/ are allowed by the policy itself
+  // (PUBLIC_STATIC_ROOTS), so a file extension on a private route cannot bypass the gate.
+  matcher: ["/((?!_next/static|_next/image|favicon\\.ico).*)"],
 };

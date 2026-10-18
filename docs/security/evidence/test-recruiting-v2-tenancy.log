@@ -2,49 +2,49 @@ TAP version 13
 # Subtest: 1. Fleet A cannot retrieve Fleet B's candidate (same result as an unknown code)
 ok 1 - 1. Fleet A cannot retrieve Fleet B's candidate (same result as an unknown code)
   ---
-  duration_ms: 262.615553
+  duration_ms: 364.665446
   type: 'test'
   ...
 # Subtest: 2. Fleet B cannot retrieve Fleet A's candidate
 ok 2 - 2. Fleet B cannot retrieve Fleet A's candidate
   ---
-  duration_ms: 28.521405
+  duration_ms: 14.462582
   type: 'test'
   ...
 # Subtest: 3. An aggregator affiliated with A and B reaches both, but not unaffiliated Fleet C
 ok 3 - 3. An aggregator affiliated with A and B reaches both, but not unaffiliated Fleet C
   ---
-  duration_ms: 34.365354
+  duration_ms: 21.599764
   type: 'test'
   ...
 # Subtest: 4. An aggregator affiliated with A only, or with an inactive B link, cannot reach B
 ok 4 - 4. An aggregator affiliated with A only, or with an inactive B link, cannot reach B
   ---
-  duration_ms: 40.188403
+  duration_ms: 31.252037
   type: 'test'
   ...
 # Subtest: 5. Drivers and invited members of Fleet A get no candidates
 ok 5 - 5. Drivers and invited members of Fleet A get no candidates
   ---
-  duration_ms: 10.534153
+  duration_ms: 8.888001
   type: 'test'
   ...
 # Subtest: 6. BOF platform staff reach every candidate, including one with no recorded fleet; fleet users do not see unassigned candidates
 ok 6 - 6. BOF platform staff reach every candidate, including one with no recorded fleet; fleet users do not see unassigned candidates
   ---
-  duration_ms: 25.699195
+  duration_ms: 12.392585
   type: 'test'
   ...
 # Subtest: 7. Fleet A cannot activate Fleet B's candidate into Fleet A or into Fleet B; no driver is created
 ok 7 - 7. Fleet A cannot activate Fleet B's candidate into Fleet A or into Fleet B; no driver is created
   ---
-  duration_ms: 40.743171
+  duration_ms: 41.221506
   type: 'test'
   ...
 # Subtest: 8. No Recruiting V2 API route loads a candidate by code without the tenant scope
 ok 8 - 8. No Recruiting V2 API route loads a candidate by code without the tenant scope
   ---
-  duration_ms: 1.518427
+  duration_ms: 1.517332
   type: 'test'
   ...
 1..8
@@ -55,4 +55,4 @@ ok 8 - 8. No Recruiting V2 API route loads a candidate by code without the tenan
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 1236.150138
+# duration_ms 1364.974344

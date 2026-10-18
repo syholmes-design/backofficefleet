@@ -29,9 +29,9 @@
 | `/` | Questions | `/qa` | OK | Q&A \| 184w |  |
 | `/` | Home | `/` | OK | Enterprise back-office operations for aggregators and carriers \| 1999w |  |
 | `/` | Drivers at Risk 3 Readiness / safety review | `/safety` | OK | Safety Command Center \| 1095w \| demo |  |
-| `/` | Loads at Risk 4 Load execution exceptions | `/demo/dispatch` | OK | CRITICAL · MAJOR · MINOR \| 1824w \| demo |  |
-| `/` | Claims Exposure $52k Proof / claims queue | `/rf-actions` | OK | RF action engine \| 339w |  |
-| `/` | Money at Risk $136k Settlement / cash holds | `/money-at-risk` | OK | Money at Risk \| 550w |  |
+| `/` | Loads at Risk 5 Load execution exceptions | `/demo/dispatch` | OK | CRITICAL · MAJOR · MINOR \| 1824w \| demo |  |
+| `/` | Claims Exposure $56k Proof / claims queue | `/rf-actions` | OK | RF action engine \| 339w |  |
+| `/` | Money at Risk $146k Settlement / cash holds | `/money-at-risk` | OK | Money at Risk \| 550w |  |
 | `/` | Open the demo lobby | `/dashboard` | OK | Start the BackOfficeFleet demo \| 117w \| demo |  |
 | `/` | READINESS Driver readiness issue Illustrative: HOS coaching  | `/safety` | OK | Safety Command Center \| 1095w \| demo |  |
 | `/` | LOAD Load exception Illustrative: L001 proof packet needs cl | `/demo/loads` | OK | Authoritative load roster \| 573w \| demo |  |

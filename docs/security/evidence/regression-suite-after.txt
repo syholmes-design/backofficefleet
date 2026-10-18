@@ -1,37 +1,37 @@
-1 audit:actionability-links 1s | - generic-label: components/safety/SafetyEvidenceThumb.tsx :: /\bOpen\b/ x1
+1 audit:actionability-links 0s | - generic-label: components/safety/SafetyEvidenceThumb.tsx :: /\bOpen\b/ x1
 1 audit:bof-links 0s | Node.js v22.22.0
-0 test:fmcsa-verification 13s | # duration_ms 11059.04153
-0 test:provision-operator 2s | # duration_ms 953.173692
-0 test:recruiting-v2-tenancy 4s | # duration_ms 1236.150138
-0 test:route-access 0s | # duration_ms 273.24156
-0 test:samba-intelligence 27s | # duration_ms 23839.940863
-0 test:secure-pickup 16s | # duration_ms 12415.128688
-0 test:training-authorization 6s | # duration_ms 3416.384213
-0 test:unified-integration 15s | # duration_ms 12466.569836
+0 test:fmcsa-verification 15s | # duration_ms 11494.521612
+0 test:provision-operator 2s | # duration_ms 1083.645965
+0 test:recruiting-v2-tenancy 4s | # duration_ms 1364.974344
+0 test:route-access 1s | # duration_ms 299.248296
+0 test:samba-intelligence 28s | # duration_ms 24566.822768
+0 test:secure-pickup 16s | # duration_ms 13574.026171
+0 test:training-authorization 8s | # duration_ms 4284.556794
+0 test:unified-integration 16s | # duration_ms 12700.124271
 0 validate:advance-compliance 2s | validate-advance-compliance-engine: OK
-0 validate:compliance-incident-reconciliation 2s | validate-compliance-incident-reconciliation: OK (effective open compliance count=1; OPEN credential incidents displayed after reconcile=0/0)
+0 validate:compliance-incident-reconciliation 3s | validate-compliance-incident-reconciliation: OK (effective open compliance count=1; OPEN credential incidents displayed after reconcile=0/0)
 0 validate:dashboard-attention-queue 0s | validate-dashboard-attention-queue: OK (credential reconciliation wired for attention surfaces)
 0 validate:driver-blockers 0s | validate-driver-blockers: OK
-0 validate:driver-credential-source-alignment 2s | validate-driver-credential-source-alignment: OK
-0 validate:driver-docs 1s | Driver docs validation passed.
+0 validate:driver-credential-source-alignment 3s | validate-driver-credential-source-alignment: OK
+0 validate:driver-docs 0s | Driver docs validation passed.
 1 validate:driver-document-packets 0s | - DRV-011: medical status mismatch status=VALID exp=2026-12-01 expected=EXPIRING_SOON
 0 validate:driver-dqf-readiness 0s | validate-driver-dqf-readiness OK (core rows, W-9 + I-9 + DQF summary PDF index, expiration vs EXPIRED labels).
-0 validate:driver-dqf-summaries 0s | validate-driver-dqf-summaries: OK
+0 validate:driver-dqf-summaries 1s | validate-driver-dqf-summaries: OK
 1 validate:driver-medical-status 0s | ]
 0 validate:driver-mvr-status 0s | validate-driver-mvr-status: OK (canonical MVR resolver wired)
-0 validate:driver-review-explanations 1s | validate-driver-review-explanations: OK
-0 validate:driver-review-ux 2s | ]
+0 validate:driver-review-explanations 0s | validate-driver-review-explanations: OK
+0 validate:driver-review-ux 3s | ]
 0 validate:equipment-spine 2s | validate-canonical-equipment-spine: OK
-1 validate:load-doc-templates 0s |  - L008.insuranceNotification: unknown generated HTML doc file insurance-packet.html
+1 validate:load-doc-templates 1s |  - L008.insuranceNotification: unknown generated HTML doc file insurance-packet.html
 0 validate:load-docs 0s | validate:load-docs passed for 12 loads.
 0 validate:load-evidence 0s | validate:load-evidence passed for 12 loads.
-1 validate:load-intake-routing 1s | ]
-1 validate:load-signatures 0s | - L011: delivered POD must include <!-- bof-sig-pod:complete -->
+1 validate:load-intake-routing 0s | ]
+1 validate:load-signatures 1s | - L011: delivered POD must include <!-- bof-sig-pod:complete -->
 1 validate:load-to-cash-foundation 1s | Node.js v22.22.0
-1 validate:load-trip-packets 1s |  - L008: claim path missing claim_intake URL
-1 validate:process-intelligence-foundation 1s | Node.js v22.22.0
+1 validate:load-trip-packets 0s |  - L008: claim path missing claim_intake URL
+1 validate:process-intelligence-foundation 2s | Node.js v22.22.0
 0 validate:prompt-013-hardening 2s | PROMPT_013_SOURCE_CHECKS_OK
-0 validate:prompt-020-demo-firewall 1s | PROMPT_020_SOURCE_CHECKS_OK
+0 validate:prompt-020-demo-firewall 2s | PROMPT_020_SOURCE_CHECKS_OK
 0 validate:prompt-021-coherence 4s | PROMPT_021_CANONICAL_FIELD_COHERENCE_PASS
 1 validate:review-explanations 2s | L009: issue pretrip:tire-asset-defect:L009 actionHref may be off-demo-route: /maintenance/work-orders/WO-003
 1 validate:safety-credential-mapping 1s | ]

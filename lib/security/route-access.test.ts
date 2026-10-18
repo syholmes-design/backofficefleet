@@ -3,12 +3,53 @@ import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 
-import { PUBLIC_MARKETING_SEGMENTS, isPublicRoute, signInRedirectPath } from "@/lib/security/route-access";
+import { PUBLIC_MARKETING_SEGMENTS, PUBLIC_STATIC_ROOTS, isPublicRoute, signInRedirectPath } from "@/lib/security/route-access";
 
 test("every marketing page group segment is public", () => {
   const dir = join(process.cwd(), "app/(marketing)");
   const segments = readdirSync(dir).filter((name) => statSync(join(dir, name)).isDirectory() && !name.startsWith("[") && !name.startsWith("("));
   assert.deepEqual([...segments].sort(), [...PUBLIC_MARKETING_SEGMENTS].sort());
+});
+
+test("every public/ folder is a static root", () => {
+  const dir = join(process.cwd(), "public");
+  const folders = readdirSync(dir).filter((name) => statSync(join(dir, name)).isDirectory());
+  assert.deepEqual([...folders].sort(), [...PUBLIC_STATIC_ROOTS].sort());
+});
+
+test("static files stay public; a file extension on a private route does not bypass the gate", () => {
+  for (const path of [
+    "/documents/drivers/DRV-001/cdl.png",
+    "/documents/drivers/DRV-001/w9-drv-001.pdf",
+    "/data/main-source-v2_enhanced_bof_aligned.xlsx",
+    "/generated/drivers/DRV-001/driver-application.html",
+    "/recovered-assets/static-20260729/scoped.css",
+    "/images/drivers/DRV-001.png",
+  ]) {
+    assert.equal(isPublicRoute(path), true, path);
+  }
+  for (const path of [
+    "/carriers/CAR-001/x.json",
+    "/carriers/CAR-001/report.pdf",
+    "/carriers/CAR-001/.x",
+    "/drivers/DRV-001.json",
+    "/loads/L-1001.json",
+    "/pretrip/x.json",
+    "/trip-release/x.json",
+    "/intake/x.json",
+    "/maintenance/photos/a.jpg",
+    "/documents/vault/DRV-001.json",
+    "/documents/vault/final.pdf",
+    "/x.json",
+    "/api/drivers/x.json",
+    "/documents/%76ault/x.json",
+    "/documents//vault/x.json",
+    "/%64rivers/DRV-001",
+    "/carriers%2FCAR-001",
+    "/documents/%E0%A4%A.json",
+  ]) {
+    assert.equal(isPublicRoute(path), false, path);
+  }
 });
 
 test("public pages stay reachable without a session", () => {

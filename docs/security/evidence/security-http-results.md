@@ -40,10 +40,30 @@
 | Anonymous: private pages redirect to sign-in | /contact-inquiries | PASS | HTTP 307 → /api/auth/signin?callbackUrl=%2Fcontact-inquiries |
 | Anonymous: private pages redirect to sign-in | /maintenance | PASS | HTTP 307 → /api/auth/signin?callbackUrl=%2Fmaintenance |
 | Anonymous: private pages redirect to sign-in | /source-of-truth | PASS | HTTP 307 → /api/auth/signin?callbackUrl=%2Fsource-of-truth |
+| Anonymous: gate bypass attempts are refused | /carriers/CAR-001/x.json | PASS | HTTP 307 /api/auth/signin?callbackUrl=%2Fcarriers%2FCAR-001%2Fx.json |
+| Anonymous: gate bypass attempts are refused | /carriers/CAR-001/report.pdf | PASS | HTTP 307 /api/auth/signin?callbackUrl=%2Fcarriers%2FCAR-001%2Freport.pdf |
+| Anonymous: gate bypass attempts are refused | /carriers/CAR-001/.x | PASS | HTTP 307 /api/auth/signin?callbackUrl=%2Fcarriers%2FCAR-001%2F.x |
+| Anonymous: gate bypass attempts are refused | /carriers/CAR-001/x.json?_rsc=1 | PASS | HTTP 307 /api/auth/signin?callbackUrl=%2Fcarriers%2FCAR-001%2Fx.json |
+| Anonymous: gate bypass attempts are refused | /carriers/CAR-001/x.json {"RSC":"1"} | PASS | HTTP 307 /api/auth/signin?callbackUrl=%2Fcarriers%2FCAR-001%2Fx.json |
+| Anonymous: gate bypass attempts are refused | /drivers/DRV-001.json | PASS | HTTP 307 /api/auth/signin?callbackUrl=%2Fdrivers%2FDRV-001.json |
+| Anonymous: gate bypass attempts are refused | /loads/L-1001.json | PASS | HTTP 307 /api/auth/signin?callbackUrl=%2Floads%2FL-1001.json |
+| Anonymous: gate bypass attempts are refused | /pretrip/x.json | PASS | HTTP 307 /api/auth/signin?callbackUrl=%2Fpretrip%2Fx.json |
+| Anonymous: gate bypass attempts are refused | /trip-release/x.json | PASS | HTTP 307 /api/auth/signin?callbackUrl=%2Ftrip-release%2Fx.json |
+| Anonymous: gate bypass attempts are refused | /intake/x.json | PASS | HTTP 307 /api/auth/signin?callbackUrl=%2Fintake%2Fx.json |
+| Anonymous: gate bypass attempts are refused | /maintenance/photos/a.jpg | PASS | HTTP 307 /api/auth/signin?callbackUrl=%2Fmaintenance%2Fphotos%2Fa.jpg |
+| Anonymous: gate bypass attempts are refused | /documents/vault/DRV-001.json | PASS | HTTP 307 /api/auth/signin?callbackUrl=%2Fdocuments%2Fvault%2FDRV-001.json |
+| Anonymous: gate bypass attempts are refused | /documents/%76ault | PASS | HTTP 307 /api/auth/signin?callbackUrl=%2Fdocuments%2F%2576ault |
+| Anonymous: gate bypass attempts are refused | /%64rivers/DRV-001/bank-info | PASS | HTTP 307 /api/auth/signin?callbackUrl=%2F%2564rivers%2FDRV-001%2Fbank-info |
+| Anonymous: gate bypass attempts are refused | //drivers/DRV-001/bank-info | PASS | HTTP 308 /drivers/DRV-001/bank-info → HTTP 307 /api/auth/signin?callbackUrl=%2Fdrivers%2FDRV-001%2Fbank-info |
+| Anonymous: gate bypass attempts are refused | /drivers/DRV-001/bank-info {"x-middleware-subrequest":"middleware:middleware:middleware:middleware:middleware"} | PASS | HTTP 307 /api/auth/signin?callbackUrl=%2Fdrivers%2FDRV-001%2Fbank-info |
+| Anonymous: public static files still served | /documents/drivers/DRV-001/w9-drv-001.pdf | PASS | HTTP 200 application/pdf |
+| Anonymous: public static files still served | /data/main-source-v2_enhanced_bof_aligned.xlsx | PASS | HTTP 200 application/vnd.openxmlformats-officedocument.spreadsheetml.sheet |
+| Anonymous: public static files still served | /recovered-assets/static-20260729/scoped.css | PASS | HTTP 200 text/css; charset=UTF-8 |
+| Anonymous: public static files still served | /images/drivers/DRV-001.png | PASS | HTTP 200 image/png |
 | Anonymous: private APIs return 401 | GET /api/drivers | PASS | HTTP 401 {"error":"Unauthorized","code":"AUTH_REQUIRED"} |
 | Anonymous: private APIs return 401 | GET /api/dispatch/operating-spine | PASS | HTTP 401 {"error":"Unauthorized","code":"AUTH_REQUIRED"} |
-| Anonymous: private APIs return 401 | GET /api/recruiting-v2/qualification/CAND-SEC1792331953440-A | PASS | HTTP 401 {"error":"Unauthorized","code":"AUTH_REQUIRED"} |
-| Anonymous: private APIs return 401 | POST /api/recruiting-v2/documents/CAND-SEC1792331953440-A | PASS | HTTP 401 {"error":"Unauthorized","code":"AUTH_REQUIRED"} |
+| Anonymous: private APIs return 401 | GET /api/recruiting-v2/qualification/CAND-SEC1792335483658-A | PASS | HTTP 401 {"error":"Unauthorized","code":"AUTH_REQUIRED"} |
+| Anonymous: private APIs return 401 | POST /api/recruiting-v2/documents/CAND-SEC1792335483658-A | PASS | HTTP 401 {"error":"Unauthorized","code":"AUTH_REQUIRED"} |
 | Anonymous: private APIs return 401 | GET /api/contact/inquiries | PASS | HTTP 401 {"error":"Unauthorized","code":"AUTH_REQUIRED"} |
 | Anonymous: private APIs return 401 | GET /api/driver/vault/documents | PASS | HTTP 401 {"error":"Unauthorized","code":"AUTH_REQUIRED"} |
 | Anonymous: public endpoints still work | GET /api/auth/providers | PASS | HTTP 200 |
@@ -59,11 +79,11 @@
 | Role checks | fleet-a-admin (FLEET_ADMIN) is refused the BOF-staff inquiry queue | PASS | HTTP 403 |
 | Role checks | bof-operations (BOF_OPERATIONS) opens the inquiry queue | PASS | HTTP 200 |
 | Role checks | fleet-a-admin GET /api/contact/inquiries is refused | PASS | HTTP 403 |
-| Recruiting V2 tenancy | Fleet A reads its own candidate CAND-SEC1792331953440-A | PASS | HTTP 200 |
-| Recruiting V2 tenancy | Fleet A cannot read Fleet B's candidate CAND-SEC1792331953440-B | PASS | HTTP 404 |
+| Recruiting V2 tenancy | Fleet A reads its own candidate CAND-SEC1792335483658-A | PASS | HTTP 200 |
+| Recruiting V2 tenancy | Fleet A cannot read Fleet B's candidate CAND-SEC1792335483658-B | PASS | HTTP 404 |
 | Recruiting V2 tenancy | Out-of-scope and unknown codes are indistinguishable | PASS | HTTP 404 |
-| Recruiting V2 tenancy | Fleet B cannot read Fleet A's candidate CAND-SEC1792331953440-A | PASS | HTTP 404 |
-| Recruiting V2 tenancy | Fleet B reads its own candidate CAND-SEC1792331953440-B | PASS | HTTP 200 |
+| Recruiting V2 tenancy | Fleet B cannot read Fleet A's candidate CAND-SEC1792335483658-A | PASS | HTTP 404 |
+| Recruiting V2 tenancy | Fleet B reads its own candidate CAND-SEC1792335483658-B | PASS | HTTP 200 |
 | Recruiting V2 tenancy | BOF operations staff read both fleets' candidates | PASS | HTTP 200 / 200 |
 | Recruiting V2 tenancy | Fleet A cannot add a document to Fleet B's candidate (no row written) | PASS | HTTP 404, documents before=0 after=0 |
 | Recruiting V2 tenancy | Fleet A cannot activate Fleet B's candidate into Fleet A | PASS | HTTP 404 |
