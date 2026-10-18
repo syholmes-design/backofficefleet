@@ -10,8 +10,8 @@ export { candidateTenantFleetId } from "@/lib/recruiting-v2/candidate-tenant";
  * Recruiting V2 tenant isolation.
  *
  * Recruiting V2 tables have no tenant column, so a candidate's owning fleet is recorded in
- * `Candidate.applicationSummary.tenant.fleetId` (and, once activated, in
- * `applicationSummary.recruitingV2DriverHandoff.fleetId`). Every candidate lookup is filtered
+ * `Candidate.applicationSummary.tenant.fleetId` (activation fills it in when missing). That field
+ * alone decides visibility; the activation hand-off fleet does not. Every candidate lookup is filtered
  * in the database query by the fleets the signed-in user may work in:
  *   - BOF platform staff (BOF_OPERATIONS, BOF_COMPLIANCE_REVIEW): every candidate;
  *   - fleet HR/operations staff (FLEET_ADMIN, FLEET_MANAGER, FLEET_OPERATIONS): their fleets;
@@ -54,10 +54,7 @@ export function candidateScopeWhere(scope: RecruitingScope): Prisma.CandidateWhe
   return {
     AND: [
       {
-        OR: scope.fleetIds.flatMap((fleetId) => [
-          { applicationSummary: { path: ["tenant", "fleetId"], equals: fleetId } },
-          { applicationSummary: { path: ["recruitingV2DriverHandoff", "fleetId"], equals: fleetId } },
-        ]),
+        OR: scope.fleetIds.map((fleetId) => ({ applicationSummary: { path: ["tenant", "fleetId"], equals: fleetId } })),
       },
     ],
   };

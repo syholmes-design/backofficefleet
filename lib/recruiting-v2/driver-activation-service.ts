@@ -76,7 +76,10 @@ function mergeApplicationSummaryHandoff(
     applicationSummary && typeof applicationSummary === "object" && !Array.isArray(applicationSummary)
       ? { ...(applicationSummary as Record<string, unknown>) }
       : {};
-  return { ...base, recruitingV2DriverHandoff: handoff } as Prisma.InputJsonValue;
+  // The tenant fleet is what scopes the candidate (lib/recruiting-v2/candidate-access.ts); record it
+  // when activation happens on a candidate that had none.
+  const tenant = base.tenant && typeof base.tenant === "object" && !Array.isArray(base.tenant) ? base.tenant : { fleetId: handoff.fleetId };
+  return { ...base, tenant, recruitingV2DriverHandoff: handoff } as Prisma.InputJsonValue;
 }
 
 function appendAuditTrail(auditTrail: Prisma.JsonValue, entry: string): Prisma.InputJsonValue {

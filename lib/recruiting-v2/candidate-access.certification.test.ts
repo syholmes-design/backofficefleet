@@ -27,7 +27,7 @@ type Fixture = {
   fleetA: string;
   fleetB: string;
   fleetC: string;
-  candidates: { a: string; b: string; c: string; unassigned: string };
+  candidates: { a: string; b: string; c: string; unassigned: string; bHandedToA: string; noTenantHandedToA: string };
   sessions: {
     fleetAAdmin: SessionUserLike;
     fleetBAdmin: SessionUserLike;
@@ -52,7 +52,7 @@ async function user(label: string) {
   return row.id;
 }
 
-async function candidate(code: string, positionId: string, fleetId: string | null) {
+async function candidate(code: string, positionId: string, fleetId: string | null, handoffFleetId?: string) {
   const row = await prisma.candidate.create({
     data: {
       candidateCode: code,
@@ -63,7 +63,10 @@ async function candidate(code: string, positionId: string, fleetId: string | nul
       cdlClass: "A",
       cdlState: "OH",
       cdlNumberMasked: "XXXX0000",
-      applicationSummary: fleetId ? { tenant: { fleetId } } : {},
+      applicationSummary: {
+        ...(fleetId ? { tenant: { fleetId } } : {}),
+        ...(handoffFleetId ? { recruitingV2DriverHandoff: { fleetId: handoffFleetId } } : {}),
+      },
       qualificationSummary: {},
       documentRequirements: {},
       complianceSummary: {},
@@ -131,6 +134,8 @@ test.before(async () => {
       b: await candidate(code("b"), position.id, fleetB),
       c: await candidate(code("c"), position.id, fleetC),
       unassigned: await candidate(code("none"), position.id, null),
+      bHandedToA: await candidate(code("b-handoff-a"), position.id, fleetB, fleetA),
+      noTenantHandedToA: await candidate(code("none-handoff-a"), position.id, null, fleetA),
     },
     sessions: {
       fleetAAdmin: session(await user("fleet-a-admin"), [{ fleetId: fleetA, roleCode: "FLEET_ADMIN" }]),
@@ -195,6 +200,13 @@ test("6. BOF platform staff reach every candidate, including one with no recorde
   }
   assert.equal(await visibleCandidate(fixture.sessions.fleetAAdmin, fixture.candidates.unassigned), null);
   assert.equal(await visibleCandidate(fixture.sessions.aggregatorAB, fixture.candidates.unassigned), null);
+});
+
+test("6b. Only the recorded tenant fleet grants access; an activation hand-off fleet does not", async () => {
+  assert.equal(await visibleCandidate(fixture.sessions.fleetAAdmin, fixture.candidates.bHandedToA), null);
+  assert.equal((await visibleCandidate(fixture.sessions.fleetBAdmin, fixture.candidates.bHandedToA))?.candidateCode, fixture.candidates.bHandedToA);
+  assert.equal(await visibleCandidate(fixture.sessions.fleetAAdmin, fixture.candidates.noTenantHandedToA), null);
+  assert.equal((await visibleCandidate(fixture.sessions.platform, fixture.candidates.noTenantHandedToA))?.candidateCode, fixture.candidates.noTenantHandedToA);
 });
 
 test("7. Fleet A cannot activate Fleet B's candidate into Fleet A or into Fleet B; no driver is created", async () => {

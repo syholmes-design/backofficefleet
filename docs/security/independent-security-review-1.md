@@ -22,24 +22,24 @@ Note on scope: at the start of the review the changes were uncommitted. They wer
 ### B1. Full original SSNs still visible in all 12 public W-9 PDFs (rasterized, so text scanners cannot see them)
 - **Files:** `public/documents/drivers/DRV-0{01..12}/w9-drv-0NN.pdf`. Each one is a single page that is now an image (DRV-001 grew from 64,396 to 436,411 bytes).
 - **Evidence:** I rendered page 1 of each file with `pdftoppm` and looked at them. The Part I SSN boxes show:
-  - DRV-001 [redacted]
-  - DRV-002 [redacted]
-  - DRV-003 [redacted]
-  - DRV-004 [redacted]
-  - DRV-005 [redacted]
-  - DRV-006 [redacted]
-  - DRV-007 [redacted]
-  - DRV-008 [redacted]
-  - DRV-009 [redacted]
-  - DRV-010 [redacted]
-  - DRV-011 [redacted]
-  - DRV-012 [redacted]
+  - DRV-[redacted]
+  - DRV-[redacted]
+  - DRV-[redacted]
+  - DRV-[redacted]
+  - DRV-[redacted]
+  - DRV-[redacted]
+  - DRV-[redacted]
+  - DRV-[redacted]
+  - DRV-[redacted]
+  - DRV-[redacted]
+  - DRV-[redacted]
+  - DRV-[redacted]
 
-  All 12 are exactly the `ssn_full` originals in `deid/harvest.json`. Map example: `ssn4` maps `9443` to `0123`.
+  All 12 are exactly the `ssn_full` originals in `deid/harvest.json`. Map example: `ssn4` maps `[redacted]` to `0123`.
 - **Exploit:** `curl http://localhost:3200/documents/drivers/DRV-001/w9-drv-001.pdf` returns 200 `application/pdf` with no session. The served file is byte-identical to the working tree and to HEAD.
 - **Root cause:**
   - `raster_redact.py` finds values with `pdftotext -bbox-layout` line text and runs `transform()` on it.
-  - The W-9 TIN is drawn in comb boxes, one glyph per word (`3 2 2 - 4 0 - 9 4 4 3`), so the SSN pattern never matched.
+  - The W-9 TIN is drawn in comb boxes, one glyph per word (`[redacted]`), so the SSN pattern never matched.
   - The page was still rasterized because the name and address changed, so the original SSN pixels were baked into the new image.
   - Rasterizing also removed the text layer. That is why `verify_clean.py` and my own text and stream scan both report 0 hits.
 - **Fix:**
@@ -49,7 +49,7 @@ Note on scope: at the start of the review the changes were uncommitted. They wer
 
 ### B2. Original DOBs of all 12 drivers in a publicly served workbook
 - **File:** `public/data/main-source-v2_enhanced_bof_aligned.xlsx`, sheet 8 "Master Driver Data", column N "DOB", rows for DRV-001 to DRV-012. The cells are Excel date serials.
-- **Values:** DRV-001 John Carter [redacted], DRV-002 [redacted], DRV-003 [redacted], DRV-004 [redacted], DRV-005 [redacted], DRV-006 [redacted], DRV-007 [redacted], DRV-008 [redacted], DRV-009 [redacted], DRV-010 [redacted], DRV-011 [redacted], DRV-012 [redacted]. Every one is a key in `map.json["dob"]` (for example [redacted] maps to 1964-01-01). The `dob_serial` keys (for example 23612) are present as `<v>` values in `xl/worksheets/sheet8.xml`.
+- **Values:** DRV-001 John Carter [redacted], DRV-002 [redacted], DRV-003 [redacted], DRV-004 [redacted], DRV-005 [redacted], DRV-006 [redacted], DRV-007 [redacted], DRV-008 [redacted], DRV-009 [redacted], DRV-010 [redacted], DRV-011 [redacted], DRV-012 [redacted]. Every one is a key in `map.json["dob"]` (for example [redacted] maps to 1964-01-01). The `dob_serial` keys (for example [redacted]) are present as `<v>` values in `xl/worksheets/sheet8.xml`.
 - **Exploit:** `GET /data/main-source-v2_enhanced_bof_aligned.xlsx` returns 200 (94,883 bytes) anonymously.
 - **Root cause:** the apply and verify steps skipped date-typed cells in this sheet. The same column in the other sheets (and the `data/source-workbooks` copies) was rewritten correctly.
 - **Fix:**

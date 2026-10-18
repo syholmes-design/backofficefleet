@@ -62,8 +62,8 @@
 | Anonymous: public static files still served | /images/drivers/DRV-001.png | PASS | HTTP 200 image/png |
 | Anonymous: private APIs return 401 | GET /api/drivers | PASS | HTTP 401 {"error":"Unauthorized","code":"AUTH_REQUIRED"} |
 | Anonymous: private APIs return 401 | GET /api/dispatch/operating-spine | PASS | HTTP 401 {"error":"Unauthorized","code":"AUTH_REQUIRED"} |
-| Anonymous: private APIs return 401 | GET /api/recruiting-v2/qualification/CAND-SEC1792335483658-A | PASS | HTTP 401 {"error":"Unauthorized","code":"AUTH_REQUIRED"} |
-| Anonymous: private APIs return 401 | POST /api/recruiting-v2/documents/CAND-SEC1792335483658-A | PASS | HTTP 401 {"error":"Unauthorized","code":"AUTH_REQUIRED"} |
+| Anonymous: private APIs return 401 | GET /api/recruiting-v2/qualification/CAND-SEC1792340048675-A | PASS | HTTP 401 {"error":"Unauthorized","code":"AUTH_REQUIRED"} |
+| Anonymous: private APIs return 401 | POST /api/recruiting-v2/documents/CAND-SEC1792340048675-A | PASS | HTTP 401 {"error":"Unauthorized","code":"AUTH_REQUIRED"} |
 | Anonymous: private APIs return 401 | GET /api/contact/inquiries | PASS | HTTP 401 {"error":"Unauthorized","code":"AUTH_REQUIRED"} |
 | Anonymous: private APIs return 401 | GET /api/driver/vault/documents | PASS | HTTP 401 {"error":"Unauthorized","code":"AUTH_REQUIRED"} |
 | Anonymous: public endpoints still work | GET /api/auth/providers | PASS | HTTP 200 |
@@ -79,11 +79,11 @@
 | Role checks | fleet-a-admin (FLEET_ADMIN) is refused the BOF-staff inquiry queue | PASS | HTTP 403 |
 | Role checks | bof-operations (BOF_OPERATIONS) opens the inquiry queue | PASS | HTTP 200 |
 | Role checks | fleet-a-admin GET /api/contact/inquiries is refused | PASS | HTTP 403 |
-| Recruiting V2 tenancy | Fleet A reads its own candidate CAND-SEC1792335483658-A | PASS | HTTP 200 |
-| Recruiting V2 tenancy | Fleet A cannot read Fleet B's candidate CAND-SEC1792335483658-B | PASS | HTTP 404 |
+| Recruiting V2 tenancy | Fleet A reads its own candidate CAND-SEC1792340048675-A | PASS | HTTP 200 |
+| Recruiting V2 tenancy | Fleet A cannot read Fleet B's candidate CAND-SEC1792340048675-B | PASS | HTTP 404 |
 | Recruiting V2 tenancy | Out-of-scope and unknown codes are indistinguishable | PASS | HTTP 404 |
-| Recruiting V2 tenancy | Fleet B cannot read Fleet A's candidate CAND-SEC1792335483658-A | PASS | HTTP 404 |
-| Recruiting V2 tenancy | Fleet B reads its own candidate CAND-SEC1792335483658-B | PASS | HTTP 200 |
+| Recruiting V2 tenancy | Fleet B cannot read Fleet A's candidate CAND-SEC1792340048675-A | PASS | HTTP 404 |
+| Recruiting V2 tenancy | Fleet B reads its own candidate CAND-SEC1792340048675-B | PASS | HTTP 200 |
 | Recruiting V2 tenancy | BOF operations staff read both fleets' candidates | PASS | HTTP 200 / 200 |
 | Recruiting V2 tenancy | Fleet A cannot add a document to Fleet B's candidate (no row written) | PASS | HTTP 404, documents before=0 after=0 |
 | Recruiting V2 tenancy | Fleet A cannot activate Fleet B's candidate into Fleet A | PASS | HTTP 404 |
