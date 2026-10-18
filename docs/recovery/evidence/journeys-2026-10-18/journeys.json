@@ -1,0 +1,388 @@
+{
+ "A": {
+  "title": "Recruiting: homepage card → driver onboarding → recruiting workspace → document intake → assessment",
+  "ok": true,
+  "failure": null,
+  "steps": [
+   {
+    "step": 1,
+    "label": "homepage",
+    "path": "/",
+    "h1": "Enterprise back-office operations for aggregators and carriers",
+    "screenshot": "A-01-homepage.png"
+   },
+   {
+    "step": 2,
+    "label": "driver-onboarding-service-page",
+    "path": "/business-operations/driver-onboarding",
+    "h1": "Turn a driver candidate into assignment readiness.",
+    "screenshot": "A-02-driver-onboarding-service-page.png"
+   },
+   {
+    "step": 3,
+    "label": "assignment-readiness-detail",
+    "path": "/business-operations/driver-onboarding/assignment-readiness",
+    "h1": "Release drivers only when the operating file can support the work.",
+    "screenshot": "A-03-assignment-readiness-detail.png"
+   },
+   {
+    "step": 4,
+    "label": "recruiting-onboarding-workspace",
+    "path": "/business-operations/hr-tier/recruiting-onboarding",
+    "h1": "Move driver and staff candidates into readiness with fewer handoff gaps.",
+    "screenshot": "A-04-recruiting-onboarding-workspace.png"
+   },
+   {
+    "step": 5,
+    "label": "workspace-interaction",
+    "path": "/business-operations/hr-tier/recruiting-onboarding",
+    "h1": "Move driver and staff candidates into readiness with fewer handoff gaps.",
+    "screenshot": "A-05-workspace-interaction.png"
+   },
+   {
+    "step": 6,
+    "label": "document-intake-demo",
+    "path": "/interactive-demo/drivers/document-intake",
+    "h1": "BOF Vault Intake Workbench",
+    "screenshot": "A-06-document-intake-demo.png"
+   },
+   {
+    "step": 7,
+    "label": "assessment",
+    "path": "/assessment",
+    "h1": "Take the Fleet Back Office Assessment",
+    "screenshot": "A-07-assessment.png"
+   }
+  ],
+  "pageErrors": []
+ },
+ "B": {
+  "title": "Compliance: homepage card → driver qualification → compliance documents → driver files demo → driver record",
+  "ok": true,
+  "failure": null,
+  "steps": [
+   {
+    "step": 1,
+    "label": "driver-readiness-service",
+    "path": "/services/drivers",
+    "h1": "Driver Command Center",
+    "screenshot": "B-01-driver-readiness-service.png"
+   },
+   {
+    "step": 2,
+    "label": "compliance-documents-detail",
+    "path": "/services/drivers/compliance-documents",
+    "h1": "Keep driver-document gaps tied to assignment readiness.",
+    "screenshot": "B-02-compliance-documents-detail.png"
+   },
+   {
+    "step": 3,
+    "label": "driver-files-demo",
+    "path": "/interactive-demo/drivers",
+    "h1": "Driver Records",
+    "screenshot": "B-03-driver-files-demo.png"
+   },
+   {
+    "step": 4,
+    "label": "driver-record-drv-003",
+    "path": "/interactive-demo/drivers/drv-003",
+    "h1": "DRV-003 Driver File",
+    "screenshot": "B-04-driver-record-drv-003.png"
+   },
+   {
+    "step": 5,
+    "label": "driver-record-documents",
+    "path": "/interactive-demo/drivers/drv-003",
+    "h1": "DRV-003 Driver File",
+    "screenshot": "B-05-driver-record-documents.png"
+   },
+   {
+    "step": 6,
+    "label": "sample-driver-file-cabinet",
+    "path": "/documents",
+    "h1": "Operations File Cabinet",
+    "screenshot": "B-06-sample-driver-file-cabinet.png"
+   }
+  ],
+  "pageErrors": []
+ },
+ "C": {
+  "title": "Dispatch: homepage card → dispatch service → interactive dispatch board → dispatch demo → load intake",
+  "ok": true,
+  "failure": null,
+  "steps": [
+   {
+    "step": 1,
+    "label": "dispatch-service-page",
+    "path": "/services/dispatch",
+    "h1": "Dispatch & Operations Command Center",
+    "screenshot": "C-01-dispatch-service-page.png"
+   },
+   {
+    "step": 2,
+    "label": "interactive-dispatch-board",
+    "path": "/interactive-demo/dispatch",
+    "h1": "Dispatch Board",
+    "screenshot": "C-02-interactive-dispatch-board.png"
+   },
+   {
+    "step": 3,
+    "label": "load-queue",
+    "path": "/interactive-demo/load-queue",
+    "h1": "Load Queue",
+    "screenshot": "C-03-load-queue.png"
+   },
+   {
+    "step": 4,
+    "label": "dispatch-triage-demo",
+    "path": "/demo/dispatch",
+    "h1": "Dispatch triage: critical, major and minor issues",
+    "screenshot": "C-04-dispatch-triage-demo.png"
+   },
+   {
+    "step": 5,
+    "label": "load-from-dispatch-demo",
+    "path": "/demo/loads",
+    "h1": "Authoritative load roster",
+    "screenshot": "C-05-load-from-dispatch-demo.png"
+   },
+   {
+    "step": 6,
+    "label": "customer-load-intake",
+    "path": "/customer-portal/load-intake",
+    "h1": "Enter the shipment details BOF needs before quote review and assignment.",
+    "screenshot": "C-06-customer-load-intake.png"
+   }
+  ],
+  "pageErrors": []
+ },
+ "D": {
+  "title": "Business Operations: navigation → overview → six service areas → third-level page",
+  "ok": true,
+  "failure": null,
+  "steps": [
+   {
+    "step": 1,
+    "label": "business-operations-menu",
+    "path": "/",
+    "h1": "Enterprise back-office operations for aggregators and carriers",
+    "screenshot": "D-01-business-operations-menu.png"
+   },
+   {
+    "step": 2,
+    "label": "business-operations-overview",
+    "path": "/business-operations",
+    "h1": "Business Operations",
+    "screenshot": "D-02-business-operations-overview.png"
+   },
+   {
+    "step": 3,
+    "label": "driver-onboarding",
+    "path": "/business-operations/driver-onboarding",
+    "h1": "Turn a driver candidate into assignment readiness.",
+    "screenshot": "D-03-driver-onboarding.png"
+   },
+   {
+    "step": 4,
+    "label": "document-records-control",
+    "path": "/business-operations/document-records-control",
+    "h1": "Control the document lifecycle without losing the operating context.",
+    "screenshot": "D-04-document-records-control.png"
+   },
+   {
+    "step": 5,
+    "label": "operational-reporting",
+    "path": "/business-operations/operational-reporting",
+    "h1": "Show leadership what is ready, blocked, aging, and owned.",
+    "screenshot": "D-05-operational-reporting.png"
+   },
+   {
+    "step": 6,
+    "label": "customer-billing",
+    "path": "/business-operations/customer-billing",
+    "h1": "Turn completed work into a billing-ready packet.",
+    "screenshot": "D-06-customer-billing.png"
+   },
+   {
+    "step": 7,
+    "label": "payroll-administration",
+    "path": "/business-operations/payroll-administration",
+    "h1": "Make pay support traceable to the record behind it.",
+    "screenshot": "D-07-payroll-administration.png"
+   },
+   {
+    "step": 8,
+    "label": "accounting-finance",
+    "path": "/business-operations/accounting-finance",
+    "h1": "Give finance the operating record behind the number.",
+    "screenshot": "D-08-accounting-finance.png"
+   },
+   {
+    "step": 9,
+    "label": "third-level-cash-flow-review",
+    "path": "/business-operations/accounting-finance/cash-flow-review",
+    "h1": "See what is ready to move and what is holding cash back.",
+    "screenshot": "D-09-third-level-cash-flow-review.png"
+   }
+  ],
+  "pageErrors": []
+ },
+ "E": {
+  "title": "Assessment: homepage CTA → category → questions → results → inquiry → confirmation (recorded)",
+  "ok": true,
+  "failure": null,
+  "steps": [
+   {
+    "step": 1,
+    "label": "assessment-categories",
+    "path": "/assessment",
+    "h1": "Take the Fleet Back Office Assessment",
+    "screenshot": "E-01-assessment-categories.png"
+   },
+   {
+    "step": 2,
+    "label": "for-hire-sections",
+    "path": "/assessment/for-hire-carriers",
+    "h1": "For-Hire Carrier Assessment",
+    "screenshot": "E-02-for-hire-sections.png"
+   },
+   {
+    "step": 3,
+    "label": "first-questions",
+    "path": "/assessment/for-hire-carriers",
+    "h1": "For-Hire Carrier Assessment",
+    "screenshot": "E-03-first-questions.png"
+   },
+   {
+    "step": 4,
+    "label": "results",
+    "path": "/assessment/for-hire-carriers",
+    "h1": "Assessment Results",
+    "screenshot": "E-04-results.png"
+   },
+   {
+    "step": 5,
+    "label": "inquiry-form-prefilled",
+    "path": "/contact?source=assessment&track=for-hire-carriers&score=56&category=High+Risk&risks=Document+Management%7CCash+Flow+Visibility",
+    "h1": "Start with the operating question you need resolved.",
+    "screenshot": "E-05-inquiry-form-prefilled.png"
+   },
+   {
+    "step": 6,
+    "label": "confirmation",
+    "path": "/contact?source=assessment&track=for-hire-carriers&score=56&category=High+Risk&risks=Document+Management%7CCash+Flow+Visibility",
+    "h1": "Start with the operating question you need resolved.",
+    "screenshot": "E-06-confirmation.png"
+   }
+  ],
+  "pageErrors": []
+ },
+ "F": {
+  "title": "Financial: homepage card → settlements service → settlements demos → money at risk → payroll administration",
+  "ok": true,
+  "failure": null,
+  "steps": [
+   {
+    "step": 1,
+    "label": "settlements-service-page",
+    "path": "/services/settlements",
+    "h1": "Settlements & Billing Command Center",
+    "screenshot": "F-01-settlements-service-page.png"
+   },
+   {
+    "step": 2,
+    "label": "exception-visibility-detail",
+    "path": "/services/settlements/exception-visibility",
+    "h1": "Keep missing, disputed, and held settlement items accountable.",
+    "screenshot": "F-02-exception-visibility-detail.png"
+   },
+   {
+    "step": 3,
+    "label": "interactive-settlements",
+    "path": "/interactive-demo/settlements",
+    "h1": "Settlements",
+    "screenshot": "F-03-interactive-settlements.png"
+   },
+   {
+    "step": 4,
+    "label": "settlement-holds-demo",
+    "path": "/demo/settlements",
+    "h1": "Settlement release control",
+    "screenshot": "F-04-settlement-holds-demo.png"
+   },
+   {
+    "step": 5,
+    "label": "money-at-risk",
+    "path": "/money-at-risk",
+    "h1": "Money at Risk",
+    "screenshot": "F-05-money-at-risk.png"
+   },
+   {
+    "step": 6,
+    "label": "pay-exception-control",
+    "path": "/business-operations/payroll-administration/pay-exception-control",
+    "h1": "Turn pay exceptions into reviewable support records.",
+    "screenshot": "F-06-pay-exception-control.png"
+   }
+  ],
+  "pageErrors": []
+ },
+ "G": {
+  "title": "Savings: homepage estimate (inputs change result) → savings model page (inputs change result)",
+  "ok": true,
+  "failure": null,
+  "steps": [
+   {
+    "step": 1,
+    "label": "homepage-savings-estimate",
+    "path": "/#we-save-you-money",
+    "h1": "Enterprise back-office operations for aggregators and carriers",
+    "screenshot": "G-01-homepage-savings-estimate.png"
+   },
+   {
+    "step": 2,
+    "label": "homepage-savings-after-change",
+    "path": "/#we-save-you-money",
+    "h1": "Enterprise back-office operations for aggregators and carriers",
+    "screenshot": "G-02-homepage-savings-after-change.png"
+   },
+   {
+    "step": 3,
+    "label": "savings-model-page",
+    "path": "/fleet-savings",
+    "h1": "Fleet Savings Outlook",
+    "screenshot": "G-03-savings-model-page.png"
+   },
+   {
+    "step": 4,
+    "label": "savings-model-after-change",
+    "path": "/fleet-savings",
+    "h1": "Fleet Savings Outlook",
+    "screenshot": "G-04-savings-model-after-change.png"
+   }
+  ],
+  "pageErrors": []
+ },
+ "M": {
+  "title": "Mobile homepage: service cards and assessment CTA at phone width",
+  "ok": true,
+  "failure": null,
+  "steps": [
+   {
+    "step": 1,
+    "label": "mobile-hero",
+    "path": "/",
+    "h1": "Enterprise back-office operations for aggregators and carriers",
+    "screenshot": "M-01-mobile-hero.png"
+   },
+   {
+    "step": 2,
+    "label": "mobile-service-cards",
+    "path": "/",
+    "h1": "Enterprise back-office operations for aggregators and carriers",
+    "screenshot": "M-02-mobile-service-cards.png"
+   }
+  ],
+  "pageErrors": []
+ }
+}

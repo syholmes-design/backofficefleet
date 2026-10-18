@@ -1779,5 +1779,568 @@
   "/what-we-do/operations-compliance",
   "/what-we-do/people-hr",
   "/what-we-do/procurement-savings"
- ]
+ ],
+ "rendered": {
+  "/": {
+   "status": 200,
+   "words": 2204,
+   "headings": [
+    "Enterprise back-office operations for aggregators and carriers",
+    "Outsourced back-office operations for transportation businesses.",
+    "Comprehensive back-office functions across the transportation lifecycle.",
+    "Pre-trip, in-route, and post-trip administration—under one service team.",
+    "People, equipment, and paperwork are ready before freight moves.",
+    "Coordination and evidence stay connected while the load is active.",
+    "Close the movement in finance and reporting—not in scattered inboxes.",
+    "Built for aggregators, their carriers, and fleet operators.",
+    "Managed operations across compliance, finance, people, and procurement.",
+    "Operations Compliance",
+    "Finance Accounting",
+    "People HR",
+    "Procurement Savings",
+    "Estimate operating drag from your own assumptions.",
+    "Fleet profile",
+    "Walk the operation and keep the answers in this browser.",
+    "Fleet Operations Assessment",
+    "Fleet scale",
+    "A sample operating picture, labeled as a sample.",
+    "Watch the operating walkthroughs already produced for BOF.",
+    "Information becomes action when the operating layer owns the next move.",
+    "Built for businesses that move, manage, or coordinate transportation",
+    "Aggregator / carrier network",
+    "Affiliated independent carrier",
+    "Private fleet operator",
+    "Broker / 3PL with carrier relationships",
+    "Specialized tools multiply. Back-office work still needs owners.",
+    "BOF does not replace every specialized provider. We operate the back office around them.",
+    "Administrative work tied to each movement",
+    "Every number opens the workflow that owns it.",
+    "Exceptions should trigger action, not an inbox search.",
+    "You may already have the freight. BOF provides the back-office capacity.",
+    "Technology-enabled back-office support when your team needs more operating capacity",
+    "Deploy an operating environment without building the entire technology stack yourself.",
+    "Assess",
+    "Configure",
+    "Connect",
+    "Operate",
+    "A late delivery should never be a surprise.",
+    "Tell BOF about your network, carriers, and back-office pressure."
+   ]
+  },
+  "/assessment": {
+   "status": 200,
+   "words": 33,
+   "headings": [
+    "Loading Assessment"
+   ]
+  },
+  "/assessment/for-hire-carriers": {
+   "status": 200,
+   "words": 167,
+   "headings": [
+    "For-Hire Carrier Assessment",
+    "Fleet Profile",
+    "Dispatch Load Execution",
+    "Driver Readiness Worker Type",
+    "HR / Workforce",
+    "Settlements Pay Visibility",
+    "Fleet Financials Cash Flow",
+    "Factoring Receivables",
+    "Tax / Regulatory Audit Readiness",
+    "Customer Visibility"
+   ]
+  },
+  "/assessment/private-fleets": {
+   "status": 200,
+   "words": 177,
+   "headings": [
+    "Private Fleet Assessment",
+    "Fleet Profile",
+    "Internal Dispatch Service Execution",
+    "Driver Readiness Compliance",
+    "Asset Utilization Maintenance",
+    "Cost Allocation Budget Visibility",
+    "Policy Controls Document Governance",
+    "Audit Trails Proof of Service",
+    "Workforce Records",
+    "Audit Support",
+    "Cost Visibility Deep Dive"
+   ]
+  },
+  "/assessment/government-fleets": {
+   "status": 200,
+   "words": 195,
+   "headings": [
+    "Government Fleet Assessment",
+    "Agency / Department Profile",
+    "Fleet Readiness Dispatch / Work Orders",
+    "Driver / Operator Compliance",
+    "Asset Accountability Maintenance Records",
+    "Records Retention Audit Trails",
+    "Fuel / Mileage / Regulatory Support",
+    "Policy / Governance Controls",
+    "Budget / Cost Visibility",
+    "Procurement / Vendor Documentation",
+    "Audit Support Deep Dive",
+    "Internal Service Visibility"
+   ]
+  },
+  "/assessment/bof-vault": {
+   "status": 200,
+   "words": 164,
+   "headings": [
+    "BOF Vault Assessment",
+    "Your Driving Profile",
+    "Your Essential Documents",
+    "Additional Supporting Documents",
+    "Document Readiness Analysis",
+    "Secure Vault Access Sharing",
+    "Driver Qualification File Readiness",
+    "Set Up Your Driver Vault Account"
+   ]
+  },
+  "/contact": {
+   "status": 200,
+   "words": 102,
+   "headings": [
+    "Start with the operating question you need resolved.",
+    "Send an inquiry",
+    "Other ways to reach BOF"
+   ]
+  },
+  "/fleet-savings": {
+   "status": 200,
+   "words": 235,
+   "headings": [
+    "Fleet Savings Outlook",
+    "Fleet profile"
+   ]
+  },
+  "/how-bof-works": {
+   "status": 200,
+   "words": 688,
+   "headings": [
+    "HOW BOF WORKS",
+    "One Connected Operating Capability — Workforce to Settlement",
+    "WORKFORCE NEED",
+    "RECRUIT",
+    "JOB DESCRIPTION POSTING PACKAGE",
+    "APPLICANT SCREENING",
+    "DRIVER QUALIFICATION REVIEW",
+    "ONBOARDING CHECKLIST",
+    "DRIVER ACTIVATION BOF VAULT HANDOFF",
+    "LOAD INTAKE",
+    "LOAD, DRIVER EQUIPMENT MATCH",
+    "READINESS EVALUATION",
+    "PRE-TRIP INSPECTION",
+    "DISPATCH RELEASE GATE",
+    "IN-TRANSIT TRACKING",
+    "DELIVERY POST-TRIP CLOSEOUT",
+    "PROOF BILLING PACKET",
+    "SETTLEMENT PAYROLL CLOSEOUT",
+    "ONE CONNECTED FLEET OPERATING SYSTEM."
+   ]
+  },
+  "/what-we-do": {
+   "status": 200,
+   "words": 953,
+   "headings": [
+    "WHAT WE DO",
+    "An Outsourced Operating Capability — Not Just Software",
+    "The Large-Company Advantage for Growing Fleets",
+    "Finance and Operations as One Business System",
+    "The Four Administrative Pillars of BOF",
+    "Operations Compliance",
+    "Finance Accounting",
+    "People HR",
+    "Procurement Savings",
+    "AI as an Efficiency Multiplier — Technology + Data + Human Oversight",
+    "Three Levels of Value for Fleet Owners",
+    "Substantive Work Absorbed",
+    "Connected Operating Record",
+    "Economic Strategic Freedom",
+    "Ready to see how BOF operates behind your fleet?"
+   ]
+  },
+  "/aggregators": {
+   "status": 200,
+   "words": 633,
+   "headings": [
+    "Turn fleet relationships into a clearer readiness conversation.",
+    "Available capacity is not always usable capacity.",
+    "The network still needs a single administrative truth.",
+    "Carrier readiness",
+    "Carrier packet control",
+    "Capacity governance",
+    "Executive roll-up",
+    "What needs attention right now",
+    "Management action queue",
+    "Carrier readiness at a glance",
+    "Who owns the decision across the network",
+    "Network operations",
+    "Carrier managers",
+    "Compliance",
+    "Finance",
+    "Executive leadership",
+    "The network needs a governed operating layer, not another marketplace abstraction.",
+    "Start with the network question that needs a clearer owner."
+   ]
+  },
+  "/company": {
+   "status": 200,
+   "words": 529,
+   "headings": [
+    "WHO ARE WE?",
+    "Howard Ridgeway",
+    "Vincent G. Whitelock, PhD",
+    "Sylvester D. Holmes"
+   ]
+  },
+  "/for-hire-carriers": {
+   "status": 200,
+   "words": 1011,
+   "headings": [
+    "Built for Carriers Who Can t Afford Mistakes",
+    "Carrier-grade operational credibility",
+    "Where for-hire carriers lose first",
+    "Dispatch moves faster than compliance can keep up",
+    "Proof lives everywhere except the load record",
+    "Disputes eat margin before leadership sees the pattern",
+    "No enforcement layer—only visibility theater",
+    "What BOF enforces on every lane",
+    "Control every load before it rolls",
+    "Never miss compliance again",
+    "Proof that gets you paid",
+    "Protect carrier revenue",
+    "Assessment savings outlook",
+    "Fleet savings outlook",
+    "Carrier assessment intake",
+    "How carrier engagements run with BOF",
+    "Discover",
+    "Design",
+    "Deploy",
+    "Operate",
+    "What your command center would stress-test daily",
+    "The operating model behind a carrier-controlled workday",
+    "Dispatch lane control",
+    "Proof service quality",
+    "Claims settlements",
+    "Governance accountability",
+    "Who owns the decision",
+    "Operations",
+    "Safety",
+    "Drivers",
+    "Finance",
+    "Leadership",
+    "The decision layer is the real value",
+    "See the carrier-grade BOF command center on your data"
+   ]
+  },
+  "/private-fleets": {
+   "status": 200,
+   "words": 1001,
+   "headings": [
+    "Enterprise Control for Captive Fleet Networks",
+    "Operational credibility at a glance",
+    "Where private fleets feel the pressure first",
+    "Every branch runs a different playbook",
+    "Policy exists; proof does not",
+    "Finance inherits operational ambiguity",
+    "Board-level risk without operator-level truth",
+    "What BOF enforces for captive operations",
+    "Standardize the internal operating system",
+    "Rhythm between dispatch and compliance",
+    "Risk radar for captive networks",
+    "Executive roll-up without dilution",
+    "Assessment savings outlook",
+    "Fleet savings outlook",
+    "Fleet assessment intake",
+    "How engagements run for private fleets",
+    "Discover",
+    "Design",
+    "Deploy",
+    "Operate",
+    "What leadership would see Monday morning",
+    "Why captive fleets need a different operating layer",
+    "Branch governance",
+    "Maintenance readiness",
+    "Proof across departments",
+    "Executive confidence",
+    "The real accountability problem is cross-functional",
+    "Fleet manager",
+    "Transportation manager",
+    "Maintenance",
+    "Finance",
+    "Executive team",
+    "Governance turns scattered operational data into a decision layer",
+    "Bring the same enforcement rigor to your internal fleet"
+   ]
+  },
+  "/government": {
+   "status": 200,
+   "words": 730,
+   "headings": [
+    "The agency keeps operational command. BOF keeps the administrative layer organized.",
+    "The government fleet operating model is a records problem as much as a service problem",
+    "Service assignments",
+    "Readiness inspection control",
+    "Evidence retention",
+    "Leadership visibility",
+    "Who owns the chain of accountability",
+    "Fleet manager",
+    "Supervisors",
+    "Procurement admin",
+    "Compliance",
+    "Leadership",
+    "Government fleet operating hubs",
+    "Public Works",
+    "Transit",
+    "Utilities",
+    "Solid Waste",
+    "Emergency Services",
+    "Municipal Services",
+    "County Operations",
+    "State DOT",
+    "Infrastructure Capital Projects",
+    "The value is administrative control without operational loss of authority",
+    "The administrative layer behind public operations",
+    "Operations stay in-house",
+    "BOF handles the admin engine",
+    "Leadership sees the truth"
+   ]
+  },
+  "/bof-vault": {
+   "status": 200,
+   "words": 1080,
+   "headings": [
+    "YOUR PROFESSIONAL RECORD. WHEREVER YOUR CAREER TAKES YOU.",
+    "The Vault belongs to the driver",
+    "BOF Vault is not the Operations File Cabinet",
+    "The organization s administrative record",
+    "The driver s portable professional record",
+    "One record, maintained over time",
+    "Organize",
+    "Maintain",
+    "Share",
+    "The record can move with the driver",
+    "A missing document should become a visible next step",
+    "Portability is the point of continuity",
+    "The future BOF Vault Level 2 domains",
+    "Documents Credentials",
+    "Verification Evidence",
+    "Qualification Status",
+    "Sharing Employer Transfer",
+    "Renewal Maintenance",
+    "Record History Continuity",
+    "Identity Access",
+    "Exceptions Resolution",
+    "A professional record that stays with the person"
+   ]
+  },
+  "/bof-vault/intake": {
+   "status": 200,
+   "words": 1287,
+   "headings": [
+    "Vault Intake",
+    "Submission is not the record",
+    "The mechanics of Vault Intake",
+    "Receive",
+    "Identify",
+    "Associate",
+    "Assess",
+    "Route",
+    "Submission to organized administrative record",
+    "Submit",
+    "Receive",
+    "Identify",
+    "Associate",
+    "Check",
+    "Create record",
+    "Route follow-up",
+    "Preserve history",
+    "Three Vault Intake workflows",
+    "New credential submission",
+    "Incomplete or ambiguous submission",
+    "Replacement supersedes earlier record",
+    "Intake makes uncertainty visible at the beginning",
+    "Intake history carries forward with the driver",
+    "An intake condition determines the next professional step",
+    "Vault Intake — Future Level 3 subjects",
+    "Intake Routing",
+    "Intake Validation",
+    "Intake Storage",
+    "Start the driver s record with the right condition"
+   ]
+  },
+  "/documents": {
+   "status": 200,
+   "words": 941,
+   "headings": [
+    "Operations File Cabinet",
+    "Driver Qualification Files",
+    "Secondary Driver Documents",
+    "Dispatch Load Operations",
+    "Safety / Claims / Insurance",
+    "Contracts / Customer / Legal",
+    "Policies SOPs",
+    "Finance / Settlements / Back Office",
+    "Training Knowledge Base",
+    "HR / Talent / Performance",
+    "Featured Documents Templates",
+    "CDL",
+    "Medical Card",
+    "MVR",
+    "FMCSA Clearinghouse",
+    "I-9",
+    "W-9",
+    "Master Agreement",
+    "Work Order",
+    "Rate Confirmation",
+    "Bill of Lading",
+    "Proof of Delivery",
+    "Safety Compliance Policy",
+    "Claims / Escalation SOP",
+    "Employee Handbook",
+    "AI Use Automation Governance",
+    "Featured File Cabinet",
+    "CDL",
+    "Medical Card",
+    "MVR",
+    "FMCSA Clearinghouse",
+    "I-9",
+    "W-9",
+    "Master Agreement",
+    "Work Order",
+    "Rate Confirmation",
+    "Bill of Lading",
+    "Proof of Delivery",
+    "Safety Compliance Policy",
+    "Claims / Escalation SOP",
+    "Employee Handbook",
+    "AI Use Automation Governance"
+   ]
+  },
+  "/demo/dispatch": {
+   "status": 200,
+   "words": 22,
+   "headings": []
+  },
+  "/demo/loads": {
+   "status": 200,
+   "words": 672,
+   "headings": [
+    "Authoritative load roster",
+    "Dispatch operating guidance",
+    "Load File operating guidance",
+    "Current fleet loads"
+   ]
+  },
+  "/demo/drivers": {
+   "status": 200,
+   "words": 264,
+   "headings": [
+    "Who can safely take the next load?",
+    "Driver operating guidance",
+    "Driver Roster",
+    "Drivers Command Center",
+    "Drivers needing attention ( 2 )",
+    "Compliance Actions Document Review"
+   ]
+  },
+  "/demo/settlements": {
+   "status": 200,
+   "words": 36,
+   "headings": []
+  },
+  "/demo/command-center": {
+   "status": 200,
+   "words": 78,
+   "headings": [
+    "Cross-domain operating observation"
+   ]
+  },
+  "/customer-portal/load-intake": {
+   "status": 200,
+   "words": 495,
+   "headings": [
+    "Enter the shipment details BOF needs before quote review and assignment.",
+    "Customer, lane, freight, proof, and terms",
+    "Customer contact",
+    "Origin and destination",
+    "Commodity and equipment",
+    "Quote assumptions and accessorials",
+    "Cargo photo",
+    "Calculating",
+    "Dispatch-ready blocked",
+    "Generated IDs"
+   ]
+  },
+  "/team-briefing": {
+   "status": 200,
+   "words": 790,
+   "headings": [
+    "Fleets already own systems. BOF fixes the work between them.",
+    "Fleets already own systems. The work between them is still unowned.",
+    "FMCSA defines the rules. BOF organizes the record.",
+    "Readiness begins before dispatch.",
+    "The TMS moves the freight. BOF makes the work ready to move.",
+    "TMS",
+    "BOF",
+    "The shipment record carries the administrative work.",
+    "BOF checks readiness before the truck rolls.",
+    "Fleets already pay for the back office. BOF replaces friction.",
+    "The assessment proves the economics in the fleet s own work.",
+    "BOF is a working operating spine with remaining finish work.",
+    "BOF is the operating-control layer around the TMS."
+   ]
+  },
+  "/founding-fleet": {
+   "status": 200,
+   "words": 375,
+   "headings": [
+    "Founding Fleet Program",
+    "Premium access for serious operators.",
+    "The operating system layers Founding Fleets help shape.",
+    "Manager Portal",
+    "Driver Portal",
+    "Customer Portal",
+    "Enforcement Engine",
+    "Company Operations Vault",
+    "Fleet Financials",
+    "Exception Queue",
+    "Fleets with enough complexity to feel the pain and enough urgency to fix it.",
+    "A focused partnership, not a commodity software trial.",
+    "Request Founding Fleet Review"
+   ]
+  },
+  "/qa": {
+   "status": 200,
+   "words": 2793,
+   "headings": [
+    "Q A",
+    "Grow the fleet. Not the back office.",
+    "What BOF Is and Why It Matters",
+    "The Operating Record and Finance-Operations Integration",
+    "Driver Administration and Lifecycle",
+    "Dispatch, Compliance, and Financial Visibility",
+    "Scaling, Control, and Service Options",
+    "Ready to see how BOF would operate behind your fleet?"
+   ]
+  },
+  "/blog": {
+   "status": 200,
+   "words": 296,
+   "headings": [
+    "Fleet Intelligence",
+    "Operational thinking for enforcement-driven fleets.",
+    "From Document Verification to Load Release Control",
+    "A Late Delivery Should Never Be a Surprise: How BOF Turns Truck Tracking Into Proactive Operations",
+    "Why Trucking Back Offices Need Enforcement, Not More Dashboards",
+    "Why Proof Packets Control Settlement and Cash Flow",
+    "How Driver Readiness Prevents Dispatch Failure",
+    "Where the enforcement engine shows up.",
+    "Ready to enforce your back office?"
+   ]
+  }
+ }
 }

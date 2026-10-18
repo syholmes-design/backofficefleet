@@ -66,7 +66,7 @@ export default async function ContactPage({ searchParams }: { searchParams?: Con
         <ContactInquiryForm defaultMessage={defaultMessage} />
 
         <section className="mt-10 grid gap-4" aria-label="Email BOF instead">
-          <h2 className="text-lg font-bold text-slate-950">Or email BOF</h2>
+          <h2 className="text-lg font-bold text-slate-950">Other ways to reach BOF</h2>
           {CONTACT_TOPICS.map((item) => (
             <a key={item.label} href={item.href} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:border-teal-400">
               <span className="text-base font-semibold text-slate-900">{item.label}</span>
