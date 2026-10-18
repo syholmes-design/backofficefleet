@@ -20,7 +20,7 @@ const PROJECT_ROOT = join(__dirname, "..");
 // Configuration
 const BOF_CONFIG = {
   company: "Delta Advanced Trucking, Inc.",
-  address: "2475 Laver Rd., Mansfield, OH 44905",
+  address: "540 Demo Street, Mansfield, OH 44905",
   disclaimer: "BackOfficeFleet operations document.",
   tealColor: "#0BA5A4",
   payPeriodsPerYear: 26
@@ -1090,7 +1090,7 @@ function generatePayrollGarnishmentWithholdingSummary(driverInfo, settlementData
     <div class="paper">
         <div class="header">
             <div class="company-name">Delta Advanced Trucking, Inc.</div>
-            <div class="company-address">2475 Laver Rd., Mansfield, OH 44905</div>
+            <div class="company-address">540 Demo Street, Mansfield, OH 44905</div>
             <div class="document-title">Payroll Garnishment Withholding Summary</div>
             <div style="font-size: 9pt; color: #4a5568;">2025 Annual Summary Period</div>
         </div>
@@ -1104,7 +1104,7 @@ function generatePayrollGarnishmentWithholdingSummary(driverInfo, settlementData
                 </div>
                 <div class="info-row">
                     <div class="info-label">Address:</div>
-                    <div class="info-value">2475 Laver Rd., Mansfield, OH 44905</div>
+                    <div class="info-value">540 Demo Street, Mansfield, OH 44905</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Group:</div>
@@ -1407,7 +1407,7 @@ function generateLifeInsuranceBeneficiaryElection(driverInfo, settlementData) {
     <div class="paper">
         <div class="header">
             <div class="company-name">Delta Advanced Trucking, Inc.</div>
-            <div class="company-address">2475 Laver Rd., Mansfield, OH 44905</div>
+            <div class="company-address">540 Demo Street, Mansfield, OH 44905</div>
             <div class="document-title">Life Insurance Beneficiary Election Form</div>
             <div style="font-size: 9pt; color: #4a5568;">2025 Annual Election Period</div>
         </div>
@@ -1780,7 +1780,7 @@ function generateFlexibleSpendingAccountElection(driverInfo, settlementData) {
     <div class="paper">
         <div class="header">
             <div class="company-name">Delta Advanced Trucking, Inc.</div>
-            <div class="company-address">2475 Laver Rd., Mansfield, OH 44905</div>
+            <div class="company-address">540 Demo Street, Mansfield, OH 44905</div>
             <div class="document-title">Flexible Spending Account Election Form</div>
             <div style="font-size: 9pt; color: #4a5568;">2025 Annual Election Period</div>
         </div>

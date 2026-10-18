@@ -10,18 +10,18 @@ try {
   
   // Expected email data
   const expectedEmails = {
-    "DRV-001": { primary: "sarah.carter@gmail.com", secondary: "mcarter@aol.com" },
-    "DRV-002": { primary: "clopez@yahoo.com", secondary: "rosa.hernandez@gmail.com" },
-    "DRV-003": { primary: "minji.kim@hotmail.com", secondary: "dkim@yahoo.com" },
-    "DRV-004": { primary: "raj.patel@aol.com", secondary: "anita.sharma@hotmail.com" },
-    "DRV-005": { primary: "ytanaka@gmail.com", secondary: "htanaka@aol.com" },
-    "DRV-006": { primary: "linda.chen@yahoo.com", secondary: "wei.chen@gmail.com" },
-    "DRV-007": { primary: "mgomez@hotmail.com", secondary: "itorres@yahoo.com" },
-    "DRV-008": { primary: "jessica.smith@gmail.com", secondary: "brian.smith@hotmail.com" },
-    "DRV-009": { primary: "mbrown@aol.com", secondary: "ldavis@gmail.com" },
-    "DRV-010": { primary: "angela.wilson@yahoo.com", secondary: "terrance.wilson@aol.com" },
-    "DRV-011": { primary: "vsharma@gmail.com", secondary: "mnair@hotmail.com" },
-    "DRV-012": { primary: "karen.johnson@hotmail.com", secondary: "david.johnson@yahoo.com" }
+    "DRV-001": { primary: "sarah.carter@example.com", secondary: "mcarter@example.com" },
+    "DRV-002": { primary: "clopez@example.com", secondary: "rosa.hernandez@example.com" },
+    "DRV-003": { primary: "minji.kim@example.com", secondary: "dkim@example.com" },
+    "DRV-004": { primary: "raj.patel@example.com", secondary: "anita.sharma@example.com" },
+    "DRV-005": { primary: "ytanaka@example.com", secondary: "htanaka@example.com" },
+    "DRV-006": { primary: "linda.chen@example.com", secondary: "wei.chen@example.com" },
+    "DRV-007": { primary: "mgomez@example.com", secondary: "itorres@example.com" },
+    "DRV-008": { primary: "jessica.smith@example.com", secondary: "brian.smith@example.com" },
+    "DRV-009": { primary: "mbrown@example.com", secondary: "ldavis@example.com" },
+    "DRV-010": { primary: "angela.wilson@example.com", secondary: "terrance.wilson@example.com" },
+    "DRV-011": { primary: "vsharma@example.com", secondary: "mnair@example.com" },
+    "DRV-012": { primary: "karen.johnson@example.com", secondary: "david.johnson@example.com" }
   };
   
   let correctCount = 0;

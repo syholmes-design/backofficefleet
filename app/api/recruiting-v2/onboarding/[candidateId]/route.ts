@@ -1,6 +1,5 @@
-import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
+import { requireRecruitingCandidateAccess } from "@/lib/recruiting-v2/candidate-access";
 import { NextRequest, NextResponse } from "next/server";
-import { recruitingV2UnauthorizedResponse } from "@/lib/recruiting-v2/require-operator-session";
 import type { Prisma, RecruitingV2DocumentStatus, RecruitingV2DocumentType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { evaluateRecruitingV2ActivationReadiness } from "@/lib/recruiting-v2/activation-engine";
@@ -126,9 +125,9 @@ function normalizeChecklistInput(value: unknown): RecruitingV2OnboardingChecklis
   return rows;
 }
 
-async function getOnboardingContext(candidateId: string) {
+async function getOnboardingContext(candidateWhere: Prisma.CandidateWhereUniqueInput) {
   const candidate = await prisma.candidate.findUnique({
-    where: { candidateCode: candidateId },
+    where: candidateWhere,
     include: {
       position: true,
       documentRecords: { orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }] },
@@ -206,19 +205,21 @@ function onboardingPayload(context: NonNullable<Awaited<ReturnType<typeof getOnb
 }
 
 export async function GET(_request: NextRequest, context: RouteContext) {
-  const unauthorized = await operatorUnauthorizedResponse();
-  if (unauthorized) return unauthorized;
   const { candidateId } = await context.params;
-  const onboardingContext = await getOnboardingContext(candidateId);
+  const access = await requireRecruitingCandidateAccess(candidateId);
+  if (access.response) return access.response;
+  const candidateWhere = access.access.where;
+  const onboardingContext = await getOnboardingContext(candidateWhere);
   if (!onboardingContext) return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
   return NextResponse.json(onboardingPayload(onboardingContext));
 }
 
 export async function POST(request: NextRequest, context: RouteContext) {
-  const unauthorized = await recruitingV2UnauthorizedResponse();
-  if (unauthorized) return unauthorized;
   const { candidateId } = await context.params;
-  const onboardingContext = await getOnboardingContext(candidateId);
+  const access = await requireRecruitingCandidateAccess(candidateId);
+  if (access.response) return access.response;
+  const candidateWhere = access.access.where;
+  const onboardingContext = await getOnboardingContext(candidateWhere);
   if (!onboardingContext) return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
 
   let body: unknown;
@@ -271,7 +272,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     },
   });
 
-  const updatedContext = await getOnboardingContext(candidateId);
+  const updatedContext = await getOnboardingContext(candidateWhere);
   if (!updatedContext) return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
   return NextResponse.json({ operation: "Update Onboarding Metadata", ...onboardingPayload(updatedContext) });
 }

@@ -1,6 +1,5 @@
-import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
+import { requireRecruitingCandidateAccess } from "@/lib/recruiting-v2/candidate-access";
 import { NextRequest, NextResponse } from "next/server";
-import { recruitingV2UnauthorizedResponse } from "@/lib/recruiting-v2/require-operator-session";
 import type { Prisma, RecruitingV2DocumentStatus, RecruitingV2DocumentType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { evaluateRecruitingV2DocumentGates } from "@/lib/recruiting-v2/document-gate-engine";
@@ -95,9 +94,9 @@ function serializeInterview(interview: {
   };
 }
 
-async function getActivationContext(candidateId: string) {
+async function getActivationContext(candidateWhere: Prisma.CandidateWhereUniqueInput) {
   const candidate = await prisma.candidate.findUnique({
-    where: { candidateCode: candidateId },
+    where: candidateWhere,
     include: {
       position: true,
       documentRecords: { orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }] },
@@ -198,19 +197,21 @@ async function activationPayload(context: NonNullable<Awaited<ReturnType<typeof 
 }
 
 export async function GET(_request: NextRequest, context: RouteContext) {
-  const unauthorized = await operatorUnauthorizedResponse();
-  if (unauthorized) return unauthorized;
   const { candidateId } = await context.params;
-  const activationContext = await getActivationContext(candidateId);
+  const access = await requireRecruitingCandidateAccess(candidateId);
+  if (access.response) return access.response;
+  const candidateWhere = access.access.where;
+  const activationContext = await getActivationContext(candidateWhere);
   if (!activationContext) return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
   return NextResponse.json(await activationPayload(activationContext));
 }
 
 export async function POST(request: NextRequest, context: RouteContext) {
-  const unauthorized = await recruitingV2UnauthorizedResponse();
-  if (unauthorized) return unauthorized;
   const { candidateId } = await context.params;
-  const activationContext = await getActivationContext(candidateId);
+  const access = await requireRecruitingCandidateAccess(candidateId);
+  if (access.response) return access.response;
+  const candidateWhere = access.access.where;
+  const activationContext = await getActivationContext(candidateWhere);
   if (!activationContext) return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
 
   let body: unknown;
@@ -257,7 +258,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       candidateCode: candidateId,
       fleetId,
     });
-    const refreshed = await getActivationContext(candidateId);
+    const refreshed = await getActivationContext(candidateWhere);
     return NextResponse.json(
       {
         ...(await activationPayload(refreshed!)),

@@ -1,6 +1,7 @@
 import type { DriverDocumentType, Prisma, RecruitingV2DocumentStatus } from "@prisma/client";
 import { AuditAction } from "@prisma/client";
-import { hasRole, type SessionUserLike } from "@/lib/authorization";
+import { hasRole, requireFleetAccess, type SessionUserLike } from "@/lib/authorization";
+import { candidateTenantFleetId } from "@/lib/recruiting-v2/candidate-tenant";
 import { prisma } from "@/lib/prisma";
 import { evaluateRecruitingV2DocumentGates } from "@/lib/recruiting-v2/document-gate-engine";
 import { normalizeRecruitingV2OfferSummary } from "@/lib/recruiting-v2/offer-engine";
@@ -98,6 +99,24 @@ function mapRecruitingDocType(documentType: string): DriverDocumentType {
   return "OTHER";
 }
 
+const PLATFORM_ACTIVATION_ROLE_CODES = ["BOF_OPERATIONS", "BOF_COMPLIANCE_REVIEW", "BOF_ADMINISTRATION"] as const;
+
+async function hasActivationRoleForFleet(user: SessionUserLike, fleetId: string) {
+  if (hasRole(user, [...PLATFORM_ACTIVATION_ROLE_CODES])) return true;
+  if (requireFleetAccess(user, fleetId, [...ACTIVATION_ROLE_CODES]).allowed) return true;
+  if (!user.id) return false;
+  const aggregatorRole = await prisma.aggregatorMembership.findFirst({
+    where: {
+      userId: user.id,
+      status: "ACTIVE",
+      role: { code: { in: [...ACTIVATION_ROLE_CODES] } },
+      aggregator: { status: "ACTIVE", aggregatorFleets: { some: { fleetId, status: "ACTIVE" } } },
+    },
+    select: { id: true },
+  });
+  return Boolean(aggregatorRole);
+}
+
 export async function activateRecruitingV2Candidate(input: {
   sessionUser: SessionUserLike;
   candidateCode: string;
@@ -116,7 +135,9 @@ export async function activateRecruitingV2Candidate(input: {
     );
   }
 
-  if (!hasRole(input.sessionUser, [...ACTIVATION_ROLE_CODES])) {
+  // The activation role must be held for the target fleet (or platform-wide, or through an
+  // aggregator affiliated with that fleet), not merely on some other fleet.
+  if (!(await hasActivationRoleForFleet(input.sessionUser, fleetId))) {
     throw new RecruitingV2ActivationError(
       "Driver activation requires an authorized fleet operations, safety, dispatch, or BOF operations role.",
       403,
@@ -132,6 +153,11 @@ export async function activateRecruitingV2Candidate(input: {
     },
   });
   if (!candidate) throw new RecruitingV2ActivationError("Candidate not found", 404);
+
+  const candidateFleetId = candidateTenantFleetId(candidate.applicationSummary);
+  if (candidateFleetId && candidateFleetId !== fleetId) {
+    throw new RecruitingV2ActivationError("Candidate can only be activated into the fleet that owns the candidate.", 422);
+  }
 
   const existingHandoff = readRecruitingV2DriverHandoff(candidate.applicationSummary);
   if (candidate.activationStatus === "ACTIVE" && existingHandoff) {

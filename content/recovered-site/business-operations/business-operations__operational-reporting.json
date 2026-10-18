@@ -12,6 +12,7 @@
 "path": "Website/business-operations/operational-reporting/index.html"
 }
 ],
+"ownerRemovals": [],
 "title": "Operational Reporting | Business Operations | BackOfficeFleet",
 "description": "BOF operational reporting connects readiness status, blockers, owner queues, aging work, exceptions, and leadership review across trucking operations.",
 "bodyClass": "premium-site page-business-operations",

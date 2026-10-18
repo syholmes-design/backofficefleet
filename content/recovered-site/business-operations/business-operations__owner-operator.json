@@ -7,6 +7,7 @@
 "label": "Static BOF site, 2026-07-29 (origin/codex/public-site-deployment-candidate)"
 },
 "merges": [],
+"ownerRemovals": [],
 "title": "Owner-Operator & Leased Contractor Management | BOF",
 "description": "BOF manages owner-operator leases, Part 376 records, contractor qualification, settlements, deductions, escrow, and termination workflows.",
 "bodyClass": "premium-site page-business-operations bof-bo-detail",

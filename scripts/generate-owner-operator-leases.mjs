@@ -12,9 +12,9 @@ const OWNER_OPERATORS = [
   {
     driverId: 'DRV-006',
     name: 'Marcus Chen',
-    address: '500 Pacific Ave, Dallas, TX 75202',
-    phone: '283-876-4322',
-    email: 'marcus.chen@boftransport.com',
+    address: '810 Demo Street, Dallas, TX 75202',
+    phone: '283-555-0100',
+    email: 'marcus.chen@boftransport.example',
     equipment: {
       type: 'Class A Tractor',
       year: '2022',
@@ -33,9 +33,9 @@ const OWNER_OPERATORS = [
   {
     driverId: 'DRV-010',
     name: 'Noah Wilson',
-    address: '110 W Adams St, Chicago, IL 60603',
-    phone: '582-987-2387',
-    email: 'noah.wilson@boftransport.com',
+    address: '130 Demo Street, Chicago, IL 60603',
+    phone: '582-555-0100',
+    email: 'noah.wilson@boftransport.example',
     equipment: {
       type: 'Class A Tractor',
       year: '2021',
@@ -54,9 +54,9 @@ const OWNER_OPERATORS = [
   {
     driverId: 'DRV-012',
     name: 'Robert Johnson',
-    address: '88 S Main St, Akron, OH 44308',
-    phone: '618-623-9317',
-    email: 'robert.johnson@boftransport.com',
+    address: '1040 Demo Street, Akron, OH 44308',
+    phone: '618-555-0100',
+    email: 'robert.johnson@boftransport.example',
     equipment: {
       type: 'Class A Tractor',
       year: '2023',

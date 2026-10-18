@@ -81,7 +81,9 @@
     "test:fmcsa-verification": "npx --yes tsx scripts/run-fmcsa-verification-test.ts",
     "test:samba-intelligence": "npx --yes tsx scripts/run-samba-intelligence-test.ts",
     "test:unified-integration": "npx --yes tsx scripts/run-unified-integration-test.ts",
-    "test:training-authorization": "npx --yes tsx scripts/run-training-authorization-test.ts"
+    "test:training-authorization": "npx --yes tsx scripts/run-training-authorization-test.ts",
+    "test:recruiting-v2-tenancy": "npx --yes tsx scripts/run-recruiting-v2-tenancy-test.ts",
+    "test:route-access": "node --import ./scripts/lib/ts-alias-loader.mjs --test lib/security/route-access.test.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",

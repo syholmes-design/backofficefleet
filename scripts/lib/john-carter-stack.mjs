@@ -7,7 +7,7 @@
  * same primary/secondary structure with generated HTML under /generated/drivers/{id}/.
  */
 export const JOHN_CARTER_DRIVER_ID = "DRV-001";
-export const JOHN_CARTER_CDL_NUMBER = "OH1668243";
+export const JOHN_CARTER_CDL_NUMBER = "OH0000075";
 
 /** Supplemental rows owned by this module (stripped before rebuild). */
 export const FLEET_MANAGED_SUPPLEMENTAL_TYPES = [
@@ -347,7 +347,7 @@ function buildManagedSupplementalRows(driverId, ex, driver) {
 }
 
 /**
- * When a spreadsheet row keys John Carter by CDL number (OH1668243) instead of DRV-001.
+ * When a spreadsheet row keys John Carter by CDL number (OH0000075) instead of DRV-001.
  * @param {Record<string, unknown>} rowObj
  * @param {(s: string) => string} normHeader same normalizer as build-demo-data
  */

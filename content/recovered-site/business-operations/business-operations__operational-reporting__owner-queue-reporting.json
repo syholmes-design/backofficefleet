@@ -7,6 +7,7 @@
 "label": "Static BOF site, 2026-07-29 (origin/codex/public-site-deployment-candidate)"
 },
 "merges": [],
+"ownerRemovals": [],
 "title": "Owner Queue Reporting | Operational Reporting | BackOfficeFleet",
 "description": "Owner queue reporting for trucking teams connecting blockers, aging work, missing records, and next actions to responsible owners.",
 "bodyClass": "premium-site page-business-operations",

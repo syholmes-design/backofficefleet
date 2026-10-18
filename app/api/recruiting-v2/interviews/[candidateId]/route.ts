@@ -1,6 +1,6 @@
-import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
+import type { Prisma } from "@prisma/client";
+import { requireRecruitingCandidateAccess } from "@/lib/recruiting-v2/candidate-access";
 import { NextRequest, NextResponse } from "next/server";
-import { recruitingV2UnauthorizedResponse } from "@/lib/recruiting-v2/require-operator-session";
 import { prisma } from "@/lib/prisma";
 
 type RouteContext = { params: Promise<{ candidateId: string }> };
@@ -92,9 +92,9 @@ function serializeInterview(interview: {
   };
 }
 
-async function findCandidate(candidateId: string) {
+async function findCandidate(candidateWhere: Prisma.CandidateWhereUniqueInput) {
   return prisma.candidate.findUnique({
-    where: { candidateCode: candidateId },
+    where: candidateWhere,
     include: {
       position: true,
       interviews: { orderBy: [{ scheduledFor: "desc" }, { createdAt: "desc" }] },
@@ -103,10 +103,11 @@ async function findCandidate(candidateId: string) {
 }
 
 export async function GET(_request: NextRequest, context: RouteContext) {
-  const unauthorized = await operatorUnauthorizedResponse();
-  if (unauthorized) return unauthorized;
   const { candidateId } = await context.params;
-  const candidate = await findCandidate(candidateId);
+  const access = await requireRecruitingCandidateAccess(candidateId);
+  if (access.response) return access.response;
+  const candidateWhere = access.access.where;
+  const candidate = await findCandidate(candidateWhere);
 
   if (!candidate) {
     return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
@@ -140,10 +141,11 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 }
 
 export async function POST(request: NextRequest, context: RouteContext) {
-  const unauthorized = await recruitingV2UnauthorizedResponse();
-  if (unauthorized) return unauthorized;
   const { candidateId } = await context.params;
-  const candidate = await findCandidate(candidateId);
+  const access = await requireRecruitingCandidateAccess(candidateId);
+  if (access.response) return access.response;
+  const candidateWhere = access.access.where;
+  const candidate = await findCandidate(candidateWhere);
 
   if (!candidate || !candidate.positionId) {
     return NextResponse.json({ error: "Candidate or candidate position not found" }, { status: 400 });

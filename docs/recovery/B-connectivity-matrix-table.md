@@ -28,10 +28,10 @@
 | `/` | Full operating model | `/what-we-do` | OK | WHAT WE DO \| 919w |  |
 | `/` | Questions | `/qa` | OK | Q&A \| 184w |  |
 | `/` | Home | `/` | OK | Enterprise back-office operations for aggregators and carriers \| 1999w |  |
-| `/` | Drivers at Risk 2 Readiness / safety review | `/safety` | OK | Safety Command Center \| 1095w \| demo |  |
+| `/` | Drivers at Risk 3 Readiness / safety review | `/safety` | OK | Safety Command Center \| 1095w \| demo |  |
 | `/` | Loads at Risk 4 Load execution exceptions | `/demo/dispatch` | OK | CRITICAL · MAJOR · MINOR \| 1824w \| demo |  |
-| `/` | Claims Exposure $48k Proof / claims queue | `/rf-actions` | OK | RF action engine \| 339w |  |
-| `/` | Money at Risk $126k Settlement / cash holds | `/money-at-risk` | OK | Money at Risk \| 550w |  |
+| `/` | Claims Exposure $52k Proof / claims queue | `/rf-actions` | OK | RF action engine \| 339w |  |
+| `/` | Money at Risk $136k Settlement / cash holds | `/money-at-risk` | OK | Money at Risk \| 550w |  |
 | `/` | Open the demo lobby | `/dashboard` | OK | Start the BackOfficeFleet demo \| 117w \| demo |  |
 | `/` | READINESS Driver readiness issue Illustrative: HOS coaching  | `/safety` | OK | Safety Command Center \| 1095w \| demo |  |
 | `/` | LOAD Load exception Illustrative: L001 proof packet needs cl | `/demo/loads` | OK | Authoritative load roster \| 573w \| demo |  |
@@ -39,12 +39,12 @@
 | `/` | SETTLEMENT Settlement hold Illustrative: QR lumper closeout  | `/demo/settlements` | OK | Settlement release control \| 459w \| demo |  |
 | `/` | CASH Cash exposure Illustrative: money at risk remains attac | `/money-at-risk` | OK | Money at Risk \| 550w |  |
 | `/` | Open the DEMO Command Center | `/demo/command-center` | OK | Fleet Operations Control Tower \| 1645w \| demo |  |
-| `/` | Open existing workflow | `/demo/drivers` | PRIVACY | shows 12 realistic contact/ID values | Do not link anonymous visitors here; de-identify demo data |
+| `/` | Open existing workflow | `/demo/drivers` | OK | Who can safely take the next load? \| 1331w \| demo |  |
 | `/` | Open existing workflow | `/demo/dispatch` | OK | CRITICAL · MAJOR · MINOR \| 1824w \| demo |  |
 | `/` | Open existing workflow | `/documents` | OK | Operations File Cabinet \| 862w \| demo |  |
 | `/` | Open existing workflow | `/demo/settlements` | OK | Settlement release control \| 459w \| demo |  |
 | `/` | Open existing workflow | `/money-at-risk` | OK | Money at Risk \| 550w |  |
-| `/` | 01 Ready DRIVERS Readiness, credentials, assignment eligibil | `/demo/drivers` | PRIVACY | shows 12 realistic contact/ID values | Do not link anonymous visitors here; de-identify demo data |
+| `/` | 01 Ready DRIVERS Readiness, credentials, assignment eligibil | `/demo/drivers` | OK | Who can safely take the next load? \| 1331w \| demo |  |
 | `/` | 02 Load DISPATCH Execution exceptions and trip ownership → | `/demo/dispatch` | OK | CRITICAL · MAJOR · MINOR \| 1824w \| demo |  |
 | `/` | 03 Proof OPERATIONS VAULT POD, seals, photos, document packe | `/bof-vault` | OK | YOUR PROFESSIONAL RECORD. WHEREVER YOUR CAREER TAKES YOU. \| 998w |  |
 | `/` | 04 Settle SETTLEMENTS Holds, deductions, pay alignment → | `/demo/settlements` | OK | Settlement release control \| 459w \| demo |  |
@@ -57,11 +57,11 @@
 | `/` | Aggregator overview | `/aggregators` | OK | Turn fleet relationships into a clearer readiness conversation. \| 603w |  |
 | `/aggregators` | Fleet Assessment | `/book-assessment?sector=aggregator&source=aggregators` | OK | → /assessment?sector=aggregator \| Take the Fleet Back Office Assessment \| 264w |  |
 | `/aggregators` | Open Operations | `/dashboard` | OK | Start the BackOfficeFleet demo \| 117w \| demo |  |
-| `/aggregators` | Open carrier registry | `/carriers` | OK | Carrier Registry \| 443w \| demo |  |
-| `/aggregators` | Resolve insurance hold and obtain signed agreement before di | `/carriers/CAR-003` | PRIVACY | shows 1 realistic contact/ID values | Do not link anonymous visitors here; de-identify demo data |
-| `/aggregators` | Confirm updated cargo certificate before high-value or refri | `/carriers/CAR-002` | PRIVACY | shows 1 realistic contact/ID values | Do not link anonymous visitors here; de-identify demo data |
-| `/aggregators` | Review POD timeliness pattern before assigning another refri | `/carriers/CAR-004` | PRIVACY | shows 1 realistic contact/ID values | Do not link anonymous visitors here; de-identify demo data |
-| `/aggregators` | Collect W-9 and verify ACH before assigning payment-sensitiv | `/carriers/CAR-005` | PRIVACY | shows 1 realistic contact/ID values | Do not link anonymous visitors here; de-identify demo data |
+| `/aggregators` | Open carrier registry | `/carriers` | OK | sign-in (callback /carriers) |  |
+| `/aggregators` | Resolve insurance hold and obtain signed agreement before di | `/carriers/CAR-003` | OK | sign-in (callback /carriers/CAR-003) |  |
+| `/aggregators` | Confirm updated cargo certificate before high-value or refri | `/carriers/CAR-002` | OK | sign-in (callback /carriers/CAR-002) |  |
+| `/aggregators` | Review POD timeliness pattern before assigning another refri | `/carriers/CAR-004` | OK | sign-in (callback /carriers/CAR-004) |  |
+| `/aggregators` | Collect W-9 and verify ACH before assigning payment-sensitiv | `/carriers/CAR-005` | OK | sign-in (callback /carriers/CAR-005) |  |
 | `/aggregators` | Open Documents | `/documents` | OK | Operations File Cabinet \| 862w \| demo |  |
 | `/assessment` | Create My Driver Vault | `/assessment/bof-vault` | OK | BOF Vault Assessment \| 147w |  |
 | `/assessment` | Start For-Hire Assessment | `/assessment/for-hire-carriers` | OK | For-Hire Carrier Assessment \| 146w |  |
@@ -183,7 +183,7 @@
 | `/business-operations` | Sign in to dispatch | `/api/auth/signin?callbackUrl=%2Fdispatch` | OK | sign-in (callback /dispatch) |  |
 | `/business-operations/accounting` | View Full Policy → | `/recovered-assets/static-20260729/assets/documents/policies/bof-pol-006-billing-packet-requirements.pdf` | OK | file |  |
 | `/business-operations/accounting` | View Full Policy → | `/recovered-assets/static-20260729/assets/documents/policies/bof-pol-007-document-retention-standard.pdf` | OK | file |  |
-| `/business-operations/accounting-finance` | Business Operations | `/business-operations` | OK | Business Operations \| 1985w |  |
+| `/business-operations/accounting-finance` | Business Operations | `/business-operations` | OK | Business Operations \| 1970w |  |
 | `/business-operations/accounting-finance` | Settlements & Billing | `/demo/settlements` | OK | Settlement release control \| 459w \| demo |  |
 | `/business-operations/accounting-finance` | Open AP & Vendor Control | `/business-operations/accounting-finance/ap-vendor-control` | OK | Keep vendor questions tied to approvals and operating proof. \| 119w |  |
 | `/business-operations/accounting-finance` | Open Cash-Flow Review | `/business-operations/accounting-finance/cash-flow-review` | OK | See what is ready to move and what is holding cash back. \| 113w |  |
@@ -191,14 +191,14 @@
 | `/business-operations/accounting-finance/ap-vendor-control` | Document Management | `/business-operations/document-management` | OK | Make office records easy to find, review, and act on. \| 296w |  |
 | `/business-operations/accounting-finance/cash-flow-review` | Accounting & Finance | `/business-operations/accounting-finance` | OK | Give finance the operating record behind the number. \| 1013w |  |
 | `/business-operations/accounting-finance/cash-flow-review` | Accounts Receivable | `/business-operations/accounts-receivable` | OK | Show why money is still open. \| 200w |  |
-| `/business-operations/accounts-receivable` | Business Operations | `/business-operations` | OK | Business Operations \| 1985w |  |
+| `/business-operations/accounts-receivable` | Business Operations | `/business-operations` | OK | Business Operations \| 1970w |  |
 | `/business-operations/accounts-receivable` | Customer Billing | `/business-operations/customer-billing` | OK | Turn completed work into a billing-ready packet. \| 196w |  |
 | `/business-operations/accounts-receivable` | Open Aging & Dispute Control | `/business-operations/accounts-receivable/aging-dispute-control` | OK | Make every open invoice explainable. \| 107w |  |
 | `/business-operations/accounts-receivable` | Billing & AR Control → | `/business-operations/customer-billing/billing-ar-control` | OK | Make packet readiness and dispute ownership visible. \| 390w |  |
 | `/business-operations/accounts-receivable/aging-dispute-control` | Accounts Receivable | `/business-operations/accounts-receivable` | OK | Show why money is still open. \| 200w |  |
 | `/business-operations/accounts-receivable/aging-dispute-control` | Customer Billing | `/business-operations/customer-billing` | OK | Turn completed work into a billing-ready packet. \| 196w |  |
 | `/business-operations/cash-flow` | View policy → | `/recovered-assets/static-20260729/assets/documents/policies/bof-pol-006-billing-packet-requirements.pdf` | OK | file |  |
-| `/business-operations/customer-billing` | Business Operations | `/business-operations` | OK | Business Operations \| 1985w |  |
+| `/business-operations/customer-billing` | Business Operations | `/business-operations` | OK | Business Operations \| 1970w |  |
 | `/business-operations/customer-billing` | Accounts Receivable | `/business-operations/accounts-receivable` | OK | Show why money is still open. \| 200w |  |
 | `/business-operations/customer-billing` | Open Billing Packet Control | `/business-operations/customer-billing/billing-packet-control` | OK | Confirm the proof before the invoice leaves the office. \| 107w |  |
 | `/business-operations/customer-billing` | Billing & AR Control → | `/business-operations/customer-billing/billing-ar-control` | OK | Make packet readiness and dispute ownership visible. \| 390w |  |
@@ -210,7 +210,7 @@
 | `/business-operations/customer-billing/billing-ar-control` | Accounts Receivable → | `/business-operations/accounts-receivable` | OK | Show why money is still open. \| 200w |  |
 | `/business-operations/customer-billing/billing-packet-control` | Customer Billing | `/business-operations/customer-billing` | OK | Turn completed work into a billing-ready packet. \| 196w |  |
 | `/business-operations/customer-billing/billing-packet-control` | Accounts Receivable | `/business-operations/accounts-receivable` | OK | Show why money is still open. \| 200w |  |
-| `/business-operations/document-management` | Business Operations | `/business-operations` | OK | Business Operations \| 1985w |  |
+| `/business-operations/document-management` | Business Operations | `/business-operations` | OK | Business Operations \| 1970w |  |
 | `/business-operations/document-management` | Policies & Procedures | `/documents/company-operations-vault` | OK | Company Operations Vault \| 1131w |  |
 | `/business-operations/document-management` | Open Records Control | `/business-operations/document-management/records-control` | OK | Classify records by the work they support. \| 204w |  |
 | `/business-operations/document-management` | Document & Records Control → | `/business-operations/document-records-control` | OK | Control the document lifecycle without losing the operating context. \| 511w |  |
@@ -235,8 +235,8 @@
 | `/business-operations/document-records-control` | Sign in to recruiting and onboarding | `/api/auth/signin?callbackUrl=%2Frecruiting` | OK | sign-in (callback /recruiting) |  |
 | `/business-operations/document-records-control` | View the dispatch demonstration → | `/demo/dispatch` | OK | CRITICAL · MAJOR · MINOR \| 1824w \| demo |  |
 | `/business-operations/document-records-control` | Sign in to dispatch | `/api/auth/signin?callbackUrl=%2Fdispatch` | OK | sign-in (callback /dispatch) |  |
-| `/business-operations/driver-onboarding` | Business Operations | `/business-operations` | OK | Business Operations \| 1985w |  |
-| `/business-operations/driver-onboarding` | Driver Command Center | `/demo/drivers` | PRIVACY | shows 12 realistic contact/ID values | Do not link anonymous visitors here; de-identify demo data |
+| `/business-operations/driver-onboarding` | Business Operations | `/business-operations` | OK | Business Operations \| 1970w |  |
+| `/business-operations/driver-onboarding` | Driver Command Center | `/demo/drivers` | OK | Who can safely take the next load? \| 1331w \| demo |  |
 | `/business-operations/driver-onboarding` | Open Assignment Readiness | `/business-operations/driver-onboarding/assignment-readiness` | OK | Release drivers only when the operating file can support the work. \| 225w |  |
 | `/business-operations/driver-onboarding` | Try the recruiting and onboarding workspace (sample candidat | `/business-operations/hr-tier/recruiting-onboarding` | OK | Move driver and staff candidates into readiness with fewer handoff gap \| 485w |  |
 | `/business-operations/driver-onboarding` | Sign in to recruiting and onboarding | `/api/auth/signin?callbackUrl=%2Frecruiting` | OK | sign-in (callback /recruiting) |  |
@@ -245,7 +245,7 @@
 | `/business-operations/driver-onboarding` | View the dispatch demonstration → | `/demo/dispatch` | OK | CRITICAL · MAJOR · MINOR \| 1824w \| demo |  |
 | `/business-operations/driver-onboarding` | Sign in to dispatch | `/api/auth/signin?callbackUrl=%2Fdispatch` | OK | sign-in (callback /dispatch) |  |
 | `/business-operations/driver-onboarding/assignment-readiness` | Driver Onboarding | `/business-operations/driver-onboarding` | OK | Turn a driver candidate into assignment readiness. \| 423w |  |
-| `/business-operations/driver-onboarding/assignment-readiness` | Drivers | `/demo/drivers` | PRIVACY | shows 12 realistic contact/ID values | Do not link anonymous visitors here; de-identify demo data |
+| `/business-operations/driver-onboarding/assignment-readiness` | Drivers | `/demo/drivers` | OK | Who can safely take the next load? \| 1331w \| demo |  |
 | `/business-operations/driver-onboarding/assignment-readiness` | Try the recruiting and onboarding workspace (sample candidat | `/business-operations/hr-tier/recruiting-onboarding` | OK | Move driver and staff candidates into readiness with fewer handoff gap \| 485w |  |
 | `/business-operations/driver-onboarding/assignment-readiness` | Sign in to recruiting and onboarding | `/api/auth/signin?callbackUrl=%2Frecruiting` | OK | sign-in (callback /recruiting) |  |
 | `/business-operations/driver-onboarding/assignment-readiness` | Open the driver file cabinet (sample documents) → | `/documents` | OK | Operations File Cabinet \| 862w \| demo |  |
@@ -259,7 +259,7 @@
 | `/business-operations/erp` | View Full Policy → | `/recovered-assets/static-20260729/assets/documents/policies/bof-pol-007-document-retention-standard.pdf` | OK | file |  |
 | `/business-operations/excise-taxes` | View Full Policy → | `/recovered-assets/static-20260729/assets/documents/policies/bof-pol-007-document-retention-standard.pdf` | OK | file |  |
 | `/business-operations/fleet-maintenance` | View policy → | `/recovered-assets/static-20260729/assets/documents/policies/bof-pol-007-document-retention-standard.pdf` | OK | file |  |
-| `/business-operations/hr-tier` | Business Operations | `/business-operations` | OK | Business Operations \| 1985w |  |
+| `/business-operations/hr-tier` | Business Operations | `/business-operations` | OK | Business Operations \| 1970w |  |
 | `/business-operations/hr-tier` | Driver Onboarding | `/business-operations/driver-onboarding` | OK | Turn a driver candidate into assignment readiness. \| 423w |  |
 | `/business-operations/hr-tier` | Open Employee Relations | `/business-operations/hr-tier/employee-relations` | OK | Keep people issues visible before they become operating drag. \| 168w |  |
 | `/business-operations/hr-tier` | Open Recruiting & Onboarding | `/business-operations/hr-tier/recruiting-onboarding` | OK | Move driver and staff candidates into readiness with fewer handoff gap \| 485w |  |
@@ -278,16 +278,16 @@
 | `/business-operations/human-resources` | View Full Policy → | `/recovered-assets/static-20260729/assets/documents/policies/bof-pol-001-driver-qualification-policy.pdf` | OK | file |  |
 | `/business-operations/human-resources` | View Full Policy → | `/recovered-assets/static-20260729/assets/documents/policies/bof-pol-007-document-retention-standard.pdf` | OK | file |  |
 | `/business-operations/insurance` | View policy → | `/recovered-assets/static-20260729/assets/documents/policies/bof-pol-008-access-and-data-governance.pdf` | OK | file |  |
-| `/business-operations/operational-reporting` | Business Operations | `/business-operations` | OK | Business Operations \| 1985w |  |
+| `/business-operations/operational-reporting` | Business Operations | `/business-operations` | OK | Business Operations \| 1970w |  |
 | `/business-operations/operational-reporting` | Command Center | `/dashboard` | OK | Start the BackOfficeFleet demo \| 117w \| demo |  |
 | `/business-operations/operational-reporting` | Open Owner Queue Reporting | `/business-operations/operational-reporting/owner-queue-reporting` | OK | Make every blocker belong to someone. \| 113w |  |
 | `/business-operations/operational-reporting/owner-queue-reporting` | Operational Reporting | `/business-operations/operational-reporting` | OK | Show leadership what is ready, blocked, aging, and owned. \| 249w |  |
-| `/business-operations/operational-reporting/owner-queue-reporting` | Business Operations | `/business-operations` | OK | Business Operations \| 1985w |  |
+| `/business-operations/operational-reporting/owner-queue-reporting` | Business Operations | `/business-operations` | OK | Business Operations \| 1970w |  |
 | `/business-operations/owner-operator` | Open pay workbench → | `/business-operations/payroll-administration` | OK | Make pay support traceable to the record behind it. \| 936w |  |
 | `/business-operations/payroll` | View Full Policy → | `/recovered-assets/static-20260729/assets/documents/policies/bof-pol-001-driver-qualification-policy.pdf` | OK | file |  |
 | `/business-operations/payroll` | View Full Policy → | `/recovered-assets/static-20260729/assets/documents/policies/bof-pol-006-billing-packet-requirements.pdf` | OK | file |  |
 | `/business-operations/payroll` | View Full Policy → | `/recovered-assets/static-20260729/assets/documents/policies/bof-pol-007-document-retention-standard.pdf` | OK | file |  |
-| `/business-operations/payroll-administration` | Business Operations | `/business-operations` | OK | Business Operations \| 1985w |  |
+| `/business-operations/payroll-administration` | Business Operations | `/business-operations` | OK | Business Operations \| 1970w |  |
 | `/business-operations/payroll-administration` | Compensation & Benefits | `/business-operations/hr-tier/compensation-benefits` | OK | Keep pay and benefit support tied to the records behind it. \| 458w |  |
 | `/business-operations/payroll-administration` | Open payroll clearance | `/demo/command-center` | OK | Fleet Operations Control Tower \| 1645w \| demo |  |
 | `/business-operations/payroll-administration` | Open Pay Exception Control | `/business-operations/payroll-administration/pay-exception-control` | OK | Turn pay exceptions into reviewable support records. \| 110w |  |

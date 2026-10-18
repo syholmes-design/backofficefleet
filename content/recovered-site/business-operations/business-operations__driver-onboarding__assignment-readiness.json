@@ -7,6 +7,7 @@
 "label": "Static BOF site, 2026-07-29 (origin/codex/public-site-deployment-candidate)"
 },
 "merges": [],
+"ownerRemovals": [],
 "title": "Assignment Readiness | Driver Onboarding | BackOfficeFleet",
 "description": "Assignment readiness page for driver onboarding teams reviewing DQF, training, payroll setup, safety acknowledgement, and dispatch release.",
 "bodyClass": "premium-site page-business-operations",

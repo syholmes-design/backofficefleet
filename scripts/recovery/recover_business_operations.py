@@ -52,6 +52,16 @@ def merge(commit, rel, only=None):
 
 
 BO = "business-operations"
+
+# Owner-directed removals (2026-10-18): exact recovered markup taken off the public page.
+# Nothing is reworded or added; the removal is recorded on the page and in the recovery report.
+OWNER_REMOVALS = {
+    "/business-operations": [
+        # Development note shown as the directory heading in f254f4e3; the eyebrow and intro remain.
+        "<h2>The dropdown choices are now visible on the page and lead to real operating pages.</h2>",
+    ],
+}
+
 # route -> source. Merge sources: same July lineage (rendered with the 2026-07-29 stylesheet).
 PAGES = {
     "/business-operations": src(S29, f"{BO}/index.html", [
@@ -339,12 +349,20 @@ def main():
         if any("bof-driver-pay-profiles.js" in s for s in widget_scripts):
             assets_needed.setdefault((spec["gen"], "/assets/data/bof-public-operations.json"), set()).add(route)
 
+        removals = []
+        for snippet in OWNER_REMOVALS.get(route, []):
+            if content.count(snippet) != 1:
+                raise SystemExit(f"owner removal not found exactly once on {route}: {snippet[:60]}")
+            content = content.replace(snippet, "")
+            removals.append(snippet)
+
         key = route.strip("/").replace("/", "__") or "index"
         page = {
             "route": route,
             "generation": spec["gen"],
             "source": {"commit": gen["commit"], "path": f"{gen['root']}/{spec['path']}", "label": gen["label"]},
             "merges": [{"commit": m["commit"], "path": m["path"]} for m in spec["merges"]],
+            "ownerRemovals": removals,
             "title": parts["title"],
             "description": parts["description"],
             "bodyClass": parts["body_class"],
@@ -403,6 +421,9 @@ def main():
     lines += ["", "## Merged sections (present in an earlier version, dropped later)", "", "| Route | From | Section | Words |", "|---|---|---|---|"]
     for route, commit, path, heading, words in merge_log:
         lines.append(f"| `{route}` | `{commit}:{path}` | {heading[:90]} | {words} |")
+    lines += ["", "## Owner-directed removals (not shown on the public page)", "", "| Route | Removed recovered markup |", "|---|---|"]
+    for route, snippets in OWNER_REMOVALS.items():
+        lines += [f"| `{route}` | `{sn}` |" for sn in snippets]
     lines += ["", f"## Assets: {copied} copied, {len(missing)} missing", ""]
     for gen_key, path, used in missing:
         lines.append(f"- MISSING `{gen_key}{path}` (used by {', '.join(used)})")

@@ -40,7 +40,7 @@ function rowForDriver(id, idx) {
   const n = idx + 1;
   return [
     id,
-    id === "DRV-001" ? "OH1668243" : `DLN-${String(n).padStart(5, "0")}`,
+    id === "DRV-001" ? "OH0000075" : `DLN-${String(n).padStart(5, "0")}`,
     "2024-01-15",
     "2026-04-22",
     id === "DRV-001" ? "Dr. Jordan Ellis, MD" : `Demo Examiner ${n}`,
@@ -51,7 +51,7 @@ function rowForDriver(id, idx) {
     "4321",
     "440-555-0100",
     "OH",
-    id === "DRV-001" ? "OH441134921" : `DL-${String(n).padStart(4, "0")}`,
+    id === "DRV-001" ? "OH000000097" : `DL-${String(n).padStart(4, "0")}`,
     "2024-01-15",
     "2024-02-01",
     "Complete",

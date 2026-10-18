@@ -10,18 +10,18 @@ try {
   
   // Expected data from Master Driver Data
   const expectedData = {
-    "DRV-001": { primary: "Sarah Carter (Spouse) - 206-482-0199", secondary: "Mark Carter (Brother) - 216-347-8321" },
-    "DRV-002": { primary: "Carlos Lopez (Spouse) - 312-739-4718", secondary: "Rosa Hernandez (Mother) - 312-482-2364" },
-    "DRV-003": { primary: "Min-Ji Kim (Spouse) - 404-347-8293", secondary: "Daniel Kim (Brother) - 770-618-4917" },
-    "DRV-004": { primary: "Raj Patel (Spouse) - 216-618-3847", secondary: "Anita Sharma (Sister) - 216-739-6102" },
-    "DRV-005": { primary: "Yuki Tanaka (Spouse) - 614-823-9012", secondary: "Hiroshi Tanaka (Father) - 614-276-3485" },
-    "DRV-006": { primary: "Linda Chen (Spouse) - 214-491-6734", secondary: "Wei Chen (Brother) - 214-384-8923" },
-    "DRV-007": { primary: "Miguel Gomez (Father) - 216-276-1482", secondary: "Isabel Torres (Mother) - 216-917-7536" },
-    "DRV-008": { primary: "Jessica Smith (Spouse) - 419-384-2938", secondary: "Brian Smith (Brother) - 419-653-6147" },
-    "DRV-009": { primary: "Michael Brown (Spouse) - 614-917-7261", secondary: "Laura Davis (Sister) - 614-491-1893" },
-    "DRV-010": { primary: "Angela Wilson (Spouse) - 312-653-8145", secondary: "Terrance Wilson (Brother) - 773-823-4628" },
-    "DRV-011": { primary: "Vikram Sharma (Spouse) - 404-741-3619", secondary: "Meera Nair (Sister) - 678-294-2740" },
-    "DRV-012": { primary: "Karen Johnson (Spouse) - 312-294-5478", secondary: "David Johnson (Brother) - 312-741-9317" }
+    "DRV-001": { primary: "Sarah Carter (Spouse) - 206-555-0100", secondary: "Mark Carter (Brother) - 216-555-0101" },
+    "DRV-002": { primary: "Carlos Lopez (Spouse) - 312-555-0107", secondary: "Rosa Hernandez (Mother) - 312-555-0104" },
+    "DRV-003": { primary: "Min-Ji Kim (Spouse) - 404-555-0101", secondary: "Daniel Kim (Brother) - 770-555-0100" },
+    "DRV-004": { primary: "Raj Patel (Spouse) - 216-555-0106", secondary: "Anita Sharma (Sister) - 216-555-0107" },
+    "DRV-005": { primary: "Yuki Tanaka (Spouse) - 614-555-0108", secondary: "Hiroshi Tanaka (Father) - 614-555-0102" },
+    "DRV-006": { primary: "Linda Chen (Spouse) - 214-555-0102", secondary: "Wei Chen (Brother) - 214-555-0100" },
+    "DRV-007": { primary: "Miguel Gomez (Father) - 216-555-0100", secondary: "Isabel Torres (Mother) - 216-555-0108" },
+    "DRV-008": { primary: "Jessica Smith (Spouse) - 419-555-0101", secondary: "Brian Smith (Brother) - 419-555-0103" },
+    "DRV-009": { primary: "Michael Brown (Spouse) - 614-555-0112", secondary: "Laura Davis (Sister) - 614-555-0103" },
+    "DRV-010": { primary: "Angela Wilson (Spouse) - 312-555-0105", secondary: "Terrance Wilson (Brother) - 773-555-0104" },
+    "DRV-011": { primary: "Vikram Sharma (Spouse) - 404-555-0108", secondary: "Meera Nair (Sister) - 678-555-0100" },
+    "DRV-012": { primary: "Karen Johnson (Spouse) - 312-555-0102", secondary: "David Johnson (Brother) - 312-555-0108" }
   };
   
   let correctCount = 0;

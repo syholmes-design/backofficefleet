@@ -1,6 +1,5 @@
-import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
+import { requireRecruitingCandidateAccess } from "@/lib/recruiting-v2/candidate-access";
 import { NextRequest, NextResponse } from "next/server";
-import { recruitingV2UnauthorizedResponse } from "@/lib/recruiting-v2/require-operator-session";
 import type { RecruitingV2DocumentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { evaluateRecruitingV2DocumentGate, evaluateRecruitingV2DocumentGates } from "@/lib/recruiting-v2/document-gate-engine";
@@ -51,10 +50,11 @@ async function syncGates(
 }
 
 export async function GET(_request: NextRequest, context: RouteContext) {
-  const unauthorized = await operatorUnauthorizedResponse();
-  if (unauthorized) return unauthorized;
   const { candidateId, documentCode } = await context.params;
-  const candidate = await prisma.candidate.findUnique({ where: { candidateCode: candidateId } });
+  const access = await requireRecruitingCandidateAccess(candidateId);
+  if (access.response) return access.response;
+  const candidateWhere = access.access.where;
+  const candidate = await prisma.candidate.findUnique({ where: candidateWhere });
 
   if (!candidate) {
     return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
@@ -99,11 +99,12 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 }
 
 export async function PATCH(request: NextRequest, context: RouteContext) {
-  const unauthorized = await recruitingV2UnauthorizedResponse();
-  if (unauthorized) return unauthorized;
   const { candidateId, documentCode } = await context.params;
+  const access = await requireRecruitingCandidateAccess(candidateId);
+  if (access.response) return access.response;
+  const candidateWhere = access.access.where;
   const candidate = await prisma.candidate.findUnique({
-    where: { candidateCode: candidateId },
+    where: candidateWhere,
     include: { documentRecords: { orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }] } },
   });
 

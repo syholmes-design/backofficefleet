@@ -1,6 +1,5 @@
-import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
+import { requireRecruitingCandidateAccess } from "@/lib/recruiting-v2/candidate-access";
 import { NextRequest, NextResponse } from "next/server";
-import { recruitingV2UnauthorizedResponse } from "@/lib/recruiting-v2/require-operator-session";
 import type { Prisma, RecruitingV2DocumentStatus, RecruitingV2DocumentType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { evaluateRecruitingV2DocumentGates } from "@/lib/recruiting-v2/document-gate-engine";
@@ -99,9 +98,9 @@ function serializeInterview(interview: {
   };
 }
 
-async function getOfferContext(candidateId: string) {
+async function getOfferContext(candidateWhere: Prisma.CandidateWhereUniqueInput) {
   const candidate = await prisma.candidate.findUnique({
-    where: { candidateCode: candidateId },
+    where: candidateWhere,
     include: {
       position: true,
       documentRecords: { orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }] },
@@ -168,19 +167,21 @@ function validateRequiredOfferFields(body: Record<string, unknown>, targetStatus
 }
 
 export async function GET(_request: NextRequest, context: RouteContext) {
-  const unauthorized = await operatorUnauthorizedResponse();
-  if (unauthorized) return unauthorized;
   const { candidateId } = await context.params;
-  const offerContext = await getOfferContext(candidateId);
+  const access = await requireRecruitingCandidateAccess(candidateId);
+  if (access.response) return access.response;
+  const candidateWhere = access.access.where;
+  const offerContext = await getOfferContext(candidateWhere);
   if (!offerContext) return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
   return NextResponse.json(offerPayload(offerContext));
 }
 
 export async function POST(request: NextRequest, context: RouteContext) {
-  const unauthorized = await recruitingV2UnauthorizedResponse();
-  if (unauthorized) return unauthorized;
   const { candidateId } = await context.params;
-  const offerContext = await getOfferContext(candidateId);
+  const access = await requireRecruitingCandidateAccess(candidateId);
+  if (access.response) return access.response;
+  const candidateWhere = access.access.where;
+  const offerContext = await getOfferContext(candidateWhere);
   if (!offerContext) return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
 
   let body: unknown;
@@ -235,7 +236,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     data: { offerSummary: nextOffer as Prisma.InputJsonValue },
   });
 
-  const updatedContext = await getOfferContext(candidateId);
+  const updatedContext = await getOfferContext(candidateWhere);
   if (!updatedContext) return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
 
   return NextResponse.json({ operation: "Update Offer Metadata", ...offerPayload(updatedContext) }, { status: 200 });

@@ -1,6 +1,5 @@
-import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
+import { requireRecruitingCandidateAccess } from "@/lib/recruiting-v2/candidate-access";
 import { NextRequest, NextResponse } from "next/server";
-import { recruitingV2UnauthorizedResponse } from "@/lib/recruiting-v2/require-operator-session";
 import type { Prisma, RecruitingV2DocumentStatus, RecruitingV2DocumentType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
@@ -38,9 +37,9 @@ function parseExpirationDate(value: unknown): Date | null | "INVALID" {
   return Number.isNaN(parsed.getTime()) ? "INVALID" : parsed;
 }
 
-async function findCandidate(candidateId: string) {
+async function findCandidate(candidateWhere: Prisma.CandidateWhereUniqueInput) {
   return prisma.candidate.findUnique({
-    where: { candidateCode: candidateId },
+    where: candidateWhere,
     include: { documentRecords: { orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }] } },
   });
 }
@@ -79,10 +78,11 @@ function candidatePayload(candidate: Awaited<ReturnType<typeof findCandidate>>) 
 }
 
 export async function GET(_request: NextRequest, context: RouteContext) {
-  const unauthorized = await operatorUnauthorizedResponse();
-  if (unauthorized) return unauthorized;
   const { candidateId } = await context.params;
-  const candidate = await findCandidate(candidateId);
+  const access = await requireRecruitingCandidateAccess(candidateId);
+  if (access.response) return access.response;
+  const candidateWhere = access.access.where;
+  const candidate = await findCandidate(candidateWhere);
 
   if (!candidate) {
     return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
@@ -109,10 +109,11 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 }
 
 export async function POST(request: NextRequest, context: RouteContext) {
-  const unauthorized = await recruitingV2UnauthorizedResponse();
-  if (unauthorized) return unauthorized;
   const { candidateId } = await context.params;
-  const candidate = await findCandidate(candidateId);
+  const access = await requireRecruitingCandidateAccess(candidateId);
+  if (access.response) return access.response;
+  const candidateWhere = access.access.where;
+  const candidate = await findCandidate(candidateWhere);
 
   if (!candidate) {
     return NextResponse.json({ error: "Candidate not found" }, { status: 404 });

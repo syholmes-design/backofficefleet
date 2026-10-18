@@ -1,6 +1,5 @@
-import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
+import { requireRecruitingCandidateAccess } from "@/lib/recruiting-v2/candidate-access";
 import { NextRequest, NextResponse } from "next/server";
-import { recruitingV2UnauthorizedResponse } from "@/lib/recruiting-v2/require-operator-session";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
@@ -17,9 +16,9 @@ import { evaluateRecruitingV2DocumentGates } from "@/lib/recruiting-v2/document-
 
 type RouteContext = { params: Promise<{ candidateId: string; documentCode: string }> };
 
-async function loadScopedDocument(candidateId: string, documentCode: string) {
+async function loadScopedDocument(candidateWhere: Prisma.CandidateWhereUniqueInput, documentCode: string) {
   const candidate = await prisma.candidate.findUnique({
-    where: { candidateCode: candidateId },
+    where: candidateWhere,
     include: { documentRecords: { orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }] } },
   });
   if (!candidate) return { candidate: null, documentRecord: null };
@@ -55,10 +54,11 @@ async function syncGatesForCandidate(
 }
 
 export async function GET(request: NextRequest, context: RouteContext) {
-  const unauthorized = await operatorUnauthorizedResponse();
-  if (unauthorized) return unauthorized;
   const { candidateId, documentCode } = await context.params;
-  const { candidate, documentRecord } = await loadScopedDocument(candidateId, documentCode);
+  const access = await requireRecruitingCandidateAccess(candidateId);
+  if (access.response) return access.response;
+  const candidateWhere = access.access.where;
+  const { candidate, documentRecord } = await loadScopedDocument(candidateWhere, documentCode);
 
   if (!candidate) {
     return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
@@ -101,10 +101,11 @@ export async function GET(request: NextRequest, context: RouteContext) {
 }
 
 export async function POST(request: NextRequest, context: RouteContext) {
-  const unauthorized = await recruitingV2UnauthorizedResponse();
-  if (unauthorized) return unauthorized;
   const { candidateId, documentCode } = await context.params;
-  const { candidate, documentRecord } = await loadScopedDocument(candidateId, documentCode);
+  const access = await requireRecruitingCandidateAccess(candidateId);
+  if (access.response) return access.response;
+  const candidateWhere = access.access.where;
+  const { candidate, documentRecord } = await loadScopedDocument(candidateWhere, documentCode);
 
   if (!candidate) {
     return NextResponse.json({ error: "Candidate not found" }, { status: 404 });

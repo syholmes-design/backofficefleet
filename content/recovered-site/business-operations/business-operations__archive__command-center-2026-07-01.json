@@ -7,6 +7,7 @@
 "label": "Static BOF site, 2026-07-01 (origin/feature/cta-language-cleanup)"
 },
 "merges": [],
+"ownerRemovals": [],
 "title": "Business Operations Center | BackOfficeFleet",
 "description": "BOF Business Operations Center shows administrative infrastructure for payroll, HR, insurance, factoring readiness, accounting coordination, and executive financial visibility.",
 "bodyClass": "",

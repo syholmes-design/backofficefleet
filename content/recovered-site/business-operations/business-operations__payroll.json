@@ -7,6 +7,7 @@
 "label": "Static BOF site, 2026-07-29 (origin/codex/public-site-deployment-candidate)"
 },
 "merges": [],
+"ownerRemovals": [],
 "title": "Trucking Payroll & Driver Compensation | BOF",
 "description": "BOF handles per-mile, percentage-of-load, hourly, and 1099 owner-operator payroll structures with multi-state withholding, per-diem tracking, and driver settlement reconciliation.",
 "bodyClass": "premium-site page-business-operations bof-bo-detail",

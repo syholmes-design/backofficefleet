@@ -1,9 +1,9 @@
 /**
  * John Carter gold-standard demo: BOF driver id vs CDL identifier.
- * Routes and folders use DRV-001; spreadsheet may key OH1668243.
+ * Routes and folders use DRV-001; spreadsheet may key OH0000075.
  */
 export const JOHN_CARTER_REFERENCE_DRIVER_ID = "DRV-001";
-export const JOHN_CARTER_CDL_NUMBER = "OH1668243";
+export const JOHN_CARTER_CDL_NUMBER = "OH0000075";
 
 export const JOHN_CARTER_PRIMARY_EXTRA_TYPES = [
   "MCSA-5875",

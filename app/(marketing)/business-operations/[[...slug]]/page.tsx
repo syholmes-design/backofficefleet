@@ -14,6 +14,12 @@ export const dynamicParams = false;
 
 type Params = { slug?: string[] };
 
+/** "fork-20260819" -> "2026-08-19" */
+function versionDate(generation: string) {
+  const digits = generation.match(/(\d{4})(\d{2})(\d{2})$/);
+  return digits ? `${digits[1]}-${digits[2]}-${digits[3]}` : "earlier version";
+}
+
 function routeFor(slug: string[] | undefined) {
   return ["/business-operations", ...(slug ?? [])].join("/");
 }
@@ -76,11 +82,12 @@ export default async function RecoveredBusinessOperationsPage({ params }: { para
       <link rel="stylesheet" href={`/recovered-assets/${page.generation}/scoped.css`} precedence="default" />
       {page.archive ? (
         <div className="bof-recovered-archive-banner" role="note">
-          Archived historical version, kept for owner review and not linked from the public site. Source:{" "}
-          <code>{page.source.commit}</code> {page.source.label}.
+          Archived historical version ({versionDate(page.generation)}), kept for owner review and not linked from the public
+          site.
         </div>
       ) : null}
-      <div className="bof-legacy" data-recovered-route={route} data-recovered-source={`${page.source.commit}:${page.source.path}`}>
+      {/* Provenance (commit and path) stays in docs/recovery/, not in public markup. */}
+      <div className="bof-legacy" data-recovered-route={route}>
         <div className={`bof-legacy-body ${page.bodyClass}`}>
           <div
             className={`bof-legacy-main ${page.mainClass}`}

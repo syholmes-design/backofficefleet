@@ -76,7 +76,7 @@ const SRC_DRIVER_DOCS_REQUESTER: SourceRef = {
 const SRC_OO_LEASE_TEMPLATE: SourceRef = {
   kind: "REPO_FILE",
   ref: "scripts/templates/owner-operator-lease-template.html:139",
-  note: "Owner-operator lease template states the Company is located at 500 Pacific Ave, Dallas, TX 75202.",
+  note: "Owner-operator lease template states the Company is located at 810 Demo Street, Dallas, TX 75202.",
 };
 const SRC_OO_LEASE_SIGNATORY: SourceRef = {
   kind: "REPO_FILE",
@@ -130,21 +130,21 @@ const SRC_ROSTER_DAT_IT: SourceRef = {
 };
 
 const MANSFIELD_OH: PostalAddress = {
-  street: "2475 Laver Rd.",
+  street: "540 Demo Street",
   city: "Mansfield",
   region: "OH",
   postalCode: "44905",
   country: "US",
 };
 const CLEVELAND_OH: PostalAddress = {
-  street: "1234 Fleet Ave",
+  street: "190 Demo Street",
   city: "Cleveland",
   region: "OH",
   postalCode: "44113",
   country: "US",
 };
 const DALLAS_TX: PostalAddress = {
-  street: "500 Pacific Ave",
+  street: "810 Demo Street",
   city: "Dallas",
   region: "TX",
   postalCode: "75202",

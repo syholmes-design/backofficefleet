@@ -33,6 +33,10 @@ This was an independent recovery. Earlier conclusions, including Cursor's "recov
 6. **Security fix.** A reflected XSS on `/book-assessment` (confirmed in a browser) is fixed.
 7. **Pre-existing privacy and authorization findings need owner decisions** (section F). They were not introduced by this branch, and they are the main reason the recommendation in section G is "do not release to production yet".
 
+## Update: security remediation
+
+Section F items 1–3 (public demo personal data, missing central route protection, Recruiting V2 tenant isolation) and content decision C-1 (developer-style hub heading, removed at the owner's direction) were resolved later on this branch. Commit identifiers were also removed from public pages. See [`docs/security/SECURITY-REMEDIATION-2026-10-18.md`](../security/SECURITY-REMEDIATION-2026-10-18.md).
+
 ## Contents
 
 - [A. Historical recovery inventory](#a-historical-recovery-inventory)

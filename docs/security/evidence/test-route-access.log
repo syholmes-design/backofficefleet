@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: every marketing page group segment is public
+ok 1 - every marketing page group segment is public
+  ---
+  duration_ms: 2.57965
+  type: 'test'
+  ...
+# Subtest: public pages stay reachable without a session
+ok 2 - public pages stay reachable without a session
+  ---
+  duration_ms: 0.711221
+  type: 'test'
+  ...
+# Subtest: private operating pages require a session
+ok 3 - private operating pages require a session
+  ---
+  duration_ms: 1.776014
+  type: 'test'
+  ...
+# Subtest: APIs are private except sign-in, public media/feeds and the two public submissions
+ok 4 - APIs are private except sign-in, public media/feeds and the two public submissions
+  ---
+  duration_ms: 0.187987
+  type: 'test'
+  ...
+# Subtest: sign-in redirect keeps the destination, drops RSC markers and stays relative
+ok 5 - sign-in redirect keeps the destination, drops RSC markers and stays relative
+  ---
+  duration_ms: 0.234418
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 273.24156

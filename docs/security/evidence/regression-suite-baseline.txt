@@ -1,0 +1,36 @@
+0 test:provision-operator 2s | # duration_ms 998.72961
+1 audit:bof-links 0s | Node.js v22.22.0
+0 validate:load-docs 0s | validate:load-docs passed for 12 loads.
+1 validate:load-signatures 0s | - L011: delivered POD must include <!-- bof-sig-pod:complete -->
+1 validate:load-doc-templates 0s |  - L008.insuranceNotification: unknown generated HTML doc file insurance-packet.html
+0 validate:load-evidence 1s | validate:load-evidence passed for 12 loads.
+1 validate:load-trip-packets 0s |  - L008: claim path missing claim_intake URL
+1 validate:load-intake-routing 0s | ]
+0 validate:safety-evidence 0s | [validate-safety-evidence] OK — all safety evidence URLs resolve to committed public files.
+0 validate:driver-docs 0s | Driver docs validation passed.
+1 validate:driver-medical-status 1s | ]
+0 validate:driver-review-explanations 0s | validate-driver-review-explanations: OK
+1 validate:review-explanations 3s | L009: issue pretrip:tire-asset-defect:L009 actionHref may be off-demo-route: /maintenance/work-orders/WO-003
+0 validate:advance-compliance 3s | validate-advance-compliance-engine: OK
+0 validate:equipment-spine 2s | validate-canonical-equipment-spine: OK
+0 validate:driver-credential-source-alignment 2s | validate-driver-credential-source-alignment: OK
+0 validate:driver-blockers 0s | validate-driver-blockers: OK
+1 validate:driver-document-packets 0s | - DRV-011: medical status mismatch status=VALID exp=2026-12-01 expected=EXPIRING_SOON
+0 validate:driver-dqf-readiness 0s | validate-driver-dqf-readiness OK (core rows, W-9 + I-9 + DQF summary PDF index, expiration vs EXPIRED labels).
+1 validate:process-intelligence-foundation 2s | Node.js v22.22.0
+1 validate:load-to-cash-foundation 1s | Node.js v22.22.0
+1 validate:driver-dqf-summaries 0s | - Manifest DRV-012: dqf PDF missing on disk for undefined
+1 validate:safety-credential-mapping 1s | ]
+0 validate:driver-mvr-status 0s | validate-driver-mvr-status: OK (canonical MVR resolver wired)
+0 validate:compliance-incident-reconciliation 1s | validate-compliance-incident-reconciliation: OK (effective open compliance count=1; OPEN credential incidents displayed after reconcile=0/0)
+0 validate:driver-review-ux 2s | ]
+0 validate:dashboard-attention-queue 1s | validate-dashboard-attention-queue: OK (credential reconciliation wired for attention surfaces)
+1 audit:actionability-links 0s | - generic-label: components/safety/SafetyEvidenceThumb.tsx :: /\bOpen\b/ x1
+0 validate:prompt-013-hardening 2s | PROMPT_013_SOURCE_CHECKS_OK
+0 validate:prompt-020-demo-firewall 1s | PROMPT_020_SOURCE_CHECKS_OK
+0 validate:prompt-021-coherence 4s | PROMPT_021_CANONICAL_FIELD_COHERENCE_PASS
+0 test:secure-pickup 17s | # duration_ms 13774.061665
+0 test:fmcsa-verification 14s | # duration_ms 11004.120508
+0 test:samba-intelligence 35s | # duration_ms 32834.490735
+0 test:unified-integration 25s | # duration_ms 21408.057876
+0 test:training-authorization 11s | # duration_ms 7626.479193
