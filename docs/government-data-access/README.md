@@ -21,6 +21,7 @@ capability on authoritative sources. Carriers that work with BOF authorize BOF t
 | [`outreach-register.md`](outreach-register.md) | Structured register: contacts, requirements, correspondence, responses, next actions |
 | [`drafts/`](drafts/) | Individualized correspondence awaiting approval |
 | [`fmcsa-integration-activation.md`](fmcsa-integration-activation.md) | QCMobile and open-data integration readiness and activation steps |
+| [`fmcsa-monitoring-pause-2026-10-18.md`](fmcsa-monitoring-pause-2026-10-18.md) | **PAUSED:** FMCSA monitoring state, open issues (Preview login, Motus schema), steps to resume |
 | [`phase3-preview-implementation.md`](phase3-preview-implementation.md) | Phase 3: carrier identity, monitoring tables (migration docs), workflow, Preview test steps |
 | [`state-mvr-matrix-50.md`](state-mvr-matrix-50.md) | 50-state + DC MVR access matrix (evidence-graded) |
 | [`interstate-access-report.md`](interstate-access-report.md) | AAMVA (CDLIS, S2S, NDR, DLDV), interstate/regional programs, employer notification services |
