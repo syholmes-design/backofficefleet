@@ -1,0 +1,524 @@
+[
+ {
+  "area": "Header nav",
+  "name": "Sectors dropdown opens",
+  "ok": true,
+  "detail": "4 items"
+ },
+ {
+  "area": "Header nav",
+  "name": "What We Do dropdown opens",
+  "ok": true,
+  "detail": "5 items"
+ },
+ {
+  "area": "Header nav",
+  "name": "Business Operations dropdown opens",
+  "ok": true,
+  "detail": "10 items"
+ },
+ {
+  "area": "Header nav",
+  "name": "Documents dropdown opens",
+  "ok": true,
+  "detail": "3 items"
+ },
+ {
+  "area": "Header nav",
+  "name": "More dropdown opens",
+  "ok": true,
+  "detail": "3 items"
+ },
+ {
+  "area": "Header nav",
+  "name": "Sectors → For-Hire Carriers",
+  "ok": true,
+  "detail": "/for-hire-carriers → /for-hire-carriers | Built for Carriers Who Can't Afford Mistakes | 991w"
+ },
+ {
+  "area": "Header nav",
+  "name": "Sectors → Private Fleets",
+  "ok": true,
+  "detail": "/private-fleets → /private-fleets | Enterprise Control for Captive Fleet Networks | 977w"
+ },
+ {
+  "area": "Header nav",
+  "name": "Sectors → Aggregators",
+  "ok": true,
+  "detail": "/aggregators → /aggregators | Turn fleet relationships into a clearer readiness conversation. | 603w"
+ },
+ {
+  "area": "Header nav",
+  "name": "Sectors → Government",
+  "ok": true,
+  "detail": "/government → /government | The agency keeps operational command. BOF keeps the administrative layer organiz | 707w"
+ },
+ {
+  "area": "Header nav",
+  "name": "What We Do → What We Do overview",
+  "ok": true,
+  "detail": "/what-we-do → /what-we-do | WHAT WE DO | 919w"
+ },
+ {
+  "area": "Header nav",
+  "name": "What We Do → People & HR",
+  "ok": true,
+  "detail": "/what-we-do/people-hr → /what-we-do/people-hr | PEOPLE & HR | 528w"
+ },
+ {
+  "area": "Header nav",
+  "name": "What We Do → Finance",
+  "ok": true,
+  "detail": "/what-we-do/finance → /what-we-do/finance | FINANCE | 472w"
+ },
+ {
+  "area": "Header nav",
+  "name": "What We Do → Operations & Compliance",
+  "ok": true,
+  "detail": "/what-we-do/operations-compliance → /what-we-do/operations-compliance | OPERATIONS & COMPLIANCE | 509w"
+ },
+ {
+  "area": "Header nav",
+  "name": "What We Do → Procurement & Savings",
+  "ok": true,
+  "detail": "/what-we-do/procurement-savings → /what-we-do/procurement-savings | PROCUREMENT & SAVINGS | 441w"
+ },
+ {
+  "area": "Header nav",
+  "name": "Business Operations → Business Operations overview",
+  "ok": true,
+  "detail": "/business-operations → /business-operations | Business Operations | 1985w"
+ },
+ {
+  "area": "Header nav",
+  "name": "Business Operations → HR Tier",
+  "ok": true,
+  "detail": "/business-operations/hr-tier → /business-operations/hr-tier | Run trucking HR as an operating control center. | 859w"
+ },
+ {
+  "area": "Header nav",
+  "name": "Business Operations → Driver Onboarding",
+  "ok": true,
+  "detail": "/business-operations/driver-onboarding → /business-operations/driver-onboarding | Turn a driver candidate into assignment readiness. | 423w"
+ },
+ {
+  "area": "Header nav",
+  "name": "Business Operations → Document Management",
+  "ok": true,
+  "detail": "/business-operations/document-management → /business-operations/document-management | Make office records easy to find, review, and act on. | 296w"
+ },
+ {
+  "area": "Header nav",
+  "name": "Business Operations → Document & Records Control",
+  "ok": true,
+  "detail": "/business-operations/document-records-control → /business-operations/document-records-control | Control the document lifecycle without losing the operating context. | 511w"
+ },
+ {
+  "area": "Header nav",
+  "name": "Business Operations → Operational Reporting",
+  "ok": true,
+  "detail": "/business-operations/operational-reporting → /business-operations/operational-reporting | Show leadership what is ready, blocked, aging, and owned. | 249w"
+ },
+ {
+  "area": "Header nav",
+  "name": "Business Operations → Customer Billing",
+  "ok": true,
+  "detail": "/business-operations/customer-billing → /business-operations/customer-billing | Turn completed work into a billing-ready packet. | 196w"
+ },
+ {
+  "area": "Header nav",
+  "name": "Business Operations → Accounts Receivable",
+  "ok": true,
+  "detail": "/business-operations/accounts-receivable → /business-operations/accounts-receivable | Show why money is still open. | 200w"
+ },
+ {
+  "area": "Header nav",
+  "name": "Business Operations → Payroll Administration",
+  "ok": true,
+  "detail": "/business-operations/payroll-administration → /business-operations/payroll-administration | Make pay support traceable to the record behind it. | 261w"
+ },
+ {
+  "area": "Header nav",
+  "name": "Business Operations → Accounting & Finance",
+  "ok": true,
+  "detail": "/business-operations/accounting-finance → /business-operations/accounting-finance | Give finance the operating record behind the number. | 823w"
+ },
+ {
+  "area": "Header nav",
+  "name": "Documents → Documents",
+  "ok": true,
+  "detail": "/documents → /documents | Operations File Cabinet | 862w"
+ },
+ {
+  "area": "Header nav",
+  "name": "Documents → Company Operations Vault",
+  "ok": true,
+  "detail": "/documents/company-operations-vault → /documents/company-operations-vault | Company Operations Vault | 1131w"
+ },
+ {
+  "area": "Header nav",
+  "name": "Documents → BOF Vault",
+  "ok": true,
+  "detail": "/bof-vault → /bof-vault | YOUR PROFESSIONAL RECORD.\nWHEREVER YOUR CAREER TAKES YOU. | 998w"
+ },
+ {
+  "area": "Header nav",
+  "name": "More → Careers",
+  "ok": true,
+  "detail": "/careers → /careers | CAREERS WITH BOF FLEET PARTNERS | 148w"
+ },
+ {
+  "area": "Header nav",
+  "name": "More → Team Briefing",
+  "ok": true,
+  "detail": "/team-briefing → /team-briefing | Fleets already own systems. BOF fixes the work between them. | 745w"
+ },
+ {
+  "area": "Header nav",
+  "name": "More → Founding Fleet",
+  "ok": true,
+  "detail": "/founding-fleet → /founding-fleet | Founding Fleet Program | 356w"
+ },
+ {
+  "area": "Mobile",
+  "name": "menu toggle present",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "area": "Mobile",
+  "name": "Business Operations items reachable in mobile menu",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "area": "Mobile",
+  "name": "HR Tier opens from mobile menu",
+  "ok": true,
+  "detail": "/business-operations/hr-tier 859w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/human-resources",
+  "ok": true,
+  "detail": "200 /business-operations/human-resources | Human Resources & DOT Compliance for Motor Carriers | 493w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/accounting",
+  "ok": true,
+  "detail": "200 /business-operations/accounting | Accounting & Financial Operations for Trucking | 401w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/cash-flow",
+  "ok": true,
+  "detail": "200 /business-operations/cash-flow | Cash Flow & Factoring Strategy | 237w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/operational-reporting",
+  "ok": true,
+  "detail": "200 /business-operations/operational-reporting | Show leadership what is ready, blocked, aging, and owned. | 249w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/payroll",
+  "ok": true,
+  "detail": "200 /business-operations/payroll | Payroll & Driver Compensation for Motor Carriers | 505w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/customer-billing/billing-packet-control",
+  "ok": true,
+  "detail": "200 /business-operations/customer-billing/billing-packet-control | Confirm the proof before the invoice leaves the office. | 107w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/excise-taxes",
+  "ok": true,
+  "detail": "200 /business-operations/excise-taxes | Excise Taxes & Federal Fleet Compliance | 343w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/erp",
+  "ok": true,
+  "detail": "200 /business-operations/erp | ERP & Workflow Integration for Fleets | 389w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/fleet-maintenance",
+  "ok": true,
+  "detail": "200 /business-operations/fleet-maintenance | Fleet Maintenance & Asset Management | 193w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/safety-sms",
+  "ok": true,
+  "detail": "200 /business-operations/safety-sms | Safety Management & SMS Compliance | 213w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/insurance",
+  "ok": true,
+  "detail": "200 /business-operations/insurance | Insurance Management & COI Tracking | 174w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/fuel-management",
+  "ok": true,
+  "detail": "200 /business-operations/fuel-management | Fuel Management & Cost Control | 186w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/owner-operator",
+  "ok": true,
+  "detail": "200 /business-operations/owner-operator | Owner-Operator & Leased Contractor Management | 183w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/operating-authority",
+  "ok": true,
+  "detail": "200 /business-operations/operating-authority | Operating Authority & FMCSA Portal Management | 160w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/legal-contracts",
+  "ok": true,
+  "detail": "200 /business-operations/legal-contracts | Legal & Contract Management | 169w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/technology",
+  "ok": true,
+  "detail": "200 /business-operations/technology | Technology Stack & Integration Management | 193w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/driver-onboarding",
+  "ok": true,
+  "detail": "200 /business-operations/driver-onboarding | Turn a driver candidate into assignment readiness. | 423w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/hr-tier",
+  "ok": true,
+  "detail": "200 /business-operations/hr-tier | Run trucking HR as an operating control center. | 859w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/accounting-finance",
+  "ok": true,
+  "detail": "200 /business-operations/accounting-finance | Give finance the operating record behind the number. | 1013w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/payroll-administration",
+  "ok": true,
+  "detail": "200 /business-operations/payroll-administration | Make pay support traceable to the record behind it. | 936w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/customer-billing",
+  "ok": true,
+  "detail": "200 /business-operations/customer-billing | Turn completed work into a billing-ready packet. | 196w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/accounts-receivable",
+  "ok": true,
+  "detail": "200 /business-operations/accounts-receivable | Show why money is still open. | 200w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/document-management",
+  "ok": true,
+  "detail": "200 /business-operations/document-management | Make office records easy to find, review, and act on. | 296w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/business-operations/hr-tier/recruiting-onboarding",
+  "ok": true,
+  "detail": "200 /business-operations/hr-tier/recruiting-onboarding | Move driver and staff candidates into readiness with fewer handoff gaps. | 485w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/api/auth/signin?callbackUrl=%2Frecruiting",
+  "ok": true,
+  "detail": "200 /api/auth/signin?callbackUrl=%2Frecruiting |  | 6w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/documents",
+  "ok": true,
+  "detail": "200 /documents | Operations File Cabinet | 862w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/api/auth/signin?callbackUrl=%2Fdrivers",
+  "ok": true,
+  "detail": "200 /api/auth/signin?callbackUrl=%2Fdrivers |  | 6w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/demo/dispatch",
+  "ok": true,
+  "detail": "200 /demo/dispatch | CRITICAL · MAJOR · MINOR | 1824w"
+ },
+ {
+  "area": "BO hub links",
+  "name": "/api/auth/signin?callbackUrl=%2Fdispatch",
+  "ok": true,
+  "detail": "200 /api/auth/signin?callbackUrl=%2Fdispatch |  | 6w"
+ },
+ {
+  "area": "Capabilities",
+  "name": "three capability cards on Driver Onboarding",
+  "ok": true,
+  "detail": "driver-onboarding, driver-compliance-documents, dispatch-assignment"
+ },
+ {
+  "area": "Capabilities",
+  "name": "driver-onboarding demo",
+  "ok": true,
+  "detail": "/business-operations/hr-tier/recruiting-onboarding | Move driver and staff candidates into readiness with fewer handoff gaps. | 485w"
+ },
+ {
+  "area": "Capabilities",
+  "name": "driver-onboarding demo shows no contact/ID data",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "area": "Capabilities",
+  "name": "driver-onboarding demo renders without errors or live-only notices",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "area": "Capabilities",
+  "name": "driver-onboarding sign-in path",
+  "ok": true,
+  "detail": "/api/auth/signin?callbackUrl=%2Frecruiting → form=true callback cookie=http://localhost:3200/recruiting"
+ },
+ {
+  "area": "Capabilities",
+  "name": "driver-compliance-documents demo",
+  "ok": true,
+  "detail": "/documents | Operations File Cabinet | 862w"
+ },
+ {
+  "area": "Capabilities",
+  "name": "driver-compliance-documents demo shows no contact/ID data",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "area": "Capabilities",
+  "name": "driver-compliance-documents demo renders without errors or live-only notices",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "area": "Capabilities",
+  "name": "driver-compliance-documents sign-in path",
+  "ok": true,
+  "detail": "/api/auth/signin?callbackUrl=%2Fdrivers → form=true callback cookie=http://localhost:3200/drivers"
+ },
+ {
+  "area": "Capabilities",
+  "name": "dispatch-assignment demo",
+  "ok": true,
+  "detail": "/demo/dispatch | CRITICAL · MAJOR · MINOR | 1596w"
+ },
+ {
+  "area": "Capabilities",
+  "name": "dispatch-assignment demo shows no contact/ID data",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "area": "Capabilities",
+  "name": "dispatch-assignment demo renders without errors or live-only notices",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "area": "Capabilities",
+  "name": "dispatch-assignment sign-in path",
+  "ok": true,
+  "detail": "/api/auth/signin?callbackUrl=%2Fdispatch → form=true callback cookie=http://localhost:3200/dispatch"
+ },
+ {
+  "area": "Assessment",
+  "name": "book-assessment?sector=private-fleet reaches the private fleets track",
+  "ok": true,
+  "detail": "http://localhost:3200/assessment/private-fleets"
+ },
+ {
+  "area": "Assessment",
+  "name": "assessment completes and shows results",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "area": "Assessment",
+  "name": "results offer 'Send these results to BOF'",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "area": "Inquiry",
+  "name": "contact form pre-filled with assessment results",
+  "ok": true,
+  "detail": "I completed the BOF Private Fleet assessment and would like to review the results with BOF. / Score: 87% (Strong)"
+ },
+ {
+  "area": "Inquiry",
+  "name": "inquiry submitted and saved",
+  "ok": true,
+  "detail": "201 {\"accepted\":true,\"saved\":true,\"emailed\":false,\"message\":\"Your inquiry was received and saved for BOF review. An email no"
+ },
+ {
+  "area": "Security",
+  "name": "book-assessment no longer executes injected script",
+  "ok": true,
+  "detail": "http://localhost:3200/assessment"
+ },
+ {
+  "area": "Mobile",
+  "name": "/business-operations fits 390px (no horizontal scroll)",
+  "ok": true,
+  "detail": "overflow 0px"
+ },
+ {
+  "area": "Mobile",
+  "name": "/business-operations/hr-tier fits 390px (no horizontal scroll)",
+  "ok": true,
+  "detail": "overflow 0px"
+ },
+ {
+  "area": "Mobile",
+  "name": "/business-operations/driver-onboarding fits 390px (no horizontal scroll)",
+  "ok": true,
+  "detail": "overflow 0px"
+ },
+ {
+  "area": "Mobile",
+  "name": "/business-operations/document-records-control fits 390px (no horizontal scroll)",
+  "ok": true,
+  "detail": "overflow 0px"
+ },
+ {
+  "area": "Mobile",
+  "name": "/business-operations/payroll-administration fits 390px (no horizontal scroll)",
+  "ok": true,
+  "detail": "overflow 0px"
+ },
+ {
+  "area": "Mobile",
+  "name": "/business-operations/excise-taxes fits 390px (no horizontal scroll)",
+  "ok": true,
+  "detail": "overflow 0px"
+ }
+]

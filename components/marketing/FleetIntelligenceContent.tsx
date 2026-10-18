@@ -48,8 +48,8 @@ export const FLEET_INTELLIGENCE_ARTICLES: FleetIntelligenceArticle[] = [
     category: "Load Release Control",
     date: "September 18, 2026",
     relatedLinks: [
-      { label: "Open Command Center", href: "/command-center" },
-      { label: "Open Dispatch", href: "/dispatch" },
+      { label: "Open Command Center", href: "/demo/command-center" },
+      { label: "Open Dispatch", href: "/demo/dispatch" },
       { label: "Open Loads", href: "/loads" },
       { label: "Review Driver Records", href: "/drivers" },
       { label: "Open Documents", href: "/documents" },
@@ -154,8 +154,8 @@ export const FLEET_INTELLIGENCE_ARTICLES: FleetIntelligenceArticle[] = [
     category: "Technology in Trucking",
     date: "September 8, 2026",
     relatedLinks: [
-      { label: "Open Command Center", href: "/command-center" },
-      { label: "Open Dispatch Board", href: "/dispatch" },
+      { label: "Open Command Center", href: "/demo/command-center" },
+      { label: "Open Dispatch Board", href: "/demo/dispatch" },
       { label: "Open Exception Queue", href: "/dispatch?view=exceptions" },
     ],
     sections: [
@@ -247,8 +247,8 @@ export const FLEET_INTELLIGENCE_ARTICLES: FleetIntelligenceArticle[] = [
     category: "Enforcement Philosophy",
     date: "May 22, 2026",
     relatedLinks: [
-      { label: "Open Command Center", href: "/command-center" },
-      { label: "Explore Dispatch Proof Workflow", href: "/dispatch" },
+      { label: "Open Command Center", href: "/demo/command-center" },
+      { label: "Explore Dispatch Proof Workflow", href: "/demo/dispatch" },
     ],
     sections: [
       {
@@ -283,7 +283,7 @@ export const FLEET_INTELLIGENCE_ARTICLES: FleetIntelligenceArticle[] = [
     category: "Fleet Profitability",
     date: "May 22, 2026",
     relatedLinks: [
-      { label: "View Settlements & Factoring", href: "/settlements" },
+      { label: "View Settlements & Factoring", href: "/demo/settlements" },
       { label: "Open Document Vault", href: "/documents" },
     ],
     sections: [
@@ -320,7 +320,7 @@ export const FLEET_INTELLIGENCE_ARTICLES: FleetIntelligenceArticle[] = [
     date: "May 22, 2026",
     relatedLinks: [
       { label: "Review Driver Readiness", href: "/drivers" },
-      { label: "Open Command Center", href: "/command-center" },
+      { label: "Open Command Center", href: "/demo/command-center" },
     ],
     sections: [
       {
@@ -509,7 +509,7 @@ export function FleetIntelligenceIndexPage() {
             <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
               Request a BOF Assessment
             </Link>
-            <Link href="/command-center" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+            <Link href="/demo/command-center" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
               See BOF in Action
             </Link>
           </div>
@@ -586,7 +586,7 @@ export function FleetIntelligenceArticlePage({ article }: { article: FleetIntell
             <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
               Request a BOF Assessment
             </Link>
-            <Link href="/command-center" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+            <Link href="/demo/command-center" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
               See BOF in Action
             </Link>
           </div>

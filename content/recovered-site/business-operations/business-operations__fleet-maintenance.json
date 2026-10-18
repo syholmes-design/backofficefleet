@@ -1,0 +1,19 @@
+{
+"route": "/business-operations/fleet-maintenance",
+"generation": "static-20260729",
+"source": {
+"commit": "66929e67",
+"path": "Website/business-operations/fleet-maintenance/index.html",
+"label": "Static BOF site, 2026-07-29 (origin/codex/public-site-deployment-candidate)"
+},
+"merges": [],
+"title": "Fleet Maintenance & Asset Management | BOF",
+"description": "BOF manages preventive maintenance, DOT annual inspections, breakdown workflows, tire programs, and asset lifecycle records for trucking fleets.",
+"bodyClass": "premium-site page-business-operations bof-bo-detail",
+"mainClass": "",
+"mainId": "",
+"html": "<section class=\"bof-bo-detail-hero reveal\"><p class=\"bof-bo-eyebrow\">Asset control</p><h1>Fleet Maintenance &amp; Asset Management</h1><p>Part 396 requires a systematic inspection, repair, and maintenance program. BOF turns PM intervals, annual inspections, DVIR defects, tire records, and roadside repairs into dispatch-visible clearance gates.</p></section>\n<section class=\"bof-bo-detail-content reveal\">\n      <h2>Maintenance Records That Affect Release</h2>\n      <div class=\"bof-bo-table-wrap\"><table class=\"bof-bo-table\"><thead><tr><th scope=\"col\">Control</th><th scope=\"col\">Operating Record</th><th scope=\"col\">Clearance Rule</th></tr></thead><tbody>\n        <tr><td>Preventive maintenance</td><td>Mileage, date, engine-hours interval, work order, vendor invoice</td><td>Alert before due; hold unit when overdue or safety-critical.</td></tr>\n        <tr><td>DOT annual inspection</td><td>Inspection certificate, sticker date, inspector credential</td><td>Expired annual inspection blocks dispatch until certificate is current.</td></tr>\n        <tr><td>DVIR defect</td><td>Driver report, defect category, repair certification</td><td>Safety-affecting defect must be repaired and certified before release.</td></tr>\n        <tr><td>Tire program</td><td>Position, tread depth, pressure, replacement, retread eligibility</td><td>Unsafe tread or pressure exception routes to maintenance owner.</td></tr>\n      </tbody></table></div>\n      <h2>Breakdown Response Workflow</h2>\n      <ol class=\"bof-bo-step-list\">\n        <li><strong>Driver notice.</strong> Driver reports location, unit, symptoms, and load impact.</li>\n        <li><strong>Vendor dispatch.</strong> Approved repair vendor, ETA, estimate, and spending authority are recorded.</li>\n        <li><strong>Load decision.</strong> Dispatch decides whether to wait, relay, rescue, or notify the customer.</li>\n        <li><strong>Return to service.</strong> Repair invoice, post-repair inspection, and new DVIR clear the unit.</li>\n      </ol>\n      <div class=\"bof-policy-ref\"><span class=\"bof-policy-icon\">POL</span><div><small>Record standard</small><strong>BOF-POL-007 - Document Retention Standard</strong><p>Maintenance records, inspection certificates, DVIRs, repair invoices, and unit lifecycle evidence stay tied to the unit record and dispatch consequence.</p><a href=\"/recovered-assets/static-20260729/assets/documents/policies/bof-pol-007-document-retention-standard.pdf\">View policy &rarr;</a></div></div>\n    </section>",
+"inlineScripts": [],
+"widgetScripts": [],
+"archive": false
+}

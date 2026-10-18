@@ -431,7 +431,7 @@ export default function AssessmentTrackPageClient({ trackId }: AssessmentTrackPa
               </div>
 
               {/* Actions */}
-              <div className="flex space-x-4">
+              <div className="flex flex-wrap gap-4">
                 <button
                   onClick={() => {
                     setShowResults(false);
@@ -444,8 +444,21 @@ export default function AssessmentTrackPageClient({ trackId }: AssessmentTrackPa
                   Retake Assessment
                 </button>
                 <Link
-                  href="/assessment"
+                  href={`/contact?${new URLSearchParams({
+                    source: "assessment",
+                    track: trackId,
+                    score: String(assessmentResult.score),
+                    category: assessmentResult.scoreCategory,
+                    risks: assessmentResult.riskAreas.slice(0, 8).join("|"),
+                  }).toString()}`}
                   className="rounded-lg bg-teal-600 px-6 py-3 font-semibold text-white transition-colors duration-200 hover:bg-teal-700"
+                  data-testid="assessment-send-results"
+                >
+                  Send these results to BOF
+                </Link>
+                <Link
+                  href="/assessment"
+                  className="rounded-lg border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 transition-colors duration-200 hover:bg-slate-50"
                 >
                   Back to Assessment Selection
                 </Link>

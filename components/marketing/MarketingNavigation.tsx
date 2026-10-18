@@ -24,17 +24,20 @@ const whatWeDo = [
 
 const businessOperations = [
   ["Business Operations overview", "/business-operations"],
+  ["HR Tier", "/business-operations/hr-tier"],
   ["Driver Onboarding", "/business-operations/driver-onboarding"],
+  ["Document Management", "/business-operations/document-management"],
   ["Document & Records Control", "/business-operations/document-records-control"],
   ["Operational Reporting", "/business-operations/operational-reporting"],
   ["Customer Billing", "/business-operations/customer-billing"],
+  ["Accounts Receivable", "/business-operations/accounts-receivable"],
   ["Payroll Administration", "/business-operations/payroll-administration"],
   ["Accounting & Finance", "/business-operations/accounting-finance"],
 ] as const;
 
 const documents = [
   ["Documents", "/documents"],
-  ["Driver Vault", BOF_RUNTIME_LINKS.vault],
+  ["Company Operations Vault", "/documents/company-operations-vault"],
   ["BOF Vault", "/bof-vault"],
 ] as const;
 

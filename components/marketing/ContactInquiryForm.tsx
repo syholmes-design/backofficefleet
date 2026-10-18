@@ -8,7 +8,7 @@ type FieldErrors = Partial<Record<"fullName" | "companyName" | "email" | "phone"
 
 const inputClass = "mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-950";
 
-export function ContactInquiryForm() {
+export function ContactInquiryForm({ defaultMessage }: { defaultMessage?: string } = {}) {
   const [pending, setPending] = useState(false);
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
@@ -104,7 +104,7 @@ export function ContactInquiryForm() {
       </fieldset>
       <label className="mt-4 block text-sm font-semibold text-slate-900">
         Message
-        <textarea name="message" required rows={5} className={inputClass} aria-invalid={Boolean(fields.message)} />
+        <textarea name="message" required rows={defaultMessage ? 8 : 5} defaultValue={defaultMessage} className={inputClass} aria-invalid={Boolean(fields.message)} />
         {fields.message ? <span className="mt-1 block text-sm font-normal text-red-800">{fields.message}</span> : null}
       </label>
       <button type="submit" disabled={pending} className="mt-5 inline-flex rounded-md bg-teal-700 px-5 py-3 text-sm font-semibold text-white hover:bg-teal-800 disabled:opacity-60">

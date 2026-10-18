@@ -152,7 +152,7 @@ export default function TeamBriefingPage() {
             makes the decision visible.
           </p>
           <p>
-            Live product surface: <Link href="/dispatch">Dispatch</Link>.
+            Live product surface: <Link href="/api/auth/signin?callbackUrl=%2Fdispatch">Dispatch</Link>.
           </p>
         </article>
 
@@ -192,7 +192,7 @@ export default function TeamBriefingPage() {
               How BOF works
               <span>Sixteen-step product walkthrough.</span>
             </Link>
-            <Link href="/dispatch">
+            <Link href="/api/auth/signin?callbackUrl=%2Fdispatch">
               Dispatch
               <span>Release and operating board.</span>
             </Link>

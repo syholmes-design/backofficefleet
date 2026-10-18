@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ContactInquiryForm } from "@/components/marketing/ContactInquiryForm";
+import { getAssessmentTrack } from "@/lib/assessment-tracks";
 
 export const metadata: Metadata = {
   title: "Contact | BackOfficeFleet",
@@ -15,7 +16,42 @@ const CONTACT_TOPICS = [
   { label: "Fleet operations working session", href: "mailto:demo@backofficefleet.com?subject=BOF%20Working%20Session" },
 ];
 
-export default function ContactPage() {
+type ContactSearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+const SCORE_CATEGORIES = new Set(["Strong", "Needs Attention", "High Risk", "Critical"]);
+
+function first(value: string | string[] | undefined) {
+  return (Array.isArray(value) ? value[0] : value)?.trim() ?? "";
+}
+
+/**
+ * Assessment hand-off: /contact?source=assessment&track=<id>&score=<0-100>&category=<label>&risks=a|b
+ * Values are validated (known track, numeric score, known category, short plain risk labels) and
+ * only used as editable default text, which React escapes.
+ */
+function assessmentMessage(params: Record<string, string | string[] | undefined>): string | undefined {
+  if (first(params.source) !== "assessment") return undefined;
+  const track = getAssessmentTrack(first(params.track));
+  if (!track) return undefined;
+  const score = Number(first(params.score));
+  const category = first(params.category);
+  const risks = first(params.risks)
+    .split("|")
+    .map((risk) => risk.replace(/[^\w\s&/,().'-]/g, "").trim().slice(0, 80))
+    .filter(Boolean)
+    .slice(0, 8);
+  const lines = [`I completed the BOF ${track.title} assessment and would like to review the results with BOF.`];
+  if (Number.isFinite(score) && score >= 0 && score <= 100) {
+    lines.push(`Score: ${Math.round(score)}%${SCORE_CATEGORIES.has(category) ? ` (${category})` : ""}`);
+  }
+  if (risks.length) lines.push(`Risk areas: ${risks.join("; ")}`);
+  lines.push("", "Workflow pressure or decision we need help with:");
+  return lines.join("\n");
+}
+
+export default async function ContactPage({ searchParams }: { searchParams?: ContactSearchParams }) {
+  const params = searchParams ? await searchParams : {};
+  const defaultMessage = assessmentMessage(params);
   return (
     <main className="bof-service-page">
       <div className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
@@ -26,7 +62,7 @@ export default function ContactPage() {
           appropriate assessment or strategy path.
         </p>
 
-        <ContactInquiryForm />
+        <ContactInquiryForm defaultMessage={defaultMessage} />
 
         <section className="mt-10 grid gap-4" aria-label="Email BOF instead">
           <h2 className="text-lg font-bold text-slate-950">Or email BOF</h2>

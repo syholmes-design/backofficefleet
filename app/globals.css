@@ -19204,3 +19204,23 @@ a.shipper-portal-story-step:focus-visible,
     width: 100%;
   }
 }
+
+/* Recovered Business Operations: platform capability links and archive banner */
+.bof-capabilities { background: #0f172a; color: #e2e8f0; padding: 3.5rem 1rem; }
+.bof-capabilities-inner { max-width: 72rem; margin: 0 auto; }
+.bof-capabilities-eyebrow { color: #5eead4; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+.bof-capabilities-heading { margin-top: 0.5rem; color: #fff; font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; line-height: 1.15; }
+.bof-capabilities-note { max-width: 46rem; margin-top: 0.75rem; color: #cbd5e1; font-size: 0.95rem; }
+.bof-capabilities-grid { display: grid; gap: 1rem; margin-top: 1.75rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+.bof-capability-card { display: flex; flex-direction: column; gap: 0.6rem; padding: 1.25rem; border: 1px solid rgba(148, 163, 184, 0.35); border-radius: 0.9rem; background: rgba(15, 23, 42, 0.6); }
+.bof-capability-card h3 { color: #fff; font-size: 1.15rem; font-weight: 700; }
+.bof-capability-card p { color: #cbd5e1; font-size: 0.92rem; }
+.bof-capability-actions { display: flex; flex-direction: column; gap: 0.5rem; margin-top: auto; padding-top: 0.5rem; }
+.bof-capability-demo { display: inline-flex; justify-content: center; padding: 0.6rem 0.9rem; border-radius: 999px; background: #2dd4bf; color: #0f172a; font-size: 0.9rem; font-weight: 700; text-decoration: none; }
+.bof-capability-demo:hover { background: #5eead4; }
+.bof-capability-demo-here { font-size: 0.9rem; font-weight: 600; color: #5eead4; }
+.bof-capability-live { display: inline-flex; justify-content: center; padding: 0.55rem 0.9rem; border: 1px solid rgba(226, 232, 240, 0.4); border-radius: 999px; color: #e2e8f0; font-size: 0.88rem; font-weight: 600; text-decoration: none; }
+.bof-capability-live:hover { background: rgba(255, 255, 255, 0.08); }
+.bof-recovered-archive-banner { padding: 0.75rem 1rem; background: #fef3c7; color: #78350f; font-size: 0.85rem; text-align: center; }
+.bof-recovered-related { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem; max-width: 72rem; margin: 0 auto; padding: 1.25rem 1rem; font-size: 0.92rem; color: #334155; }
+.bof-recovered-related a { color: #0f766e; font-weight: 600; }

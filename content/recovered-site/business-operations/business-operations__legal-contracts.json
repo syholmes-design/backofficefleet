@@ -1,0 +1,19 @@
+{
+"route": "/business-operations/legal-contracts",
+"generation": "static-20260729",
+"source": {
+"commit": "66929e67",
+"path": "Website/business-operations/legal-contracts/index.html",
+"label": "Static BOF site, 2026-07-29 (origin/codex/public-site-deployment-candidate)"
+},
+"merges": [],
+"title": "Legal & Contract Management for Motor Carriers | BOF",
+"description": "BOF manages broker-carrier agreements, shipper contracts, equipment leases, owner-operator leases, vendor agreements, renewals, and contract dispute records.",
+"bodyClass": "premium-site page-business-operations bof-bo-detail",
+"mainClass": "",
+"mainId": "",
+"html": "<section class=\"bof-bo-detail-hero reveal\"><p class=\"bof-bo-eyebrow\">Contract control</p><h1>Legal &amp; Contract Management</h1><p>Motor carriers operate inside broker, shipper, equipment, owner-operator, vendor, and insurance contracts. BOF does not give legal advice; it makes contract records, renewal dates, risk terms, owners, and dispute evidence visible.</p></section>\n<section class=\"bof-bo-detail-content reveal\">\n      <h2>Contract Library by Operating Risk</h2>\n      <div class=\"bof-bo-table-wrap\"><table class=\"bof-bo-table\"><thead><tr><th scope=\"col\">Contract</th><th scope=\"col\">Risk Terms to Track</th><th scope=\"col\">BOF Control</th></tr></thead><tbody>\n        <tr><td>Broker-carrier agreement</td><td>Indemnity, cargo claims, offsets, insurance requirements, venue</td><td>Annual review, requirement extraction, dispute history.</td></tr>\n        <tr><td>Shipper direct contract</td><td>Rate, term, service levels, cargo liability, insurance minimums</td><td>Renewal calendar and contract KPI evidence.</td></tr>\n        <tr><td>Equipment loan or lease</td><td>Payment, balloon, buyout, mileage cap, termination penalty</td><td>Asset record and cash-flow obligation link.</td></tr>\n        <tr><td>Vendor agreement</td><td>Pricing, renewal, service level, insurance, payment terms</td><td>Vendor status and approval owner.</td></tr>\n      </tbody></table></div>\n      <h2>Contract Clearance Path</h2>\n      <ol class=\"bof-bo-step-list\">\n        <li><strong>Capture agreement.</strong> Current signed copy, amendment, renewal date, and owner are stored.</li>\n        <li><strong>Extract terms.</strong> Insurance, payment, service, claim, notice, and renewal provisions become review fields.</li>\n        <li><strong>Assign review.</strong> Business owner, legal reviewer, insurance agent, or finance owner gets the next action.</li>\n        <li><strong>Attach evidence.</strong> Approval note, revised term, notice sent, or dispute outcome stays with the record.</li>\n      </ol>\n    </section>",
+"inlineScripts": [],
+"widgetScripts": [],
+"archive": false
+}

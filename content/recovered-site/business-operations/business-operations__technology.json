@@ -1,0 +1,19 @@
+{
+"route": "/business-operations/technology",
+"generation": "static-20260729",
+"source": {
+"commit": "66929e67",
+"path": "Website/business-operations/technology/index.html",
+"label": "Static BOF site, 2026-07-29 (origin/codex/public-site-deployment-candidate)"
+},
+"merges": [],
+"title": "Technology Stack & Integration Management | BOF",
+"description": "BOF manages ELD, TMS, accounting, payroll, GPS, load-board, EDI/API, user access, and integration handoff records for trucking operations.",
+"bodyClass": "premium-site page-business-operations bof-bo-detail",
+"mainClass": "",
+"mainId": "",
+"html": "<section class=\"bof-bo-detail-hero reveal\"><p class=\"bof-bo-eyebrow\">Integration control</p><h1>Technology Stack &amp; Integration Management</h1><p>Fleet data is scattered across ELDs, TMS tools, GPS, accounting, payroll, load boards, storage, and email. BOF tracks the handoff so every system has an owner, access rule, data source, and exception path.</p></section>\n<section class=\"bof-bo-detail-content reveal\">\n      <h2>Technology Fragmentation Record</h2>\n      <div class=\"bof-bo-table-wrap\"><table class=\"bof-bo-table\"><thead><tr><th scope=\"col\">System</th><th scope=\"col\">Data It Holds</th><th scope=\"col\">BOF Control</th></tr></thead><tbody>\n        <tr><td>ELD / telematics</td><td>HOS, location, odometer, events, vehicle diagnostics</td><td>Driver readiness, PM intervals, safety review, and route context.</td></tr>\n        <tr><td>TMS</td><td>Load, lane, customer, rate, dispatch status</td><td>Load-to-cash record and owner follow-up.</td></tr>\n        <tr><td>Accounting / payroll</td><td>Invoice, AR, AP, settlement, payroll basis</td><td>Revenue readiness and driver pay math.</td></tr>\n        <tr><td>Documents / storage</td><td>POD, BOL, COI, policy, packet, image proof</td><td>Evidence binding and retention governance.</td></tr>\n      </tbody></table></div>\n      <h2>Integration Clearance Path</h2>\n      <ol class=\"bof-bo-step-list\">\n        <li><strong>Map system owner.</strong> Each tool has an admin, business owner, and access gate.</li>\n        <li><strong>Classify handoff.</strong> API, export, manual upload, email, or portal workflow is recorded.</li>\n        <li><strong>Find broken fields.</strong> Missing IDs, mismatched load numbers, stale driver status, or duplicate records are flagged.</li>\n        <li><strong>Close with proof.</strong> Sync status, audit log, import result, or owner approval clears the gap.</li>\n      </ol>\n      <div class=\"bof-policy-ref\"><span class=\"bof-policy-icon\">POL</span><div><small>Access standard</small><strong>BOF-POL-008 - Access and Data Governance</strong><p>Technology access, API keys, user roles, sensitive data, and evidence retention need governance before the demo becomes an MVP.</p><a href=\"/recovered-assets/static-20260729/assets/documents/policies/bof-pol-008-access-and-data-governance.pdf\">View policy &rarr;</a></div></div>\n    </section>",
+"inlineScripts": [],
+"widgetScripts": [],
+"archive": false
+}

@@ -1,0 +1,296 @@
+{
+ "/business-operations": {
+  "key": "business-operations",
+  "title": "Business Operations | BackOfficeFleet",
+  "description": "Business Operations connects workforce, finance, payroll, accounting, treasury, vendors, records, and executive oversight for fleet administration.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/driver-onboarding": {
+  "key": "business-operations__driver-onboarding",
+  "title": "Driver Onboarding | Business Operations | BackOfficeFleet",
+  "description": "BOF driver onboarding support connects recruiting, DQF handoff, payroll setup, training, safety acknowledgement, and assignment readiness.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/document-management": {
+  "key": "business-operations__document-management",
+  "title": "Document Management | Business Operations | BackOfficeFleet",
+  "description": "BOF document management support connects administrative records, customer packets, policy files, record owners, retention visibility, and workflow handoffs.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/operational-reporting": {
+  "key": "business-operations__operational-reporting",
+  "title": "Operational Reporting | Business Operations | BackOfficeFleet",
+  "description": "BOF operational reporting connects readiness status, blockers, owner queues, aging work, exceptions, and leadership review across trucking operations.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/customer-billing": {
+  "key": "business-operations__customer-billing",
+  "title": "Customer Billing | Business Operations | BackOfficeFleet",
+  "description": "BOF customer billing support connects invoice readiness, PODs, rate confirmations, detention, accessorials, claims, and customer packet follow-up.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/accounts-receivable": {
+  "key": "business-operations__accounts-receivable",
+  "title": "Accounts Receivable | Business Operations | BackOfficeFleet",
+  "description": "BOF accounts receivable support connects invoice aging, disputes, customer packet support, factoring context, and owner follow-up.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/payroll-administration": {
+  "key": "business-operations__payroll-administration",
+  "title": "Payroll Administration | Business Operations | BackOfficeFleet",
+  "description": "BOF payroll administration support connects pay questions, reimbursements, deductions, contractor packets, approvals, and operating records.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/accounting-finance": {
+  "key": "business-operations__accounting-finance",
+  "title": "Accounting & Finance | Business Operations | BackOfficeFleet",
+  "description": "BOF accounting and finance support connects bookkeeping coordination, AP, AR, billing status, settlement context, cash-flow visibility, and owner follow-up.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/hr-tier": {
+  "key": "business-operations__hr-tier",
+  "title": "HR Tier | Business Operations | BackOfficeFleet",
+  "description": "BOF HR Tier support connects employee relations, recruiting, onboarding, compensation, benefits, training, and talent follow-up to trucking operating readiness.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/accounting": {
+  "key": "business-operations__accounting",
+  "title": "Accounting & Financial Operations for Trucking | BOF",
+  "description": "BOF structures trucking accounting around load-level profitability, factoring reconciliation, AP, AR, driver settlements, fuel, maintenance, and lane-level cost visibility.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/cash-flow": {
+  "key": "business-operations__cash-flow",
+  "title": "Cash Flow & Factoring Strategy for Trucking | BOF",
+  "description": "BOF connects load pipeline, packet readiness, AR aging, factoring cost, fixed obligations, and a 13-week trucking cash-flow forecast.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/erp": {
+  "key": "business-operations__erp",
+  "title": "ERP & Workflow Integration for Fleets | BOF",
+  "description": "BOF connects dispatch, maintenance, compliance, billing, documents, and finance through workflow queues, owners, due dates, and escalation paths.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/excise-taxes": {
+  "key": "business-operations__excise-taxes",
+  "title": "Excise Taxes & Federal Fleet Compliance | BOF",
+  "description": "BOF manages Form 2290, IFTA, IRP, UCR, and state weight-distance tax obligations for motor carriers and fleet aggregators. Never miss a filing deadline again.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/fleet-maintenance": {
+  "key": "business-operations__fleet-maintenance",
+  "title": "Fleet Maintenance & Asset Management | BOF",
+  "description": "BOF manages preventive maintenance, DOT annual inspections, breakdown workflows, tire programs, and asset lifecycle records for trucking fleets.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/fuel-management": {
+  "key": "business-operations__fuel-management",
+  "title": "Fuel Management & Cost Control | BOF",
+  "description": "BOF tracks fuel card controls, IFTA reconciliation, cost-per-mile analysis, idle reduction, DEF tracking, and fuel exceptions by lane and unit.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/human-resources": {
+  "key": "business-operations__human-resources",
+  "title": "HR & DOT Driver Compliance for Motor Carriers | BOF",
+  "description": "BOF manages Driver Qualification Files, drug and alcohol testing program records, CDL expiration monitoring, and onboarding workflows for motor carriers.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/insurance": {
+  "key": "business-operations__insurance",
+  "title": "Insurance Management & COI Tracking | BOF",
+  "description": "BOF tracks motor carrier insurance policies, COIs, BMC filings, unit-level coverage, renewals, and claim coordination.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/legal-contracts": {
+  "key": "business-operations__legal-contracts",
+  "title": "Legal & Contract Management for Motor Carriers | BOF",
+  "description": "BOF manages broker-carrier agreements, shipper contracts, equipment leases, owner-operator leases, vendor agreements, renewals, and contract dispute records.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/operating-authority": {
+  "key": "business-operations__operating-authority",
+  "title": "Operating Authority & FMCSA Portal Management | BOF",
+  "description": "BOF manages operating authority records, USDOT updates, MC status, BOC-3, UCR, FMCSA portal access, and filing deadlines.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/owner-operator": {
+  "key": "business-operations__owner-operator",
+  "title": "Owner-Operator & Leased Contractor Management | BOF",
+  "description": "BOF manages owner-operator leases, Part 376 records, contractor qualification, settlements, deductions, escrow, and termination workflows.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/payroll": {
+  "key": "business-operations__payroll",
+  "title": "Trucking Payroll & Driver Compensation | BOF",
+  "description": "BOF handles per-mile, percentage-of-load, hourly, and 1099 owner-operator payroll structures with multi-state withholding, per-diem tracking, and driver settlement reconciliation.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/safety-sms": {
+  "key": "business-operations__safety-sms",
+  "title": "Safety Management & SMS Compliance | BOF",
+  "description": "BOF manages SMS exposure, roadside inspection workflows, DataQ challenges, safety documentation, and corrective action records for trucking fleets.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/technology": {
+  "key": "business-operations__technology",
+  "title": "Technology Stack & Integration Management | BOF",
+  "description": "BOF manages ELD, TMS, accounting, payroll, GPS, load-board, EDI/API, user access, and integration handoff records for trucking operations.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/driver-onboarding/assignment-readiness": {
+  "key": "business-operations__driver-onboarding__assignment-readiness",
+  "title": "Assignment Readiness | Driver Onboarding | BackOfficeFleet",
+  "description": "Assignment readiness page for driver onboarding teams reviewing DQF, training, payroll setup, safety acknowledgement, and dispatch release.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/document-management/records-control": {
+  "key": "business-operations__document-management__records-control",
+  "title": "Records Control | Document Management | BackOfficeFleet",
+  "description": "Records control page for trucking offices classifying, reviewing, routing, and retaining operational and administrative documents.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/operational-reporting/owner-queue-reporting": {
+  "key": "business-operations__operational-reporting__owner-queue-reporting",
+  "title": "Owner Queue Reporting | Operational Reporting | BackOfficeFleet",
+  "description": "Owner queue reporting for trucking teams connecting blockers, aging work, missing records, and next actions to responsible owners.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/customer-billing/billing-packet-control": {
+  "key": "business-operations__customer-billing__billing-packet-control",
+  "title": "Billing Packet Control | Customer Billing | BackOfficeFleet",
+  "description": "Billing packet control for trucking offices reviewing PODs, rate confirmations, detention, accessorials, claims, and invoice readiness.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/accounts-receivable/aging-dispute-control": {
+  "key": "business-operations__accounts-receivable__aging-dispute-control",
+  "title": "Aging & Dispute Control | Accounts Receivable | BackOfficeFleet",
+  "description": "Aging and dispute control for trucking AR teams reviewing invoice aging, customer disputes, missing proof, factoring support, and owner follow-up.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/payroll-administration/pay-exception-control": {
+  "key": "business-operations__payroll-administration__pay-exception-control",
+  "title": "Pay Exception Control | Payroll Administration | BackOfficeFleet",
+  "description": "Pay exception control for trucking payroll support teams reviewing detention, accessorials, deductions, reimbursements, approvals, and packet records.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/accounting-finance/ap-vendor-control": {
+  "key": "business-operations__accounting-finance__ap-vendor-control",
+  "title": "AP & Vendor Control | Accounting & Finance | BackOfficeFleet",
+  "description": "AP and vendor control page for trucking finance teams reviewing vendor bills, approvals, receipts, deductions, and owner follow-up.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/accounting-finance/cash-flow-review": {
+  "key": "business-operations__accounting-finance__cash-flow-review",
+  "title": "Cash-Flow Review | Accounting & Finance | BackOfficeFleet",
+  "description": "Cash-flow review page for trucking finance teams connecting billing, receivables, settlements, factoring packet context, and blockers.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/hr-tier/recruiting-onboarding": {
+  "key": "business-operations__hr-tier__recruiting-onboarding",
+  "title": "Recruiting & Onboarding | HR Tier | BackOfficeFleet",
+  "description": "Recruiting and onboarding operating page for trucking HR teams moving candidates from intake to assignment readiness.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/hr-tier/compensation-benefits": {
+  "key": "business-operations__hr-tier__compensation-benefits",
+  "title": "Compensation & Benefits | HR Tier | BackOfficeFleet",
+  "description": "Compensation and benefits operating page for trucking HR teams coordinating pay support, benefit status, deductions, reimbursements, and owner follow-up.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/hr-tier/talent-management": {
+  "key": "business-operations__hr-tier__talent-management",
+  "title": "Talent Management | HR Tier | BackOfficeFleet",
+  "description": "Talent management operating page for trucking HR teams coordinating training, coaching, readiness, retention, and leadership follow-up.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/hr-tier/employee-relations": {
+  "key": "business-operations__hr-tier__employee-relations",
+  "title": "Employee Relations | HR Tier | BackOfficeFleet",
+  "description": "Employee relations operating page for trucking HR teams managing conduct, attendance, coaching, escalation, and follow-up visibility.",
+  "generation": "static-20260729",
+  "archive": false
+ },
+ "/business-operations/document-records-control": {
+  "key": "business-operations__document-records-control",
+  "title": "Document and Records Control | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": false
+ },
+ "/business-operations/customer-billing/billing-ar-control": {
+  "key": "business-operations__customer-billing__billing-ar-control",
+  "title": "Billing and AR Control | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": false
+ },
+ "/business-operations/archive/command-center-2026-07-01": {
+  "key": "business-operations__archive__command-center-2026-07-01",
+  "title": "Business Operations Center | BackOfficeFleet",
+  "description": "BOF Business Operations Center shows administrative infrastructure for payroll, HR, insurance, factoring readiness, accounting coordination, and executive financial visibility.",
+  "generation": "static-20260701",
+  "archive": true
+ },
+ "/business-operations/archive/business-office-2026-08-19": {
+  "key": "business-operations__archive__business-office-2026-08-19",
+  "title": "Business Operations Center | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": true
+ },
+ "/business-operations/archive/assignment-readiness-2026-08-19": {
+  "key": "business-operations__archive__assignment-readiness-2026-08-19",
+  "title": "Onboarding and Assignment Readiness | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": true
+ },
+ "/business-operations/archive/owner-queue-reporting-2026-08-19": {
+  "key": "business-operations__archive__owner-queue-reporting-2026-08-19",
+  "title": "Owner Queue Reporting | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": true
+ },
+ "/business-operations/archive/pay-exception-control-2026-08-19": {
+  "key": "business-operations__archive__pay-exception-control-2026-08-19",
+  "title": "Pay Exception Control | BackOfficeFleet",
+  "description": "",
+  "generation": "fork-20260819",
+  "archive": true
+ }
+}

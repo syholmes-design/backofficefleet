@@ -46,7 +46,7 @@ const INCLUDED = [
   {
     title: "Fleet Financials",
     body: "Settlement timing, factoring readiness, billing blockers, profitability, and money at risk.",
-    href: "/settlements",
+    href: "/demo/settlements",
     icon: <IconDispatch />,
   },
   {

@@ -29,8 +29,19 @@ export const BOF_CANONICAL_PAGE_REGISTRY: CanonicalRouteProfile[] = [
     header: "BOF marketing navigation",
     miniHeader: "Business operations overview",
     parentPage: "/",
-    primaryChildren: ["/business-operations/route-optimization", "/business-operations/operations-dashboard"],
-    duplicates: ["/recovered/business-operations", "/legacy/business-operations"],
+    // Original hierarchy recovered verbatim from Git history (docs/recovery/business-operations-recovery-report.md).
+    primaryChildren: [
+      "/business-operations/hr-tier",
+      "/business-operations/driver-onboarding",
+      "/business-operations/document-management",
+      "/business-operations/document-records-control",
+      "/business-operations/operational-reporting",
+      "/business-operations/customer-billing",
+      "/business-operations/accounts-receivable",
+      "/business-operations/payroll-administration",
+      "/business-operations/accounting-finance",
+    ],
+    duplicates: [],
   },
   {
     route: "/documents",

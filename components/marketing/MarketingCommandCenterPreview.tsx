@@ -32,7 +32,7 @@ const DEFAULT_ROWS: readonly CcMockRow[] = [
     meta: "L007 dock proof / Zelle confirmation",
     val: "$180",
     valClass: "bof-mkt-cc-mock-kpi-val--warn",
-    href: "/settlements",
+    href: "/demo/settlements",
   },
   {
     label: "Safety",
@@ -46,7 +46,7 @@ const DEFAULT_ROWS: readonly CcMockRow[] = [
     title: "Storm reroute exercise",
     meta: "I-40 weather cell / dispatch workaround",
     val: "LIVE",
-    href: "/dispatch",
+    href: "/demo/dispatch",
   },
 ];
 

@@ -53,7 +53,7 @@ const TIERS: readonly Tier[] = [
       "Export-ready settlement documentation",
     ],
     ctaLabel: "See Financial Controls",
-    href: "/settlements",
+    href: "/demo/settlements",
   },
 ] as const;
 

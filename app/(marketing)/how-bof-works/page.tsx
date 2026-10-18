@@ -250,7 +250,7 @@ export default function HowBofWorksPage() {
                   READINESS EVALUATION
                 </h2>
               </div>
-              <Link href="/loads/L001/readiness-summary" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              <Link href="/demo/loads" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
                 CHECK READINESS &rarr;
               </Link>
             </div>
@@ -270,7 +270,7 @@ export default function HowBofWorksPage() {
                   PRE-TRIP INSPECTION
                 </h2>
               </div>
-              <Link href="/pretrip/L009" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              <Link href="/api/auth/signin?callbackUrl=%2Fpretrip%2FL009" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
                 OPEN PRE-TRIP &rarr;
               </Link>
             </div>
@@ -290,7 +290,7 @@ export default function HowBofWorksPage() {
                   DISPATCH RELEASE GATE
                 </h2>
               </div>
-              <Link href="/dispatch" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              <Link href="/demo/dispatch" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
                 OPEN DISPATCH &rarr;
               </Link>
             </div>
@@ -391,7 +391,7 @@ export default function HowBofWorksPage() {
             <Link href="/book-assessment" className="inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
               Request a BOF Assessment
             </Link>
-            <Link href="/command-center" className="inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+            <Link href="/demo/command-center" className="inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
               See BOF in Action
             </Link>
           </div>

@@ -15,7 +15,7 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
             <a href={BOF_RUNTIME_LINKS.dashboard}>Operating System</a>
             <a href={BOF_RUNTIME_LINKS.dispatch}>Dispatch Runtime</a>
             <Link href="/safety">Safety &amp; Compliance</Link>
-            <Link href="/settlements">Settlements</Link>
+            <Link href="/demo/settlements">Settlements</Link>
             <Link href="/rf-actions">Exception Queue</Link>
             <Link href="/documents">File Cabinet</Link>
             <Link href="/driver-experience">Driver Experience</Link>
