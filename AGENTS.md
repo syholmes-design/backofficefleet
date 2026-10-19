@@ -23,6 +23,12 @@ Claude, Cursor, GitHub Copilot, Google Antigravity, Codex and any future tool.
 
 **[docs/architecture/BOF-CANONICAL-IMPLEMENTATION-REGISTER.md](docs/architecture/BOF-CANONICAL-IMPLEMENTATION-REGISTER.md)** names the one active implementation of each consolidated function (routes, UI, APIs, services, entities, tests) and the code that was removed. Do not add a second implementation of a listed function.
 
+## Assignments and release
+
+- Six-agent assignments and shared contracts: [docs/architecture/BOF-SIX-AGENT-ASSIGNMENTS-2026-10-19.md](docs/architecture/BOF-SIX-AGENT-ASSIGNMENTS-2026-10-19.md)
+- Before tests, builds or releases: `npm run preflight` (add `-- --test` for the bof_dev test database). It separates infrastructure failures from application defects.
+- After a release: `BASE=<site> node scripts/release/verify-public-routes.mjs` (read-only). Checklist: [docs/release/RELEASE-CANDIDATE-2026-10-19.md](docs/release/RELEASE-CANDIDATE-2026-10-19.md)
+
 ## Quick pointers
 
 | Topic | Document / location |

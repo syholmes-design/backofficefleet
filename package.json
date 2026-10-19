@@ -84,7 +84,8 @@
     "test:training-authorization": "npx --yes tsx scripts/run-training-authorization-test.ts",
     "test:recruiting-v2-tenancy": "npx --yes tsx scripts/run-recruiting-v2-tenancy-test.ts",
     "test:route-access": "node --import ./scripts/lib/ts-alias-loader.mjs --test lib/security/route-access.test.ts",
-    "check:preservation": "node scripts/preservation/check-preservation.mjs"
+    "check:preservation": "node scripts/preservation/check-preservation.mjs",
+    "preflight": "node scripts/preflight/preflight.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",
