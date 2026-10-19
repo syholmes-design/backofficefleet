@@ -73,12 +73,6 @@ export function RequisitionListClient({
           </p>
           <p className="bof-recruiting-lede">
             <Link href={`${basePath}/workspace`}>Recruiting &amp; Onboarding workspace</Link>
-            {basePath === "/recruiting" ? (
-              <>
-                {" · "}
-                <Link href="/recruiting-v2">Recruiting v2 documents</Link>
-              </>
-            ) : null}
           </p>
         </div>
         <button className="bof-recruiting-create" type="button" onClick={createDraft} disabled={busy}>

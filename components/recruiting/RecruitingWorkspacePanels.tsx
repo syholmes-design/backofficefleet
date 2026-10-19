@@ -299,13 +299,39 @@ export function DocumentActionsPanel({
   candidate,
   onRecord,
   onVerify,
+  onUploaded,
+  demo = false,
   busy,
 }: {
   candidate: WorkspaceCandidate;
   onRecord: (documentType: string) => void;
   onVerify: (documentCode: string, documentType: string) => void;
+  /** Called after a file upload so the workspace reloads from the source of record. */
+  onUploaded?: () => void;
+  /** The public demonstration has no server to store files, so it records documents without them. */
+  demo?: boolean;
   busy: boolean;
 }) {
+  const [uploading, setUploading] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  async function upload(documentCode: string, file: File | undefined) {
+    if (!file) return;
+    setUploading(documentCode);
+    setUploadError(null);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      form.append("uploadedBy", "Recruiting & Onboarding workspace");
+      const response = await fetch(`/api/recruiting-v2/documents/${encodeURIComponent(candidate.candidateCode)}/${encodeURIComponent(documentCode)}/file`, { method: "POST", body: form });
+      const body = (await response.json().catch(() => ({}))) as { error?: string };
+      if (!response.ok) throw new Error(body.error ?? `Upload failed (${response.status})`);
+      onUploaded?.();
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : "Upload failed");
+    } finally {
+      setUploading(null);
+    }
+  }
   return (
     <section className={`mt-5 ${card}`} data-testid="document-gates">
       <p className={eyebrow}>Qualification documents</p>
@@ -334,10 +360,39 @@ export function DocumentActionsPanel({
                 ) : null}
                 {doc?.status === "VERIFIED" ? <span className="text-[11px] text-emerald-300">Verified by {doc.verifiedBy}</span> : null}
               </div>
+              {doc && !demo ? (
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px]">
+                  {candidate.documentFiles[doc.documentCode] ? (
+                    <>
+                      <a href={candidate.documentFiles[doc.documentCode].viewUrl} target="_blank" rel="noopener noreferrer" className="font-bold text-teal-300 hover:underline">
+                        View file{candidate.documentFiles[doc.documentCode].synthetic ? " (synthetic)" : ""}
+                      </a>
+                      <a href={candidate.documentFiles[doc.documentCode].downloadUrl} className="font-bold text-teal-300 hover:underline">
+                        Download
+                      </a>
+                    </>
+                  ) : (
+                    <span className="text-slate-500">No file attached</span>
+                  )}
+                  <label className="cursor-pointer font-bold text-slate-300 hover:text-white">
+                    {uploading === doc.documentCode ? "Uploading…" : candidate.documentFiles[doc.documentCode] ? "Replace file" : "Attach file"}
+                    <input
+                      type="file"
+                      accept="application/pdf,image/png,image/jpeg,.pdf,.png,.jpg,.jpeg"
+                      className="sr-only"
+                      data-testid={`upload-${gate.documentType}`}
+                      disabled={busy || uploading !== null}
+                      onChange={(event) => void upload(doc.documentCode, event.target.files?.[0])}
+                    />
+                  </label>
+                </div>
+              ) : null}
             </div>
           );
         })}
       </div>
+      {uploadError ? <p className="mt-2 text-[11px] text-rose-300" role="alert">{uploadError}</p> : null}
+      {!demo ? <p className="mt-2 text-[11px] text-slate-500">Files: PDF, JPG or PNG, up to 2 MB.</p> : null}
     </section>
   );
 }
@@ -610,17 +665,50 @@ export function OnboardingControls({
   );
 }
 
-export function ActivationPanel({
-  candidate,
-  onActivate,
-  busy,
-  demo,
-}: {
+type ActivationPanelProps = {
   candidate: WorkspaceCandidate;
   onActivate: () => void;
   busy: boolean;
   demo: boolean;
-}) {
+};
+
+export function ActivationPanel(props: ActivationPanelProps) {
+  return (
+    <>
+      <ActivationPanelBody {...props} />
+      {props.demo ? null : <PayrollHandoffPreview candidateCode={props.candidate.candidateCode} />}
+    </>
+  );
+}
+
+/** Payroll (Paylocity) handoff payload from the activation API. Preview only: nothing is sent. */
+function PayrollHandoffPreview({ candidateCode }: { candidateCode: string }) {
+  const [preview, setPreview] = useState<{ label: string; status: string; payload: unknown } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  async function load() {
+    if (preview) return;
+    const response = await fetch(`/api/recruiting-v2/activation/${encodeURIComponent(candidateCode)}`, { cache: "no-store" });
+    const body = (await response.json().catch(() => ({}))) as { paylocityHandoffPreview?: { label: string; status: string; payload: unknown }; error?: string };
+    if (response.ok && body.paylocityHandoffPreview) setPreview(body.paylocityHandoffPreview);
+    else setError(body.error ?? `Preview unavailable (${response.status})`);
+  }
+  return (
+    <details className="mt-4 rounded-xl border border-slate-800 bg-slate-950 p-4 text-xs" data-testid="payroll-handoff-preview" onToggle={(event) => (event.currentTarget.open ? void load() : undefined)}>
+      <summary className="cursor-pointer font-bold text-slate-200">Payroll handoff preview (Paylocity) · preview only, not sent</summary>
+      {error ? <p className="mt-2 text-rose-300">{error}</p> : null}
+      {preview ? (
+        <>
+          <p className="mt-2 font-bold uppercase tracking-wider text-amber-200">{preview.status}</p>
+          <pre className="mt-2 max-h-[360px] overflow-auto rounded-lg border border-slate-800 p-3 text-slate-300">{JSON.stringify(preview.payload, null, 2)}</pre>
+        </>
+      ) : !error ? (
+        <p className="mt-2 text-slate-500">Loading…</p>
+      ) : null}
+    </details>
+  );
+}
+
+function ActivationPanelBody({ candidate, onActivate, busy, demo }: ActivationPanelProps) {
   const ready = candidate.activationReadiness;
   const activation = candidate.activation;
   if (activation) {

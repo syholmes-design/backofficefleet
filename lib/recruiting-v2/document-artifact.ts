@@ -173,10 +173,11 @@ export function artifactSummaryForRecord(args: {
   documentType: RecruitingV2DocumentType;
   metadata: Prisma.JsonValue | null;
 }): RecruitingV2ArtifactSummary {
+  // Only a file stored on the record counts (an upload, or a synthetic file explicitly attached).
+  // Bundled synthetic files are never implied by a candidate code: real candidates are CAND-NNN too.
   const stored = parseStoredArtifact(args.metadata);
-  const bundled = bundledSyntheticArtifact(args.candidateCode, args.documentType);
-  const attached = Boolean(stored || bundled);
-  const source = stored ?? bundled;
+  const attached = Boolean(stored);
+  const source = stored;
   const fileUrl = attached
     ? `/api/recruiting-v2/documents/${encodeURIComponent(args.candidateCode)}/${encodeURIComponent(args.documentCode)}/file`
     : null;
@@ -187,7 +188,7 @@ export function artifactSummaryForRecord(args: {
     mimeType: source?.mimeType ?? null,
     sizeBytes: stored?.sizeBytes ?? null,
     uploadedAt: source?.uploadedAt ?? null,
-    synthetic: source?.synthetic ?? Boolean(bundled),
+    synthetic: source?.synthetic ?? false,
     viewUrl: fileUrl,
     downloadUrl: fileUrl ? `${fileUrl}?download=1` : null,
   };

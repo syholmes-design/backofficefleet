@@ -1,4 +1,3 @@
-import type { RecruitingCandidate, RecruitingPosition } from "@/lib/recruiting-demo-data";
 import { normalizeRecruitingV2OnboardingSummary, evaluateRecruitingV2ActivationReadiness, type RecruitingV2ActivationReadiness } from "@/lib/recruiting-v2/activation-engine";
 import { evaluateRecruitingV2DocumentGates, type RecruitingV2DocumentGateEvaluation, type RecruitingV2DocumentRecordForGate } from "@/lib/recruiting-v2/document-gate-engine";
 import { evaluateRecruitingV2OfferDecision, normalizeRecruitingV2OfferSummary, type RecruitingV2OfferMetadata } from "@/lib/recruiting-v2/offer-engine";
@@ -18,6 +17,77 @@ import {
 import { recruitingPipelineState, requisitionPipelineCounts, type RecruitingPipelineState, type RequisitionPipelineCounts } from "@/lib/recruiting/requisition-pipeline";
 import { evaluateRequisitionScreening, type RequisitionScreeningSource, type ScreeningEvaluation } from "@/lib/recruiting/requisition-screening";
 import { isStructuredInterviewRecord, recommendationLabel, type StructuredInterviewRecord } from "@/lib/recruiting/structured-interview";
+
+/** The workspace's original (Aug 29) position and candidate shapes, which the connected model extends. */
+export type RecruitingPosition = {
+  id: string;
+  title: string;
+  department: string;
+  location: string;
+  openings: number;
+  employmentType: string;
+  homeTime: string;
+  equipment: string;
+  freightType: string;
+  primaryLanes: string;
+  schedule: string;
+  compensation: string;
+  benefits: string[];
+  minimumQualifications: string[];
+  cdlClass: string;
+  experienceYears: number;
+  endorsements: string[];
+  safetyExpectations: string;
+  physicalRequirements: string;
+  applicationInstructions: string;
+  status: "OPEN" | "DRAFT" | "CLOSED";
+  createdAt: string;
+};
+
+export type RecruitingCandidate = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  homeLocation: string;
+  positionId: string;
+  positionTitle: string;
+  appliedDate: string;
+  experienceYears: number;
+  cdlClass: string;
+  cdlState: string;
+  cdlNumberMasked: string;
+  medCardStatus: "VALID" | "PENDING_VERIFICATION" | "EXPIRED";
+  mvrStatus: "CLEAN" | "REVIEW_REQUIRED" | "PENDING_VERIFICATION";
+  backgroundStatus: "CLEAN" | "PENDING_VERIFICATION";
+  pipelineStage:
+    | "APPLICATION_RECEIVED"
+    | "SCREENING"
+    | "QUALIFICATION_REVIEW"
+    | "INTERVIEW"
+    | "OFFER_PREPARED"
+    | "OFFER_SENT"
+    | "OFFER_ACCEPTED"
+    | "ONBOARDING"
+    | "ACTIVATED";
+  interviewNotes?: string;
+  offerDetails?: {
+    salaryCPM: string;
+    weeklyGuarantee: string;
+    signOnBonus: string;
+    startDate: string;
+    homeTerminal: string;
+  };
+  onboardingChecklist: Array<{
+    id: string;
+    label: string;
+    completed: boolean;
+    requiredDocType?: string;
+    verifiedAt?: string;
+  }>;
+  activatedDriverId?: string;
+};
+
 
 /**
  * View model for the Recruiting & Onboarding workspace (the approved Aug-29 "Michael Anderson"
@@ -111,8 +181,12 @@ export type WorkspaceCandidateRow = {
   dispositionAt: string | null;
   createdAt: string;
   documents: RecruitingV2DocumentRecordForGate[];
+  /** File attached to each document record, by documentCode (signed-in only; file bytes never included). */
+  documentFiles?: Record<string, WorkspaceDocumentFile>;
   interviews: WorkspaceInterviewRow[];
 };
+
+export type WorkspaceDocumentFile = { fileName: string | null; viewUrl: string; downloadUrl: string; synthetic: boolean };
 
 /** Real records created by activation (signed-in) or the simulated equivalent (demo). */
 export type WorkspaceActivationFacts = {
@@ -169,6 +243,7 @@ export type WorkspaceCandidate = RecruitingCandidate & {
   screening: ScreeningEvaluation;
   qualification: RecruitingV2QualificationSummary;
   documentGates: RecruitingV2DocumentGateEvaluation[];
+  documentFiles: Record<string, WorkspaceDocumentFile>;
   interview: WorkspaceInterviewSummary | null;
   offer: RecruitingV2OfferMetadata;
   offerBlockedReason: string | null;
@@ -369,6 +444,7 @@ export function buildRecruitingWorkspaceModel(input: {
       screening,
       qualification: qualification.qualificationSummary,
       documentGates,
+      documentFiles: row.documentFiles ?? {},
       interview: latest
         ? {
             status: String(latest.status),

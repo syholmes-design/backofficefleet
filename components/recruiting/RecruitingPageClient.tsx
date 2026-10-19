@@ -125,7 +125,7 @@ export function RecruitingPageClient({
   demo?: boolean;
   basePath?: string;
 } = {}) {
-  const { model, loadError, busy, notice, run } = useRecruitingWorkspace(transport);
+  const { model, loadError, busy, notice, run, reload } = useRecruitingWorkspace(transport);
   const positions = React.useMemo(() => model?.positions ?? [], [model]);
   const allCandidates: WorkspaceCandidate[] = React.useMemo(() => model?.candidates ?? [], [model]);
   const [selectedPositionId, setSelectedPositionId] = useState<string | null>(null);
@@ -425,6 +425,8 @@ export function RecruitingPageClient({
                 busy={busy}
                 onRecord={(type) => void actions.recordDocument(selectedCandidate, type)}
                 onVerify={(code) => void actions.verifyDocument(selectedCandidate, code)}
+                onUploaded={() => void reload()}
+                demo={demo}
               />
             </>
           ) : null}

@@ -98,6 +98,7 @@ export const PUBLIC_API_PREFIXES = ["/api/auth", "/api/marketing-demo-media", "/
 export const PUBLIC_API_METHODS: Record<string, readonly string[]> = {
   "/api/contact/inquiries": ["POST"],
   "/api/recruiting/apply": ["POST"],
+  "/api/recruiting/openings": ["GET"],
 };
 
 function matchesPrefix(pathname: string, prefix: string) {

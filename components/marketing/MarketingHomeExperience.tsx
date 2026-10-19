@@ -237,7 +237,7 @@ export function MarketingHomeHeroExperience() {
   );
 }
 
-export function MarketingHomeDemoSnapshot() {
+function MarketingHomeDemoSnapshot() {
   return (
     <div className="bof-home-hero__panel">
       <div className="bof-home-hero__panel-head">

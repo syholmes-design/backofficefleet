@@ -18,7 +18,7 @@ const WHY_OUTSOURCE = [
   },
 ] as const;
 
-export const BOF_SERVICE_CAPABILITIES = [
+const BOF_SERVICE_CAPABILITIES = [
   ["Driver recruiting and onboarding", "/business-operations/driver-onboarding"],
   ["Driver qualification and compliance", "/services/drivers/compliance-documents"],
   ["Fleet activation and operational readiness", "/services/fleet"],

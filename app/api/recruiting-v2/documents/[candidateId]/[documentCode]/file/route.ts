@@ -74,7 +74,8 @@ export async function GET(request: NextRequest, context: RouteContext) {
 
   if (stored?.storage === "document-record-metadata" && stored.contentBase64) {
     bytes = Buffer.from(stored.contentBase64, "base64");
-  } else {
+  } else if (stored?.storage === "bundled-synthetic") {
+    // Only a synthetic file explicitly attached to this record; never a fallback for real candidates.
     const bundled = await readBundledSyntheticFile(candidate.candidateCode, documentRecord.documentType);
     if (bundled) {
       fileName = bundled.fileName;
@@ -95,7 +96,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
       "Content-Length": String(bytes.byteLength),
       "Content-Disposition": `${download ? "attachment" : "inline"}; filename="${fileName}"`,
       "Cache-Control": "private, no-store",
-      "X-Synthetic-Document": stored?.synthetic || !stored ? "true" : "false",
+      "X-Synthetic-Document": stored?.synthetic ? "true" : "false",
     },
   });
 }

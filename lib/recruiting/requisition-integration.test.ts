@@ -60,3 +60,35 @@ test("structured interview requires evaluations, a recommendation and conditions
   assert.ok(errors.includes("Record the conditions for proceeding."));
   assert.ok(errors.includes("Record the interviewer."));
 });
+
+test("public openings are blind postings and close when every seat is filled", async () => {
+  const { toPublicOpening } = await import("@/lib/recruiting/public-openings");
+  const requisition = {
+    publicNumber: "BOF-HR-DRV-009",
+    positionTitle: "CDL-A Regional Driver",
+    workLocation: "Cleveland, OH",
+    terminalDomicile: null,
+    numberOfPositions: 2,
+    payRange: "$0.62 CPM",
+    compensationStructure: "Per mile",
+    requestingCarrierName: "Confidential Carrier LLC",
+    usdot: "1234567",
+    mcNumber: "MC-7654321",
+    requestingManagerName: "Hiring Manager",
+    estimatedRecruitingCost: "$3,500",
+    targetStartDate: null,
+  };
+  const row = (activated: number) =>
+    ({
+      title: "CDL-A Regional Driver",
+      requisition,
+      candidates: Array.from({ length: activated }, () => ({ activationStatus: "ACTIVE" })),
+    }) as unknown as Parameters<typeof toPublicOpening>[0];
+  const opening = toPublicOpening(row(1));
+  assert.ok(opening);
+  assert.equal(opening.openingId, "BOF-HR-DRV-009");
+  assert.equal(opening.openings, 1);
+  const serialized = JSON.stringify(opening);
+  for (const secret of ["Confidential Carrier", "1234567", "MC-7654321", "Hiring Manager", "3,500"]) assert.ok(!serialized.includes(secret), secret);
+  assert.equal(toPublicOpening(row(2)), null);
+});

@@ -128,8 +128,6 @@ All discovered routes are active Next.js routes unless marked legacy redirect.
 | `components/marketing/MarketingBofVaultHero.tsx` | SHARED_COMPONENT | Active hero for `/bof-vault`. |
 | `components/marketing/MarketingPremiumHero.tsx` | SHARED_COMPONENT | Shared hero shell used by active hero wrappers. |
 | `components/marketing/MarketingHeroImagePanel.tsx` | SHARED_COMPONENT | Shared hero image panel used by wrappers. |
-| `components/marketing/MarketingHomeIntegratedHero.tsx` | LEGACY_DO_NOT_EDIT | Defined but not imported by any route/component. |
-| `components/marketing/MarketingGovernmentIntegratedHero.tsx` | LEGACY_DO_NOT_EDIT | Defined but not imported by any route/component. |
 | `components/dashboard/DashboardPageClient.tsx` | ACTIVE_COMPONENT | Active `/dashboard` demo page content. |
 
 ### Static HTML Classification

@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
-import { DEMO_POSITIONS, type RecruitingPosition } from "@/lib/recruiting-demo-data";
-import { useRecruitingStore } from "@/lib/stores/recruiting-store";
+import type { PublicOpening } from "@/lib/recruiting/public-openings";
 
-export function CareersPageClient() {
-  const { addCandidate } = useRecruitingStore();
-  const [selectedPosition, setSelectedPosition] = useState<RecruitingPosition | null>(null);
+/**
+ * Public careers page. Openings are the approved requisitions BOF is recruiting for (blind postings);
+ * an application becomes a Candidate on that requisition in Recruiting & Onboarding.
+ */
+export function CareersPageClient({ openings, unavailable = false }: { openings: PublicOpening[]; unavailable?: boolean }) {
+  const [selectedPosition, setSelectedPosition] = useState<PublicOpening | null>(null);
 
   // Form State
   const [name, setName] = useState("");
@@ -26,7 +27,7 @@ export function CareersPageClient() {
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [submittedAppId, setSubmittedAppId] = useState<string | null>(null);
 
-  const positions = DEMO_POSITIONS.filter((p) => p.status === "OPEN");
+  const positions = openings;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +45,7 @@ export function CareersPageClient() {
           email,
           phone,
           homeLocation,
-          positionId: selectedPosition.id,
+          positionId: selectedPosition.openingId,
           cdlClass,
           cdlState,
           cdlNumber,
@@ -62,8 +63,6 @@ export function CareersPageClient() {
         return;
       }
 
-      // Application successfully validated on server! Persist to store.
-      addCandidate(json.candidate);
       setSubmittedAppId(json.applicationId);
       setSubmitting(false);
     } catch {
@@ -92,12 +91,12 @@ export function CareersPageClient() {
             <span className="text-xs font-black uppercase tracking-widest text-emerald-400">Application Received</span>
             <h2 className="mt-2 text-3xl font-black text-white">APPLICATION SUBMITTED SUCCESSFULLY</h2>
             <p className="mt-3 text-sm text-emerald-200">
-              Thank you, <strong className="text-white">{name}</strong>. Your application has been securely validated and entered into the BOF Recruiting Queue.
+              Thank you, <strong className="text-white">{name}</strong>. Your application was saved and is in the BOF recruiting queue for this opening.
             </p>
 
             <div className="mt-6 rounded-xl border border-emerald-800/80 bg-slate-950 p-6 text-xs space-y-2">
               <p><strong className="text-slate-400">Application ID:</strong> <span className="font-mono text-emerald-400 font-bold">{submittedAppId}</span></p>
-              <p><strong className="text-slate-400">Position Applied For:</strong> {selectedPosition?.title} ({selectedPosition?.id})</p>
+              <p><strong className="text-slate-400">Position Applied For:</strong> {selectedPosition?.title} ({selectedPosition?.openingId})</p>
               <p><strong className="text-slate-400">Submission Date:</strong> {new Date().toLocaleDateString()}</p>
               <p><strong className="text-slate-400">Application Source:</strong> BOF Careers Portal</p>
               <p><strong className="text-slate-400">Next Step:</strong> A BOF Recruiter will conduct an initial qualification review and follow up via email ({email}).</p>
@@ -118,9 +117,6 @@ export function CareersPageClient() {
               >
                 Apply for Another Position
               </button>
-              <Link href="/recruiting" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary text-xs">
-                VIEW APPLICATION IN BOF RECRUITING &rarr;
-              </Link>
             </div>
           </section>
         ) : selectedPosition ? (
@@ -301,39 +297,47 @@ export function CareersPageClient() {
           <section className="space-y-6">
             <h2 className="text-2xl font-extrabold text-white">Active Open Positions ({positions.length})</h2>
 
+            {positions.length === 0 ? (
+              <p className="rounded-xl border border-slate-800 bg-slate-900/60 p-6 text-sm text-slate-300" data-testid="careers-no-openings">
+                {unavailable
+                  ? "Openings could not be loaded right now. Please try again shortly."
+                  : "There are no open driver positions right now. New openings appear here as carriers approve them."}
+              </p>
+            ) : null}
             <div className="grid gap-6 md:grid-cols-2">
               {positions.map((pos) => (
-                <article key={pos.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 flex flex-col justify-between">
+                <article key={pos.openingId} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 flex flex-col justify-between" data-testid="careers-opening">
                   <div>
                     <div className="flex items-center justify-between gap-2">
                       <span className="rounded-full bg-teal-900/50 border border-teal-700/50 px-3 py-1 text-xs font-bold text-teal-300 uppercase">
-                        {pos.employmentType}
+                        {pos.employment ?? "Driver"}
                       </span>
-                      <span className="font-mono text-xs text-slate-400">Posting ID: {pos.id}</span>
+                      <span className="font-mono text-xs text-slate-400">Posting ID: {pos.openingId}</span>
                     </div>
 
                     <h3 className="mt-4 text-2xl font-bold text-white">{pos.title}</h3>
-                    <p className="mt-1 text-sm font-semibold text-slate-300">Location: {pos.location} · {pos.homeTime}</p>
+                    <p className="mt-1 text-sm font-semibold text-slate-300">
+                      {[pos.location, pos.homeTime].filter(Boolean).join(" · ")}
+                      {" · "}
+                      {pos.openings} {pos.openings === 1 ? "opening" : "openings"}
+                    </p>
+                    {pos.summary ? <p className="mt-3 text-sm text-slate-300">{pos.summary}</p> : null}
 
                     <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950 p-4 space-y-2 text-xs text-slate-300">
-                      <p><strong className="text-slate-400">Compensation:</strong> <span className="text-emerald-400 font-bold">{pos.compensation}</span></p>
-                      <p><strong className="text-slate-400">Equipment:</strong> {pos.equipment}</p>
-                      <p><strong className="text-slate-400">Primary Lanes:</strong> {pos.primaryLanes}</p>
-                      <p><strong className="text-slate-400">Experience Required:</strong> {pos.experienceYears} Years {pos.cdlClass} CDL</p>
-                    </div>
-
-                    <div className="mt-4">
-                      <strong className="text-xs font-bold uppercase tracking-wider text-slate-400">Key Benefits:</strong>
-                      <ul className="mt-2 list-disc list-inside space-y-1 text-xs text-slate-300">
-                        {pos.benefits.map((b) => (
-                          <li key={b}>{b}</li>
-                        ))}
-                      </ul>
+                      {pos.pay ? <p><strong className="text-slate-400">Compensation:</strong> <span className="text-emerald-400 font-bold">{pos.pay}</span></p> : null}
+                      {pos.signOnBonus ? <p><strong className="text-slate-400">Sign-on bonus:</strong> {pos.signOnBonus}</p> : null}
+                      {pos.equipment ? <p><strong className="text-slate-400">Equipment:</strong> {pos.equipment}</p> : null}
+                      {pos.route ? <p><strong className="text-slate-400">Route:</strong> {pos.route}</p> : null}
+                      {pos.schedule ? <p><strong className="text-slate-400">Schedule:</strong> {pos.schedule}</p> : null}
+                      <p>
+                        <strong className="text-slate-400">Requirements:</strong> {[pos.cdlClass ? `CDL class ${pos.cdlClass}` : null, pos.experience, pos.endorsements].filter(Boolean).join(" · ") || "See the posting"}
+                      </p>
+                      {pos.benefits ? <p><strong className="text-slate-400">Benefits:</strong> {pos.benefits}</p> : null}
                     </div>
                   </div>
 
                   <div className="mt-6 border-t border-slate-800 pt-4 flex items-center justify-between gap-4">
-                    <span className="text-xs text-slate-400">Application Source: BOF Careers Portal</span>
+                    <span className="text-xs text-slate-400">Recruiting administered by BOF</span>
                     <button
                       type="button"
                       onClick={() => setSelectedPosition(pos)}

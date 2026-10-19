@@ -19,10 +19,15 @@ Claude, Cursor, GitHub Copilot, Google Antigravity, Codex and any future tool.
   [docs/governance/superseded-decisions.md](docs/governance/superseded-decisions.md)
 - Check before committing: `npm run check:preservation` (manifest: `docs/governance/preservation-manifest.json`)
 
+## Canonical implementations (read before editing)
+
+**[docs/architecture/BOF-CANONICAL-IMPLEMENTATION-REGISTER.md](docs/architecture/BOF-CANONICAL-IMPLEMENTATION-REGISTER.md)** names the one active implementation of each consolidated function (routes, UI, APIs, services, entities, tests) and the code that was removed. Do not add a second implementation of a listed function.
+
 ## Quick pointers
 
 | Topic | Document / location |
 |-------|---------------------|
+| Recruiting & Onboarding (requisition → activation) | `lib/services/requisitionRecruitingBridge.ts`, `/recruiting/workspace` |
 | UOS architecture | `docs/architecture/UNIFIED-OPERATIONS-ARCHITECTURE.md` |
 | Integration gaps | `docs/architecture/BOF-UOS-GAP-REGISTER.md` |
 | Recruiting → driver handoff | `lib/recruiting-v2/driver-activation-service.ts` |

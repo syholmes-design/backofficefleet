@@ -6,8 +6,10 @@ import { readRecruitingV2DriverHandoff } from "@/lib/recruiting-v2/driver-activa
 import { candidateScopeWhere, resolveRecruitingScope, type RecruitingScope } from "@/lib/recruiting-v2/candidate-access";
 import type { SessionUserLike } from "@/lib/authorization";
 import { evaluateRecruitingV2DocumentGates } from "@/lib/recruiting-v2/document-gate-engine";
+import { artifactSummaryForRecord, metadataWithoutArtifactBytes } from "@/lib/recruiting-v2/document-artifact";
 import { recruitingPipelineState, requisitionPipelineCounts } from "@/lib/recruiting/requisition-pipeline";
 import { evaluateRequisitionScreening } from "@/lib/recruiting/requisition-screening";
+import { publicOpeningInclude, toPublicOpening, type PublicOpening } from "@/lib/recruiting/public-openings";
 import {
   buildRecruitingWorkspaceModel,
   positionFieldsFromRequisition,
@@ -181,10 +183,19 @@ export async function loadRecruitingWorkspace(user: SessionUserLike) {
       uploadedBy: d.uploadedBy,
       verifiedBy: d.verifiedBy,
       verificationNotes: d.verificationNotes,
-      metadata: d.metadata,
+      // Uploaded file bytes stay on the server; the workspace gets the view/download links below.
+      metadata: metadataWithoutArtifactBytes(d.metadata),
       createdAt: d.createdAt.toISOString(),
       updatedAt: d.updatedAt.toISOString(),
     })),
+    documentFiles: Object.fromEntries(
+      c.documentRecords.flatMap((d) => {
+        const file = artifactSummaryForRecord({ candidateCode: c.candidateCode, documentCode: d.documentCode, documentType: d.documentType, metadata: d.metadata });
+        return file.attached && file.viewUrl && file.downloadUrl
+          ? [[d.documentCode, { fileName: file.fileName, viewUrl: file.viewUrl, downloadUrl: file.downloadUrl, synthetic: file.synthetic }]]
+          : [];
+      }),
+    ),
     interviews: c.interviews.map((i) => ({
       id: i.id,
       interviewCode: i.interviewCode,
@@ -262,4 +273,117 @@ export async function requisitionScreeningForCandidate(candidateId: string) {
     documentGates,
   });
   return { candidate, requisition, publicNumber: requisition.publicNumber, evaluation };
+}
+
+// ---------------------------------------------------------------------------------------------
+// Candidate intake: one implementation for recruiter attachment (workspace) and public applications
+// (careers page). Both create the Candidate on the requisition's recruiting position.
+// ---------------------------------------------------------------------------------------------
+
+export type CandidateIntake = {
+  fullName: string;
+  email: string;
+  phone?: string;
+  homeLocation?: string;
+  cdlClass: string;
+  cdlState?: string;
+  cdlNumber?: string;
+  experienceYears?: number | null;
+  endorsements?: string[];
+  equipmentExperience?: string | null;
+  /** Where the candidate came from, e.g. "BOF Careers Page" or "Recruiter attached in Recruiting & Onboarding". */
+  source: string;
+  /** Who attached the candidate, for the audit trail. */
+  attachedBy: string;
+};
+
+type IntakePosition = {
+  id: string;
+  status: string;
+  title: string;
+  positionCode: string;
+  requisitionId: string | null;
+  fleetId: string | null;
+  requisition: { publicNumber: string } | null;
+};
+
+function maskCdl(value: string, state: string) {
+  const digits = value.replace(/[^0-9A-Za-z]/g, "");
+  if (!digits) return "";
+  return `${state || "XX"}••••${digits.slice(-4)}`;
+}
+
+async function nextCandidateCode() {
+  const existing = await prisma.candidate.findMany({ where: { candidateCode: { startsWith: "CAND-" } }, select: { candidateCode: true } });
+  const max = existing.reduce((m, c) => Math.max(m, Number(c.candidateCode.slice(5)) || 0), 0);
+  return `CAND-${String(max + 1).padStart(3, "0")}`;
+}
+
+/** Creates a Candidate on a recruiting position (and so on its originating requisition). */
+export async function attachCandidateToPosition(position: IntakePosition, input: CandidateIntake) {
+  if (position.status === "CLOSED") throw httpError("Position is closed", 422);
+  const email = input.email.trim().toLowerCase();
+  const duplicate = await prisma.candidate.findFirst({
+    where: { positionId: position.id, email: { equals: email, mode: "insensitive" } },
+    select: { candidateCode: true },
+  });
+  if (duplicate) throw httpError(`This candidate is already attached as ${duplicate.candidateCode}`, 409);
+
+  const cdlState = (input.cdlState ?? "").trim().toUpperCase().slice(0, 2);
+  const now = new Date().toISOString();
+  const requisitionNumber = position.requisition?.publicNumber ?? null;
+  const candidate = await prisma.candidate.create({
+    data: {
+      candidateCode: await nextCandidateCode(),
+      fullName: input.fullName.trim(),
+      email,
+      phone: input.phone?.trim() ?? "",
+      homeLocation: input.homeLocation?.trim() ?? "",
+      cdlClass: input.cdlClass.trim(),
+      cdlState,
+      cdlNumberMasked: maskCdl(input.cdlNumber ?? "", cdlState),
+      positionId: position.id,
+      applicationSummary: {
+        source: input.source,
+        appliedDate: now.slice(0, 10),
+        experienceYears: typeof input.experienceYears === "number" && Number.isFinite(input.experienceYears) ? input.experienceYears : null,
+        endorsements: input.endorsements ?? [],
+        equipmentExperience: input.equipmentExperience || null,
+        requisitionId: position.requisitionId,
+        requisitionNumber,
+        tenant: { fleetId: position.fleetId },
+        screening: { confirmations: {} },
+      } as Prisma.InputJsonValue,
+      qualificationSummary: {},
+      documentRequirements: [],
+      complianceSummary: {},
+      onboardingSummary: {},
+      auditTrail: [`${input.source}: attached to ${requisitionNumber ?? position.positionCode} (${position.title}) by ${input.attachedBy} at ${now}`],
+    },
+  });
+  await syncPipelineForPosition(position.id);
+  return candidate;
+}
+
+/** Requisition states in which the position accepts applications. */
+const OPEN_FOR_APPLICATIONS = ["READY_FOR_RECRUITING", "RECRUITING", "PARTIALLY_FILLED"] as const;
+
+const openWhere = {
+  status: { not: "CLOSED" },
+  requisition: { status: "APPROVED", recruitingPipelineState: { in: [...OPEN_FOR_APPLICATIONS] } },
+} satisfies Prisma.PositionWhereInput;
+
+/** Open driver positions for the public careers page (approved requisitions with seats remaining). */
+export async function listPublicOpenings(): Promise<PublicOpening[]> {
+  const rows = await prisma.position.findMany({ where: openWhere, include: publicOpeningInclude, orderBy: { createdAt: "desc" } });
+  return rows.map(toPublicOpening).filter((o): o is PublicOpening => o !== null);
+}
+
+/** The recruiting position behind a public opening, or null when it is not open for applications. */
+export async function findOpenPositionByOpeningId(openingId: string) {
+  const row = await prisma.position.findFirst({
+    where: { ...openWhere, requisition: { ...openWhere.requisition, publicNumber: openingId } },
+    include: publicOpeningInclude,
+  });
+  return row && toPublicOpening(row) ? row : null;
 }

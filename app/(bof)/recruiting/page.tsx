@@ -3,7 +3,7 @@
  * URL: /recruiting
  * Type: LIVE
  * Primary component: RequisitionListClient
- * Related: /recruiting/workspace (RecruitingPageClient), /recruiting-v2
+ * Related: /recruiting/workspace (RecruitingPageClient)
  */
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
