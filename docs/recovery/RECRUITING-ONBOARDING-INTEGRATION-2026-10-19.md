@@ -164,3 +164,20 @@ Per standing instructions, the migration has **not** been applied to the Preview
 - No other BOF department was restored.
 - The assessment was not changed.
 - No production deployment, migration or data change was made.
+
+## Revision 2026-10-19 (owner feedback on the preview)
+
+- **`/recruiting-onboarding` reorganized the way a recruiter works a requisition.**
+  - **Hero.** It keeps the lifecycle statement, with two calls to action: "Open the demonstration" and "Take the Assessment". "Start from a requisition" was removed, because the requisition is already the first stage.
+  - **Requisition at a glance.** A sample requisition card (fictional) shows the fill bar, the candidate funnel and the fill states. Its counts are computed with BOF's own `requisitionPipelineCounts` rules.
+  - **Stage navigator.** It is sticky and highlights the stage in view.
+  - **Five stages, covering all 15 lifecycle steps.** The stages are requisition and approval; source and screen; interview and select; offer and onboard; activate and hand off. Each step can be linked to directly.
+  - **What each stage covers.** Each stage states what the recruiter does, what BOF enforces, and what stops a candidate.
+  - **"Try it" links.** Each stage has a link that opens the demonstration at that stage.
+- **Starting the demonstration at a stage.** This uses `/demo/recruiting/workspace?stage=screen|interview|offer|activation` (`lib/recruiting/demo-stages.ts`).
+  - The demonstration is reset, then Michael Anderson's earlier steps on BOF-HR-DRV-001 are replayed through the same demonstration requests and rules a visitor's clicks would send.
+  - A note on screen says the earlier steps were completed for the visitor.
+  - All five links were verified in a browser, including activating from the activation stage.
+- **Fixed literal HTML entities shown as text.**
+  - Careers application button: "SUBMIT APPLICATION &rarr;" now reads "SUBMIT APPLICATION →"; "SUBMITTING &amp; VALIDATING" is fixed as well.
+  - `/bof-vault`: "driver&apos;s" is fixed.

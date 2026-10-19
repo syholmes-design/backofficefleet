@@ -7,6 +7,7 @@ import { RecruitingPageClient } from "@/components/recruiting/RecruitingPageClie
 import { RequisitionFormClient } from "@/components/recruiting/RequisitionFormClient";
 import { RequisitionListClient } from "@/components/recruiting/RequisitionListClient";
 import { demoRecruitingTransport, resetRecruitingDemo } from "@/lib/recruiting/demo-backend";
+import { DEMO_STAGE_VIEW, isDemoStage, stageRecruitingDemo } from "@/lib/recruiting/demo-stages";
 import { transportFetch } from "@/lib/recruiting/workspace-transport";
 import "./recruiting.css";
 
@@ -89,12 +90,35 @@ export function RecruitingDemoRequisition({ requisitionId }: { requisitionId: st
 export function RecruitingDemoWorkspace() {
   // The workspace reads URL state on mount; render it only in the browser, where the demo store lives.
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const [staged, setStaged] = useState<{ label: string } | { error: string } | null>(null);
+  useEffect(() => {
+    const stage = new URLSearchParams(window.location.search).get("stage");
+    if (!isDemoStage(stage)) {
+      setMounted(true);
+      return;
+    }
+    // ?stage=… starts the demonstration at that stage, then opens the workspace on it.
+    const view = DEMO_STAGE_VIEW[stage];
+    stageRecruitingDemo(stage)
+      .then((candidateId) => {
+        window.history.replaceState(null, "", `/demo/recruiting/workspace?candidateId=${encodeURIComponent(candidateId)}&tab=${view.tab}${view.workflow ? `&workflow=${view.workflow}` : ""}`);
+        setStaged({ label: view.label });
+      })
+      .catch((error: unknown) => setStaged({ error: error instanceof Error ? error.message : String(error) }))
+      .finally(() => setMounted(true));
+  }, []);
   const transport = useMemo(() => demoRecruitingTransport, []);
   return (
     <>
       <RecruitingDemoBanner />
-      {mounted ? <RecruitingPageClient transport={transport} demo basePath="/demo/recruiting/workspace" /> : null}
+      {staged ? (
+        <p className="bof-recruiting-demo-stage" data-testid="demo-stage-note" role="note">
+          {"label" in staged
+            ? `Starting at ${staged.label}: Michael Anderson's earlier steps on BOF-HR-DRV-001 were completed for you, through the same demonstration rules.`
+            : `The demonstration could not be staged (${staged.error}). It opens from the start instead.`}
+        </p>
+      ) : null}
+      {mounted ? <RecruitingPageClient transport={transport} demo basePath="/demo/recruiting/workspace" /> : <p className="bof-recruiting-note">Preparing the demonstration…</p>}
     </>
   );
 }

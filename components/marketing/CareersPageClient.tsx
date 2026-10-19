@@ -291,7 +291,7 @@ export function CareersPageClient() {
                   disabled={submitting}
                   className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary disabled:opacity-50"
                 >
-                  {submitting ? "SUBMITTING &amp; VALIDATING..." : "SUBMIT APPLICATION &rarr;"}
+                  {submitting ? "SUBMITTING & VALIDATING…" : "SUBMIT APPLICATION →"}
                 </button>
               </div>
             </form>

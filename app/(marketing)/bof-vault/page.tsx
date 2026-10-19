@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 const levelTwoDomains = [
-  ["Documents & Credentials", "The driver&apos;s CDL, medical documentation, MVR, certifications, training records, qualification evidence, employment documentation, and supporting professional credentials."],
+  ["Documents & Credentials", "The driver’s CDL, medical documentation, MVR, certifications, training records, qualification evidence, employment documentation, and supporting professional credentials."],
   ["Verification & Evidence", "The evidence and review context that help an authorized verifier understand what a document represents and whether further attention is required."],
   ["Qualification Status", "The current administrative picture of what documentation is available, current, incomplete, pending review, or not ready to share."],
   ["Sharing & Employer Transfer", "The controlled handoff by which a driver provides appropriate documentation to an employer without surrendering ownership of the portable record."],

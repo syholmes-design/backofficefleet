@@ -172,3 +172,12 @@
   padding: 0.3rem 0.65rem;
   cursor: pointer;
 }
+
+.bof-recruiting-demo-stage {
+  margin: 0;
+  padding: 0.6rem 1rem;
+  background: rgba(13, 148, 136, 0.18);
+  border-bottom: 1px solid rgba(45, 212, 191, 0.35);
+  color: #99f6e4;
+  font-size: 0.85rem;
+}
