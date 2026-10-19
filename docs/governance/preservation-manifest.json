@@ -1,18 +1,11 @@
 {
  "note": "Approved-content baseline. Update only for owner-approved changes (docs/governance/CONTENT-PRESERVATION-POLICY.md).",
- "updated": "2026-10-18",
+ "updated": "2026-10-19",
  "recovered": {
   "/business-operations": {
-   "words": 1882,
+   "words": 1635,
    "headings": [
     "Business Operations",
-    "Five operating areas, one accountable workflow.",
-    "HR Workforce",
-    "Accounting",
-    "Treasury",
-    "Finance",
-    "Payroll",
-    "A practical desk for the work behind the fleet.",
     "Payroll, AR, AP, fuel, maintenance, and cash flow are worked from one operating queue.",
     "SET-1907 held for POD and renewal evidence",
     "TMS-LD-10482 rate, BOL, and POD packet tracked",
@@ -59,9 +52,7 @@
     "What clears the hold?",
     "Review the administrative workspace without leaving the public page path behind."
    ],
-   "assets": [
-    "/recovered-assets/static-20260729/assets/images/dashboard-mockups/bof-business-operations-command.webp"
-   ],
+   "assets": [],
    "scripts": []
   },
   "/business-operations/driver-onboarding": {

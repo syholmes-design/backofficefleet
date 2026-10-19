@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import type { PlatformCapabilityKey } from "@/components/recovered-site/PlatformCapabilityLinks";
@@ -21,11 +22,65 @@ function routeFor(slug: string[] | undefined) {
 }
 
 export function generateStaticParams(): Params[] {
-  return recoveredRoutes(SECTION).map((route) => ({ slug: recoveredSlug(route, SECTION) }));
+  return [{ slug: [] }, ...recoveredRoutes(SECTION).map((route) => ({ slug: recoveredSlug(route, SECTION) }))];
+}
+
+/** The explainers listed on /services, each with its detail pages (titles and descriptions come from the recovered pages). */
+const SERVICE_INDEX: Array<[string, string[]]> = [
+  ["/services/dispatch", []],
+  ["/services/drivers", ["/services/drivers/onboarding", "/services/drivers/compliance-documents", "/services/drivers/communication", "/services/drivers/settlements-payments"]],
+  ["/services/documents", []],
+  ["/services/safety", []],
+  ["/services/settlements", ["/services/settlements/audit-trail", "/services/settlements/exception-visibility", "/services/settlements/finance-operations-alignment", "/services/settlements/single-record-accountability"]],
+  ["/services/fleet", []],
+];
+
+const shortTitle = (route: string) => (recoveredEntry(route)?.title ?? route).replace(/ \| BackOfficeFleet$/, "");
+
+function ServicesIndex() {
+  return (
+    <section className="bof-services-index" aria-labelledby="services-index-heading">
+      <h1 id="services-index-heading">BOF services</h1>
+      <p className="bof-services-index__lead">
+        Each service page explains the work BOF performs and leads to its detail pages and to a demonstration with
+        fictional records. Business Operations (HR, accounting, treasury, finance, payroll) has its own section.
+      </p>
+      <div className="bof-services-index__grid">
+        {SERVICE_INDEX.map(([route, children]) => (
+          <article key={route}>
+            <h2>
+              <Link href={route}>{shortTitle(route)} →</Link>
+            </h2>
+            {recoveredEntry(route)?.description ? <p>{recoveredEntry(route)?.description}</p> : null}
+            {children.length ? (
+              <ul>
+                {children.map((child) => (
+                  <li key={child}>
+                    <Link href={child}>{shortTitle(child)}</Link>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            {DEMOS_BY_ROUTE[route]?.[0] ? (
+              <Link className="bof-services-index__demo" href={DEMOS_BY_ROUTE[route][0][1]}>
+                {DEMOS_BY_ROUTE[route][0][0]} →
+              </Link>
+            ) : null}
+          </article>
+        ))}
+      </div>
+      <p className="bof-services-index__actions">
+        <Link href="/business-operations">Business Operations →</Link>
+        <Link href="/interactive-demo">Interactive demo →</Link>
+        <Link href="/assessment">Take the Assessment →</Link>
+      </p>
+    </section>
+  );
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
+  if (!slug?.length) return { title: "Services | BackOfficeFleet", description: "BOF service explainers with detail pages and demonstrations." };
   const entry = recoveredEntry(routeFor(slug));
   if (!entry) return {};
   return {
@@ -117,6 +172,7 @@ const CAPABILITIES_BY_ROUTE: Record<string, PlatformCapabilityKey[]> = {
 
 export default async function RecoveredServicePage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
+  if (!slug?.length) return <ServicesIndex />;
   const route = routeFor(slug);
   const page = await loadRecoveredPage(route);
   if (!page) notFound();

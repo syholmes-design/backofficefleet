@@ -66,6 +66,28 @@ OWNER_REMOVALS = {
     ],
 }
 
+# Owner-directed section removals (owner review of the Business Operations page, 2026-10-18): whole
+# top-level sections, identified by a class on their opening tag. Each must match exactly one section.
+OWNER_SECTION_REMOVALS = {
+    "/business-operations": [
+        ("business-operations-proof-rail", "Operating Proof strip (5 Operating Areas / 12 Open Queues / 4 Exception Types, illustrative)"),
+        ("business-operations-capabilities", "Duplicate five-card department section (destinations moved to the hero cards)"),
+        ("business-operations-workspace", "Workspace preview: 'A practical desk for the work behind the fleet.' with its two buttons"),
+    ],
+}
+
+# Owner-directed: the five hero department cards become the department navigation. Destination is the
+# most substantive existing page for each department (see docs/recovery/CHECKPOINT-1-2026-10-18.md).
+HERO_AREA_LINKS = {
+    "/business-operations": {
+        "HR": "/business-operations/hr-tier",
+        "AC": "/business-operations/accounting-finance",
+        "TR": "/business-operations/cash-flow",
+        "FN": "/business-operations/operational-reporting",
+        "PY": "/business-operations/payroll-administration",
+    },
+}
+
 # route -> source. Merge sources: same July lineage (rendered with the 2026-07-29 stylesheet).
 PAGES = {
     "/business-operations": src(S29, f"{BO}/index.html", [
@@ -412,7 +434,19 @@ def main():
                 heading = re.search(r"(?is)<h[1-3][^>]*>(.*?)</h[1-3]>", child["html"])
                 merge_log.append((route, m["commit"], m["path"], text_of(heading.group(1)) if heading else t[:80], words))
 
+        section_removals = []
+        for marker, label in OWNER_SECTION_REMOVALS.get(route, []):
+            hits = [i for i, sec in enumerate(sections) if re.match(r'(?is)<[a-z]+[^>]*\bclass="[^"]*\b' + re.escape(marker) + r'\b', sec)]
+            if len(hits) != 1:
+                raise SystemExit(f"owner section removal must match exactly one section on {route}: {marker} ({len(hits)})")
+            del sections[hits[0]]
+            section_removals.append(label)
         content = strip_script_tags("\n".join(sections))
+        for code, href in HERO_AREA_LINKS.get(route, {}).items():
+            pattern = re.compile(r'<article>(<span>' + code + r'</span>.*?)</article>', re.S)
+            content, n = pattern.subn(lambda m, href=href: f'<article><a class="business-operations-hero__area-link" href="{href}">{m.group(1)}</a></article>', content)
+            if n != 1:
+                raise SystemExit(f"hero area card {code} not found exactly once on {route}")
         prefix = f"/recovered-assets/{spec['gen']}"
 
         page_url = "/" + os.path.dirname(spec["path"]).strip("/") + "/"
@@ -508,6 +542,7 @@ def main():
             # data-* attributes of the original <main>: mount points for the page's own scripts.
             "mainData": {k: (v or "") for k, v in parts["main_attrs"].items() if k.startswith("data-")},
             "ownerReplacements": replacements,
+            "ownerSectionRemovals": section_removals,
             "html": content,
             "inlineScripts": scripts,
             "widgetScripts": widget_scripts,
@@ -614,6 +649,12 @@ def main():
     lines += ["", "## Owner-directed removals (not shown on the public page)", "", "| Route | Removed recovered markup |", "|---|---|"]
     for route, snippets in OWNER_REMOVALS.items():
         lines += [f"| `{route}` | `{sn}` |" for sn in snippets]
+    lines += ["", "## Owner-directed section removals", "", "| Route | Removed section |", "|---|---|"]
+    for route, items in OWNER_SECTION_REMOVALS.items():
+        lines += [f"| `{route}` | {label} |" for _, label in items]
+    lines += ["", "## Owner-directed hero department links", "", "| Route | Card | Destination |", "|---|---|---|"]
+    for route, links in HERO_AREA_LINKS.items():
+        lines += [f"| `{route}` | {code} | `{href}` |" for code, href in links.items()]
     lines += ["", "## Owner-directed replacements (superseded calls to action)", "", "| Route | Replaced | Count |", "|---|---|---|"]
     for route, label, n in replace_log:
         lines.append(f"| `{route}` | {label} | {n} |")

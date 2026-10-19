@@ -19276,3 +19276,25 @@ a.shipper-portal-story-step:focus-visible,
 .bof-demo-notice { margin: 0; padding: 0.5rem 1rem; background: #ecfdf5; color: #065f46; font-size: 0.85rem; text-align: center; }
 /* Recovered pages: site.js scroll-reveal is not loaded, and widgets inject .reveal sections after mount. */
 .bof-legacy .reveal { opacity: 1 !important; transform: none !important; }
+
+/* Business Operations hero: the five department cards are the department navigation (owner direction, 2026-10-18). */
+.bof-legacy .business-operations-hero__areas article:has(> .business-operations-hero__area-link) { position: relative; transition: border-color 150ms ease, transform 150ms ease; }
+.bof-legacy .business-operations-hero__areas article:has(> .business-operations-hero__area-link):hover { border-color: rgba(114, 238, 221, 0.75); transform: translateY(-2px); }
+.bof-legacy .business-operations-hero__areas article:has(> .business-operations-hero__area-link):focus-within { outline: 3px solid #72eedd; outline-offset: 2px; }
+.bof-legacy .business-operations-hero__area-link { color: inherit; text-decoration: none; outline: none; }
+.bof-legacy .business-operations-hero__area-link::after { content: ""; position: absolute; inset: 0; border-radius: 8px; }
+.bof-legacy .business-operations-hero__area-link strong::after { content: " \2192"; color: #72eedd; }
+
+/* /services index */
+.bof-services-index { max-width: 72rem; margin: 0 auto; padding: 3rem 1rem 4rem; color: #0f172a; }
+.bof-services-index h1 { font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 800; }
+.bof-services-index__lead { max-width: 48rem; margin-top: 0.75rem; color: #475569; line-height: 1.6; }
+.bof-services-index__grid { display: grid; gap: 1rem; margin-top: 2rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); }
+.bof-services-index__grid article { border: 1px solid #dbe4ea; border-radius: 0.75rem; background: #fff; padding: 1.25rem; }
+.bof-services-index__grid h2 { font-size: 1.15rem; font-weight: 700; }
+.bof-services-index__grid h2 a { color: #0f172a; }
+.bof-services-index__grid p { margin-top: 0.5rem; font-size: 0.92rem; color: #475569; line-height: 1.5; }
+.bof-services-index__grid ul { margin-top: 0.75rem; padding-left: 1.1rem; list-style: disc; font-size: 0.9rem; }
+.bof-services-index__grid li a, .bof-services-index__demo, .bof-services-index__actions a { color: #0e7490; font-weight: 600; }
+.bof-services-index__demo { display: inline-block; margin-top: 0.75rem; font-size: 0.9rem; }
+.bof-services-index__actions { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-top: 2rem; }

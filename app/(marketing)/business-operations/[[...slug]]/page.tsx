@@ -58,6 +58,25 @@ const RELATED_BY_ROUTE: Record<string, Array<[string, string]>> = {
     ["Accounts Receivable", "/business-operations/accounts-receivable"],
   ],
   "/business-operations/document-management": [["Document & Records Control", "/business-operations/document-records-control"]],
+  // Department pages reached from the hero cards, and the pages the removed duplicate cards linked to.
+  "/business-operations/hr-tier": [
+    ["Human Resources", "/business-operations/human-resources"],
+    ["Driver Onboarding", "/business-operations/driver-onboarding"],
+  ],
+  "/business-operations/human-resources": [["HR Tier", "/business-operations/hr-tier"]],
+  "/business-operations/accounting-finance": [
+    ["Accounting", "/business-operations/accounting"],
+    ["Accounts Receivable", "/business-operations/accounts-receivable"],
+    ["Customer Billing", "/business-operations/customer-billing"],
+  ],
+  "/business-operations/accounting": [["Accounting & Finance", "/business-operations/accounting-finance"]],
+  "/business-operations/cash-flow": [
+    ["Cash-Flow Review", "/business-operations/accounting-finance/cash-flow-review"],
+    ["Accounts Receivable", "/business-operations/accounts-receivable"],
+  ],
+  "/business-operations/operational-reporting": [["Accounting & Finance", "/business-operations/accounting-finance"]],
+  "/business-operations/payroll-administration": [["Payroll", "/business-operations/payroll"]],
+  "/business-operations/payroll": [["Payroll Administration", "/business-operations/payroll-administration"]],
   "/business-operations/document-management/records-control": [["Document & Records Control", "/business-operations/document-records-control"]],
   "/business-operations/document-records-control": [
     ["Document Management", "/business-operations/document-management"],

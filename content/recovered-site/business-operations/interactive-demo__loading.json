@@ -18,6 +18,7 @@
 "data-demo-loader": ""
 },
 "ownerReplacements": [],
+"ownerSectionRemovals": [],
 "html": "<section class=\"app-loading-screen session-loader\" data-shell-region=\"session-loader\" aria-live=\"polite\" aria-label=\"BOF Control Center loading\">\n      <div class=\"loading-console\">\n        <div class=\"terminal-dots\" aria-hidden=\"true\"><span></span><span></span><span></span></div>\n        <img src=\"/recovered-assets/static-20260729/assets/brand/bof-design-system-2/svg/header-lockup.svg\" alt=\"BackOfficeFleet\">\n        <h2>Opening BOF Partner Review</h2>\n        <p data-loading-target=\"message\">Checking workspace access and Partner TMS import queue.</p>\n        <div class=\"loading-progress\" aria-hidden=\"true\"><span></span></div>\n        <ol class=\"loading-checks\">\n          <li>Fleet workspace loaded</li>\n          <li>Partner TMS import TMS-LD-10482 selected</li>\n          <li>BOF-RR-10482 release file opened</li>\n          <li>Driver and carrier records attached</li>\n          <li>Document pane prepared</li>\n        </ol>\n      </div>\n    </section>",
 "inlineScripts": [],
 "widgetScripts": [],

@@ -15,6 +15,7 @@
 "mainId": "",
 "mainData": {},
 "ownerReplacements": [],
+"ownerSectionRemovals": [],
 "html": "<section class=\"section page-hero business-ops-detail-hero\"><div class=\"reveal\"><p class=\"eyebrow\">Operational Reporting / Owner Queue Reporting</p><h1>Make every blocker belong to someone.</h1><p>Owner queue reporting turns broad status into action. The office can see what is waiting, who owns it, how long it has aged, and what operating workflow is affected.</p><div class=\"actions\"><a class=\"button primary\" href=\"/business-operations/operational-reporting\">Operational Reporting</a><a class=\"button secondary\" href=\"/business-operations\">Business Operations</a></div></div><aside class=\"ops-brief-card reveal\"><p class=\"eyebrow\">Accountability view</p><h2>Reports should reduce ambiguity, not preserve it.</h2><p>Every item should have an owner, status, reason, due date, and record link.</p></aside></section>\n<section class=\"section\"><div class=\"ops-detail-grid\"><article class=\"ops-detail-card reveal\"><span>Queue design</span><h3>Group work by who can move it.</h3><p>Driver manager, HR, finance, billing, dispatch, safety, settlement support, records, customer follow-up, or leadership.</p></article><article class=\"ops-detail-card reveal\"><span>Review rhythm</span><h3>Use aging and consequence to prioritize.</h3><p>Sort queues by age, blocked revenue, dispatch risk, safety impact, customer urgency, or repeated owner delay.</p></article></div></section>",
 "inlineScripts": [],
 "widgetScripts": [],
