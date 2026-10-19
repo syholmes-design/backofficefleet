@@ -2,8 +2,21 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRecruitingStore } from "@/lib/stores/recruiting-store";
 import { DEMO_JOB_POSTINGS, type JobBoardDestinationConfig } from "@/lib/job-board-distribution";
+import {
+  ActivationPanel,
+  AttachCandidateForm,
+  DispositionPanel,
+  DocumentActionsPanel,
+  OfferPanel,
+  OnboardingControls,
+  PositionRequisitionBlock,
+  RequisitionPositionsPanel,
+  ScreeningPanel,
+  StructuredInterviewPanel,
+} from "@/components/recruiting/RecruitingWorkspacePanels";
+import type { WorkspaceCandidate } from "@/lib/recruiting/workspace-model";
+import { httpRecruitingTransport, useRecruitingWorkspace, type RecruitingTransport } from "@/lib/recruiting/workspace-transport";
 
 type CandidateDocumentWorkflow = {
   id: string;
@@ -24,7 +37,7 @@ const CANDIDATE_DOCUMENT_WORKFLOWS: CandidateDocumentWorkflow[] = [
     templateLabel: "BOF application intake workflow",
     templateHref: "/apply",
     workspaceLabel: "Application Review",
-    checklistMatch: /Employment Application|I-9/i,
+    checklistMatch: /Employment Application|^Application$|I-9/i,
     reviewLabel: "Application Review",
     decisionLabel: "Qualification review remains the decision gate",
     nextAction: "Review CDL, medical, MVR, and background status before advancement.",
@@ -90,50 +103,89 @@ const CANDIDATE_DOCUMENT_WORKFLOWS: CandidateDocumentWorkflow[] = [
     templateLabel: "New Driver Onboarding Checklist",
     templateHref: "/generated/company-operations-vault/hr-templates/new-driver-onboarding-checklist.html",
     workspaceLabel: "Candidate Onboarding Workspace",
-    checklistMatch: /Employment Application|CDL|Medical|MVR|FMCSA|W-9|Bank|Safety|ELD|Equipment/i,
+    checklistMatch: /Employment Application|^Application$|CDL|Medical|MVR|FMCSA|Clearinghouse|I-9|W-9|Bank|Safety|ELD|Equipment|Orientation|Training/i,
     reviewLabel: "Onboarding Review",
     decisionLabel: "Driver activation only after configured gates are satisfied",
     nextAction: "Finish incomplete checklist items before operations handoff.",
   },
 ];
 
-export function RecruitingPageClient() {
-  const {
-    positions,
-    candidates,
-    createPosition,
-    updateCandidateStage,
-    toggleOnboardingCheckitem,
-    activateCandidateAsDriver,
-  } = useRecruitingStore();
+/**
+ * The approved Recruiting & Onboarding workspace (first built 2026-08-29, "Michael Anderson" version).
+ * Its data now comes from the connected recruiting records instead of a browser-only demo store:
+ * signed in, from the requisition / Recruiting V2 / activation APIs; in the public demonstration,
+ * from the in-browser demo backend with fictional records (same requests, same rules).
+ */
+export function RecruitingPageClient({
+  transport = httpRecruitingTransport,
+  demo = false,
+  basePath = "/recruiting/workspace",
+}: {
+  transport?: RecruitingTransport;
+  demo?: boolean;
+  basePath?: string;
+} = {}) {
+  const { model, loadError, busy, notice, run } = useRecruitingWorkspace(transport);
+  const positions = React.useMemo(() => model?.positions ?? [], [model]);
+  const allCandidates: WorkspaceCandidate[] = React.useMemo(() => model?.candidates ?? [], [model]);
+  const [selectedPositionId, setSelectedPositionId] = useState<string | null>(null);
+  const activePositionId = selectedPositionId ?? positions[0]?.id ?? null;
+  const candidates = allCandidates.filter((c) => !activePositionId || c.positionId === activePositionId);
 
   const [selectedCandidateId, setSelectedCandidateId] = useState<string>("CAND-001");
   const [activeTab, setActiveTab] = useState<"pipeline" | "position-builder" | "job-distribution" | "candidate-detail" | "onboarding">("pipeline");
   const [activeCandidateWorkflow, setActiveCandidateWorkflow] = useState<"qualification" | "interview" | "offer" | "onboarding" | null>(null);
 
-  // Position Builder Form State
-  const [posTitle, setPosTitle] = useState("CDL-A OTR Regional Driver");
-  const [posOpenings, setPosOpenings] = useState(2);
-  const [posLocation, setPosLocation] = useState("Cleveland, OH");
-  const [posFreight, setPosFreight] = useState("Refrigerated & Dry Freight");
-  const [posLanes, setPosLanes] = useState("Midwest → Southeast");
-  const [posPay, setPosPay] = useState("$0.65 CPM + $1,250 Weekly Guarantee");
-  const [posCreatedMessage, setPosCreatedMessage] = useState<string | null>(null);
+  const selectedCandidate = allCandidates.find((c) => c.id === selectedCandidateId) || candidates[0];
+  const selectedPosition = positions.find((p) => p.id === (activePositionId ?? selectedCandidate?.positionId)) || positions[0];
+  const candidatePosition = positions.find((p) => p.id === selectedCandidate?.positionId);
 
-  const selectedCandidate = candidates.find((c) => c.id === selectedCandidateId) || candidates[0];
-  const selectedPosition = positions.find((p) => p.id === selectedCandidate?.positionId) || positions[0];
+  // Recruiting actions: each goes to the source of record and the workspace reloads from it.
+  const candidatePath = (c: WorkspaceCandidate) => encodeURIComponent(c.candidateCode);
+  const actions = {
+    openPosition: (requisitionId: string) => run("Recruiting position opened from the requisition.", `/api/recruiting/requisitions/${requisitionId}/position`, { body: {} }),
+    attach: (positionId: string, body: Record<string, unknown>) => run("Candidate attached to the requisition.", `/api/recruiting/positions/${positionId}/candidates`, { body }),
+    screen: (c: WorkspaceCandidate) => run("Screening against the requisition recorded.", `/api/recruiting/candidates/${candidatePath(c)}/screening`, { body: { action: "screen" } }),
+    confirm: (c: WorkspaceCandidate, key: string) => run("Screening confirmation recorded.", `/api/recruiting/candidates/${candidatePath(c)}/screening`, { body: { action: "confirm", key } }),
+    recordDocument: (c: WorkspaceCandidate, documentType: string) =>
+      run("Document recorded as received.", `/api/recruiting-v2/documents/${candidatePath(c)}`, { body: { documentType, status: "RECEIVED", uploadedBy: "Recruiting & Onboarding workspace" } }),
+    verifyDocument: (c: WorkspaceCandidate, documentCode: string) =>
+      run("Document verified.", `/api/recruiting-v2/documents/${candidatePath(c)}/${encodeURIComponent(documentCode)}`, {
+        method: "PATCH",
+        body: { action: "VERIFY", verifiedBy: "BOF compliance review", verificationNotes: "Verified in the Recruiting & Onboarding workspace." },
+      }),
+    interview: (c: WorkspaceCandidate, questionnaire: Record<string, unknown>) =>
+      run("Structured interview and recommendation recorded.", `/api/recruiting-v2/interviews/${candidatePath(c)}`, { method: "PATCH", body: { questionnaire } }),
+    offer: (c: WorkspaceCandidate, body: Record<string, unknown>) => run(`Offer ${String(body.offerStatus).toLowerCase()}.`, `/api/recruiting-v2/offer/${candidatePath(c)}`, { body }),
+    onboarding: (c: WorkspaceCandidate, body: Record<string, unknown>) => run("Onboarding updated.", `/api/recruiting-v2/onboarding/${candidatePath(c)}`, { body }),
+    activate: (c: WorkspaceCandidate) =>
+      run("Driver activated.", `/api/recruiting-v2/activation/${candidatePath(c)}`, {
+        body: { activationStatus: "ACTIVE", fleetId: positions.find((p) => p.id === c.positionId)?.requisition?.fleetId ?? "" },
+      }),
+    disposition: (c: WorkspaceCandidate, body: Record<string, unknown>) =>
+      run(body.status === "ACTIVE" ? "Candidate reopened." : "Candidate disposition recorded.", `/api/recruiting/candidates/${candidatePath(c)}/disposition`, { body }),
+  };
 
   const completedChecklistCount = selectedCandidate?.onboardingChecklist.filter((i) => i.completed).length || 0;
   const totalChecklistCount = selectedCandidate?.onboardingChecklist.length || 10;
   const onboardingPct = Math.round((completedChecklistCount / totalChecklistCount) * 100);
 
+  // Apply the candidate / tab / workflow in the URL once, when the workspace data first arrives
+  // (later reloads after each action must not move the recruiter off the view they are on).
+  const appliedUrlState = React.useRef(false);
   useEffect(() => {
+    if (appliedUrlState.current || !model) return;
+    appliedUrlState.current = true;
     const params = new URLSearchParams(window.location.search);
+    const fromRequisition = positions.find((position) => position.requisition?.id === params.get("requisition"));
+    if (fromRequisition) setSelectedPositionId(fromRequisition.id);
     const candidateId = params.get("candidateId");
     const tab = params.get("tab");
     const workflow = params.get("workflow");
-    if (candidateId && candidates.some((candidate) => candidate.id === candidateId)) {
+    const linked = allCandidates.find((candidate) => candidate.id === candidateId);
+    if (candidateId && linked) {
       setSelectedCandidateId(candidateId);
+      setSelectedPositionId(linked.positionId);
     }
     if (tab === "candidate-detail" || tab === "onboarding" || tab === "pipeline" || tab === "position-builder" || tab === "job-distribution") {
       setActiveTab(tab);
@@ -141,7 +193,7 @@ export function RecruitingPageClient() {
     if (workflow === "qualification" || workflow === "interview" || workflow === "offer" || workflow === "onboarding") {
       setActiveCandidateWorkflow(workflow);
     }
-  }, [candidates]);
+  }, [model, positions, allCandidates]);
 
   function showCandidateWorkflow(candidateId: string, tab: typeof activeTab, workflow: typeof activeCandidateWorkflow = null) {
     setSelectedCandidateId(candidateId);
@@ -151,7 +203,7 @@ export function RecruitingPageClient() {
     params.set("candidateId", candidateId);
     params.set("tab", tab);
     if (workflow) params.set("workflow", workflow);
-    window.history.replaceState(null, "", `/recruiting/workspace?${params.toString()}`);
+    window.history.replaceState(null, "", `${basePath}?${params.toString()}`);
   }
 
   const candidateDocumentRows = selectedCandidate
@@ -215,10 +267,9 @@ export function RecruitingPageClient() {
   const missingChecklistItems = selectedCandidate?.onboardingChecklist.filter((item) => !item.completed) ?? [];
   const qualificationProblems = selectedCandidate
     ? [
-        selectedCandidate.backgroundStatus !== "CLEAN" ? `Background status is ${selectedCandidate.backgroundStatus.replace(/_/g, " ").toLowerCase()}` : null,
-        selectedCandidate.medCardStatus !== "VALID" ? `Medical card status is ${selectedCandidate.medCardStatus.replace(/_/g, " ").toLowerCase()}` : null,
-        selectedCandidate.mvrStatus !== "CLEAN" ? `MVR status is ${selectedCandidate.mvrStatus.replace(/_/g, " ").toLowerCase()}` : null,
-        ...missingChecklistItems.slice(0, 4).map((item) => `${item.label} is not complete`),
+        selectedCandidate.screening.status === "FAIL" ? `Screening against ${selectedCandidate.requisitionNumber ?? "the requisition"}: ${selectedCandidate.screening.blocking[0]}` : null,
+        ...selectedCandidate.qualification.blockingItems,
+        ...selectedCandidate.qualification.pendingItems,
       ].filter((item): item is string => Boolean(item))
     : [];
 
@@ -226,7 +277,7 @@ export function RecruitingPageClient() {
     setSelectedCandidateId(candidateId);
     setActiveTab("candidate-detail");
     setActiveCandidateWorkflow(null);
-    window.history.replaceState(null, "", `/recruiting/workspace?candidateId=${encodeURIComponent(candidateId)}&tab=candidate-detail`);
+    window.history.replaceState(null, "", `${basePath}?candidateId=${encodeURIComponent(candidateId)}&tab=candidate-detail`);
   }
 
   function workflowHeading(workflow: NonNullable<typeof activeCandidateWorkflow>) {
@@ -238,9 +289,9 @@ export function RecruitingPageClient() {
 
   function workflowStatus(workflow: NonNullable<typeof activeCandidateWorkflow>) {
     if (!selectedCandidate) return "Unavailable";
-    if (workflow === "qualification") return selectedCandidate.pipelineStage === "QUALIFICATION_REVIEW" ? "Qualification review open" : selectedCandidate.pipelineStage.replace(/_/g, " ");
-    if (workflow === "interview") return selectedCandidate.interviewNotes ? "Interview record on file" : "Pending interview record";
-    if (workflow === "offer") return selectedCandidate.offerDetails ? "Offer details on file" : "Not yet configured";
+    if (workflow === "qualification") return `Qualification ${selectedCandidate.qualification.status} · screening ${selectedCandidate.screening.status}`;
+    if (workflow === "interview") return selectedCandidate.interview ? `Interview ${selectedCandidate.interview.status.toLowerCase()} · ${selectedCandidate.interview.recommendationLabel}` : "Pending interview record";
+    if (workflow === "offer") return `Offer ${selectedCandidate.offer.offerStatus.replace(/_/g, " ").toLowerCase()}`;
     return `${completedChecklistCount} of ${totalChecklistCount} onboarding items complete`;
   }
 
@@ -253,46 +304,36 @@ export function RecruitingPageClient() {
 
   function workflowDecision(workflow: NonNullable<typeof activeCandidateWorkflow>) {
     if (!selectedCandidate) return "No candidate selected";
-    if (workflow === "qualification") return qualificationProblems.length === 0 ? "Qualification can advance to interview or onboarding review" : "Qualification remains open";
-    if (workflow === "interview") return selectedCandidate.interviewNotes ? "Interview evidence supports continued review" : "Interview record pending";
-    if (workflow === "offer") return selectedCandidate.offerDetails ? "Offer record available" : "Offer cannot be issued yet";
-    return missingChecklistItems.length === 0 && selectedCandidate.activatedDriverId ? "Ready for existing driver activation handoff" : "Onboarding remains incomplete";
+    if (workflow === "qualification") return selectedCandidate.qualification.status === "READY" ? "Qualification can advance to offer review" : `Qualification ${selectedCandidate.qualification.status.toLowerCase()}: ${selectedCandidate.qualification.reason}`;
+    if (workflow === "interview") return selectedCandidate.qualification.interviewEvaluation.label;
+    if (workflow === "offer") return selectedCandidate.offerBlockedReason ?? (selectedCandidate.offer.offerStatus === "ACCEPTED" ? "Offer accepted" : "Offer can be issued");
+    return selectedCandidate.activationReadiness.currentDecision;
   }
 
   function workflowNextAction(workflow: NonNullable<typeof activeCandidateWorkflow>) {
     if (!selectedCandidate) return "Select a candidate.";
-    if (workflow === "qualification") return qualificationProblems[0] ?? "Advance candidate to interview or onboarding review.";
-    if (workflow === "interview") return selectedCandidate.interviewNotes ? "Record decision and determine whether an offer can be prepared." : "Schedule interview and capture interviewer notes.";
-    if (workflow === "offer") return selectedCandidate.offerDetails ? "Review offer terms and send candidate-specific offer." : "Complete qualification requirements before preparing an offer.";
+    if (workflow === "qualification") return selectedCandidate.qualification.nextRequiredAction;
+    if (workflow === "interview") return selectedCandidate.qualification.interviewEvaluation.requiredAction;
+    if (workflow === "offer") return selectedCandidate.offerBlockedReason ? "Resolve the blocking item before preparing an offer." : selectedCandidate.offer.offerStatus === "SENT" ? "Record the candidate's response to the offer." : "Prepare and send the candidate-specific offer.";
     return missingChecklistItems[0]?.label ? `Complete ${missingChecklistItems[0].label}.` : "Confirm activation gate and handoff destination.";
   }
 
-  const handleCreatePosition = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newId = createPosition({
-      title: posTitle,
-      department: "Fleet Operations",
-      location: posLocation,
-      openings: Number(posOpenings),
-      employmentType: "Full-Time W-2",
-      homeTime: "Weekly",
-      equipment: "2024 Freightliner Cascadia",
-      freightType: posFreight,
-      primaryLanes: posLanes,
-      schedule: "5-6 Days On, 34-Hr Restart",
-      compensation: posPay,
-      benefits: ["Health, Dental & Vision", "401(k) Match", "PTO"],
-      minimumQualifications: ["Valid Class A CDL", "Clean MVR", "2 Years OTR Experience"],
-      cdlClass: "Class A",
-      experienceYears: 2,
-      endorsements: [],
-      safetyExpectations: "Zero recordable accidents in last 24 months.",
-      physicalRequirements: "Pre-trip inspections & seal verifications.",
-      applicationInstructions: "Apply via BOF Recruiting Portal.",
-    });
-    setPosCreatedMessage(`Position ${newId} created successfully! Job posting package is ready.`);
-    setTimeout(() => setPosCreatedMessage(null), 5000);
-  };
+  const noticeBanner = notice ? (
+    <div
+      role="status"
+      className={`mb-6 rounded-xl border p-3 text-sm font-bold ${notice.tone === "ok" ? "border-emerald-500/50 bg-emerald-950/40 text-emerald-200" : "border-rose-600/60 bg-rose-950/40 text-rose-100"}`}
+    >
+      {notice.text}
+    </div>
+  ) : null;
+
+  if (!model) {
+    return (
+      <div className="bof-page bg-slate-950 text-slate-100 min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+        <p className="rounded-xl border border-slate-800 bg-slate-900/60 p-6 text-sm text-slate-300">{loadError ?? "Loading Recruiting & Onboarding…"}</p>
+      </div>
+    );
+  }
 
   if (selectedCandidate && activeCandidateWorkflow) {
     const workflowLabel = workflowHeading(activeCandidateWorkflow);
@@ -315,6 +356,7 @@ export function RecruitingPageClient() {
           <span aria-hidden> / </span>
           <span>{workflowLabel}</span>
         </nav>
+        {noticeBanner}
 
         <section className="rounded-2xl border border-teal-900/70 bg-slate-900/70 p-5 shadow-2xl md:p-7">
           <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-800 pb-5">
@@ -375,13 +417,34 @@ export function RecruitingPageClient() {
             </aside>
           </div>
 
+          {activeCandidateWorkflow === "qualification" ? (
+            <>
+              <ScreeningPanel candidate={selectedCandidate} busy={busy} onScreen={() => void actions.screen(selectedCandidate)} onConfirm={(key) => void actions.confirm(selectedCandidate, key)} />
+              <DocumentActionsPanel
+                candidate={selectedCandidate}
+                busy={busy}
+                onRecord={(type) => void actions.recordDocument(selectedCandidate, type)}
+                onVerify={(code) => void actions.verifyDocument(selectedCandidate, code)}
+              />
+            </>
+          ) : null}
+          {activeCandidateWorkflow === "interview" ? (
+            <StructuredInterviewPanel key={selectedCandidate.id} candidate={selectedCandidate} busy={busy} onComplete={(q) => void actions.interview(selectedCandidate, q)} />
+          ) : null}
+          {activeCandidateWorkflow === "offer" ? (
+            <OfferPanel key={selectedCandidate.id} candidate={selectedCandidate} position={candidatePosition} busy={busy} onOffer={(body) => void actions.offer(selectedCandidate, body)} />
+          ) : null}
+          {activeCandidateWorkflow === "onboarding" ? (
+            <OnboardingControls key={selectedCandidate.id} candidate={selectedCandidate} busy={busy} onUpdate={(body) => void actions.onboarding(selectedCandidate, body)} />
+          ) : null}
+
           <section className="mt-5 rounded-xl border border-slate-800 bg-slate-950 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.18em] text-teal-300">Documents / requirements</p>
                 <h2 className="mt-1 text-xl font-black text-white">Template to candidate submission</h2>
               </div>
-              {activeCandidateWorkflow === "offer" && !selectedCandidate.offerDetails ? (
+              {activeCandidateWorkflow === "offer" && selectedCandidate.offer.offerStatus === "NOT_PROVIDED" ? (
                 <span className="rounded-full border border-amber-700 bg-amber-950/40 px-3 py-1 text-xs font-black text-amber-100">
                   Offer status: Not yet configured
                 </span>
@@ -435,9 +498,13 @@ export function RecruitingPageClient() {
             </div>
             <div className="rounded-xl border border-slate-800 bg-slate-950 p-4">
               <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Related objects / audit trail</p>
-              <p className="mt-3 text-sm text-slate-200">Position: {selectedCandidate.positionId} · {selectedPosition?.title}</p>
+              <p className="mt-3 text-sm text-slate-200">Requisition: {selectedCandidate.requisitionNumber ?? "—"} · Position: {selectedCandidate.positionCode} · {selectedCandidate.positionTitle}</p>
               <p className="mt-2 text-sm text-slate-200">Applied: {selectedCandidate.appliedDate}</p>
-              <p className="mt-2 text-sm text-slate-200">Audit: current demo store stage is {selectedCandidate.pipelineStage.replace(/_/g, " ")}.</p>
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-slate-300">
+                {selectedCandidate.auditTrail.slice(-4).map((entry) => (
+                  <li key={entry}>{entry}</li>
+                ))}
+              </ul>
             </div>
           </section>
         </section>
@@ -480,7 +547,7 @@ export function RecruitingPageClient() {
                   : "border-slate-700 bg-slate-900 text-slate-300 hover:border-slate-600"
               }`}
             >
-              + Create Position
+              + Requisition / Position
             </button>
             <button
               type="button"
@@ -507,6 +574,7 @@ export function RecruitingPageClient() {
           </div>
         </div>
       </header>
+      {noticeBanner}
 
       {/* RECRUITING PIPELINE TAB */}
       {activeTab === "pipeline" && (
@@ -514,13 +582,13 @@ export function RecruitingPageClient() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Open Positions</span>
-              <p className="mt-2 text-3xl font-extrabold text-white">{positions.length}</p>
-              <p className="mt-1 text-xs text-slate-400">Active workforce openings</p>
+              <p className="mt-2 text-3xl font-extrabold text-white">{positions.reduce((sum, p) => sum + p.counts.remaining, 0)}</p>
+              <p className="mt-1 text-xs text-slate-400">Seats remaining on {positions.length} approved requisition{positions.length === 1 ? "" : "s"}</p>
             </div>
             <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Applicants</span>
-              <p className="mt-2 text-3xl font-extrabold text-teal-400">{candidates.length}</p>
-              <p className="mt-1 text-xs text-slate-400">In qualification pipeline</p>
+              <p className="mt-2 text-3xl font-extrabold text-teal-400">{allCandidates.filter((c) => c.disposition.status === "ACTIVE").length}</p>
+              <p className="mt-1 text-xs text-slate-400">Active candidates (rejected kept in history)</p>
             </div>
             <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Onboarding Progress</span>
@@ -530,7 +598,7 @@ export function RecruitingPageClient() {
             <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Operations Handoff</span>
               <p className="mt-2 text-3xl font-extrabold text-emerald-400">
-                {selectedCandidate?.pipelineStage === "ACTIVATED" ? "ACTIVE" : "READY"}
+                {selectedCandidate?.activation ? "ACTIVE" : selectedCandidate?.activationReadiness.ready ? "READY" : "PENDING"}
               </p>
               <p className="mt-1 text-xs text-slate-400">Driver activation gate</p>
             </div>
@@ -567,12 +635,23 @@ export function RecruitingPageClient() {
             </div>
           </div>
 
+          <RequisitionPositionsPanel
+            positions={positions}
+            unopened={model.unopenedRequisitions}
+            selectedPositionId={activePositionId}
+            onSelect={setSelectedPositionId}
+            onOpenPosition={(id) => void actions.openPosition(id)}
+            requisitionsHref={model.requisitionsHref}
+            busy={busy}
+          />
+
           {/* CANDIDATES TABLE & DETAIL */}
           <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
             {/* Candidate Roster */}
             <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
               <h2 className="text-lg font-bold text-white mb-4">Active Candidate Applications</h2>
               <div className="space-y-3">
+                {candidates.length === 0 ? <p className="text-xs text-slate-400">No candidates are attached to this requisition yet. Attach one from the position overview.</p> : null}
                 {candidates.map((cand) => {
                   const isSelected = cand.id === selectedCandidateId;
                   return (
@@ -593,12 +672,13 @@ export function RecruitingPageClient() {
                           <span className="ml-2 font-mono text-xs text-slate-400">({cand.id})</span>
                         </div>
                         <span className="rounded-full bg-teal-900/50 border border-teal-700/50 px-3 py-0.5 text-xs font-bold text-teal-200 uppercase">
-                          {cand.pipelineStage.replace("_", " ")}
+                          {cand.disposition.status !== "ACTIVE" ? cand.disposition.status : cand.pipelineStage.replace("_", " ")}
                         </span>
                       </div>
                       <p className="mt-1 text-xs text-slate-300">
-                        {cand.positionTitle} · {cand.homeLocation} · {cand.experienceYears} Yrs CDL-A
+                        {cand.positionTitle} · {cand.homeLocation} · {cand.experienceYears} Yrs CDL-{cand.cdlClass.replace(/^Class\s*/i, "")}
                       </p>
+                      {cand.requisitionNumber ? <p className="mt-1 font-mono text-[11px] text-sky-300">Requisition {cand.requisitionNumber}</p> : null}
                       <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-slate-400">
                         <span>Med Card: <strong className="text-emerald-400">{cand.medCardStatus}</strong></span>
                         <span>·</span>
@@ -616,12 +696,17 @@ export function RecruitingPageClient() {
             <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
               <h2 className="text-lg font-bold text-white mb-4">Position Overview: {selectedPosition?.title}</h2>
               <div className="space-y-4 text-xs text-slate-300">
+                {selectedPosition ? <PositionRequisitionBlock position={selectedPosition} /> : null}
                 <div className="rounded-xl border border-slate-800 bg-slate-950 p-4">
                   <span className="font-bold text-slate-400 uppercase">Position Details</span>
-                  <p className="mt-1 text-sm font-bold text-white">{selectedPosition?.title} ({selectedPosition?.id})</p>
+                  <p className="mt-1 text-sm font-bold text-white">{selectedPosition?.title} ({selectedPosition?.positionCode})</p>
                   <p className="mt-1 text-slate-300">Location: {selectedPosition?.location} · Openings: {selectedPosition?.openings}</p>
                   <p className="mt-1 text-slate-300">Lanes: {selectedPosition?.primaryLanes}</p>
                 </div>
+
+                {selectedPosition && selectedPosition.status === "OPEN" && selectedPosition.counts.remaining > 0 ? (
+                  <AttachCandidateForm position={selectedPosition} busy={busy} onAttach={(body) => void actions.attach(selectedPosition.id, body)} />
+                ) : null}
 
                 <div className="rounded-xl border border-slate-800 bg-slate-950 p-4">
                   <span className="font-bold text-slate-400 uppercase">Compensation &amp; Equipment</span>
@@ -632,7 +717,7 @@ export function RecruitingPageClient() {
                 <div className="rounded-xl border border-slate-800 bg-slate-950 p-4">
                   <span className="font-bold text-slate-400 uppercase">Job Board Distribution Center</span>
                   <p className="mt-1 text-xs font-semibold text-sky-400">
-                    CANONICAL POSTING JOB-001 (POS-001)
+                    CANONICAL POSTING {selectedPosition?.requisition?.publicNumber ?? "—"} ({selectedPosition?.positionCode ?? "no position"})
                   </p>
                   <div className="mt-3 space-y-2">
                     {Object.values(DEMO_JOB_POSTINGS[0].destinations).map((dest: JobBoardDestinationConfig) => (
@@ -664,97 +749,39 @@ export function RecruitingPageClient() {
         </section>
       )}
 
-      {/* CREATE POSITION TAB */}
+      {/* CREATE POSITION TAB: positions now open from approved requisitions (owner direction 2026-10-19) */}
       {activeTab === "position-builder" && (
-        <section className="max-w-3xl mx-auto rounded-2xl border border-slate-800 bg-slate-900/60 p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-white mb-2">Step 1 &amp; 2 — Workforce Need &amp; Job Description Builder</h2>
-          <p className="text-sm text-slate-400 mb-6">Create a new position and generate a structured BOF Job Description &amp; Posting Package.</p>
-
-          {posCreatedMessage ? (
-            <div className="mb-6 rounded-xl border border-emerald-500/50 bg-emerald-950/40 p-4 text-sm font-bold text-emerald-200">
-              {posCreatedMessage}
-            </div>
-          ) : null}
-
-          <form onSubmit={handleCreatePosition} className="space-y-4 text-xs">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block font-bold text-slate-300 mb-1">Position Title</label>
-                <input
-                  type="text"
-                  value={posTitle}
-                  onChange={(e) => setPosTitle(e.target.value)}
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950 p-2.5 text-white"
-                  required
-                />
+        <section className="max-w-4xl mx-auto rounded-2xl border border-slate-800 bg-slate-900/60 p-6 md:p-8">
+          <h2 className="text-2xl font-bold text-white mb-2">Step 1 &amp; 2 — Workforce Need &amp; Requisition</h2>
+          <p className="text-sm text-slate-400 mb-6">
+            A recruiting position opens from an approved 11-section driver requisition: the carrier&apos;s staffing need, position, lanes, equipment, CDL and qualification
+            requirements, compensation and budget, with five approvals. The position carries the requisition&apos;s details, so nothing is re-entered here.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Link href={model.requisitionsHref} className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              CREATE OR REVIEW A REQUISITION &rarr;
+            </Link>
+            <button type="button" onClick={() => setActiveTab("pipeline")} className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-300 hover:border-slate-600">
+              Back to the pipeline
+            </button>
+          </div>
+          <div className="mt-6 grid gap-3 md:grid-cols-2">
+            {positions.map((pos) => (
+              <div key={pos.id} className="rounded-xl border border-slate-800 bg-slate-950 p-4 text-xs text-slate-300">
+                <span className="font-mono font-bold text-teal-300">{pos.requisition?.publicNumber ?? pos.positionCode}</span>
+                <p className="mt-1 text-sm font-bold text-white">{pos.title}</p>
+                <p className="mt-1">
+                  {pos.location} · {pos.openings} opening{pos.openings === 1 ? "" : "s"} · {pos.compensation}
+                </p>
+                <p className="mt-1">Lanes: {pos.primaryLanes}</p>
+                {pos.requisition ? (
+                  <Link href={pos.requisition.href} className="mt-2 inline-block font-bold text-teal-400 hover:underline">
+                    Open requisition &rarr;
+                  </Link>
+                ) : null}
               </div>
-              <div>
-                <label className="block font-bold text-slate-300 mb-1">Openings</label>
-                <input
-                  type="number"
-                  value={posOpenings}
-                  onChange={(e) => setPosOpenings(Number(e.target.value))}
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950 p-2.5 text-white"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block font-bold text-slate-300 mb-1">Home Terminal / Location</label>
-                <input
-                  type="text"
-                  value={posLocation}
-                  onChange={(e) => setPosLocation(e.target.value)}
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950 p-2.5 text-white"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-300 mb-1">Freight Type</label>
-                <input
-                  type="text"
-                  value={posFreight}
-                  onChange={(e) => setPosFreight(e.target.value)}
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950 p-2.5 text-white"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block font-bold text-slate-300 mb-1">Primary Lanes</label>
-                <input
-                  type="text"
-                  value={posLanes}
-                  onChange={(e) => setPosLanes(e.target.value)}
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950 p-2.5 text-white"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-300 mb-1">Compensation</label>
-                <input
-                  type="text"
-                  value={posPay}
-                  onChange={(e) => setPosPay(e.target.value)}
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950 p-2.5 text-white"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="pt-4 flex gap-3">
-              <button
-                type="submit"
-                className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary"
-              >
-                GENERATE JOB DESCRIPTION &amp; POSTING PACKAGE &rarr;
-              </button>
-            </div>
-          </form>
+            ))}
+          </div>
         </section>
       )}
 
@@ -765,7 +792,7 @@ export function RecruitingPageClient() {
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-teal-400">
-                  Canonical Posting JOB-001 (POS-001)
+                  Canonical Posting {selectedPosition?.requisition?.publicNumber ?? "—"} ({selectedPosition?.positionCode ?? "no position"})
                 </span>
                 <h2 className="text-2xl font-extrabold text-white">JOB BOARD DISTRIBUTION CENTER</h2>
                 <p className="text-xs text-slate-300">
@@ -846,7 +873,7 @@ export function RecruitingPageClient() {
             {/* CANONICAL POSTING PACKAGE REVIEW */}
             <div className="mt-8 rounded-xl border border-slate-800 bg-slate-950 p-6 text-xs text-slate-300">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <span className="font-bold text-white text-sm">Normalized Canonical BOF Job Package (JOB-001)</span>
+                <span className="font-bold text-white text-sm">Normalized Canonical BOF Job Package ({selectedPosition?.positionCode ?? "no position"})</span>
                 <span className="font-mono text-teal-400">Status: ACTIVE</span>
               </div>
               <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
@@ -886,8 +913,14 @@ export function RecruitingPageClient() {
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
+                  onClick={() => showCandidateWorkflow(selectedCandidate.id, "candidate-detail", "qualification")}
+                  className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs font-bold text-slate-200 hover:bg-slate-800"
+                >
+                  Screen
+                </button>
+                <button
+                  type="button"
                   onClick={() => {
-                    updateCandidateStage(selectedCandidate.id, "QUALIFICATION_REVIEW");
                     showCandidateWorkflow(selectedCandidate.id, "candidate-detail", "qualification");
                   }}
                   className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs font-bold text-slate-200 hover:bg-slate-800"
@@ -897,7 +930,6 @@ export function RecruitingPageClient() {
                 <button
                   type="button"
                   onClick={() => {
-                    updateCandidateStage(selectedCandidate.id, "INTERVIEW");
                     showCandidateWorkflow(selectedCandidate.id, "candidate-detail", "interview");
                   }}
                   className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs font-bold text-slate-200 hover:bg-slate-800"
@@ -907,17 +939,15 @@ export function RecruitingPageClient() {
                 <button
                   type="button"
                   onClick={() => {
-                    if (selectedCandidate.offerDetails) updateCandidateStage(selectedCandidate.id, "OFFER_SENT");
                     showCandidateWorkflow(selectedCandidate.id, "candidate-detail", "offer");
                   }}
-                  className={`rounded-lg border px-3 py-1.5 text-xs font-bold ${selectedCandidate.offerDetails ? "border-teal-600 bg-teal-950 text-teal-200 hover:bg-teal-900" : "border-amber-700 bg-amber-950/40 text-amber-200 hover:bg-amber-900/40"}`}
+                  className={`rounded-lg border px-3 py-1.5 text-xs font-bold ${!selectedCandidate.offerBlockedReason || selectedCandidate.offerDetails ? "border-teal-600 bg-teal-950 text-teal-200 hover:bg-teal-900" : "border-amber-700 bg-amber-950/40 text-amber-200 hover:bg-amber-900/40"}`}
                 >
                   Send Offer
                 </button>
                 <button
                   type="button"
                   onClick={() => {
-                    updateCandidateStage(selectedCandidate.id, "ONBOARDING");
                     showCandidateWorkflow(selectedCandidate.id, "onboarding", "onboarding");
                   }}
                   className="rounded-lg border border-sky-600 bg-sky-950 px-3 py-1.5 text-xs font-bold text-sky-200 hover:bg-sky-900"
@@ -926,6 +956,8 @@ export function RecruitingPageClient() {
                 </button>
               </div>
             </div>
+
+            <DispositionPanel candidate={selectedCandidate} busy={busy} onDisposition={(body) => void actions.disposition(selectedCandidate, body)} />
 
             {/* Offer Artifact Preview */}
             <div className="mt-6 rounded-xl border border-slate-800 bg-slate-950 p-5 text-xs">
@@ -1059,22 +1091,9 @@ export function RecruitingPageClient() {
                 </p>
               </div>
 
-              {selectedCandidate.activatedDriverId ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    const driverId = activateCandidateAsDriver(selectedCandidate.id);
-                    alert(`Driver activation recorded for existing demo handoff ${driverId}.`);
-                  }}
-                  className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary"
-                >
-                  ACTIVATE DRIVER FOR OPERATIONS &rarr;
-                </button>
-              ) : (
-                <span className="rounded-lg border border-amber-700 bg-amber-950/40 px-4 py-2 text-xs font-bold text-amber-200">
-                  Driver activation not yet configured
-                </span>
-              )}
+              <span className={`rounded-lg border px-4 py-2 text-xs font-bold ${selectedCandidate.activation ? "border-emerald-600 bg-emerald-950/40 text-emerald-200" : selectedCandidate.activationReadiness.ready ? "border-teal-600 bg-teal-950/40 text-teal-200" : "border-amber-700 bg-amber-950/40 text-amber-200"}`}>
+                {selectedCandidate.activation ? "Driver activated" : selectedCandidate.activationReadiness.currentDecision}
+              </span>
             </div>
 
             {/* Checklist */}
@@ -1082,7 +1101,17 @@ export function RecruitingPageClient() {
               {selectedCandidate.onboardingChecklist.map((item) => (
                 <div
                   key={item.id}
-                  onClick={() => toggleOnboardingCheckitem(selectedCandidate.id, item.id)}
+                  onClick={() => {
+                    // Document and decision items are completed in their own workspaces; onboarding records orientation, training and equipment.
+                    const workflow = ["cdl", "medical", "mvr", "clearinghouse", "i9", "w9", "qualification", "application"].includes(item.id)
+                      ? "qualification"
+                      : item.id === "interview"
+                        ? "interview"
+                        : item.id === "offer"
+                          ? "offer"
+                          : "onboarding";
+                    showCandidateWorkflow(selectedCandidate.id, workflow === "onboarding" ? "onboarding" : "candidate-detail", workflow);
+                  }}
                   className={`flex cursor-pointer items-center justify-between rounded-xl border p-3 text-xs transition ${
                     item.completed
                       ? "border-emerald-900/60 bg-emerald-950/20 text-emerald-200"
@@ -1128,29 +1157,10 @@ export function RecruitingPageClient() {
               </div>
             </div>
 
-            {/* CRITICAL HANDOFF TO OPERATIONS */}
-            {selectedCandidate.pipelineStage === "ACTIVATED" && (
-              <div className="mt-8 rounded-2xl border border-emerald-500/60 bg-emerald-950/40 p-6 text-emerald-100">
-                <h3 className="text-xl font-black text-white">DRIVER ACTIVATED &amp; HANDED OFF TO OPERATIONS</h3>
-                <p className="mt-2 text-xs leading-relaxed text-emerald-200">
-                  Driver <strong className="text-white">{selectedCandidate.name}</strong> ({selectedCandidate.activatedDriverId}) is now active in the BOF Driver Master. All qualification documents have transitioned to the driver&apos;s BOF Vault record.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-3">
-                  <Link
-                    href={`/drivers/${selectedCandidate.activatedDriverId || "DRV-001"}`}
-                    className="inline-flex rounded-lg border border-emerald-400 bg-emerald-900/60 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-800"
-                  >
-                    VIEW DRIVER PROFILE IN BOF VAULT &rarr;
-                  </Link>
-                  <Link
-                    href="/loads"
-                    className="inline-flex rounded-lg border border-teal-400 bg-teal-900/60 px-4 py-2 text-xs font-bold text-white hover:bg-teal-800"
-                  >
-                    ASSIGN LOAD IN DISPATCH &rarr;
-                  </Link>
-                </div>
-              </div>
-            )}
+            <OnboardingControls key={selectedCandidate.id} candidate={selectedCandidate} busy={busy} onUpdate={(body) => void actions.onboarding(selectedCandidate, body)} />
+
+            {/* CRITICAL HANDOFF TO OPERATIONS: the Oct-17 activation creates the driver, intake and readiness records */}
+            <ActivationPanel candidate={selectedCandidate} busy={busy} demo={demo} onActivate={() => void actions.activate(selectedCandidate)} />
           </div>
         </section>
       )}

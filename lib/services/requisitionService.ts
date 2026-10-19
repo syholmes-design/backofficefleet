@@ -3,6 +3,7 @@ import { Prisma, RequisitionApprovalDecision, RequisitionApprovalRole, Requisiti
 import { createAuditRecord } from "@/lib/audit";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
 import { prisma } from "@/lib/prisma";
+import { openRecruitingPositionForRequisition } from "@/lib/services/requisitionRecruitingBridge";
 import {
   REQUISITION_UPDATABLE_BOOLEAN_FIELDS,
   REQUISITION_UPDATABLE_STRING_FIELDS,
@@ -372,6 +373,11 @@ export async function transitionRequisition(input: {
     details: { action: input.action, from: current, to: next, notes: input.notes ?? null, cdlRequisition: isCdlRequisition(requisition.cdlClass) },
     metadata: { source: "requisition-api" },
   });
+
+  // Approval no longer stops at READY_FOR_RECRUITING: it opens the linked recruiting position.
+  if (input.action === "approve") {
+    await openRecruitingPositionForRequisition(requisition.id, input.sessionUser);
+  }
 
   return updated;
 }

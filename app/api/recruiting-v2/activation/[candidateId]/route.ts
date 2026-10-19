@@ -18,6 +18,7 @@ import {
 import { buildRecruitingActivationPresentation } from "@/lib/recruiting-v2/activation-presentation";
 import { loadDriverOperationalProjection } from "@/lib/recruiting-v2/driver-operational-projection";
 import { auth } from "@/auth";
+import { syncPipelineForPosition } from "@/lib/services/requisitionRecruitingBridge";
 import type { SessionUserLike } from "@/lib/authorization";
 
 type RouteContext = { params: Promise<{ candidateId: string }> };
@@ -251,6 +252,13 @@ export async function POST(request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: "fleetId is required to activate a driver into a fleet tenant." }, { status: 422 });
   }
 
+  if (activationContext.candidate.dispositionStatus !== "ACTIVE") {
+    return NextResponse.json(
+      { error: `Candidate is ${activationContext.candidate.dispositionStatus.toLowerCase()} and cannot be activated.` },
+      { status: 400 },
+    );
+  }
+
   const session = await auth();
   try {
     const result = await activateRecruitingV2Candidate({
@@ -258,6 +266,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
       candidateCode: candidateId,
       fleetId,
     });
+    // An activated driver counts toward filling the originating requisition.
+    await syncPipelineForPosition(activationContext.candidate.positionId);
     const refreshed = await getActivationContext(candidateWhere);
     return NextResponse.json(
       {

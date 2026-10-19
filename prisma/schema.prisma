@@ -92,6 +92,9 @@ enum RequisitionStatus {
 enum RequisitionRecruitingPipelineState {
   NOT_OPEN
   READY_FOR_RECRUITING
+  RECRUITING
+  PARTIALLY_FILLED
+  FILLED
 }
 
 enum RequisitionApprovalRole {
@@ -723,9 +726,17 @@ enum RecruitingV2InterviewStatus {
 
 enum RecruitingV2Recommendation {
   ADVANCE
+  ADVANCE_WITH_CONDITIONS
   HOLD_FOR_REVIEW
   DO_NOT_ADVANCE
   PENDING
+}
+
+/// Recruiter disposition of a candidate. Rejected and withdrawn candidates keep their full history.
+enum RecruitingCandidateDisposition {
+  ACTIVE
+  REJECTED
+  WITHDRAWN
 }
 
 enum RecruitingV2DocumentType {
@@ -768,6 +779,12 @@ model Position {
   compensation String
   description  String
   status       String      @default("OPEN")
+  /// Approved requisition this recruiting position was opened from (one position per requisition).
+  requisitionId String?      @unique
+  requisition   Requisition? @relation(fields: [requisitionId], references: [id], onDelete: Restrict)
+  /// Owning fleet (copied from the requisition) for tenant scoping.
+  fleetId       String?
+  openings      Int          @default(1)
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   candidates   Candidate[]
@@ -775,6 +792,7 @@ model Position {
 
   @@index([status])
   @@index([homeTerminal])
+  @@index([fleetId])
 }
 
 model Candidate {
@@ -804,6 +822,12 @@ model Candidate {
   auditTrail            Json
   positionId            String
   position              Position                   @relation(fields: [positionId], references: [id], onDelete: Restrict)
+  /// Recruiter disposition (rejected/withdrawn candidates are kept with their history).
+  dispositionStatus    RecruitingCandidateDisposition @default(ACTIVE)
+  dispositionReason    String?
+  dispositionNotes     String?
+  dispositionAt        DateTime?
+  dispositionByUserId  String?
   interviews            Interview[]
   documentRecords       DocumentRecord[]
   complianceGates       ComplianceGate[]
@@ -829,6 +853,8 @@ model Interview {
   interviewers   Json
   categoryScores Json
   notes          String?
+  /// Structured interview (questions, responses, category evaluations, conditions); see lib/recruiting/structured-interview.ts.
+  questionnaire  Json?
   auditTrail     Json
   candidate      Candidate                   @relation(fields: [candidateId], references: [id], onDelete: Cascade)
   position       Position                    @relation(fields: [positionId], references: [id], onDelete: Restrict)
@@ -2266,6 +2292,7 @@ model Requisition {
   createdBy                User     @relation("RequisitionCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
   requestingManager        User?    @relation("RequisitionRequestingManager", fields: [requestingManagerUserId], references: [id], onDelete: SetNull)
   approvals                RequisitionApproval[]
+  recruitingPosition Position?
 
   @@unique([fleetId, publicNumber])
   @@index([fleetId, status])
@@ -2525,9 +2552,9 @@ model Settlement {
   settlementDate         DateTime
   payBasis               String?
   grossAmount            Decimal                @db.Decimal(12, 2)
-  deductions             Decimal                @db.Decimal(12, 2) @default(0)
-  reimbursements         Decimal                @db.Decimal(12, 2) @default(0)
-  advances               Decimal                @db.Decimal(12, 2) @default(0)
+  deductions             Decimal                 @default(0) @db.Decimal(12, 2)
+  reimbursements         Decimal                 @default(0) @db.Decimal(12, 2)
+  advances               Decimal                 @default(0) @db.Decimal(12, 2)
   netAmount              Decimal                @db.Decimal(12, 2)
   status                 SettlementRecordStatus @default(CREATED)
   holdReason             String?

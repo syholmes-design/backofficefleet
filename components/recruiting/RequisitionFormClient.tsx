@@ -77,7 +77,16 @@ function toDateInput(value: unknown) {
   return raw.slice(0, 10);
 }
 
-export function RequisitionFormClient({ initial }: { initial: RequisitionRecord }) {
+export function RequisitionFormClient({
+  initial,
+  fetcher = fetch,
+  basePath = "/recruiting",
+}: {
+  initial: RequisitionRecord;
+  /** Transport for the requisition API (the public demonstration answers it in the browser). */
+  fetcher?: typeof fetch;
+  basePath?: string;
+}) {
   const [record, setRecord] = useState(initial);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -100,7 +109,7 @@ export function RequisitionFormClient({ initial }: { initial: RequisitionRecord 
     body.minimumAge = record.minimumAge;
     body.targetStartDate = record.targetStartDate;
     body.bofHrUse = record.bofHrUse ?? null;
-    const response = await fetch(`/api/recruiting/requisitions/${record.id}`, {
+    const response = await fetcher(`/api/recruiting/requisitions/${record.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -130,7 +139,7 @@ export function RequisitionFormClient({ initial }: { initial: RequisitionRecord 
       if (action === "submit" && record.status === "DRAFT") {
         await persistDraft();
       }
-      const response = await fetch(`/api/recruiting/requisitions/${record.id}/${action}`, {
+      const response = await fetcher(`/api/recruiting/requisitions/${record.id}/${action}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: "{}",
@@ -150,7 +159,7 @@ export function RequisitionFormClient({ initial }: { initial: RequisitionRecord 
     setError(null);
     try {
       const draft = approvalDrafts[approvalRole] ?? { notes: "", signatureName: "", reviewerName: "" };
-      const response = await fetch(`/api/recruiting/requisitions/${record.id}/approvals`, {
+      const response = await fetcher(`/api/recruiting/requisitions/${record.id}/approvals`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ approvalRole, decision, ...draft }),
@@ -168,7 +177,7 @@ export function RequisitionFormClient({ initial }: { initial: RequisitionRecord 
   return (
     <div className="bof-recruiting">
       <p>
-        <Link href="/recruiting">Back to requisitions</Link>
+        <Link href={basePath}>Back to requisitions</Link>
       </p>
       <div className="bof-recruiting-header">
         <div>
@@ -176,6 +185,13 @@ export function RequisitionFormClient({ initial }: { initial: RequisitionRecord 
           <p className="bof-recruiting-lede">
             CDL Driver Requisition · {record.fleet.name} · {record.status.replaceAll("_", " ")} · Pipeline {record.recruitingPipelineState.replaceAll("_", " ")}
           </p>
+          {record.status === "APPROVED" || record.status === "FILLED" ? (
+            <p className="bof-recruiting-lede">
+              <Link href={`${basePath}/workspace?requisition=${encodeURIComponent(record.id)}`} data-testid="open-in-recruiting">
+                Open {record.publicNumber} in Recruiting &amp; Onboarding &rarr;
+              </Link>
+            </p>
+          ) : null}
         </div>
       </div>
       {error ? <p className="bof-recruiting-error">{error}</p> : null}

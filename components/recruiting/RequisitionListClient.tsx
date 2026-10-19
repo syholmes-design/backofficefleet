@@ -24,7 +24,16 @@ function formatDate(value: string | null) {
   return new Date(value).toLocaleDateString();
 }
 
-export function RequisitionListClient({ initialRows }: { initialRows: RequisitionListItem[] }) {
+export function RequisitionListClient({
+  initialRows,
+  fetcher = fetch,
+  basePath = "/recruiting",
+}: {
+  initialRows: RequisitionListItem[];
+  /** Transport for the requisition API (the public demonstration answers it in the browser). */
+  fetcher?: typeof fetch;
+  basePath?: string;
+}) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("ALL");
@@ -43,10 +52,10 @@ export function RequisitionListClient({ initialRows }: { initialRows: Requisitio
     setBusy(true);
     setError(null);
     try {
-      const response = await fetch("/api/recruiting/requisitions", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+      const response = await fetcher("/api/recruiting/requisitions", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Unable to create requisition");
-      router.push(`/recruiting/requisitions/${payload.id}`);
+      router.push(`${basePath}/requisitions/${payload.id}`);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to create requisition");
       setBusy(false);
@@ -59,12 +68,17 @@ export function RequisitionListClient({ initialRows }: { initialRows: Requisitio
         <div>
           <h1>Recruiting requisitions</h1>
           <p className="bof-recruiting-lede">
-            Authorized workforce need for a fleet position. This surface stops at Approved / Ready for Recruiting. It does not create a Driver or open DriverIntake.
+            Authorized workforce need for a fleet position. Approval opens the recruiting position in Recruiting &amp; Onboarding, where candidates are
+            screened, interviewed, offered, onboarded and activated against this requisition.
           </p>
           <p className="bof-recruiting-lede">
-            <Link href="/recruiting/workspace">Recruiting workspace</Link>
-            {" · "}
-            <Link href="/recruiting-v2">Recruiting v2 documents</Link>
+            <Link href={`${basePath}/workspace`}>Recruiting &amp; Onboarding workspace</Link>
+            {basePath === "/recruiting" ? (
+              <>
+                {" · "}
+                <Link href="/recruiting-v2">Recruiting v2 documents</Link>
+              </>
+            ) : null}
           </p>
         </div>
         <button className="bof-recruiting-create" type="button" onClick={createDraft} disabled={busy}>
@@ -108,7 +122,7 @@ export function RequisitionListClient({ initialRows }: { initialRows: Requisitio
               return (
                 <tr key={row.id}>
                   <td>
-                    <Link href={`/recruiting/requisitions/${row.id}`}>{row.publicNumber}</Link>
+                    <Link href={`${basePath}/requisitions/${row.id}`}>{row.publicNumber}</Link>
                   </td>
                   <td>
                     <span className="bof-recruiting-status">{row.status.replaceAll("_", " ")}</span>

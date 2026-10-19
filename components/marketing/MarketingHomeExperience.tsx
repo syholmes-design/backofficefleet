@@ -143,7 +143,7 @@ function DemoMetric({
 
 /** The five service areas: each opens its service page, which leads on to the detail pages and demos. */
 const HERO_PROOF = [
-  ["Recruiting & onboarding", "/business-operations/driver-onboarding"],
+  ["Recruiting & onboarding", "/recruiting-onboarding"],
   ["Qualification & compliance", "/services/drivers"],
   ["Dispatch administration", "/services/dispatch"],
   ["Documentation & vault", "/services/documents"],

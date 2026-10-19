@@ -22,7 +22,6 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
             <Link href="/investors">Investors</Link>
             <Link href="/assessment">Assessment</Link>
           </div>
-          <p className="bof-mkt-footer-tagline">CONTROL • COMPLY • CLEAR</p>
           <p className="bof-mkt-footer-copy">© {new Date().getFullYear()} BackOfficeFleet</p>
         </div>
       </footer>

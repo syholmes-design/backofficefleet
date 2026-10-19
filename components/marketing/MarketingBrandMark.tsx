@@ -53,7 +53,6 @@ export function MarketingBrandMark() {
           </g>
         </svg>
       </span>
-      <span className="bof-mkt-brand__tag">CONTROL • COMPLY • CLEAR</span>
     </span>
   );
 }

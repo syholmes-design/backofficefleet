@@ -1,3 +1,4 @@
+import { requisitionScreeningForCandidate, syncPipelineForPosition } from "@/lib/services/requisitionRecruitingBridge";
 import { requireRecruitingCandidateAccess } from "@/lib/recruiting-v2/candidate-access";
 import { NextRequest, NextResponse } from "next/server";
 import type { Prisma, RecruitingV2DocumentStatus, RecruitingV2DocumentType } from "@prisma/client";
@@ -210,6 +211,16 @@ export async function POST(request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: `Invalid offer transition: ${currentOffer.offerStatus} to ${targetStatus}` }, { status: 400 });
   }
 
+  if (offerContext.candidate.dispositionStatus !== "ACTIVE" && targetStatus !== "DECLINED") {
+    return NextResponse.json({ error: `Candidate is ${offerContext.candidate.dispositionStatus.toLowerCase()}; no offer can be made.` }, { status: 400 });
+  }
+  if (targetStatus === "DRAFT" || targetStatus === "SENT") {
+    // The requisition's own requirements gate the offer (lib/recruiting/requisition-screening.ts).
+    const screening = await requisitionScreeningForCandidate(offerContext.candidate.id);
+    if (screening && screening.evaluation.status === "FAIL") {
+      return NextResponse.json({ error: `Screening against ${screening.publicNumber} failed: ${screening.evaluation.blocking[0] ?? "requirement not met"}` }, { status: 400 });
+    }
+  }
   if ((targetStatus === "DRAFT" || targetStatus === "SENT") && offerContext.qualification.qualificationSummary.status !== "READY") {
     return NextResponse.json({ error: offerContext.offerDecision.qualificationPrerequisite }, { status: 400 });
   }
@@ -236,6 +247,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     data: { offerSummary: nextOffer as Prisma.InputJsonValue },
   });
 
+  await syncPipelineForPosition(offerContext.candidate.positionId);
   const updatedContext = await getOfferContext(candidateWhere);
   if (!updatedContext) return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
 

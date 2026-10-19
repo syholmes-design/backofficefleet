@@ -10,7 +10,7 @@ export const PLATFORM_CAPABILITIES = {
   "driver-onboarding": {
     title: "Driver Onboarding",
     body: "Applicant intake, document collection, qualification review and administrative activation, kept as separate lifecycle states.",
-    demo: { href: "/business-operations/hr-tier/recruiting-onboarding", label: "Try the recruiting and onboarding workspace (sample candidates)" },
+    demo: { href: "/demo/recruiting/workspace", label: "Try the Recruiting & Onboarding demonstration (fictional requisition and candidates)" },
     second: { href: "/interactive-demo/drivers/document-intake", label: "Walk through driver document intake" },
   },
   "driver-compliance-documents": {

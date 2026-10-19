@@ -100,6 +100,15 @@ export function evaluateRecruitingV2InterviewQualification(interview: Recruiting
         requiredAction: "Continue qualification review.",
       };
     }
+    if (interview.recommendation === "ADVANCE_WITH_CONDITIONS" || interview.recommendation === "Advance With Conditions") {
+      return {
+        state: "INTERVIEW_COMPLETED_ADVANCE",
+        label: "Interview completed - advance with conditions",
+        status: "SATISFIED",
+        reason: "Latest completed interview recommends advancing the candidate with recorded conditions.",
+        requiredAction: "Carry the interview conditions into the offer and onboarding.",
+      };
+    }
     if (interview.recommendation === "HOLD_FOR_REVIEW" || interview.recommendation === "Hold For Review") {
       return {
         state: "INTERVIEW_COMPLETED_HOLD",

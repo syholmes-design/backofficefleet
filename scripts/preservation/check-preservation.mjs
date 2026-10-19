@@ -27,7 +27,7 @@ const RENDERED_ROUTES = [
 ];
 
 // Superseded public wording (docs/governance/superseded-decisions.md).
-const SUPERSEDED = [/book an? (working session|workflow review|demo)\b/i, /request a working session/i, /\bworking session\b/i];
+const SUPERSEDED = [/book an? (working session|workflow review|demo)\b/i, /request a working session/i, /\bworking session\b/i, /control\s*[•·.|-]\s*comply\s*[•·.|-]\s*clear/i];
 const SCAN_DIRS = ["app", "components", "lib"];
 const SCAN_ALLOW = [/superseded/i];
 

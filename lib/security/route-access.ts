@@ -31,6 +31,7 @@ export const PUBLIC_MARKETING_SEGMENTS = [
   "private-fleets",
   "product",
   "qa",
+  "recruiting-onboarding",
   "services",
   "team-briefing",
   "what-we-do",
