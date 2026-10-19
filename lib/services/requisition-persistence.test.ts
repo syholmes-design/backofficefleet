@@ -109,11 +109,14 @@ test("local persistence: requisition lifecycle does not create a Driver", async 
   const approved = await transitionRequisition({ sessionUser: adminA, requisitionId: created.id, action: "approve" });
   assert.equal(approved.status, "APPROVED");
   assert.equal(approved.recruitingPipelineState, "READY_FOR_RECRUITING");
+  // Approval opens exactly one recruiting position linked to the requisition.
+  assert.equal(await prisma.position.count({ where: { requisitionId: created.id } }), 1);
 
   const held = await transitionRequisition({ sessionUser: adminA, requisitionId: created.id, action: "hold" });
   assert.equal(held.status, "ON_HOLD");
   const resumed = await transitionRequisition({ sessionUser: adminA, requisitionId: created.id, action: "approve" });
   assert.equal(resumed.status, "APPROVED");
+  assert.equal(await prisma.position.count({ where: { requisitionId: created.id } }), 1, "re-approval does not open a second position");
   const filled = await transitionRequisition({ sessionUser: adminA, requisitionId: created.id, action: "fill" });
   assert.equal(filled.status, "FILLED");
   await assert.rejects(() => transitionRequisition({ sessionUser: adminA, requisitionId: created.id, action: "cancel" }), (error: { statusCode?: number }) => error.statusCode === 422);
@@ -130,6 +133,7 @@ test("local persistence: requisition lifecycle does not create a Driver", async 
   const audit = await prisma.auditEvent.findFirst({ where: { entityType: "Requisition", entityId: created.id, action: "CREATED" } });
   assert.ok(audit);
 
+  await prisma.position.deleteMany({ where: { requisitionId: { in: [created.id, cancelTarget.id] } } });
   await prisma.requisitionApproval.deleteMany({ where: { requisitionId: { in: [created.id, cancelTarget.id] } } });
   await prisma.requisition.deleteMany({ where: { id: { in: [created.id, cancelTarget.id] } } });
 });

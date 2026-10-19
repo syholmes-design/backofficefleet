@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MedicalRenewalAffirmButton } from "@/components/drivers/MedicalRenewalAffirmButton";
 import { RequirementEvidenceAffirmButton } from "@/components/drivers/RequirementEvidenceAffirmButton";
 import { SambaIntelligencePanel } from "@/components/operations/SambaIntelligencePanel";
+import { WorkHistoryPanel } from "@/components/drivers/WorkHistoryPanel";
 import type { DriverReviewRequirement } from "@/lib/driver-review-explanation";
 import type { DriverOperationalSummary } from "@/lib/services/driverOperationalReadModelService";
 
@@ -93,6 +94,8 @@ export function OperatorDriverDetail({
           </p>
         </article>
       </section>
+
+      {summary.latestIntakeId ? <WorkHistoryPanel intakeId={summary.latestIntakeId} /> : null}
 
       <section className="rounded-xl border border-slate-800 bg-slate-950/70 p-4">
         <h2 className="text-sm font-bold text-white">Open requirements</h2>

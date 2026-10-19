@@ -78,6 +78,12 @@ All pure modules are shared by the signed-in workspace and the public demonstrat
 **Activation**
 - `lib/recruiting-v2/driver-activation-service.ts`: creates the Driver, DriverIntake and DriverDocuments, then runs post-activation qualification and readiness.
 
+**Driver qualification after activation**
+- The live driver file is `/drivers/[id]` (`components/drivers/OperatorDriverDetail.tsx`, built on `lib/services/driverOperationalReadModelService.ts`). It shows qualification, readiness and their reason codes.
+- Employment history is recorded through `components/drivers/WorkHistoryPanel.tsx`, `GET`/`POST /api/intake/[intakeId]/work-history`, `lib/services/workHistoryService.ts` and `lib/qualification/work-history-input.ts`. Only BOF operations/compliance and fleet admin/manager roles can record it.
+- Saving an entry re-runs `reevaluateDriverReadinessAfterDocumentChange`, which uses the same qualification and readiness services that dispatch assignment enforces.
+- `/drivers/[id]/safety` reads demo data. Do not link real drivers there.
+
 **Transports**
 - `lib/recruiting/workspace-transport.ts`: the HTTP transport, used when signed in.
 - `lib/recruiting/demo-backend.ts`: the in-browser transport for the public demonstration (fictional records).
@@ -102,6 +108,7 @@ Migration: `20261019120000_requisition_recruiting_integration`. It is additive a
 | `node --import ./scripts/lib/ts-alias-loader.mjs --test lib/recruiting/requisition-integration.test.ts` | Screening, pipeline counts and states, interview validation, blind postings |
 | `npm run test:route-access` | Public and private routing, including `/api/recruiting/openings` (GET only) and `/api/recruiting/apply` (POST only) |
 | `npm run test:recruiting-v2-tenancy` | Tenant isolation |
+| `lib/qualification/work-history-input.test.ts`; `lib/services/requisition-persistence.test.ts` (bof_dev) | Employment-history validation; approval opens exactly one position, including on re-approval |
 | `lib/recruiting-v2/*.test.ts` | Activation presentation and the activation service |
 
 Browser acceptance: `docs/recovery/RECRUITING-ONBOARDING-INTEGRATION-2026-10-19.md`.

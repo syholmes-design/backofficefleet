@@ -3,7 +3,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { createAuditRecord } from "@/lib/audit";
 import { readRecruitingV2DriverHandoff } from "@/lib/recruiting-v2/driver-activation-service";
-import { candidateScopeWhere, resolveRecruitingScope, type RecruitingScope } from "@/lib/recruiting-v2/candidate-access";
+import { candidateScopeWhere, resolveRecruitingScope, type RecruitingScope } from "@/lib/recruiting-v2/candidate-scope";
 import type { SessionUserLike } from "@/lib/authorization";
 import { evaluateRecruitingV2DocumentGates } from "@/lib/recruiting-v2/document-gate-engine";
 import { artifactSummaryForRecord, metadataWithoutArtifactBytes } from "@/lib/recruiting-v2/document-artifact";
@@ -146,7 +146,8 @@ export async function loadRecruitingWorkspace(user: SessionUserLike) {
       fleetId: handoff.fleetId,
       activatedAt: handoff.activatedAt,
       driverHref: `/drivers/${driver.id}`,
-      readinessHref: `/drivers/${driver.id}/safety`,
+      // The live driver file (qualification, readiness, employment history), not the demo safety page.
+      readinessHref: `/drivers/${driver.id}`,
       qualification: qualification ? { status: qualification.status, reasons: reasonList(qualification.summary, qualification.reasonCodes) } : null,
       readiness: readiness
         ? { status: readiness.status, score: readiness.score, blockers: reasonList(readiness.summary, readiness.reasonCodes), dispatchEligible: readiness.status === "READY" }

@@ -13,6 +13,8 @@ test("the recruiting workspace keeps its query on the page that reads it", () =>
   assert.match(client, /params\.get\("tab"\)/);
   assert.match(client, /params\.get\("workflow"\)/);
   assert.equal(client.includes("`/recruiting?"), false);
-  assert.match(client, /\/recruiting\/workspace\?/);
+  // URLs are built from basePath, which defaults to the workspace route (the demo passes its own).
+  assert.match(client, /basePath = "\/recruiting\/workspace"/);
+  assert.match(client, /`\$\{basePath\}\?/);
   assert.doesNotMatch(client, /prisma\.candidate\.create|recordDriverEligibilityReview/);
 });
