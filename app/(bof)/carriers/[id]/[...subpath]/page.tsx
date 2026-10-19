@@ -153,6 +153,9 @@ export default async function CarrierDetailPage({ params }: Props) {
           <div>
             <h2 className="text-xl font-bold text-slate-950">Carrier Packet Controls ({packet.ready}/{packet.total} Ready)</h2>
             <p className="text-sm text-slate-600">Verification status across authority, insurance, tax, and agreement controls.</p>
+            <Link href={`/carriers/${carrier.id}/packet`} className="mt-2 inline-block text-sm font-semibold text-teal-700 hover:underline">
+              Open the customer-safe packet preview and evidence →
+            </Link>
           </div>
           <div className="text-right">
             <span className="text-2xl font-bold text-slate-950">{packet.percent}%</span>

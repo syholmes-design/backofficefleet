@@ -18,6 +18,7 @@ export const PUBLIC_MARKETING_SEGMENTS = [
   "business-operations",
   "careers",
   "company",
+  "compliance",
   "contact",
   "driver-experience",
   "fleet-operations",

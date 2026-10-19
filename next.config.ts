@@ -18,6 +18,14 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
+  /** URLs from the retired `main` layout, kept working: each now lives at its canonical page. */
+  async redirects() {
+    return [
+      { source: "/customer-portal/request-shipment", destination: "/customer-portal/load-intake", permanent: true },
+      { source: "/demo", destination: "/interactive-demo", permanent: true },
+      { source: "/demo/walkthrough", destination: "/interactive-demo", permanent: true },
+    ];
+  },
   async rewrites() {
     return {
       /** Run after `public/` so real files (e.g. driver `.html`) are served; API fills missing `.svg`. */
