@@ -99,7 +99,7 @@ The **Oct 17 activation** (`activateRecruitingV2Candidate` and the post-activati
 | I | Real nonproduction activation (Oct 17) | `live-14`, `live-16`, plus the database check below |
 | J | Assignment-readiness handoff | `live-15` (driver safety / readiness), `live-17` (dispatch) |
 | K | Browser screenshots | `live-01`…`live-21` (signed in), `demo-01`…`demo-19` (public, anonymous), `public-00`…`public-02` |
-| L | Safe preview | The Vercel Preview for this branch (see below) |
+| L | Safe preview | Vercel Preview (bof-web, commit a035b9a4): https://bof-mn6t9gipx-syholmes-5004s-projects.vercel.app |
 
 ## Acceptance test 1–20 (real browser, Chromium)
 
