@@ -27,7 +27,7 @@ const DEMO_TARGETS: Array<[prefix: string, target: string, keepSearch?: boolean]
   ["/fleet-financials", "/demo/settlements"],
   ["/carriers", "/interactive-demo/carriers"],
   ["/safety", "/safety"],
-  ["/recruiting", "/business-operations/hr-tier/recruiting-onboarding"],
+  ["/recruiting", "/demo/recruiting/workspace"],
   ["/operational-chat", "/demo/command-center"],
 ];
 

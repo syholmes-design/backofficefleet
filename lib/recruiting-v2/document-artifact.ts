@@ -93,20 +93,7 @@ export function getBundledSyntheticFileName(candidateCode: string, documentType:
   return BUNDLED_SYNTHETIC_FILES[candidateCode]?.[documentType] ?? null;
 }
 
-export function bundledSyntheticArtifact(candidateCode: string, documentType: RecruitingV2DocumentType): RecruitingV2StoredArtifact | null {
-  const fileName = getBundledSyntheticFileName(candidateCode, documentType);
-  if (!fileName) return null;
-  return {
-    storage: "bundled-synthetic",
-    fileName,
-    mimeType: "application/pdf",
-    sizeBytes: 0,
-    checksum: null,
-    uploadedAt: "2026-08-22T16:00:00.000Z",
-    synthetic: true,
-  };
-}
-
+/** Read-only: serves synthetic files attached to records before the attach path was retired (2026-10-19). */
 export async function readBundledSyntheticFile(candidateCode: string, documentType: RecruitingV2DocumentType) {
   const fileName = getBundledSyntheticFileName(candidateCode, documentType);
   if (!fileName) return null;

@@ -1,6 +1,6 @@
 # BOF canonical implementation register
 
-**Read this before editing a module listed here.** It names the one active implementation of each function. Anything not listed for a function is not the current implementation.
+**Read this before editing a module listed here.** Recruiting & Onboarding is **closed** (`docs/recovery/RECRUITING-ONBOARDING-CLOSURE-2026-10-19.md`). Drivers/Safety work integrates through its handoff contract (§4). It names the one active implementation of each function. Anything not listed for a function is not the current implementation.
 
 Removed code stays recoverable from Git history. It must not be recreated.
 
@@ -122,6 +122,7 @@ Browser acceptance: `docs/recovery/RECRUITING-ONBOARDING-INTEGRATION-2026-10-19.
 | `lib/stores/recruiting-store.ts` (browser-only store) and `lib/recruiting-demo-data.ts` (`DEMO_POSITIONS`, `DEMO_CANDIDATES`) | Real records through the APIs above. The types moved to `workspace-model.ts`. |
 | The careers application that saved nothing (`/api/recruiting/apply` echoed the payload back to a browser store) | `POST /api/recruiting/apply` now creates the Candidate on the requisition's position. |
 | The manual "+ Create Position" job builder | Positions open only from an approved requisition (`docs/governance/superseded-decisions.md`). |
+| The live-API attach of bundled synthetic PDFs to candidate documents (`attachBundledSynthetic`) | Real file upload in the workspace. Previously attached synthetic files remain readable. |
 | `lib/job-board-adapters.ts` (Indeed, LinkedIn and ZipRecruiter adapters that returned "Published" without calling any API) and the hardcoded `DEMO_JOB_POSTINGS` | `lib/job-board-distribution.ts` (real status only) |
 
 ## 2. Contact and inquiries (WEB-004/005/006)

@@ -5,7 +5,6 @@ import { prisma } from "@/lib/prisma";
 import {
   RECRUITING_V2_MAX_UPLOAD_BYTES,
   buildUploadedArtifact,
-  bundledSyntheticArtifact,
   isAllowedRecruitingV2Upload,
   mergeMetadataArtifact,
   parseStoredArtifact,
@@ -116,42 +115,6 @@ export async function POST(request: NextRequest, context: RouteContext) {
   }
 
   const contentType = request.headers.get("content-type") ?? "";
-
-  if (contentType.includes("application/json")) {
-    let body: unknown;
-    try {
-      body = await request.json();
-    } catch {
-      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-    }
-    const attachBundled =
-      typeof body === "object" && body !== null && !Array.isArray(body) && (body as { attachBundledSynthetic?: unknown }).attachBundledSynthetic === true;
-    if (!attachBundled) {
-      return NextResponse.json({ error: "Unsupported file operation" }, { status: 400 });
-    }
-    const bundled = bundledSyntheticArtifact(candidate.candidateCode, documentRecord.documentType);
-    if (!bundled) {
-      return NextResponse.json({ error: "No bundled synthetic document exists for this candidate document type" }, { status: 404 });
-    }
-    const file = await readBundledSyntheticFile(candidate.candidateCode, documentRecord.documentType);
-    const artifact = {
-      ...bundled,
-      sizeBytes: file?.bytes.byteLength ?? 0,
-    };
-    const updated = await prisma.documentRecord.update({
-      where: { id: documentRecord.id },
-      data: { metadata: mergeMetadataArtifact(documentRecord.metadata, artifact) },
-    });
-    const records = candidate.documentRecords.map((row) =>
-      serializeRecruitingV2DocumentRecord(row.id === updated.id ? updated : row, candidate.candidateCode),
-    );
-    const gates = await syncGatesForCandidate(candidate.id, records);
-    return NextResponse.json({
-      operation: "Attach Bundled Synthetic Document",
-      documentRecord: serializeRecruitingV2DocumentRecord(updated, candidate.candidateCode),
-      gate: gates.find((item) => item.documentType === updated.documentType) ?? null,
-    });
-  }
 
   if (!contentType.includes("multipart/form-data")) {
     return NextResponse.json({ error: "Upload must be multipart/form-data with a file field" }, { status: 400 });
