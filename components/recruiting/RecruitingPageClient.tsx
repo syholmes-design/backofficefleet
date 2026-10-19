@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { DEMO_JOB_POSTINGS, type JobBoardDestinationConfig } from "@/lib/job-board-distribution";
+import { jobDistributionForPosition, type JobBoardDestinationConfig } from "@/lib/job-board-distribution";
 import {
   ActivationPanel,
   AttachCandidateForm,
@@ -722,12 +722,11 @@ export function RecruitingPageClient({
                     CANONICAL POSTING {selectedPosition?.requisition?.publicNumber ?? "—"} ({selectedPosition?.positionCode ?? "no position"})
                   </p>
                   <div className="mt-3 space-y-2">
-                    {Object.values(DEMO_JOB_POSTINGS[0].destinations).map((dest: JobBoardDestinationConfig) => (
+                    {jobDistributionForPosition(selectedPosition).map((dest: JobBoardDestinationConfig) => (
                       <div key={dest.providerId} className="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-900 p-2.5">
                         <span className="font-bold text-white">{dest.providerName}</span>
                         <span className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase ${
                           dest.status === "PUBLISHED" ? "bg-emerald-950 text-emerald-300 border border-emerald-700" :
-                          dest.status === "READY_TO_POST" ? "bg-amber-950 text-amber-300 border border-amber-700" :
                           "bg-slate-800 text-slate-400 border border-slate-700"
                         }`}>
                           {dest.statusLabel}
@@ -814,15 +813,13 @@ export function RecruitingPageClient({
 
             {/* DISTRIBUTION DESTINATIONS GRID */}
             <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {Object.values(DEMO_JOB_POSTINGS[0].destinations).map((dest: JobBoardDestinationConfig) => (
+              {jobDistributionForPosition(selectedPosition).map((dest: JobBoardDestinationConfig) => (
                 <div
                   key={dest.providerId}
                   className={`rounded-2xl border p-5 flex flex-col justify-between ${
                     dest.status === "PUBLISHED"
                       ? "border-emerald-500/60 bg-emerald-950/20"
-                      : dest.status === "READY_TO_POST"
-                        ? "border-amber-500/60 bg-amber-950/20"
-                        : "border-slate-800 bg-slate-950/60"
+                      : "border-slate-800 bg-slate-950/60"
                   }`}
                 >
                   <div>
@@ -831,9 +828,7 @@ export function RecruitingPageClient({
                       <span className={`rounded-full border px-2.5 py-0.5 text-[10px] font-extrabold uppercase ${
                         dest.status === "PUBLISHED"
                           ? "border-emerald-500 bg-emerald-950 text-emerald-300"
-                          : dest.status === "READY_TO_POST"
-                            ? "border-amber-500 bg-amber-950 text-amber-300"
-                            : "border-slate-700 bg-slate-900 text-slate-400"
+                          : "border-slate-700 bg-slate-900 text-slate-400"
                       }`}>
                         {dest.statusLabel}
                       </span>
@@ -841,11 +836,6 @@ export function RecruitingPageClient({
 
                     <p className="mt-3 text-xs leading-relaxed text-slate-300">{dest.statusDetail}</p>
 
-                    {dest.lastSyncAt ? (
-                      <p className="mt-2 text-[10px] font-mono text-emerald-400">
-                        Last Synced: {new Date(dest.lastSyncAt).toLocaleString()}
-                      </p>
-                    ) : null}
                   </div>
 
                   <div className="mt-6 border-t border-slate-800/80 pt-4">
@@ -857,15 +847,7 @@ export function RecruitingPageClient({
                         Open Live Careers Listing &rarr;
                       </Link>
                     ) : (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          alert(`${dest.providerName} API connection required. Secret token environment variable is not configured.`);
-                        }}
-                        className="text-xs font-bold text-amber-400 hover:underline"
-                      >
-                        Publish to {dest.providerName} &rarr;
-                      </button>
+                      <span className="text-xs font-bold text-slate-500">Integration not built: tracked separately</span>
                     )}
                   </div>
                 </div>
@@ -876,20 +858,20 @@ export function RecruitingPageClient({
             <div className="mt-8 rounded-xl border border-slate-800 bg-slate-950 p-6 text-xs text-slate-300">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <span className="font-bold text-white text-sm">Normalized Canonical BOF Job Package ({selectedPosition?.positionCode ?? "no position"})</span>
-                <span className="font-mono text-teal-400">Status: ACTIVE</span>
+                <span className="font-mono text-teal-400">Status: {jobDistributionForPosition(selectedPosition)[0].statusLabel}</span>
               </div>
               <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
                 <div>
                   <span className="text-slate-500 block">Title &amp; Position</span>
-                  <p className="text-sm font-bold text-white mt-0.5">{DEMO_JOB_POSTINGS[0].title} ({DEMO_JOB_POSTINGS[0].positionId})</p>
+                  <p className="text-sm font-bold text-white mt-0.5">{selectedPosition?.title ?? "—"} ({selectedPosition?.requisition?.publicNumber ?? "no requisition"})</p>
                 </div>
                 <div>
                   <span className="text-slate-500 block">Location &amp; Home Time</span>
-                  <p className="text-sm font-bold text-white mt-0.5">{DEMO_JOB_POSTINGS[0].location} · {DEMO_JOB_POSTINGS[0].homeTime}</p>
+                  <p className="text-sm font-bold text-white mt-0.5">{selectedPosition?.location ?? "—"} · {selectedPosition?.homeTime ?? "—"}</p>
                 </div>
                 <div>
                   <span className="text-slate-500 block">Compensation</span>
-                  <p className="text-sm font-bold text-emerald-400 mt-0.5">{DEMO_JOB_POSTINGS[0].compensation}</p>
+                  <p className="text-sm font-bold text-emerald-400 mt-0.5">{selectedPosition?.compensation ?? "—"}</p>
                 </div>
               </div>
             </div>

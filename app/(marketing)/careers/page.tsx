@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { CareersPageClient } from "@/components/marketing/CareersPageClient";
-import type { PublicOpening } from "@/lib/recruiting/public-openings";
+import { jobPostingStructuredData, serializeJsonLd, type PublicOpening } from "@/lib/recruiting/public-openings";
 import { listPublicOpenings } from "@/lib/services/requisitionRecruitingBridge";
 
 export const dynamic = "force-dynamic";
@@ -18,5 +18,14 @@ export default async function CareersPage() {
   } catch {
     unavailable = true;
   }
-  return <CareersPageClient openings={openings} unavailable={unavailable} />;
+  const structuredData = openings.map(jobPostingStructuredData).filter((item) => item !== null);
+  return (
+    <>
+      {structuredData.map((item) => (
+        // schema.org JobPosting for Google for Jobs; serialized so posting text cannot break out of the tag.
+        <script key={item.identifier.value} type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(item) }} />
+      ))}
+      <CareersPageClient openings={openings} unavailable={unavailable} />
+    </>
+  );
 }

@@ -92,3 +92,21 @@ test("public openings are blind postings and close when every seat is filled", a
   for (const secret of ["Confidential Carrier", "1234567", "MC-7654321", "Hiring Manager", "3,500"]) assert.ok(!serialized.includes(secret), secret);
   assert.equal(toPublicOpening(row(2)), null);
 });
+
+test("careers JobPosting structured data is complete, blind and script-safe", async () => {
+  const { jobPostingStructuredData, serializeJsonLd } = await import("@/lib/recruiting/public-openings");
+  const base = {
+    openingId: "BOF-HR-DRV-009", title: "CDL-A Regional Driver", location: "Cleveland, OH", employment: "Full-time W-2", pay: "$0.62 CPM", signOnBonus: null,
+    benefits: "Medical", cdlClass: "A", endorsements: null, experience: "2 years", equipment: "53' reefer", homeTime: "Weekly", route: null, schedule: null,
+    summary: "Regional reefer lane </script><script>alert(1)</script>", targetStartDate: null, openings: 1, postedAt: "2026-10-19T12:00:00.000Z", locality: "Cleveland", region: "OH",
+  };
+  const data = jobPostingStructuredData(base);
+  assert.ok(data);
+  assert.equal(data["@type"], "JobPosting");
+  assert.equal(data.datePosted, "2026-10-19");
+  assert.equal(data.employmentType, "FULL_TIME");
+  assert.equal(data.jobLocation.address.addressRegion, "OH");
+  assert.equal(data.hiringOrganization.name, "BackOfficeFleet");
+  assert.ok(!serializeJsonLd(data).includes("</script>"));
+  assert.equal(jobPostingStructuredData({ ...base, region: null }), null);
+});

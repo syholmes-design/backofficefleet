@@ -60,7 +60,8 @@ All pure modules are shared by the signed-in workspace and the public demonstrat
 - public openings (`listPublicOpenings` and `findOpenPositionByOpeningId`).
 
 **Pure rule modules**
-- `lib/recruiting/public-openings.ts`: blind-posting projection. No carrier name, DOT/MC numbers, managers or budget.
+- `lib/recruiting/public-openings.ts`: blind-posting projection. No carrier name, DOT/MC numbers, managers or budget. It also builds the schema.org `JobPosting` structured data on `/careers` (`jobPostingStructuredData`, `serializeJsonLd`).
+- `lib/job-board-distribution.ts`: job-board status per position, derived from real state. BOF Careers and Google for Jobs are published while the requisition is open; Indeed, LinkedIn and ZipRecruiter show "not connected". **Do not add an adapter that reports a posting without a real request and the board's job ID.** Status and requirements: `docs/release/PRODUCTION-RELEASE-PACKAGE-2026-10-19.md` §3.
 - `lib/recruiting/requisition-screening.ts`: screening against the requisition's own requirements and the document gates.
 - `lib/recruiting/requisition-pipeline.ts`: requisition counts and the pipeline state.
 - `lib/recruiting/structured-interview.ts`: interview categories, recommendations and validation. This is new as of 2026-10-19; no historical questionnaire existed.
@@ -97,7 +98,7 @@ All pure modules are shared by the signed-in workspace and the public demonstrat
 - `DocumentRecord`
 - `Interview` (`questionnaire` stores the structured interview)
 
-Activation produces `Driver`, `DriverIntake`, `DriverDocument`, `DriverQualificationSnapshot` and `DriverReadinessScore`.
+Activation produces `Driver`, `DriverIntake`, `DriverDocument` (with `verificationExpiresAt` set from the recruiting document), `DriverIntakeRequirement` (CDL, medical and employment verification, so later expiry or rejection disqualifies the driver), `DriverQualificationSnapshot` and `DriverReadinessScore`.
 
 Migration: `20261019120000_requisition_recruiting_integration`. It is additive and has been applied only to local nonproduction databases.
 
@@ -121,6 +122,7 @@ Browser acceptance: `docs/recovery/RECRUITING-ONBOARDING-INTEGRATION-2026-10-19.
 | `lib/stores/recruiting-store.ts` (browser-only store) and `lib/recruiting-demo-data.ts` (`DEMO_POSITIONS`, `DEMO_CANDIDATES`) | Real records through the APIs above. The types moved to `workspace-model.ts`. |
 | The careers application that saved nothing (`/api/recruiting/apply` echoed the payload back to a browser store) | `POST /api/recruiting/apply` now creates the Candidate on the requisition's position. |
 | The manual "+ Create Position" job builder | Positions open only from an approved requisition (`docs/governance/superseded-decisions.md`). |
+| `lib/job-board-adapters.ts` (Indeed, LinkedIn and ZipRecruiter adapters that returned "Published" without calling any API) and the hardcoded `DEMO_JOB_POSTINGS` | `lib/job-board-distribution.ts` (real status only) |
 
 ## 2. Contact and inquiries (WEB-004/005/006)
 
@@ -145,7 +147,17 @@ Browser acceptance: `docs/recovery/RECRUITING-ONBOARDING-INTEGRATION-2026-10-19.
 | Brand | Approved logo and brand mark only. "CONTROL • COMPLY • CLEAR" is superseded, and the check fails if it reappears. |
 | Removed | `MarketingHomeIntegratedHero.tsx` and `MarketingGovernmentIntegratedHero.tsx` (never rendered); the unused `IconDocWarning` |
 
-## 4. Rules for agents
+## 4. Features reconciled from `main` (2026-10-19)
+
+| Function | Canonical |
+|---|---|
+| Carrier packet preview and evidence | `app/(bof)/carriers/[id]/packet/page.tsx` and `…/packet/[evidenceId]/page.tsx` on `lib/carrier-registry.ts`, `lib/carrier-packet-evidence.ts` and `lib/carrier-dispatch-gates.ts` (demo registry; see the Loads handoff on the two carrier models) |
+| Freight Compliance Pulse | `/compliance` → `components/marketing/FreightCompliancePulse.tsx` on `lib/regulatory-feed/**` and `/api/regulatory-feed`. Live public sources only; never sample items presented as live. |
+| Retired `main` URLs | `next.config.ts` redirects: `/customer-portal/request-shipment` → `/customer-portal/load-intake`; `/demo` and `/demo/walkthrough` → `/interactive-demo` |
+
+Details: `docs/release/BRANCH-RECONCILIATION-2026-10-19.md`. The next consolidation (Loads) starts from `docs/architecture/LOADS-INTEGRATION-HANDOFF-2026-10-19.md`.
+
+## 5. Rules for agents
 
 1. Edit the canonical file listed here. When a function has no entry, find its canonical home before adding code, and add it here.
 2. Never add a second implementation (a parallel page, store, API or demo copy) of a listed function. A demonstration uses a different transport on the same screens and rules, never a copy.

@@ -94,6 +94,18 @@ function mapRecruitingDocStatus(status: RecruitingV2DocumentStatus): "VERIFIED" 
   return "PENDING_VERIFICATION";
 }
 
+/**
+ * Qualification-file items the driver's intake keeps enforcing after activation. Each becomes a
+ * DriverIntakeRequirement, so the qualification engine re-checks the carried-over document (verified,
+ * not rejected, not expired) on every evaluation. MVR and Clearinghouse map to the generic OTHER type
+ * and so cannot be matched to a single requirement; recruiting's document gates cover them at hire.
+ */
+const ACTIVATION_REQUIREMENTS: Array<{ documentType: DriverDocumentType; label: string }> = [
+  { documentType: "DRIVER_LICENSE", label: "Commercial driver's license" },
+  { documentType: "MEDICAL", label: "DOT medical examiner's certificate" },
+  { documentType: "WORK_HISTORY", label: "Employment verification" },
+];
+
 function mapRecruitingDocType(documentType: string): DriverDocumentType {
   if (documentType === "CDL") return "DRIVER_LICENSE";
   if (documentType === "MEDICAL") return "MEDICAL";
@@ -309,6 +321,8 @@ export async function activateRecruitingV2Candidate(input: {
           status: mapRecruitingDocStatus(record.status),
           storageKey,
           originalFileName: `${record.documentType}-${record.documentCode}.recruiting-bridge`,
+          // The field qualification reads for expiry (previously only in the JSON note below).
+          verificationExpiresAt: record.expirationDate ?? null,
           mimeType: "application/json",
           uploadedByUserId: input.sessionUser.id!,
           verificationQuality: JSON.stringify({
@@ -320,6 +334,27 @@ export async function activateRecruitingV2Candidate(input: {
             expirationDate: record.expirationDate?.toISOString() ?? null,
             verificationNotes: record.verificationNotes,
           }),
+        },
+      });
+    }
+
+    const carried = await tx.driverDocument.findMany({
+      where: { driverId: driver.id, driverIntakeId: intake.id, fleetId },
+      select: { id: true, type: true, status: true, verificationExpiresAt: true, uploadedAt: true },
+      orderBy: { uploadedAt: "desc" },
+    });
+    for (const item of ACTIVATION_REQUIREMENTS) {
+      const document = carried.find((d) => d.type === item.documentType) ?? null;
+      await tx.driverIntakeRequirement.create({
+        data: {
+          driverIntakeId: intake.id,
+          requirementType: item.documentType,
+          label: item.label,
+          isRequired: true,
+          status: document?.status === "VERIFIED" ? "SATISFIED" : "REQUIRED",
+          expiresAt: document?.verificationExpiresAt ?? null,
+          satisfiedByDocumentId: document?.status === "VERIFIED" ? document.id : null,
+          evidenceReference: `recruiting-v2:${candidate.candidateCode}`,
         },
       });
     }

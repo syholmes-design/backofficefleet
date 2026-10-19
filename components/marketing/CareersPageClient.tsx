@@ -306,7 +306,7 @@ export function CareersPageClient({ openings, unavailable = false }: { openings:
             ) : null}
             <div className="grid gap-6 md:grid-cols-2">
               {positions.map((pos) => (
-                <article key={pos.openingId} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 flex flex-col justify-between" data-testid="careers-opening">
+                <article key={pos.openingId} id={pos.openingId} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 flex flex-col justify-between scroll-mt-24" data-testid="careers-opening">
                   <div>
                     <div className="flex items-center justify-between gap-2">
                       <span className="rounded-full bg-teal-900/50 border border-teal-700/50 px-3 py-1 text-xs font-bold text-teal-300 uppercase">

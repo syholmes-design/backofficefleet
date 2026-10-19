@@ -1,13 +1,17 @@
-export type JobBoardProviderId = "bof_careers" | "indeed" | "linkedin" | "ziprecruiter";
+/**
+ * Job-board distribution status for a recruiting position, derived from real state only.
+ *
+ * - BOF Careers (/careers) is the one connected channel: a position is published there exactly while
+ *   its approved requisition is open for applications (lib/recruiting/public-openings.ts), and the
+ *   page carries schema.org JobPosting data that Google for Jobs can index.
+ * - Indeed, LinkedIn and ZipRecruiter are not connected. Each needs an employer account, API or feed
+ *   credentials and a commercial agreement before BOF can post; nothing here claims otherwise.
+ */
+import type { RecruitingPipelineState } from "@/lib/recruiting/requisition-pipeline";
 
-export type JobBoardConnectionStatus =
-  | "PUBLISHED"
-  | "READY_TO_POST"
-  | "API_NOT_CONNECTED"
-  | "QUEUED"
-  | "PAUSED"
-  | "EXPIRED"
-  | "ERROR";
+export type JobBoardProviderId = "bof_careers" | "google_for_jobs" | "indeed" | "linkedin" | "ziprecruiter";
+
+export type JobBoardConnectionStatus = "PUBLISHED" | "NOT_PUBLISHED" | "NOT_CONNECTED";
 
 export type JobBoardDestinationConfig = {
   providerId: JobBoardProviderId;
@@ -16,128 +20,48 @@ export type JobBoardDestinationConfig = {
   status: JobBoardConnectionStatus;
   statusLabel: string;
   statusDetail: string;
-  lastSyncAt?: string;
-  externalJobId?: string;
-  apiDocsUrl?: string;
 };
 
-export type CanonicalJobPosting = {
-  jobId: string;
-  positionId: string;
-  title: string;
-  department: string;
-  location: string;
-  employmentType: string;
-  homeTime: string;
-  equipment: string;
-  freightType: string;
-  primaryLanes: string;
-  schedule: string;
-  compensation: string;
-  benefits: string[];
-  minimumQualifications: string[];
-  cdlClass: string;
-  experienceYears: number;
-  endorsements: string[];
-  safetyExpectations: string;
-  physicalRequirements: string;
-  applicationInstructions: string;
-  postingStatus: "ACTIVE" | "PAUSED" | "EXPIRED" | "DRAFT";
-  createdAt: string;
-  updatedAt: string;
-  destinations: Record<JobBoardProviderId, JobBoardDestinationConfig>;
-};
+/** Requisition states in which the careers page lists the position (mirrors the public-openings query). */
+const OPEN_STATES: RecruitingPipelineState[] = ["READY_FOR_RECRUITING", "RECRUITING", "PARTIALLY_FILLED"];
 
-export type ApplicationSource =
-  | "BOF Careers Page"
-  | "Indeed"
-  | "LinkedIn"
-  | "ZipRecruiter"
-  | "Referral"
-  | "Direct";
-
-export interface JobBoardDistributionAdapter {
-  providerId: JobBoardProviderId;
-  providerName: string;
-  isConfigured(): boolean;
-  publish(posting: CanonicalJobPosting): Promise<{ success: boolean; externalJobId?: string; message: string }>;
-  pause(posting: CanonicalJobPosting): Promise<{ success: boolean; message: string }>;
-  getStatus(posting: CanonicalJobPosting): JobBoardConnectionStatus;
-}
-
-export const DEMO_JOB_POSTINGS: CanonicalJobPosting[] = [
-  {
-    jobId: "JOB-001",
-    positionId: "POS-001",
-    title: "CDL-A OTR Regional Driver",
-    department: "Fleet Operations",
-    location: "Cleveland, OH",
-    employmentType: "Full-Time W-2",
-    homeTime: "Weekly / Bi-Weekly",
-    equipment: "2024 Freightliner Cascadia / 53' Refrig Trailer",
-    freightType: "Refrigerated & Dry Freight",
-    primaryLanes: "Midwest (OH, IL, IN) → Southeast (GA, TX, NC)",
-    schedule: "5-6 Days On, 34-Hour Restart at Home",
-    compensation: "$0.62 - $0.68 CPM + $1,250 Weekly Guarantee + Safety Bonus",
-    benefits: [
-      "Health, Dental & Vision Insurance",
-      "401(k) with 4% Company Match",
-      "Paid Time Off & Holiday Bonus",
-      "Late-Model Inverter & Fridge Equipped Trucks",
-    ],
-    minimumQualifications: [
-      "Valid Class A CDL with clean driving record",
-      "Minimum 2 years verifiable OTR tractor-trailer experience",
-      "Current DOT Medical Examiner's Certificate",
-      "Pass FMCSA Clearinghouse drug & alcohol screen",
-    ],
-    cdlClass: "Class A",
-    experienceYears: 2,
-    endorsements: ["Tanker (N)", "HazMat (H) Preferred"],
-    safetyExpectations: "Zero recordable accidents in last 24 months; strict HOS & ELD compliance required.",
-    physicalRequirements: "Ability to conduct pre-trip inspections, open trailer doors, and secure load seals.",
-    applicationInstructions: "Submit application via BOF Careers Page or upload CDL and Medical Card for instant qualification review.",
-    postingStatus: "ACTIVE",
-    createdAt: "2026-08-16",
-    updatedAt: "2026-08-28",
-    destinations: {
-      bof_careers: {
-        providerId: "bof_careers",
-        providerName: "BOF Careers Page",
-        isInternal: true,
-        status: "PUBLISHED",
-        statusLabel: "PUBLISHED",
-        statusDetail: "Live on internal BOF Careers portal (/careers). Applications enter BOF recruiting pipeline directly.",
-        lastSyncAt: "2026-08-28T14:30:00Z",
-        externalJobId: "BOF-CAR-POS-001",
-      },
-      indeed: {
-        providerId: "indeed",
-        providerName: "Indeed",
-        isInternal: false,
-        status: "READY_TO_POST",
-        statusLabel: "READY TO POST",
-        statusDetail: "Normalized posting package generated. External API credentials/integration not configured.",
-        apiDocsUrl: "https://docs.indeed.com/employer-api",
-      },
-      linkedin: {
-        providerId: "linkedin",
-        providerName: "LinkedIn Jobs",
-        isInternal: false,
-        status: "API_NOT_CONNECTED",
-        statusLabel: "API NOT CONNECTED",
-        statusDetail: "External API integration required. Environment secret LINKEDIN_JOBS_API_KEY is not configured.",
-        apiDocsUrl: "https://learn.microsoft.com/en-us/linkedin/talent/job-postings",
-      },
-      ziprecruiter: {
-        providerId: "ziprecruiter",
-        providerName: "ZipRecruiter",
-        isInternal: false,
-        status: "READY_TO_POST",
-        statusLabel: "READY TO POST",
-        statusDetail: "XML/JSON feed package ready. External ZipRecruiter Enterprise Partner API key not configured.",
-        apiDocsUrl: "https://www.ziprecruiter.com/partners",
-      },
-    },
-  },
+const EXTERNAL_BOARDS: Array<{ providerId: JobBoardProviderId; providerName: string; needs: string }> = [
+  { providerId: "indeed", providerName: "Indeed", needs: "an Indeed employer account and job-sync/XML feed approval" },
+  { providerId: "linkedin", providerName: "LinkedIn Jobs", needs: "a LinkedIn Talent Solutions partner agreement and job-posting API access" },
+  { providerId: "ziprecruiter", providerName: "ZipRecruiter", needs: "a ZipRecruiter employer account and job-feed credentials" },
 ];
+
+export function jobDistributionForPosition(
+  position: { requisition?: { status: string; pipelineState: RecruitingPipelineState } | null } | null | undefined,
+): JobBoardDestinationConfig[] {
+  const requisition = position?.requisition;
+  const open = Boolean(requisition && requisition.status === "APPROVED" && OPEN_STATES.includes(requisition.pipelineState));
+  return [
+    {
+      providerId: "bof_careers",
+      providerName: "BOF Careers Page",
+      isInternal: true,
+      status: open ? "PUBLISHED" : "NOT_PUBLISHED",
+      statusLabel: open ? "Published" : "Not published",
+      statusDetail: open
+        ? "Listed on /careers as a blind posting while the requisition is open. Applications become candidates on this requisition."
+        : "Listed only while the approved requisition is open for applications with seats remaining.",
+    },
+    {
+      providerId: "google_for_jobs",
+      providerName: "Google for Jobs",
+      isInternal: true,
+      status: open ? "PUBLISHED" : "NOT_PUBLISHED",
+      statusLabel: open ? "Structured data live" : "Not published",
+      statusDetail: "The careers page carries schema.org JobPosting markup for each open posting. Indexing is decided by Google; BOF does not submit or pay.",
+    },
+    ...EXTERNAL_BOARDS.map(({ providerId, providerName, needs }) => ({
+      providerId,
+      providerName,
+      isInternal: false,
+      status: "NOT_CONNECTED" as const,
+      statusLabel: "Not connected",
+      statusDetail: `No integration exists yet. Posting requires ${needs}. Nothing is sent to this board.`,
+    })),
+  ];
+}
