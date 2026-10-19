@@ -17,6 +17,7 @@ import {
   MarketingHomeTripPhases,
   MarketingHomeValueIntro,
 } from "@/components/marketing/MarketingHomeOperations";
+import { MarketingServiceModel } from "@/components/marketing/MarketingServiceModel";
 import { FleetAssessmentWizardClient } from "@/components/marketing/funnel/FleetAssessmentWizardClient";
 import { FleetSavingsCalculatorClient } from "@/components/marketing/funnel/FleetSavingsCalculatorClient";
 import { SERVICE_PILLARS } from "@/lib/marketing-service-pillars";
@@ -54,6 +55,7 @@ export default function MarketingHomeAccountable() {
       <MarketingHomeCapabilities />
       <MarketingHomeTripPhases />
       <MarketingHomeBusinessModel />
+      <MarketingServiceModel />
 
       <section id="what-we-do" className="bof-home-section bof-home-section--white" aria-labelledby="what-we-do-heading">
         <div className="bof-mkt-container">

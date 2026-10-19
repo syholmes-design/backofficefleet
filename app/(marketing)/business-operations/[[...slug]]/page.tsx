@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import type { PlatformCapabilityKey } from "@/components/recovered-site/PlatformCapabilityLinks";
+import { MarketingServiceModel } from "@/components/marketing/MarketingServiceModel";
 import { RecoveredPageView } from "@/components/recovered-site/RecoveredPageView";
 import { loadRecoveredPage, recoveredEntry, recoveredRoutes, recoveredSlug } from "@/lib/recovered-site/business-operations";
 
@@ -89,7 +90,7 @@ export default async function RecoveredBusinessOperationsPage({ params }: { para
   const route = routeFor(slug);
   const page = await loadRecoveredPage(route);
   if (!page) notFound();
-  return (
+  const view = (
     <RecoveredPageView
       page={page}
       route={route}
@@ -97,5 +98,15 @@ export default async function RecoveredBusinessOperationsPage({ params }: { para
       relatedLabel="Related Business Operations pages"
       capabilities={CAPABILITIES_BY_ROUTE[route]}
     />
+  );
+  // The overview also states the service model (what BOF staff perform vs what customers see in portals).
+  if (route !== "/business-operations") return view;
+  return (
+    <>
+      {view}
+      <div className="bof-home-redesign bg-slate-50 text-slate-950">
+        <MarketingServiceModel headingId="business-operations-service-model-heading" />
+      </div>
+    </>
   );
 }

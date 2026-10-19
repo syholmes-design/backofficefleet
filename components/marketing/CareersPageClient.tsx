@@ -134,7 +134,7 @@ export function CareersPageClient() {
               <button
                 type="button"
                 onClick={() => setSelectedPosition(null)}
-                className="text-xs text-slate-400 hover:text-white underline"
+                className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary text-xs"
               >
                 &larr; Back to Openings
               </button>
@@ -282,7 +282,7 @@ export function CareersPageClient() {
                 <button
                   type="button"
                   onClick={() => setSelectedPosition(null)}
-                  className="text-xs text-slate-400 hover:text-white"
+                  className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary text-xs"
                 >
                   Cancel
                 </button>
