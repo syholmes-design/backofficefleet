@@ -23,10 +23,11 @@ import {
 } from "@/lib/recruiting/requisition-transitions";
 import { recruitingPipelineState, requisitionPipelineCounts } from "@/lib/recruiting/requisition-pipeline";
 import { applicationScreenPasses, CONFIRMATION_REQUIREMENTS, evaluateRequisitionScreening } from "@/lib/recruiting/requisition-screening";
-import { INTERVIEW_RECOMMENDATIONS, recommendationLabel, validateStructuredInterview, type InterviewCategoryResponse } from "@/lib/recruiting/structured-interview";
+import { emptyInterviewResponses, INTERVIEW_RECOMMENDATIONS, recommendationLabel, validateStructuredInterview, type InterviewCategoryResponse } from "@/lib/recruiting/structured-interview";
 import {
   buildRecruitingWorkspaceModel,
   positionFieldsFromRequisition,
+  type RecruitingWorkspaceModel,
   type WorkspaceActivationFacts,
   type WorkspaceCandidateRow,
   type WorkspacePositionRow,
@@ -43,7 +44,8 @@ import type { RecruitingTransport, RecruitingTransportResponse } from "@/lib/rec
  * Oct-17 activation creates in the platform, without creating them.
  */
 
-const STORAGE_KEY = "bof-recruiting-demo-v1";
+// v2: seeds the historical Recruiting V2 candidates (Michael Anderson CAND-001, Sarah Mitchell CAND-002).
+const STORAGE_KEY = "bof-recruiting-demo-v2";
 const FLEET = { id: "demo-fleet-lakeshore", name: "Lakeshore Regional Carriers (fictional)" };
 
 type DemoApproval = {
@@ -174,6 +176,45 @@ function seedRequisition(): DemoRequisition {
   };
 }
 
+/**
+ * Sarah Mitchell's original position (Recruiting V2 POSITION-CLASS-A-DAL, local shuttle), as an
+ * approved requisition so she belongs to it like every other candidate.
+ */
+function seedDallasRequisition(): DemoRequisition {
+  return {
+    ...seedRequisition(),
+    id: "demo-req-002",
+    publicNumber: "BOF-HR-DRV-002",
+    terminalDomicile: "Dallas, TX",
+    statesOfOperation: "TX",
+    supervisor: "Dallas terminal manager",
+    urgency: "Standard: backfill",
+    positionTitle: "CDL-A Local Shuttle Driver",
+    reportingStructure: "Reports to the Dallas terminal manager",
+    workLocation: "Dallas terminal",
+    homeTimePattern: "Home daily",
+    routeLane: "Dallas–Fort Worth yard and rail-ramp shuttles",
+    typicalNightsAway: "0",
+    equipmentType: "Day cab tractor, 53' dry van",
+    endorsements: "None required",
+    experienceRequirements: "1 year verifiable tractor-trailer experience",
+    compensationStructure: "Hourly with overtime",
+    payRange: "$27–$30 per hour",
+    signOnBonus: "$1,000 after 60 days",
+    positionSummary: "Local shuttle driver for Dallas–Fort Worth yard and rail-ramp moves.",
+    essentialFunctions: "Pre-trip inspections, yard moves, rail-ramp drop and hook, HOS compliance.",
+    schedule: "5 days, home daily",
+    numberOfPositions: 1,
+    headcount: "1 backfill seat",
+    financialJustification: "Backfill of a departing driver",
+    targetFillMetrics: "Fill within 30 days",
+    dateSubmitted: "2026-10-10T14:00:00.000Z",
+    approvedAt: "2026-10-13T15:30:00.000Z",
+    recruitingOpenedAt: "2026-10-13T15:30:00.000Z",
+    targetStartDate: "2026-11-30T00:00:00.000Z",
+  };
+}
+
 function openPosition(state: DemoState, req: DemoRequisition) {
   if (state.positions.some((p) => p.requisitionId === req.id)) return;
   const fields = positionFieldsFromRequisition({
@@ -194,9 +235,108 @@ function openPosition(state: DemoState, req: DemoRequisition) {
   state.positions.push({ id: `demo-pos-${req.id}`, ...fields, status: "OPEN", requisitionId: req.id, fleetId: FLEET.id, createdAt: now() });
 }
 
-function seed(): DemoState {
-  const state: DemoState = { seq: 1, requisitions: [seedRequisition()], positions: [], candidates: [], activations: {} };
-  openPosition(state, state.requisitions[0]);
+/** Stages the demonstration can start Michael Anderson at (the historical default is "activation"). */
+export type DemoMichaelStage = "screen" | "interview" | "offer" | "onboarding" | "activation";
+
+/** The two original Recruiting V2 demonstration candidates (fictional people; never written to a database). */
+const MICHAEL = {
+  fullName: "Michael Anderson",
+  email: "michael.anderson@demo-candidate.bof.example",
+  phone: "(216) 555-0182",
+  homeLocation: "Cleveland, OH",
+  cdlClass: "A",
+  cdlState: "OH",
+  cdlNumber: "OH00008821",
+  experienceYears: 4,
+  endorsements: ["N"],
+  equipmentExperience: "4 years 53' refrigerated and dry van, Freightliner Cascadia",
+};
+const SARAH = {
+  fullName: "Sarah Mitchell",
+  email: "sarah.mitchell@demo-candidate.bof.example",
+  phone: "(214) 555-0194",
+  homeLocation: "Dallas, TX",
+  cdlClass: "A",
+  cdlState: "TX",
+  cdlNumber: "TX00004491",
+  experienceYears: 3,
+  endorsements: [] as string[],
+  equipmentExperience: "3 years local shuttle, day cab",
+};
+
+/** Runs one demonstration request during seeding; any rejection is a seed defect, so it throws. */
+function seedCall(state: DemoState, method: string, path: string, body: Record<string, unknown> = {}) {
+  const result = handle(state, method, path, body);
+  if (!result.ok) throw new Error(`Demo seed: ${method} ${path} failed (${result.status}): ${result.data.error ?? ""}`);
+  return result;
+}
+
+function seedCandidate(state: DemoState, name: string) {
+  const model = handle(state, "GET", "/api/recruiting/workspace", {}).data as unknown as RecruitingWorkspaceModel;
+  const candidate = model.candidates.find((c) => c.name === name);
+  if (!candidate) throw new Error(`Demo seed: ${name} missing`);
+  return candidate;
+}
+
+/**
+ * Seeds the two historical Recruiting V2 candidates by replaying the same requests (and rules) a
+ * recruiter's clicks send, so their states are earned, not set:
+ * - Michael Anderson, CAND-001, BOF-HR-DRV-001 (Cleveland): application, screening, all documents
+ *   verified, structured interview "Proceed", offer accepted, onboarding complete, ready to activate
+ *   (Recruiting V2: qualification READY, offer COMPLETE, onboarding COMPLETE). `michaelStage` stops
+ *   earlier for the stage links on /recruiting-onboarding.
+ * - Sarah Mitchell, CAND-002, BOF-HR-DRV-002 (Dallas): application complete, no documents, so
+ *   qualification, document review and compliance are blocked; interview not scheduled; no offer;
+ *   onboarding pending (Recruiting V2: BLOCKED / NOT_PROVIDED / PENDING).
+ */
+function seedHistoricalCandidates(state: DemoState, michaelStage: DemoMichaelStage) {
+  const [cleveland, dallas] = state.positions;
+  seedCall(state, "POST", `/api/recruiting/positions/${cleveland.id}/candidates`, { ...MICHAEL, source: "BOF synthetic applicant intake" });
+  seedCall(state, "POST", `/api/recruiting/positions/${dallas.id}/candidates`, { ...SARAH, source: "BOF synthetic applicant intake" });
+  seedCall(state, "POST", "/api/recruiting/candidates/CAND-002/screening", { action: "screen" });
+
+  const code = "CAND-001";
+  if (michaelStage === "screen") return;
+  seedCall(state, "POST", `/api/recruiting/candidates/${code}/screening`, { action: "screen" });
+  let michael = seedCandidate(state, MICHAEL.fullName);
+  for (const item of michael.screening.results.filter((r) => r.status === "RECRUITER_CONFIRMATION")) {
+    seedCall(state, "POST", `/api/recruiting/candidates/${code}/screening`, { action: "confirm", key: item.key });
+  }
+  for (const gate of michael.documentGates.filter((g) => !g.latestDocument)) {
+    seedCall(state, "POST", `/api/recruiting-v2/documents/${code}`, { documentType: gate.documentType, status: "RECEIVED", uploadedBy: "Recruiting & Onboarding workspace" });
+  }
+  michael = seedCandidate(state, MICHAEL.fullName);
+  for (const gate of michael.documentGates.filter((g) => g.latestDocument && g.gateState !== "SATISFIED")) {
+    seedCall(state, "PATCH", `/api/recruiting-v2/documents/${code}/${encodeURIComponent(gate.latestDocument!.documentCode)}`, {
+      action: "VERIFY",
+      verifiedBy: "BOF compliance review",
+      verificationNotes: "Verified (demonstration).",
+    });
+  }
+  if (michaelStage === "interview") return;
+  const categories = emptyInterviewResponses().map((row) => ({ ...row, evaluation: "MEETS", responses: row.responses.map(() => "Fictional response recorded for the demonstration."), notes: "" }));
+  seedCall(state, "PATCH", `/api/recruiting-v2/interviews/${code}`, {
+    questionnaire: { categories, recommendation: "ADVANCE", conditions: "", decisionNotes: "Meets every requisition requirement; strong lane fit.", interviewer: "BOF recruiter (demo)" },
+  });
+  if (michaelStage === "offer") return;
+  const offer = { compensation: cleveland.compensation, startDate: "2026-11-16", orientationDate: "2026-11-12" };
+  seedCall(state, "POST", `/api/recruiting-v2/offer/${code}`, { offerStatus: "DRAFT", ...offer });
+  seedCall(state, "POST", `/api/recruiting-v2/offer/${code}`, { offerStatus: "SENT", ...offer });
+  seedCall(state, "POST", `/api/recruiting-v2/offer/${code}`, { offerStatus: "ACCEPTED" });
+  if (michaelStage === "onboarding") return;
+  seedCall(state, "POST", `/api/recruiting-v2/onboarding/${code}`, { onboardingStatus: "IN_PROGRESS", orientationDate: "2026-11-12", orientationLocation: "Cleveland terminal training room" });
+  for (const key of ["training", "equipment-assignment"]) {
+    michael = seedCandidate(state, MICHAEL.fullName);
+    const onboardingChecklist = michael.onboardingItems.map((item) => ({ key: item.key, label: item.label, status: item.key === key ? "COMPLETE" : item.status, source: item.source, reason: item.reason }));
+    seedCall(state, "POST", `/api/recruiting-v2/onboarding/${code}`, { onboardingStatus: "IN_PROGRESS", onboardingChecklist });
+  }
+  seedCall(state, "POST", `/api/recruiting-v2/onboarding/${code}`, { onboardingStatus: "COMPLETE" });
+}
+
+function seed(michaelStage: DemoMichaelStage = "activation"): DemoState {
+  const state: DemoState = { seq: 1, requisitions: [seedRequisition(), seedDallasRequisition()], positions: [], candidates: [], activations: {} };
+  for (const requisition of state.requisitions) openPosition(state, requisition);
+  seedHistoricalCandidates(state, michaelStage);
   return state;
 }
 
@@ -222,8 +362,9 @@ function save(state: DemoState) {
   }
 }
 
-export function resetRecruitingDemo() {
-  memory = seed();
+/** Restores the original demonstration: both historical candidates, Michael at `michaelStage`. */
+export function resetRecruitingDemo(michaelStage: DemoMichaelStage = "activation") {
+  memory = seed(michaelStage);
   save(memory);
 }
 

@@ -172,7 +172,18 @@ const MICHAEL_ANDERSON = {
   equipmentExperience: "4 years 53' refrigerated and dry van, Freightliner Cascadia",
 };
 
-export function AttachCandidateForm({ position, onAttach, busy }: { position: WorkspacePosition; onAttach: (body: Record<string, unknown>) => void; busy: boolean }) {
+export function AttachCandidateForm({
+  position,
+  onAttach,
+  busy,
+  offerMichael = true,
+}: {
+  position: WorkspacePosition;
+  onAttach: (body: Record<string, unknown>) => void;
+  busy: boolean;
+  /** False once Michael Anderson is already in the workspace (e.g. the seeded demonstration), so he is not duplicated. */
+  offerMichael?: boolean;
+}) {
   const blank = { fullName: "", email: "", phone: "", homeLocation: "", cdlClass: "A", cdlState: "", cdlNumber: "", experienceYears: "", endorsements: "", equipmentExperience: "" };
   const [form, setForm] = useState(blank);
   const set = (key: keyof typeof blank) => (e: React.ChangeEvent<HTMLInputElement>) => setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -188,9 +199,11 @@ export function AttachCandidateForm({ position, onAttach, busy }: { position: Wo
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="font-bold uppercase text-slate-400">Attach Candidate to {position.requisition?.publicNumber ?? position.positionCode}</span>
-        <button type="button" onClick={() => setForm(MICHAEL_ANDERSON)} className="text-[11px] font-bold text-teal-300 hover:underline">
-          Use fictional candidate Michael Anderson
-        </button>
+        {offerMichael ? (
+          <button type="button" onClick={() => setForm(MICHAEL_ANDERSON)} className="text-[11px] font-bold text-teal-300 hover:underline">
+            Use fictional candidate Michael Anderson
+          </button>
+        ) : null}
       </div>
       <div className="mt-3 grid gap-2 sm:grid-cols-2">
         {(

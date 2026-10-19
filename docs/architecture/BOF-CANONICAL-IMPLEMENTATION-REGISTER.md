@@ -88,7 +88,7 @@ All pure modules are shared by the signed-in workspace and the public demonstrat
 **Transports**
 - `lib/recruiting/workspace-transport.ts`: the HTTP transport, used when signed in.
 - `lib/recruiting/demo-backend.ts`: the in-browser transport for the public demonstration (fictional records).
-- `lib/recruiting/demo-stages.ts`: starts the demonstration at a chosen stage.
+- `lib/recruiting/demo-stages.ts`: starts the demonstration at a chosen stage. It reuses the demo backend's seed of the two historical candidates: Michael Anderson CAND-001 (BOF-HR-DRV-001, ready to activate) and Sarah Mitchell CAND-002 (BOF-HR-DRV-002, blocked on documents, no offer).
 
 ### Database entities
 

@@ -108,3 +108,42 @@ Lint shows 4 warnings, all in `components/dispatch/LoadDeliveryScreen.tsx`, whic
 7. Rollback is "Promote" of the previous deployment; no schema rollback is needed.
 
 No migration was added in this closure round.
+
+## 8. Historical demonstration candidates restored (pre-release check, 2026-10-19)
+
+**Finding.** The consolidation lost **Sarah Mitchell (CAND-002)**, and Michael Anderson's historical state was not preserved:
+- The Recruiting V2 demo data (`lib/recruiting-v2/recruiting-v2-demo-data.ts`, removed in `cfdbd24c`) defined both candidates.
+- The consolidated demonstration seeded only an approved requisition with no candidates.
+- The acceptance scripts had also reused the name "Sarah Mitchell" for an invented Class B rejection scenario, which does not represent the historical Sarah. That scenario now uses "Dana Whitfield (fictional)", and the earlier screenshots that show the name are superseded by this record.
+
+**Restoration** (in the canonical module only; no second Recruiting implementation). `lib/recruiting/demo-backend.ts` now seeds both historical candidates by **replaying the real workflow requests** through the demonstration's own rules, so their states are earned, not hand-set. `lib/recruiting/demo-stages.ts` reuses the same seed instead of keeping its own replay.
+
+| | Michael Anderson | Sarah Mitchell |
+|---|---|---|
+| ID / workspace | CAND-001, `/demo/recruiting/workspace?candidateId=CAND-001` | CAND-002, `/demo/recruiting/workspace?candidateId=CAND-002` |
+| Requisition (historical position) | BOF-HR-DRV-001, CDL-A Regional Reefer, Cleveland, OH (V2 `POSITION-CLASS-A-CLE`) | BOF-HR-DRV-002, CDL-A Local Shuttle, Dallas, TX (V2 `POSITION-CLASS-A-DAL`) |
+| Profile | Class A, OH, 4 years | Class A, TX, 3 years |
+| Application | Complete | Complete |
+| Qualification / documents / compliance | All 8 document gates verified → READY | No documents collected → gates BLOCKED |
+| Interview | Structured interview recorded: Proceed | Not scheduled (the structured interview form is available) |
+| Offer | Prepared, sent, accepted | **Not provided**: blocked until qualification is complete |
+| Onboarding | Complete | Pending (not eligible) |
+| Activation | Ready (simulated in the demonstration) | Not available |
+
+These match V2's `READY`/`COMPLETE` for Michael and `BLOCKED`/`NOT_PROVIDED`/`PENDING` for Sarah.
+
+The `/recruiting-onboarding` stage links reseed Michael at the chosen stage and keep Sarah unchanged. "Reset demonstration" restores both. The demonstration storage key moved to `bof-recruiting-demo-v2`, so returning visitors get the restored seed.
+
+**Production safety:**
+- Both candidates exist only in the visitor's browser (the demonstration transport). No seed, migration or script writes candidate rows to a database (searched: `prisma/`, `scripts/`, `lib/`).
+- In live (signed-in) mode, the workspace's "Use fictional candidate Michael Anderson" prefill is offered only when no Michael is present.
+
+**Release check (cannot be run from here):** if production still holds rows created through the old V2 APIs (the Oct 17 gap register cites `GET /api/recruiting-v2/activation/CAND-001` on production), run this read-only query:
+
+```sql
+select "candidateCode", "fullName", "applicationSummary"->'tenant' from "Candidate" order by "createdAt";
+```
+
+Then decide whether those legacy demo rows should stay. New candidates continue numbering after the highest existing code.
+
+**Focused regression:** `historical-candidates` browser suite, 26 of 26. Screenshots are in `docs/recovery/evidence/historical-candidates-2026-10-19/`.

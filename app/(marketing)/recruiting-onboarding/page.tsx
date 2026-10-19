@@ -65,7 +65,7 @@ const STAGES: Stage[] = [
     recruiter: ["Screens the application against the requisition", "Collects CDL, MVR, medical card, Clearinghouse and employment verification", "Confirms PSP and drug test from the source reports"],
     enforced: ["CDL class, endorsements and years of experience compared with the requisition", "A requirement is met only when its document is verified", "A missing document holds the candidate; a failed one stops them"],
     stops: ["Wrong CDL class or too little experience", "A rejected or expired qualification document"],
-    tryIt: { href: `${DEMO}?stage=screen`, label: "Screen Michael Anderson", note: "Starts with Michael attached to BOF-HR-DRV-001." },
+    tryIt: { href: `${DEMO}?stage=screen`, label: "Screen Michael Anderson", note: "Michael Anderson, CAND-001, on BOF-HR-DRV-001." },
   },
   {
     id: "interview",
@@ -273,8 +273,9 @@ export default function RecruitingOnboardingPage() {
         <section className="bof-ro-close" aria-labelledby="close-heading">
           <h2 id="close-heading">Walk one driver all the way through</h2>
           <p>
-            Start with the approved requisition, attach Michael Anderson, and take him from screening to the readiness check that decides
-            whether he can be dispatched.
+            Two fictional candidates are waiting: Michael Anderson (CAND-001) has cleared every gate and is ready to activate, and Sarah
+            Mitchell (CAND-002) is blocked until her qualification documents are collected. Take either one forward, or start Michael at
+            any stage above.
           </p>
           <div className="bof-ro-hero__actions">
             <Link className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary" href={DEMO}>

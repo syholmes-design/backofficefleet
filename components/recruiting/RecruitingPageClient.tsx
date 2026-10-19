@@ -707,7 +707,7 @@ export function RecruitingPageClient({
                 </div>
 
                 {selectedPosition && selectedPosition.status === "OPEN" && selectedPosition.counts.remaining > 0 ? (
-                  <AttachCandidateForm position={selectedPosition} busy={busy} onAttach={(body) => void actions.attach(selectedPosition.id, body)} />
+                  <AttachCandidateForm position={selectedPosition} busy={busy} offerMichael={!allCandidates.some((c) => c.name === "Michael Anderson")} onAttach={(body) => void actions.attach(selectedPosition.id, body)} />
                 ) : null}
 
                 <div className="rounded-xl border border-slate-800 bg-slate-950 p-4">
@@ -886,7 +886,7 @@ export function RecruitingPageClient({
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-teal-400">
-                  Candidate Profile ({selectedCandidate.id})
+                  Candidate Profile ({selectedCandidate.id}){selectedCandidate.requisitionNumber ? ` · Requisition ${selectedCandidate.requisitionNumber}` : ""}
                 </span>
                 <h2 className="text-2xl font-extrabold text-white">{selectedCandidate.name}</h2>
                 <p className="text-xs text-slate-300">
