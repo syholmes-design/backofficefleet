@@ -146,4 +146,4 @@ select "candidateCode", "fullName", "applicationSummary"->'tenant' from "Candida
 
 Then decide whether those legacy demo rows should stay. New candidates continue numbering after the highest existing code.
 
-**Focused regression:** `historical-candidates` browser suite, 26 of 26. Screenshots are in `docs/recovery/evidence/historical-candidates-2026-10-19/`.
+**Focused regression:** `historical-candidates` browser suite, 27 of 27, including "Prepare offer" being disabled for Sarah while qualification is blocked (the offer rules already reject it in both modes; the button now matches). Screenshots are in `docs/recovery/evidence/historical-candidates-2026-10-19/`.

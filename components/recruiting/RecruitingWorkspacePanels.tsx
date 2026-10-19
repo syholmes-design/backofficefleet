@@ -577,7 +577,7 @@ export function OfferPanel({
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
         {offer.offerStatus === "NOT_PROVIDED" ? (
-          <button type="button" disabled={busy} onClick={() => onOffer({ offerStatus: "DRAFT", ...fields })} className={smallButton}>
+          <button type="button" disabled={busy || Boolean(candidate.offerBlockedReason)} onClick={() => onOffer({ offerStatus: "DRAFT", ...fields })} className={smallButton}>
             Prepare offer
           </button>
         ) : null}
