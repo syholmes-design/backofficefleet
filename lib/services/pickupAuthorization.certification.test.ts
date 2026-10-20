@@ -21,10 +21,10 @@ function requireIsolatedTestDatabase() {
 
 test("cert 1: successful authorization reaches RELEASED", async () => {
   requireIsolatedTestDatabase();
-  const { fleet, admin } = await requireCertOperator();
+  const { fleet, admin, complianceUserId } = await requireCertOperator();
   const ids = emptySecurePickupCertIds();
   try {
-    const chain = await createSecurePickupChain(fleet.id, admin.id as string, ids);
+    const chain = await createSecurePickupChain(fleet.id, admin.id as string, ids, { complianceUserId });
     const issued = await issuePickupAuthorization(admin, chain.load.id);
     ids.authorizationIds.push(issued.authorization.id);
     assert.equal(issued.authorization.status, "PENDING");
@@ -51,11 +51,11 @@ test("cert 1: successful authorization reaches RELEASED", async () => {
 
 test("cert 2: identity mismatch STOPPED / 409", async () => {
   requireIsolatedTestDatabase();
-  const { fleet, admin } = await requireCertOperator();
+  const { fleet, admin, complianceUserId } = await requireCertOperator();
   const ids = emptySecurePickupCertIds();
   try {
-    const chain = await createSecurePickupChain(fleet.id, admin.id as string, ids);
-    const other = await createSecurePickupChain(fleet.id, admin.id as string, ids);
+    const chain = await createSecurePickupChain(fleet.id, admin.id as string, ids, { complianceUserId });
+    const other = await createSecurePickupChain(fleet.id, admin.id as string, ids, { complianceUserId });
     const issued = await issuePickupAuthorization(admin, chain.load.id);
     ids.authorizationIds.push(issued.authorization.id);
 
@@ -97,10 +97,10 @@ test("cert 2: identity mismatch STOPPED / 409", async () => {
 
 test("cert 3: wrong token TOKEN_INVALID / 409", async () => {
   requireIsolatedTestDatabase();
-  const { fleet, admin } = await requireCertOperator();
+  const { fleet, admin, complianceUserId } = await requireCertOperator();
   const ids = emptySecurePickupCertIds();
   try {
-    const chain = await createSecurePickupChain(fleet.id, admin.id as string, ids);
+    const chain = await createSecurePickupChain(fleet.id, admin.id as string, ids, { complianceUserId });
     const issued = await issuePickupAuthorization(admin, chain.load.id);
     ids.authorizationIds.push(issued.authorization.id);
 
@@ -134,10 +134,10 @@ test("cert 3: wrong token TOKEN_INVALID / 409", async () => {
 
 test("cert 4: assignment drift ASSIGNMENT_DRIFT / 409", async () => {
   requireIsolatedTestDatabase();
-  const { fleet, admin } = await requireCertOperator();
+  const { fleet, admin, complianceUserId } = await requireCertOperator();
   const ids = emptySecurePickupCertIds();
   try {
-    const chain = await createSecurePickupChain(fleet.id, admin.id as string, ids);
+    const chain = await createSecurePickupChain(fleet.id, admin.id as string, ids, { complianceUserId });
     const spareDriver = await prisma.driver.create({
       data: {
         fleetId: fleet.id,
@@ -183,21 +183,21 @@ test("cert 4: assignment drift ASSIGNMENT_DRIFT / 409", async () => {
   }
 });
 
-test("cert 5: no trip release blocks issue with 409 and creates no authorization", async () => {
+test("cert 5: incomplete pre-trip blocks issue with 409 and creates no authorization", async () => {
   requireIsolatedTestDatabase();
-  const { fleet, admin } = await requireCertOperator();
+  const { fleet, admin, complianceUserId } = await requireCertOperator();
   const ids = emptySecurePickupCertIds();
   try {
-    const chain = await createSecurePickupChain(fleet.id, admin.id as string, ids, { trip: false });
+    const chain = await createSecurePickupChain(fleet.id, admin.id as string, ids, {
+      complianceUserId,
+      preTrip: false,
+      trip: false,
+    });
     await assert.rejects(
       () => issuePickupAuthorization(admin, chain.load.id),
       (caught: unknown) => {
         const http = pickupHttpError(caught);
-        return (
-          http.statusCode === 409 &&
-          String(http.message).includes("PICKUP AUTHORIZATION BLOCKED") &&
-          String(http.message).includes("NO TRIP RELEASE")
-        );
+        return http.statusCode === 409 && String(http.message).includes("BLOCKED");
       },
     );
     const created = await prisma.pickupAuthorization.findMany({ where: { loadId: chain.load.id } });

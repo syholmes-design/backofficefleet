@@ -1,5 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import type { SessionUserLike } from "@/lib/services/intakeService";
+import {
+  cleanupQualifiedDriverEvidence,
+  createQualifiedDriverEvidence,
+} from "@/lib/test/qualifiedDriverFixture";
 
 export type SecurePickupCertIds = {
   loadIds: string[];
@@ -41,6 +45,25 @@ export function asSessionUser(row: {
   };
 }
 
+export async function requireCertComplianceUserId(fleetId: string) {
+  const existing = await prisma.fleetMembership.findFirst({
+    where: { fleetId, status: "ACTIVE", role: { code: "BOF_COMPLIANCE_REVIEW" } },
+    select: { userId: true },
+  });
+  if (existing) {
+    return existing.userId;
+  }
+  const user = await prisma.user.findFirst({ where: { email: "bof-compliance@dev.local" } });
+  const role = await prisma.role.findFirst({ where: { code: "BOF_COMPLIANCE_REVIEW" } });
+  if (!user || !role) {
+    throw new Error("BOF_DEV_FOUNDATION_REQUIRED: bof-compliance@dev.local or BOF_COMPLIANCE_REVIEW role missing");
+  }
+  await prisma.fleetMembership.create({
+    data: { userId: user.id, fleetId, roleId: role.id, status: "ACTIVE" },
+  });
+  return user.id;
+}
+
 export async function requireCertOperator() {
   const fleet = await prisma.fleet.findUnique({ where: { slug: "fleet-a" } });
   if (!fleet) {
@@ -53,7 +76,8 @@ export async function requireCertOperator() {
   if (!admin) {
     throw new Error("BOF_DEV_FOUNDATION_REQUIRED: fleet-a-admin@dev.local missing from isolated bof_dev");
   }
-  return { fleet, admin: asSessionUser(admin) };
+  const complianceUserId = await requireCertComplianceUserId(fleet.id);
+  return { fleet, admin: asSessionUser(admin), complianceUserId };
 }
 
 export async function cleanupSecurePickupCertFixtures(ids: SecurePickupCertIds) {
@@ -91,6 +115,8 @@ export async function cleanupSecurePickupCertFixtures(ids: SecurePickupCertIds) 
   await prisma.driverReadinessScore.deleteMany({ where: { id: { in: ids.readinessIds } } });
   await prisma.load.deleteMany({ where: { id: { in: ids.loadIds } } });
   await prisma.equipment.deleteMany({ where: { id: { in: ids.equipmentIds } } });
+  await cleanupQualifiedDriverEvidence(prisma, ids.driverIds);
+  await prisma.preTripHeader.deleteMany({ where: { assignmentId: { in: ids.assignmentIds } } });
   await prisma.driver.deleteMany({ where: { id: { in: ids.driverIds } } });
   if (ids.userIds.length > 0) {
     await prisma.fleetMembership.deleteMany({ where: { userId: { in: ids.userIds } } });
@@ -102,7 +128,7 @@ export async function createSecurePickupChain(
   fleetId: string,
   actorUserId: string,
   ids: SecurePickupCertIds,
-  options?: { trip?: boolean; tractorVin?: string | null },
+  options?: { trip?: boolean; tractorVin?: string | null; complianceUserId?: string; preTrip?: boolean; qualified?: boolean },
 ) {
   const stamp = `${Date.now().toString(36)}-${Math.random().toString(16).slice(2, 8)}`;
   const driver = await prisma.driver.create({
@@ -153,6 +179,21 @@ export async function createSecurePickupChain(
       assignedByUserId: actorUserId,
     },
   });
+  if (options?.preTrip !== false) {
+    await prisma.preTripHeader.create({
+      data: {
+        fleetId,
+        assignmentId: assignment.id,
+        status: "COMPLETED",
+        completedAt: new Date(),
+        completedByUserId: actorUserId,
+      },
+    });
+  }
+  if (options?.qualified !== false) {
+    const complianceUserId = options?.complianceUserId ?? (await requireCertComplianceUserId(fleetId));
+    await createQualifiedDriverEvidence(prisma, { driverId: driver.id, fleetId, complianceUserId });
+  }
   const readiness = await prisma.driverReadinessScore.create({
     data: {
       driverId: driver.id,

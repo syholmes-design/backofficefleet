@@ -12,11 +12,15 @@ import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { recordOperatingProcessEvent } from "@/lib/process-intelligence/operating-event-service";
 import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
+import { requireDispatchMutationRole } from "@/lib/services/dispatchAssignmentService";
 import {
-  authorizeMovementForLoad,
+  authorizeMovement,
   createMovementAuthorizationDeniedError,
 } from "@/lib/services/dispatchMovementAuthorizationService";
-import { createDispatchReleaseWithMovementAuthorization } from "@/lib/services/dispatchReleaseService";
+import {
+  executeMovementReleaseInTransaction,
+  recordDispatchReleaseSideEffects,
+} from "@/lib/services/dispatchReleaseService";
 import { authorizedFleetAccess, isServiceRole, type SessionUserLike } from "@/lib/services/intakeService";
 import { findLoadByOperatorKey } from "@/lib/services/loadService";
 import {
@@ -242,7 +246,7 @@ async function expireIfNeeded(authorization: PickupAuthorizationWithGraph) {
   });
 }
 
-async function writeAttempt(input: {
+function writeAttemptData(input: {
   authorizationId: string;
   fleetId: string;
   method: PickupVerificationMethod;
@@ -253,25 +257,39 @@ async function writeAttempt(input: {
   reasonCodes: PickupStopReasonCode[] | string[];
   actorUserId: string | null;
 }) {
-  return prisma.pickupVerificationAttempt.create({
-    data: {
-      pickupAuthorizationId: input.authorizationId,
-      fleetId: input.fleetId,
-      method: input.method,
-      result: input.result,
-      presentedTokenValid: input.presentedTokenValid,
-      presentedDriverId: input.presented.driverId?.trim() || null,
-      presentedTractorEquipmentId: input.presented.tractorEquipmentId?.trim() || null,
-      presentedTrailerEquipmentId: input.presented.trailerEquipmentId?.trim() || null,
-      presentedLoadId: input.presented.loadId?.trim() || null,
-      presentedAuthorizationId: input.presented.authorizationId?.trim() || null,
-      reason: input.reason,
-      reasonCodes: input.reasonCodes as Prisma.InputJsonValue,
-      physicalVerificationPerformed: false,
-      actorUserId: input.actorUserId,
-    },
-  });
+  return {
+    pickupAuthorizationId: input.authorizationId,
+    fleetId: input.fleetId,
+    method: input.method,
+    result: input.result,
+    presentedTokenValid: input.presentedTokenValid,
+    presentedDriverId: input.presented.driverId?.trim() || null,
+    presentedTractorEquipmentId: input.presented.tractorEquipmentId?.trim() || null,
+    presentedTrailerEquipmentId: input.presented.trailerEquipmentId?.trim() || null,
+    presentedLoadId: input.presented.loadId?.trim() || null,
+    presentedAuthorizationId: input.presented.authorizationId?.trim() || null,
+    reason: input.reason,
+    reasonCodes: input.reasonCodes as Prisma.InputJsonValue,
+    physicalVerificationPerformed: false,
+    actorUserId: input.actorUserId,
+  };
 }
+
+async function writeAttempt(
+  input: Parameters<typeof writeAttemptData>[0],
+  db: Prisma.TransactionClient | typeof prisma = prisma,
+) {
+  return db.pickupVerificationAttempt.create({ data: writeAttemptData(input) });
+}
+
+const pickupAuthorizationGraphInclude = {
+  load: true,
+  assignment: true,
+  driver: true,
+  tractorEquipment: true,
+  trailerEquipment: true,
+  verificationAttempts: { orderBy: { createdAt: "asc" as const } },
+} satisfies Prisma.PickupAuthorizationInclude;
 
 export async function issuePickupAuthorization(sessionUser: SessionUserLike | null | undefined, loadId: string) {
   requireSessionUser(sessionUser);
@@ -283,12 +301,6 @@ export async function issuePickupAuthorization(sessionUser: SessionUserLike | nu
     throw Object.assign(new Error("Load not found"), { statusCode: 404 });
   }
 
-  const access = await authorizedFleetAccess(sessionUser, load.fleetId);
-  if (!access.allowed) {
-    await logUnauthorizedPickupAccess(sessionUser, load.fleetId, load.id, access.reason ?? "TENANT_ACCESS_DENIED");
-    throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
-  }
-
   const assignment = await prisma.dispatchAssignment.findFirst({
     where: { loadId: load.id, status: DispatchAssignmentStatus.ACTIVE },
   });
@@ -296,21 +308,20 @@ export async function issuePickupAuthorization(sessionUser: SessionUserLike | nu
     throw Object.assign(new Error(PICKUP_BLOCKED_NO_ASSIGNMENT), { statusCode: 409 });
   }
 
-  const { movement, release: tripRelease } = await createDispatchReleaseWithMovementAuthorization(
-    sessionUser,
-    loadId,
-    "PICKUP_ISSUE",
-    { assignmentId: assignment.id },
-  );
-  if (!movement.allowed) {
-    throw createMovementAuthorizationDeniedError(movement);
-  }
-
   const now = new Date();
   const token = generatePickupAuthorizationToken();
   const tokenHash = hashPickupAuthorizationToken(token);
 
-  const created = await prisma.$transaction(async (tx) => {
+  const txResult = await prisma.$transaction(async (tx) => {
+    await requireDispatchMutationRole(tx, sessionUser, load.fleetId, load.id);
+
+    const releaseResult = await executeMovementReleaseInTransaction(tx, sessionUser!, loadId, "PICKUP_ISSUE", {
+      assignmentId: assignment.id,
+    });
+    if (!releaseResult.movement.allowed) {
+      throw createMovementAuthorizationDeniedError(releaseResult.movement);
+    }
+
     await tx.pickupAuthorization.updateMany({
       where: { loadId: load.id, status: { in: ACTIVE_PICKUP_STATUSES } },
       data: {
@@ -322,7 +333,7 @@ export async function issuePickupAuthorization(sessionUser: SessionUserLike | nu
       },
     });
 
-    return tx.pickupAuthorization.create({
+    const created = await tx.pickupAuthorization.create({
       data: {
         fleetId: load.fleetId,
         loadId: load.id,
@@ -330,8 +341,8 @@ export async function issuePickupAuthorization(sessionUser: SessionUserLike | nu
         driverId: assignment.driverId,
         tractorEquipmentId: assignment.tractorEquipmentId,
         trailerEquipmentId: assignment.trailerEquipmentId,
-        dispatchReleaseId: tripRelease.id,
-        driverReadinessScoreId: tripRelease.driverReadinessScoreId,
+        dispatchReleaseId: releaseResult.release.id,
+        driverReadinessScoreId: releaseResult.release.driverReadinessScoreId,
         status: "PENDING",
         tokenHash,
         pickupWindowStart: load.pickupWindowStart,
@@ -342,16 +353,22 @@ export async function issuePickupAuthorization(sessionUser: SessionUserLike | nu
         physicalEquipmentClass: "UNVERIFIED",
         createdByUserId: actorId,
       },
-      include: {
-        load: true,
-        assignment: true,
-        driver: true,
-        tractorEquipment: true,
-        trailerEquipment: true,
-        verificationAttempts: true,
-      },
+      include: pickupAuthorizationGraphInclude,
     });
+
+    return { ...releaseResult, created, token };
   });
+
+  const { movement, release: tripRelease, inputs, evaluation, created } = txResult;
+
+  await recordDispatchReleaseSideEffects(
+    sessionUser!,
+    inputs,
+    tripRelease,
+    evaluation,
+    inputs.readiness.id,
+    movement,
+  );
 
   await createAuditRecord({
     actorId,
@@ -495,6 +512,7 @@ export async function cancelPickupAuthorization(
     await logUnauthorizedPickupAccess(sessionUser, authorization.fleetId, authorization.id, accessReason);
     throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
   }
+  await requireDispatchMutationRole(prisma, sessionUser, authorization.fleetId, authorization.id);
   if (!ACTIVE_PICKUP_STATUSES.includes(authorization.status)) {
     throw Object.assign(new Error(`Authorization cannot be cancelled from ${authorization.status}`), { statusCode: 409 });
   }
@@ -559,6 +577,7 @@ export async function verifyPickupAuthorization(
     await logUnauthorizedPickupAccess(sessionUser, authorization.fleetId, authorization.id, accessReason);
     throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
   }
+  await requireDispatchMutationRole(prisma, sessionUser, authorization.fleetId, authorization.id);
 
   const presented: PickupPresentedIdentities = input.presented ?? {};
   const current = await expireIfNeeded(authorization);
@@ -675,41 +694,212 @@ export async function verifyPickupAuthorization(
     await reject("STOPPED", "STOPPED", ["ASSIGNMENT_DRIFT"], "DispatchAssignment identities drifted from this authorization", 409);
   }
 
-  const movement = await authorizeMovementForLoad(sessionUser!, current.loadId, "PICKUP_VERIFY", current.assignmentId);
-  if (!movement.allowed) {
-    await reject(
-      "STOPPED",
-      "STOPPED",
-      ["NO_TRIP_RELEASE"],
-      movement.summary || PICKUP_BLOCKED_MOVEMENT_AUTHORIZATION,
-      409,
-    );
-  }
+  type VerifyCommitResult =
+    | {
+        kind: "movement_denied";
+        attempt: Awaited<ReturnType<typeof writeAttempt>>;
+        updated: PickupAuthorizationWithGraph;
+        reason: string;
+        reasonCodes: PickupStopReasonCode[];
+      }
+    | {
+        kind: "authorized";
+        attempt: Awaited<ReturnType<typeof writeAttempt>>;
+        updated: PickupAuthorizationWithGraph;
+      }
+    | {
+        kind: "reconciliation_denied";
+        attempt: Awaited<ReturnType<typeof writeAttempt>>;
+        updated: PickupAuthorizationWithGraph;
+        reason: string;
+        reasonCodes: PickupStopReasonCode[];
+      }
+    | {
+        kind: "released";
+        attempt: Awaited<ReturnType<typeof writeAttempt>>;
+        updated: PickupAuthorizationWithGraph;
+        decisionSummary: string;
+      };
 
-  if (!hasPresentedIdentities(presented)) {
-    const attempt = await writeAttempt({
-      authorizationId: current.id,
-      fleetId: current.fleetId,
-      method,
-      result: "AUTHORIZED",
-      presentedTokenValid: true,
-      presented,
-      reason: "Credential accepted. Awaiting presented identities for reconciliation.",
-      reasonCodes: [],
-      actorUserId: actorId,
+  const commitResult = await prisma.$transaction(async (tx): Promise<VerifyCommitResult> => {
+    await requireDispatchMutationRole(tx, sessionUser, current.fleetId, current.id);
+
+    const movement = await authorizeMovement(tx, "PICKUP_VERIFY", {
+      sessionUser: sessionUser!,
+      loadId: current.loadId,
+      assignmentId: current.assignmentId,
     });
-    const updated = await prisma.pickupAuthorization.update({
+    if (!movement.allowed) {
+      const reason = movement.summary || PICKUP_BLOCKED_MOVEMENT_AUTHORIZATION;
+      const reasonCodes: PickupStopReasonCode[] = movement.reasonCodes.includes("NO_TRIP_RELEASE")
+        ? ["NO_TRIP_RELEASE"]
+        : (movement.reasonCodes as PickupStopReasonCode[]);
+      const attempt = await writeAttempt(
+        {
+          authorizationId: current.id,
+          fleetId: current.fleetId,
+          method,
+          result: "STOPPED",
+          presentedTokenValid: tokenValid,
+          presented,
+          reason,
+          reasonCodes,
+          actorUserId: actorId,
+        },
+        tx,
+      );
+      const updated = await tx.pickupAuthorization.update({
+        where: { id: current.id },
+        data: {
+          status: "STOPPED",
+          stoppedAt: new Date(),
+          reason,
+          reasonCodes: reasonCodes as Prisma.InputJsonValue,
+        },
+        include: pickupAuthorizationGraphInclude,
+      });
+      return { kind: "movement_denied", attempt, updated, reason, reasonCodes };
+    }
+
+    if (!hasPresentedIdentities(presented)) {
+      const attempt = await writeAttempt(
+        {
+          authorizationId: current.id,
+          fleetId: current.fleetId,
+          method,
+          result: "AUTHORIZED",
+          presentedTokenValid: true,
+          presented,
+          reason: "Credential accepted. Awaiting presented identities for reconciliation.",
+          reasonCodes: [],
+          actorUserId: actorId,
+        },
+        tx,
+      );
+      const updated = await tx.pickupAuthorization.update({
+        where: { id: current.id },
+        data: { status: "AUTHORIZED" },
+        include: pickupAuthorizationGraphInclude,
+      });
+      return { kind: "authorized", attempt, updated };
+    }
+
+    const decision = evaluatePickupReconciliation(
+      {
+        authorizationId: current.id,
+        loadId: current.loadId,
+        driverId: current.driverId,
+        tractorEquipmentId: current.tractorEquipmentId,
+        trailerEquipmentId: current.trailerEquipmentId,
+      },
+      { ...presented, authorizationId: presented.authorizationId ?? authorizationId },
+    );
+
+    if (!decision.match) {
+      const attempt = await writeAttempt(
+        {
+          authorizationId: current.id,
+          fleetId: current.fleetId,
+          method,
+          result: "STOPPED",
+          presentedTokenValid: true,
+          presented: { ...presented, authorizationId: presented.authorizationId ?? current.id },
+          reason: decision.summary,
+          reasonCodes: decision.reasonCodes,
+          actorUserId: actorId,
+        },
+        tx,
+      );
+      const updated = await tx.pickupAuthorization.update({
+        where: { id: current.id },
+        data: {
+          status: "STOPPED",
+          stoppedAt: new Date(),
+          reason: decision.summary,
+          reasonCodes: decision.reasonCodes as Prisma.InputJsonValue,
+        },
+        include: pickupAuthorizationGraphInclude,
+      });
+      return {
+        kind: "reconciliation_denied",
+        attempt,
+        updated,
+        reason: decision.summary,
+        reasonCodes: decision.reasonCodes,
+      };
+    }
+
+    const attempt = await writeAttempt(
+      {
+        authorizationId: current.id,
+        fleetId: current.fleetId,
+        method,
+        result: "RELEASED",
+        presentedTokenValid: true,
+        presented: { ...presented, authorizationId: presented.authorizationId ?? current.id },
+        reason: decision.summary,
+        reasonCodes: [],
+        actorUserId: actorId,
+      },
+      tx,
+    );
+    const updated = await tx.pickupAuthorization.update({
       where: { id: current.id },
-      data: { status: "AUTHORIZED" },
-      include: {
-        load: true,
-        assignment: true,
-        driver: true,
-        tractorEquipment: true,
-        trailerEquipment: true,
-        verificationAttempts: { orderBy: { createdAt: "asc" } },
+      data: {
+        status: "RELEASED",
+        releasedAt: new Date(),
+        reason: decision.summary,
+        reasonCodes: [] as Prisma.InputJsonValue,
+      },
+      include: pickupAuthorizationGraphInclude,
+    });
+    return { kind: "released", attempt, updated, decisionSummary: decision.summary };
+  });
+
+  if (commitResult.kind === "movement_denied" || commitResult.kind === "reconciliation_denied") {
+    await createAuditRecord({
+      actorId,
+      actorEmail: sessionUser!.email ?? null,
+      tenantId: current.fleetId,
+      action: "UPDATED",
+      entityType: "PickupAuthorization",
+      entityId: current.id,
+      details: {
+        event: "pickup.verification_attempt",
+        result: "STOPPED",
+        reason: commitResult.reason,
+        reasonCodes: commitResult.reasonCodes,
+        method,
+        physicalVerificationPerformed: false,
+      },
+      metadata: { source: "pickup-authorization-service" },
+    });
+    await recordPickupEvent(sessionUser!, {
+      fleetId: current.fleetId,
+      loadId: current.loadId,
+      authorizationId: current.id,
+      eventType: "PICKUP_STOPPED",
+      entityType: "PickupVerificationAttempt",
+      entityId: commitResult.attempt.id,
+      priorState: current.status,
+      resultingState: commitResult.updated.status,
+      decisionResult: "STOPPED",
+      decisionReason: commitResult.reason,
+      relatedRecordType: "PickupVerificationAttempt",
+      relatedRecordId: commitResult.attempt.id,
+    });
+    throw Object.assign(new Error(commitResult.reason), {
+      statusCode: 409,
+      payload: {
+        authorization: toPublicAuthorization(commitResult.updated),
+        attempt: toPublicAttempt(commitResult.attempt),
+        physicalVerificationNote: PHASE1_PHYSICAL_VERIFICATION_NOTE,
       },
     });
+  }
+
+  if (commitResult.kind === "authorized") {
+    const { attempt, updated } = commitResult;
     await createAuditRecord({
       actorId,
       actorEmail: sessionUser!.email ?? null,
@@ -741,51 +931,7 @@ export async function verifyPickupAuthorization(
     };
   }
 
-  const decision = evaluatePickupReconciliation(
-    {
-      authorizationId: current.id,
-      loadId: current.loadId,
-      driverId: current.driverId,
-      tractorEquipmentId: current.tractorEquipmentId,
-      trailerEquipmentId: current.trailerEquipmentId,
-    },
-    { ...presented, authorizationId: presented.authorizationId ?? authorizationId },
-  );
-
-  if (!decision.match) {
-    await reject("STOPPED", "STOPPED", decision.reasonCodes, decision.summary, 409);
-  }
-
-  const attempt = await writeAttempt({
-    authorizationId: current.id,
-    fleetId: current.fleetId,
-    method,
-    result: "RELEASED",
-    presentedTokenValid: true,
-    presented: { ...presented, authorizationId: presented.authorizationId ?? current.id },
-    reason: decision.summary,
-    reasonCodes: [],
-    actorUserId: actorId,
-  });
-
-  const updated = await prisma.pickupAuthorization.update({
-    where: { id: current.id },
-    data: {
-      status: "RELEASED",
-      releasedAt: new Date(),
-      reason: decision.summary,
-      reasonCodes: [] as Prisma.InputJsonValue,
-    },
-    include: {
-      load: true,
-      assignment: true,
-      driver: true,
-      tractorEquipment: true,
-      trailerEquipment: true,
-      verificationAttempts: { orderBy: { createdAt: "asc" } },
-    },
-  });
-
+  const { attempt, updated, decisionSummary } = commitResult;
   await createAuditRecord({
     actorId,
     actorEmail: sessionUser!.email ?? null,
@@ -812,7 +958,7 @@ export async function verifyPickupAuthorization(
     priorState: current.status,
     resultingState: "RELEASED",
     decisionResult: "RELEASED",
-    decisionReason: decision.summary,
+    decisionReason: decisionSummary,
     relatedRecordType: "PickupVerificationAttempt",
     relatedRecordId: attempt.id,
   });

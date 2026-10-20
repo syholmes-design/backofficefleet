@@ -83,8 +83,8 @@ async function logUnauthorizedDispatchAccess(
  * Dispatch mutation authority, read from the database (session claims are not trusted) for the fleet that owns
  * the load or assignment. Returns the authorizing role code; otherwise records the refusal and throws 403.
  */
-async function requireDispatchMutationRole(
-  db: Prisma.TransactionClient,
+export async function requireDispatchMutationRole(
+  db: Prisma.TransactionClient | typeof prisma,
   sessionUser: SessionUserLike | null | undefined,
   fleetId: string,
   entityId: string | null,

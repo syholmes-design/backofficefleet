@@ -629,7 +629,7 @@ type DispatchReleaseAuditContext = {
   >;
 };
 
-async function recordDispatchReleaseSideEffects(
+export async function recordDispatchReleaseSideEffects(
   sessionUser: SessionUserLike,
   inputs: DispatchReleaseInputs,
   release: Awaited<ReturnType<typeof prisma.dispatchRelease.create>>,
@@ -757,6 +757,50 @@ export async function writeDispatchReleaseInTx(
   });
 }
 
+export async function executeMovementReleaseInTransaction(
+  tx: Prisma.TransactionClient,
+  sessionUser: SessionUserLike,
+  loadId: string,
+  stage: Extract<MovementAuthorizationStage, "RELEASE" | "PICKUP_ISSUE">,
+  options?: { assignmentId?: string },
+) {
+  const movement = await authorizeMovement(tx, stage, {
+    sessionUser,
+    loadId,
+    assignmentId: options?.assignmentId,
+  });
+  if (!movement.releaseEvaluation) {
+    throw Object.assign(new Error("Movement authorization did not produce a release evaluation"), { statusCode: 500 });
+  }
+
+  const load = await findLoadByOperatorKey(loadId);
+  if (!load) {
+    throw Object.assign(new Error("Load not found"), { statusCode: 404 });
+  }
+
+  const assignment = await tx.dispatchAssignment.findFirst({
+    where: {
+      loadId: load.id,
+      status: "ACTIVE",
+      ...(options?.assignmentId ? { id: options.assignmentId } : {}),
+    },
+    include: {
+      load: true,
+      driver: { select: { id: true, fleetId: true } },
+      tractorEquipment: true,
+      trailerEquipment: true,
+    },
+    orderBy: [{ assignedAt: "desc" }, { createdAt: "desc" }],
+  });
+  if (!assignment) {
+    throw Object.assign(new Error(DISPATCH_RELEASE_BLOCKED_NO_ASSIGNMENT), { statusCode: 409 });
+  }
+
+  const inputs = await assembleReleaseInputsInTx(tx, load, assignment);
+  const release = await writeDispatchReleaseInTx(tx, sessionUser, inputs, movement.releaseEvaluation);
+  return { movement, release, inputs, evaluation: movement.releaseEvaluation };
+}
+
 export async function createDispatchReleaseWithMovementAuthorization(
   sessionUser: SessionUserLike | null | undefined,
   loadId: string,
@@ -765,43 +809,9 @@ export async function createDispatchReleaseWithMovementAuthorization(
 ): Promise<{ movement: MovementAuthorizationResult; release: Awaited<ReturnType<typeof writeDispatchReleaseInTx>> }> {
   requireSessionUser(sessionUser);
 
-  const result = await prisma.$transaction(async (tx) => {
-    const movement = await authorizeMovement(tx, stage, {
-      sessionUser: sessionUser!,
-      loadId,
-      assignmentId: options?.assignmentId,
-    });
-    if (!movement.releaseEvaluation) {
-      throw Object.assign(new Error("Movement authorization did not produce a release evaluation"), { statusCode: 500 });
-    }
-
-    const load = await findLoadByOperatorKey(loadId);
-    if (!load) {
-      throw Object.assign(new Error("Load not found"), { statusCode: 404 });
-    }
-
-    const assignment = await tx.dispatchAssignment.findFirst({
-      where: {
-        loadId: load.id,
-        status: "ACTIVE",
-        ...(options?.assignmentId ? { id: options.assignmentId } : {}),
-      },
-      include: {
-        load: true,
-        driver: { select: { id: true, fleetId: true } },
-        tractorEquipment: true,
-        trailerEquipment: true,
-      },
-      orderBy: [{ assignedAt: "desc" }, { createdAt: "desc" }],
-    });
-    if (!assignment) {
-      throw Object.assign(new Error(DISPATCH_RELEASE_BLOCKED_NO_ASSIGNMENT), { statusCode: 409 });
-    }
-
-    const inputs = await assembleReleaseInputsInTx(tx, load, assignment);
-    const release = await writeDispatchReleaseInTx(tx, sessionUser!, inputs, movement.releaseEvaluation);
-    return { movement, release, inputs, evaluation: movement.releaseEvaluation };
-  });
+  const result = await prisma.$transaction(async (tx) =>
+    executeMovementReleaseInTransaction(tx, sessionUser!, loadId, stage, options),
+  );
 
   await recordDispatchReleaseSideEffects(
     sessionUser!,

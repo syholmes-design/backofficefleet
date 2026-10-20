@@ -10,6 +10,11 @@ import {
   verifyPickupAuthorization,
 } from "@/lib/services/pickupAuthorizationService";
 import type { SessionUserLike } from "@/lib/services/intakeService";
+import {
+  cleanupQualifiedDriverEvidence,
+  createQualifiedDriverEvidence,
+} from "@/lib/test/qualifiedDriverFixture";
+import { requireCertComplianceUserId } from "@/lib/test/securePickupCertFixtures";
 
 function asUser(row: {
   id: string;
@@ -52,7 +57,9 @@ async function cleanup(ids: {
   });
   await prisma.pickupAuthorization.deleteMany({ where: { id: { in: ids.authorizationIds } } });
   await prisma.dispatchRelease.deleteMany({ where: { id: { in: ids.releaseIds } } });
+  await prisma.preTripHeader.deleteMany({ where: { assignmentId: { in: ids.assignmentIds } } });
   await prisma.dispatchAssignment.deleteMany({ where: { id: { in: ids.assignmentIds } } });
+  await cleanupQualifiedDriverEvidence(prisma, ids.driverIds);
   await prisma.driverReadinessScore.deleteMany({ where: { id: { in: ids.readinessIds } } });
   await prisma.load.deleteMany({ where: { id: { in: ids.loadIds } } });
   await prisma.equipment.deleteMany({ where: { id: { in: ids.equipmentIds } } });
@@ -77,6 +84,7 @@ test("local persistence: pickup authorization issue, release, stop, expiry, reus
       include: { memberships: { include: { role: true } } },
     }),
   );
+  const complianceUserId = await requireCertComplianceUserId(fleetAId);
 
   const stamp = Date.now().toString(36);
   const ids = {
@@ -89,7 +97,13 @@ test("local persistence: pickup authorization issue, release, stop, expiry, reus
     authorizationIds: [] as string[],
   };
 
-  async function createChain(options?: { readiness?: "READY" | "NOT_READY" | "NONE"; trip?: boolean; trailer?: boolean }) {
+  async function createChain(options?: {
+    readiness?: "READY" | "NOT_READY" | "NONE";
+    trip?: boolean;
+    trailer?: boolean;
+    preTrip?: boolean;
+    qualified?: boolean;
+  }) {
     const driver = await prisma.driver.create({
       data: {
         fleetId: fleetAId,
@@ -140,6 +154,24 @@ test("local persistence: pickup authorization issue, release, stop, expiry, reus
         assignedByUserId: adminA.id,
       },
     });
+    if (options?.preTrip !== false) {
+      await prisma.preTripHeader.create({
+        data: {
+          fleetId: fleetAId,
+          assignmentId: assignment.id,
+          status: "COMPLETED",
+          completedAt: new Date(),
+          completedByUserId: adminA.id,
+        },
+      });
+    }
+    if (options?.qualified !== false) {
+      await createQualifiedDriverEvidence(prisma, {
+        driverId: driver.id,
+        fleetId: fleetAId,
+        complianceUserId,
+      });
+    }
     let readinessId: string | null = null;
     if (options?.readiness !== "NONE") {
       const readiness = await prisma.driverReadinessScore.create({
@@ -203,25 +235,25 @@ test("local persistence: pickup authorization issue, release, stop, expiry, reus
         error.statusCode === 409 && String(error.message).includes("NO ACTIVE ASSIGNMENT"),
     );
 
-    const noReady = await createChain({ readiness: "NONE", trip: false });
+    const noReady = await createChain({ readiness: "NONE", trip: false, qualified: false });
     await assert.rejects(
       () => issuePickupAuthorization(adminA, noReady.load.id),
       (error: { statusCode?: number; message?: string }) =>
         error.statusCode === 409 && String(error.message).includes("NO CURRENT DRIVER READINESS"),
     );
 
-    const notReady = await createChain({ readiness: "NOT_READY", trip: false });
+    const notReady = await createChain({ readiness: "NOT_READY", trip: false, qualified: false });
     await assert.rejects(
       () => issuePickupAuthorization(adminA, notReady.load.id),
       (error: { statusCode?: number; message?: string }) =>
-        error.statusCode === 409 && String(error.message).includes("DRIVER NOT READY"),
+        error.statusCode === 409 && String(error.message).includes("BLOCKED"),
     );
 
-    const noTrip = await createChain({ trip: false });
+    const noPreTrip = await createChain({ trip: false, preTrip: false });
     await assert.rejects(
-      () => issuePickupAuthorization(adminA, noTrip.load.id),
+      () => issuePickupAuthorization(adminA, noPreTrip.load.id),
       (error: { statusCode?: number; message?: string }) =>
-        error.statusCode === 409 && String(error.message).includes("NO TRIP RELEASE"),
+        error.statusCode === 409 && String(error.message).includes("BLOCKED"),
     );
 
     const valid = await createChain();

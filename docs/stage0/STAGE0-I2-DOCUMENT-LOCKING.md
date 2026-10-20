@@ -35,15 +35,12 @@ unchanged. The readiness re-evaluation takes the same lock in its own transactio
 - `updateDriverIntakeRecord` (stage/status): not read by the evaluator.
 - `driverVaultDocumentService` write functions: no callers (superseded by the versioning service).
 
-## Open for Cursor: pickup writes outside the authorization transaction
+## Pickup authorization transaction boundary (remediated on `cursor/stage0-i6-pickup-race-remediation`)
 
-`issuePickupAuthorization` and `verifyPickupAuthorization` evaluate in one transaction and write the pickup
-result in another. A qualification change can commit between them; a probe held the second transaction on a
-row lock, committed a license rejection, and observed:
+Previously `issuePickupAuthorization` and `verifyPickupAuthorization` evaluated movement in one transaction
+and mutated pickup state in another, so a qualification-changing document write could commit between them.
 
-- `PICKUP_ISSUE`: authorization issued (`PENDING`) after the rejection committed.
-- `PICKUP_VERIFY`: authorization `RELEASED` after the rejection committed.
-
-Fix: run `authorizeMovement(tx, …)` and the pickup write in the same transaction (issue: create the
-`PickupAuthorization` inside the release transaction; verify: evaluate, write the attempt and the
-`AUTHORIZED` / `RELEASED` / `STOPPED` status together). Assignment (I-5) and `RELEASE` are already atomic.
+Remediation: `authorizeMovement(tx, …)` and the corresponding pickup mutation (issue create, verify
+attempt + status) run in one transaction; the driver qualification lock from movement authorization is held
+until that transaction commits. Deterministic races are covered in
+`lib/services/qualificationEvidenceLocking.certification.test.ts`.
