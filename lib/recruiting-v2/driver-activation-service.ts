@@ -11,6 +11,7 @@ import {
 } from "@/lib/recruiting-v2/activation-engine";
 import { runPostActivationQualificationAndReadiness } from "@/lib/recruiting-v2/post-activation-evaluation";
 import { authorizedFleetAccess } from "@/lib/services/intakeService";
+import { invalidateDriverMovementAuthorizations } from "@/lib/services/driverMovementInvalidationService";
 import { lockDriverReadinessWrite } from "@/lib/services/readinessService";
 
 const ACTIVATION_ROLE_CODES = [
@@ -334,6 +335,12 @@ export async function activateRecruitingV2Candidate(input: {
           driverIntakeId: intake.id,
         },
       },
+    });
+
+    await invalidateDriverMovementAuthorizations(tx, {
+      driverId: driver.id,
+      actor: { id: input.sessionUser.id!, email: input.sessionUser.email ?? null },
+      trigger: "RECRUITING_ACTIVATION",
     });
 
     return { driver, intake, handoff };

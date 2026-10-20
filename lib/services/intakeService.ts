@@ -165,7 +165,7 @@ export async function createDriverIntakeRecord(input: {
   const { withDriverQualificationLock } = await import("@/lib/services/readinessService");
   const actorId = input.sessionUser.id;
   const actorEmail = input.sessionUser.email ?? null;
-  return withDriverQualificationLock(driver.id, async (tx) => {
+  return withDriverQualificationLock(driver.id, { actor: { id: actorId, email: actorEmail }, trigger: "INTAKE_CREATED" }, async (tx) => {
     const intake = await createIntake({
       driverId: driver.id,
       fleetId: input.fleetId,

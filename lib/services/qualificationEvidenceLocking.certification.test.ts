@@ -343,6 +343,11 @@ test("qualification evidence writes serialize with assignment, release and picku
     assert.equal(contestedAudits, applied.length);
   } finally {
     const drivers = ids.drivers;
+    // Movement invalidation (I-7) records exceptions, corrective actions and notification threads.
+    await prisma.operationalChatNotification.deleteMany({ where: { tenantId: fleet.id } });
+    await prisma.operationalChatThread.deleteMany({ where: { tenantId: fleet.id } });
+    await prisma.operatingCorrectiveAction.deleteMany({ where: { fleetId: fleet.id } });
+    await prisma.operatingException.deleteMany({ where: { fleetId: fleet.id } });
     await prisma.auditEvent.deleteMany({ where: { tenantId: fleet.id } });
     await prisma.operatingProcessEvent.deleteMany({ where: { fleetId: fleet.id } });
     await prisma.pickupVerificationAttempt.deleteMany({ where: { fleetId: fleet.id } });

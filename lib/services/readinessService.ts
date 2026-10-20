@@ -373,14 +373,22 @@ export async function lockDriverReadinessWrite(db: Prisma.TransactionClient, dri
  * callers - assignment planning, release and pickup in dispatchMovementAuthorizationService - hold the same lock
  * while they evaluate, so an authorization either completes before the change or evaluates the committed change.
  * Do not call it while already inside a transaction for the same driver (the nested transaction would wait on it).
+ *
+ * After the write, still holding the lock, authorizations the change has made stale are invalidated (Stage 0 I-7,
+ * driverMovementInvalidationService) in the same transaction.
  */
 export async function withDriverQualificationLock<T>(
   driverId: string,
+  change: { actor: { id: string; email?: string | null }; trigger: string },
   write: (tx: Prisma.TransactionClient) => Promise<T>,
 ): Promise<T> {
+  // driverMovementInvalidationService imports this module; load it lazily to keep the import graph acyclic.
+  const { invalidateDriverMovementAuthorizations } = await import("@/lib/services/driverMovementInvalidationService");
   return prisma.$transaction(async (tx) => {
     await lockDriverReadinessWrite(tx, driverId);
-    return write(tx);
+    const result = await write(tx);
+    await invalidateDriverMovementAuthorizations(tx, { driverId, actor: change.actor, trigger: change.trigger });
+    return result;
   });
 }
 

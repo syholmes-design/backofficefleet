@@ -5,6 +5,7 @@ import { Prisma, type PrismaClient } from "@prisma/client";
 import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
+import { invalidateDriverMovementAuthorizations } from "@/lib/services/driverMovementInvalidationService";
 import { lockDriverReadinessWrite } from "@/lib/services/readinessService";
 
 const CLAIM_TOKEN_BYTES = 32;
@@ -399,6 +400,11 @@ export async function completeDriverClaim(input: {
         }
         throw error;
       }
+      await invalidateDriverMovementAuthorizations(tx, {
+        driverId: token.driverId,
+        actor: { id: actorId, email: actorEmail },
+        trigger: "DRIVER_ACCOUNT_CLAIMED",
+      });
 
       await writeClaimAudit(claimTx, {
         actorId,

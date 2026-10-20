@@ -729,6 +729,12 @@ export async function verifyPickupAuthorization(
       loadId: current.loadId,
       assignmentId: current.assignmentId,
     });
+    // Stage 0 I-7: authorizeMovement holds the driver qualification lock. Re-read the authorization under it, so
+    // a cancellation committed by movement invalidation while this request waited is not overwritten.
+    const locked = await tx.pickupAuthorization.findUnique({ where: { id: current.id }, select: { status: true } });
+    if (!locked || !ACTIVE_PICKUP_STATUSES.includes(locked.status)) {
+      throw Object.assign(new Error(`Pickup authorization is ${locked?.status ?? "missing"}`), { statusCode: 409 });
+    }
     if (!movement.allowed) {
       const reason = movement.summary || PICKUP_BLOCKED_MOVEMENT_AUTHORIZATION;
       const reasonCodes: PickupStopReasonCode[] = movement.reasonCodes.includes("NO_TRIP_RELEASE")

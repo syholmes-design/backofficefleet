@@ -7,6 +7,7 @@ import { Prisma } from "@prisma/client";
 import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { getAuthenticatedDriver } from "@/lib/services/authenticatedDriverService";
+import { invalidateDriverMovementAuthorizations } from "@/lib/services/driverMovementInvalidationService";
 import { lockDriverReadinessWrite } from "@/lib/services/readinessService";
 import { type SessionUserLike } from "@/lib/services/intakeService";
 
@@ -301,6 +302,12 @@ async function createVersionRecord(input: {
             throw vaultConflict("Document version conflict");
           }
         }
+
+        await invalidateDriverMovementAuthorizations(tx, {
+          driverId: input.authenticatedDriver.driver.id,
+          actor: { id: input.authenticatedDriver.userId, email: input.authenticatedDriver.email },
+          trigger: "DRIVER_VAULT_DOCUMENT_VERSIONED",
+        });
 
         return document;
       },

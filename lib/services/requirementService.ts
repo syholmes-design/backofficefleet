@@ -288,7 +288,7 @@ export async function createDriverRequirementRecord(input: {
   const actorId = input.sessionUser.id;
   const actorEmail = input.sessionUser.email ?? null;
   // Requirement rows (including exceptions) feed the authoritative qualification: write under the driver lock.
-  const requirement = await withDriverQualificationLock(intake.driverId, async (tx) => {
+  const requirement = await withDriverQualificationLock(intake.driverId, { actor: { id: actorId, email: actorEmail }, trigger: "REQUIREMENT_CREATED" }, async (tx) => {
     const created = await createRequirement({
       driverIntakeId: intake.id,
       requirementType,
@@ -340,7 +340,7 @@ export async function affirmRequirementAction(input: {
   const affirmedAt = new Date();
   const actorId = input.sessionUser.id;
   const actorEmail = input.sessionUser.email ?? null;
-  return withDriverQualificationLock(intake.driverId, async (tx) => {
+  return withDriverQualificationLock(intake.driverId, { actor: { id: actorId, email: actorEmail }, trigger: "REQUIREMENT_AFFIRMED" }, async (tx) => {
     const updated = await updateRequirement(requirement.id, {
       affirmationStatus: "AFFIRMED",
       affirmationTimestamp: affirmedAt,
@@ -467,7 +467,7 @@ export async function updateDriverRequirementRecord(input: {
   const actorId = input.sessionUser.id;
   const actorEmail = input.sessionUser.email ?? null;
   // Changes to a requirement (including exceptionReason) feed the authoritative qualification.
-  return withDriverQualificationLock(requirement.driverIntake.driverId, async (tx) => {
+  return withDriverQualificationLock(requirement.driverIntake.driverId, { actor: { id: actorId, email: actorEmail }, trigger: "REQUIREMENT_UPDATED" }, async (tx) => {
     const updated = await updateRequirement(requirement.id, {
       label: input.payload.label,
       isRequired: input.payload.isRequired,

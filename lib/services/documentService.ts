@@ -173,7 +173,7 @@ export async function createDriverDocumentRecord(input: {
   const actorId = input.sessionUser.id;
   const actorEmail = input.sessionUser.email ?? null;
   // A new upload becomes the current version of its type, so it changes qualification: write under the driver lock.
-  const document = await withDriverQualificationLock(driver.id, async (tx) => {
+  const document = await withDriverQualificationLock(driver.id, { actor: { id: actorId, email: actorEmail }, trigger: "DOCUMENT_UPLOADED" }, async (tx) => {
     const created = await createDocument({
       driverId: driver.id,
       driverIntakeId: intake.id,
@@ -235,7 +235,8 @@ export async function updateDriverDocumentRecord(input: {
   // Verification, rejection and expiry change qualification evidence. The transition is checked against the row
   // as it stands under the driver lock, so a concurrent change cannot be overwritten, and the document, its
   // verification source, the derived requirement rows and the audit commit together.
-  const { updated, previous } = await withDriverQualificationLock(document.driverId, async (tx) => {
+  const change = { actor: { id: input.sessionUser.id, email: input.sessionUser.email ?? null }, trigger: `DOCUMENT_${input.payload.status ?? "UPDATED"}` };
+  const { updated, previous } = await withDriverQualificationLock(document.driverId, change, async (tx) => {
     const current = await tx.driverDocument.findUniqueOrThrow({ where: { id: document.id } });
 
     const someStatus = input.payload.status ?? current.status;
