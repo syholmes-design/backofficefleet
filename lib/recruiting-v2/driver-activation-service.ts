@@ -11,6 +11,7 @@ import {
 } from "@/lib/recruiting-v2/activation-engine";
 import { runPostActivationQualificationAndReadiness } from "@/lib/recruiting-v2/post-activation-evaluation";
 import { authorizedFleetAccess } from "@/lib/services/intakeService";
+import { lockDriverReadinessWrite } from "@/lib/services/readinessService";
 
 const ACTIVATION_ROLE_CODES = [
   "BOF_OPERATIONS",
@@ -240,6 +241,8 @@ export async function activateRecruitingV2Candidate(input: {
       throw new RecruitingV2ActivationError("A driver with this email exists in another fleet.", 409);
     }
 
+    // The new intake becomes the one qualification is evaluated from.
+    await lockDriverReadinessWrite(tx, driver.id);
     const intake = await tx.driverIntake.create({
       data: {
         driverId: driver.id,

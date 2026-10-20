@@ -1,3 +1,5 @@
+import type { Prisma } from "@prisma/client";
+
 import { prisma } from "@/lib/prisma";
 
 export const requirementInclude = {
@@ -61,8 +63,8 @@ export async function createRequirement(data: {
   resolutionNotes?: string | null;
   exceptionReason?: string | null;
   status?: string | null;
-}) {
-  return prisma.driverIntakeRequirement.create({
+}, db: Prisma.TransactionClient | typeof prisma = prisma) {
+  return db.driverIntakeRequirement.create({
     data: {
       driverIntakeId: data.driverIntakeId,
       requirementType: data.requirementType,
@@ -111,8 +113,8 @@ export async function updateRequirement(requirementId: string, data: {
   exceptionReason?: string | null;
   status?: string;
   satisfiedByDocumentId?: string | null;
-}) {
-  return prisma.driverIntakeRequirement.update({
+}, db: Prisma.TransactionClient | typeof prisma = prisma) {
+  return db.driverIntakeRequirement.update({
     where: { id: requirementId },
     data: {
       ...(data.label ? { label: data.label } : {}),

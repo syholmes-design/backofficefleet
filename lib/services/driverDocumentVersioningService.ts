@@ -7,6 +7,7 @@ import { Prisma } from "@prisma/client";
 import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { getAuthenticatedDriver } from "@/lib/services/authenticatedDriverService";
+import { lockDriverReadinessWrite } from "@/lib/services/readinessService";
 import { type SessionUserLike } from "@/lib/services/intakeService";
 
 import { driverVaultDocumentTypeLabel, DRIVER_VAULT_DOCUMENT_TYPES } from "@/lib/driver-vault-document-types";
@@ -248,6 +249,8 @@ async function createVersionRecord(input: {
   try {
     const created = await prisma.$transaction(
       async (tx) => {
+        // A new version supersedes the driver's current document of this type, which changes qualification.
+        await lockDriverReadinessWrite(tx, input.authenticatedDriver.driver.id);
         const sourceDocumentId = input.sourceDocumentId ?? baseDocumentId;
         const currentLatest = input.previousVersionId
           ? await tx.driverDocument.findUnique({

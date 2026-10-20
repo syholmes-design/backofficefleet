@@ -367,6 +367,23 @@ export async function lockDriverReadinessWrite(db: Prisma.TransactionClient, dri
   await db.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`bof-driver-readiness:${driverId}`}))`;
 }
 
+/**
+ * Runs a write to driver qualification evidence (documents, requirements, intakes, verification sources, the
+ * driver's user link) in one transaction that first takes the driver lock. getAuthoritativeDriverQualification
+ * callers - assignment planning, release and pickup in dispatchMovementAuthorizationService - hold the same lock
+ * while they evaluate, so an authorization either completes before the change or evaluates the committed change.
+ * Do not call it while already inside a transaction for the same driver (the nested transaction would wait on it).
+ */
+export async function withDriverQualificationLock<T>(
+  driverId: string,
+  write: (tx: Prisma.TransactionClient) => Promise<T>,
+): Promise<T> {
+  return prisma.$transaction(async (tx) => {
+    await lockDriverReadinessWrite(tx, driverId);
+    return write(tx);
+  });
+}
+
 export async function writeReadinessScore(
   sessionUser: SessionUserLike | null | undefined,
   driverId: string,

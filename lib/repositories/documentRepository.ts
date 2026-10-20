@@ -1,3 +1,5 @@
+import type { Prisma } from "@prisma/client";
+
 import { prisma } from "@/lib/prisma";
 
 export const documentInclude = {
@@ -37,8 +39,8 @@ export async function createDocument(data: {
   mimeType?: string | null;
   checksum?: string | null;
   uploadedByUserId: string;
-}) {
-  return prisma.driverDocument.create({
+}, db: Prisma.TransactionClient | typeof prisma = prisma) {
+  return db.driverDocument.create({
     data: {
       driverId: data.driverId,
       driverIntakeId: data.driverIntakeId,
@@ -62,8 +64,8 @@ export async function updateDocument(documentId: string, data: {
   verificationExpiresAt?: Date | null;
   nextVerificationDueAt?: Date | null;
   verificationQuality?: string | null;
-}) {
-  return prisma.driverDocument.update({
+}, db: Prisma.TransactionClient | typeof prisma = prisma) {
+  return db.driverDocument.update({
     where: { id: documentId },
     data: {
       ...(data.status ? { status: data.status as never } : {}),
@@ -87,8 +89,8 @@ export async function createVerificationSource(data: {
   verifiedAt?: Date | null;
   verifiedByUserId?: string | null;
   notes?: string | null;
-}) {
-  return prisma.verificationSource.create({
+}, db: Prisma.TransactionClient | typeof prisma = prisma) {
+  return db.verificationSource.create({
     data: {
       driverDocumentId: data.driverDocumentId ?? null,
       driverIntakeRequirementId: data.driverIntakeRequirementId ?? null,

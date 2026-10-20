@@ -160,30 +160,37 @@ export async function createDriverIntakeRecord(input: {
     throw Object.assign(new Error("Driver does not belong to this fleet"), { statusCode: 422 });
   }
 
-  const intake = await createIntake({
-    driverId: driver.id,
-    fleetId: input.fleetId,
-    createdByUserId: input.sessionUser.id,
-    intakeSource: input.intakeSource ?? "PORTAL",
-    intakeChannel: input.intakeChannel ?? "WEB",
-    stage: "NEW",
-    status: "DRAFT",
+  // The newest intake is the one qualification is evaluated from, so creating one changes it.
+  // readinessService imports this module; load the lock helper lazily to keep the import graph acyclic.
+  const { withDriverQualificationLock } = await import("@/lib/services/readinessService");
+  const actorId = input.sessionUser.id;
+  const actorEmail = input.sessionUser.email ?? null;
+  return withDriverQualificationLock(driver.id, async (tx) => {
+    const intake = await createIntake({
+      driverId: driver.id,
+      fleetId: input.fleetId,
+      createdByUserId: actorId,
+      intakeSource: input.intakeSource ?? "PORTAL",
+      intakeChannel: input.intakeChannel ?? "WEB",
+      stage: "NEW",
+      status: "DRAFT",
+    }, tx);
+
+    await createStageAudit(intake.id, "NEW", "DRAFT", actorId, "Driver intake created", tx);
+
+    await createAuditRecord({
+      actorId,
+      actorEmail,
+      tenantId: input.fleetId,
+      action: "CREATED",
+      entityType: "DriverIntake",
+      entityId: intake.id,
+      details: { event: "intake.created", stage: "NEW", status: "DRAFT" },
+      metadata: { source: "driver-intake-api" },
+    }, tx);
+
+    return intake;
   });
-
-  await createStageAudit(intake.id, "NEW", "DRAFT", input.sessionUser.id, "Driver intake created");
-
-  await createAuditRecord({
-    actorId: input.sessionUser.id,
-    actorEmail: input.sessionUser.email ?? null,
-    tenantId: input.fleetId,
-    action: "CREATED",
-    entityType: "DriverIntake",
-    entityId: intake.id,
-    details: { event: "intake.created", stage: "NEW", status: "DRAFT" },
-    metadata: { source: "driver-intake-api" },
-  });
-
-  return intake;
 }
 
 export async function listDriverIntakesForUser(

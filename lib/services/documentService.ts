@@ -8,6 +8,7 @@ import {
 } from "@/lib/repositories/documentRepository";
 import { getAuthenticatedDriver } from "@/lib/services/authenticatedDriverService";
 import { authorizedFleetAccess, logUnauthorizedAttempt, type SessionUserLike } from "@/lib/services/intakeService";
+import { withDriverQualificationLock } from "@/lib/services/readinessService";
 import { evaluateIntakeRequirements } from "@/lib/services/requirementService";
 
 const VALID_DOCUMENT_TYPES = [
@@ -168,30 +169,38 @@ export async function createDriverDocumentRecord(input: {
     throw Object.assign(new Error("metadata must be an object"), { statusCode: 422 });
   }
 
-  const document = await createDocument({
-    driverId: driver.id,
-    driverIntakeId: intake.id,
-    fleetId: intake.fleetId,
-    type: documentType,
-    status: "RECEIVED",
-    storageKey: input.payload.storageKey,
-    originalFileName: input.payload.originalFileName,
-    mimeType: input.payload.mimeType ?? null,
-    checksum: input.payload.checksum ?? null,
-    uploadedByUserId: input.sessionUser.id,
-  });
+  const { storageKey, originalFileName } = input.payload;
+  const actorId = input.sessionUser.id;
+  const actorEmail = input.sessionUser.email ?? null;
+  // A new upload becomes the current version of its type, so it changes qualification: write under the driver lock.
+  const document = await withDriverQualificationLock(driver.id, async (tx) => {
+    const created = await createDocument({
+      driverId: driver.id,
+      driverIntakeId: intake.id,
+      fleetId: intake.fleetId,
+      type: documentType,
+      status: "RECEIVED",
+      storageKey,
+      originalFileName,
+      mimeType: input.payload.mimeType ?? null,
+      checksum: input.payload.checksum ?? null,
+      uploadedByUserId: actorId,
+    }, tx);
 
-  await evaluateIntakeRequirements(intake.id);
+    await evaluateIntakeRequirements(intake.id, tx);
 
-  await createAuditRecord({
-    actorId: input.sessionUser.id,
-    actorEmail: input.sessionUser.email ?? null,
-    tenantId: intake.fleetId,
-    action: "CREATED",
-    entityType: "DriverDocument",
-    entityId: document.id,
-    details: { event: "document.uploaded", intakeId: intake.id, driverId: driver.id, documentType, storageKey: input.payload.storageKey },
-    metadata: { source: "document-api", metadata: input.payload.metadata ?? {} },
+    await createAuditRecord({
+      actorId,
+      actorEmail,
+      tenantId: intake.fleetId,
+      action: "CREATED",
+      entityType: "DriverDocument",
+      entityId: created.id,
+      details: { event: "document.uploaded", intakeId: intake.id, driverId: driver.id, documentType, storageKey },
+      metadata: { source: "document-api", metadata: input.payload.metadata ?? {} },
+    }, tx);
+
+    return created;
   });
 
   return document;
@@ -222,81 +231,92 @@ export async function updateDriverDocumentRecord(input: {
     throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
   }
 
-  const someStatus = input.payload.status ?? document.status;
-  if ((VALID_DOCUMENT_STATUSES as readonly string[]).includes(someStatus) === false) {
-    throw Object.assign(new Error("Invalid document status"), { statusCode: 422 });
-  }
+  const sessionUser = input.sessionUser;
+  // Verification, rejection and expiry change qualification evidence. The transition is checked against the row
+  // as it stands under the driver lock, so a concurrent change cannot be overwritten, and the document, its
+  // verification source, the derived requirement rows and the audit commit together.
+  const { updated, previous } = await withDriverQualificationLock(document.driverId, async (tx) => {
+    const current = await tx.driverDocument.findUniqueOrThrow({ where: { id: document.id } });
 
-  const allowedTransitions = STATUS_TRANSITIONS[document.status] ?? [];
-  if (input.payload.status && !allowedTransitions.includes(input.payload.status)) {
-    throw Object.assign(new Error(`Illegal document status transition from ${document.status} to ${input.payload.status}`), { statusCode: 422 });
-  }
+    const someStatus = input.payload.status ?? current.status;
+    if ((VALID_DOCUMENT_STATUSES as readonly string[]).includes(someStatus) === false) {
+      throw Object.assign(new Error("Invalid document status"), { statusCode: 422 });
+    }
 
-  const nextStatus = input.payload.status ?? document.status;
-  const verificationExpiresAt = input.payload.verificationExpiresAt ? new Date(input.payload.verificationExpiresAt) : document.verificationExpiresAt;
-  const nextVerificationDueAt = input.payload.nextVerificationDueAt ? new Date(input.payload.nextVerificationDueAt) : document.nextVerificationDueAt;
-  const verifiedByUserId = input.payload.verifiedByUserId ?? document.verifiedByUserId ?? (nextStatus === "VERIFIED" ? input.sessionUser.id : null);
+    const allowedTransitions = STATUS_TRANSITIONS[current.status] ?? [];
+    if (input.payload.status && !allowedTransitions.includes(input.payload.status)) {
+      throw Object.assign(new Error(`Illegal document status transition from ${current.status} to ${input.payload.status}`), { statusCode: 422 });
+    }
 
-  const updated = await updateDocument(document.id, {
-    status: nextStatus,
-    verifiedByUserId,
-    verifiedAt: nextStatus === "VERIFIED" ? (document.verifiedAt ?? new Date()) : document.verifiedAt,
-    verificationExpiresAt: nextStatus === "VERIFIED" ? (verificationExpiresAt ?? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)) : verificationExpiresAt,
-    nextVerificationDueAt: nextStatus === "VERIFIED" ? (nextVerificationDueAt ?? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)) : nextVerificationDueAt,
-    verificationQuality: input.payload.rejectionReason ?? document.verificationQuality,
+    const nextStatus = input.payload.status ?? current.status;
+    const verificationExpiresAt = input.payload.verificationExpiresAt ? new Date(input.payload.verificationExpiresAt) : current.verificationExpiresAt;
+    const nextVerificationDueAt = input.payload.nextVerificationDueAt ? new Date(input.payload.nextVerificationDueAt) : current.nextVerificationDueAt;
+    const verifiedByUserId = input.payload.verifiedByUserId ?? current.verifiedByUserId ?? (nextStatus === "VERIFIED" ? sessionUser.id : null);
+
+    const saved = await updateDocument(current.id, {
+      status: nextStatus,
+      verifiedByUserId,
+      verifiedAt: nextStatus === "VERIFIED" ? (current.verifiedAt ?? new Date()) : current.verifiedAt,
+      verificationExpiresAt: nextStatus === "VERIFIED" ? (verificationExpiresAt ?? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)) : verificationExpiresAt,
+      nextVerificationDueAt: nextStatus === "VERIFIED" ? (nextVerificationDueAt ?? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)) : nextVerificationDueAt,
+      verificationQuality: input.payload.rejectionReason ?? current.verificationQuality,
+    }, tx);
+
+    if (input.payload.verificationSourceProvider) {
+      await tx.verificationSource.create({
+        data: {
+          driverDocumentId: saved.id,
+          providerName: input.payload.verificationSourceProvider,
+          providerType: "INTERNAL",
+          verificationMethod: "SERVER",
+          verificationStatus: nextStatus === "VERIFIED" ? "VERIFIED" : nextStatus === "REJECTED" ? "REJECTED" : "PENDING_VERIFICATION",
+          verifiedAt: nextStatus === "VERIFIED" ? new Date() : null,
+          verifiedByUserId: nextStatus === "VERIFIED" ? sessionUser.id : null,
+        },
+      });
+    }
+
+    await evaluateIntakeRequirements(current.driverIntakeId, tx);
+
+    if (nextStatus === "VERIFIED") {
+      await createAuditRecord({
+        actorId: sessionUser.id,
+        actorEmail: sessionUser.email ?? null,
+        tenantId: current.fleetId,
+        action: "UPDATED",
+        entityType: "DriverDocument",
+        entityId: current.id,
+        details: { event: "document.verified", documentId: current.id, nextStatus },
+        metadata: { source: "document-api" },
+      }, tx);
+    }
+
+    if (nextStatus === "REJECTED") {
+      await createAuditRecord({
+        actorId: sessionUser.id,
+        actorEmail: sessionUser.email ?? null,
+        tenantId: current.fleetId,
+        action: "UPDATED",
+        entityType: "DriverDocument",
+        entityId: current.id,
+        details: { event: "document.rejected", documentId: current.id, reason: input.payload.rejectionReason ?? "REJECTED" },
+        metadata: { source: "document-api" },
+      }, tx);
+    }
+
+    return { updated: saved, previous: current };
   });
 
-  if (input.payload.verificationSourceProvider) {
-    await prisma.verificationSource.create({
-      data: {
-        driverDocumentId: updated.id,
-        providerName: input.payload.verificationSourceProvider,
-        providerType: "INTERNAL",
-        verificationMethod: "SERVER",
-        verificationStatus: nextStatus === "VERIFIED" ? "VERIFIED" : nextStatus === "REJECTED" ? "REJECTED" : "PENDING_VERIFICATION",
-        verifiedAt: nextStatus === "VERIFIED" ? new Date() : null,
-        verifiedByUserId: nextStatus === "VERIFIED" ? input.sessionUser.id : null,
-      },
-    });
-  }
-
-  await evaluateIntakeRequirements(document.driverIntakeId);
-
-  const statusChanged = nextStatus !== document.status;
-  if (statusChanged && (nextStatus === "VERIFIED" || nextStatus === "REJECTED" || nextStatus === "EXPIRED")) {
+  // Readiness projections take the same driver lock in their own transaction, so they run after the commit.
+  const statusChanged = updated.status !== previous.status;
+  if (statusChanged && (updated.status === "VERIFIED" || updated.status === "REJECTED" || updated.status === "EXPIRED")) {
     const { reevaluateDriverReadinessAfterDocumentChange } = await import("@/lib/services/readinessReevaluationService");
     await reevaluateDriverReadinessAfterDocumentChange({
-      sessionUser: input.sessionUser,
+      sessionUser,
       driverId: document.driverId,
       driverIntakeId: document.driverIntakeId,
       fleetId: document.fleetId,
     }).catch(() => null);
-  }
-
-  if (nextStatus === "VERIFIED") {
-    await createAuditRecord({
-      actorId: input.sessionUser.id,
-      actorEmail: input.sessionUser.email ?? null,
-      tenantId: document.fleetId,
-      action: "UPDATED",
-      entityType: "DriverDocument",
-      entityId: document.id,
-      details: { event: "document.verified", documentId: document.id, nextStatus },
-      metadata: { source: "document-api" },
-    });
-  }
-
-  if (nextStatus === "REJECTED") {
-    await createAuditRecord({
-      actorId: input.sessionUser.id,
-      actorEmail: input.sessionUser.email ?? null,
-      tenantId: document.fleetId,
-      action: "UPDATED",
-      entityType: "DriverDocument",
-      entityId: document.id,
-      details: { event: "document.rejected", documentId: document.id, reason: input.payload.rejectionReason ?? "REJECTED" },
-      metadata: { source: "document-api" },
-    });
   }
 
   return updated;

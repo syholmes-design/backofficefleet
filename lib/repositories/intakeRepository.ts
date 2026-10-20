@@ -1,3 +1,5 @@
+import type { Prisma } from "@prisma/client";
+
 import { prisma } from "@/lib/prisma";
 
 const intakeInclude = {
@@ -65,8 +67,8 @@ export async function createIntake(data: {
   intakeChannel: string;
   stage: string;
   status: string;
-}) {
-  return prisma.driverIntake.create({
+}, db: Prisma.TransactionClient | typeof prisma = prisma) {
+  return db.driverIntake.create({
     data: {
       driverId: data.driverId,
       fleetId: data.fleetId,
@@ -92,8 +94,9 @@ export async function updateIntake(
     rejectedByUserId?: string | null;
     notes?: string | null;
   },
+  db: Prisma.TransactionClient | typeof prisma = prisma,
 ) {
-  return prisma.driverIntake.update({
+  return db.driverIntake.update({
     where: { id: intakeId },
     data: {
       ...(data.stage ? { stage: data.stage as never } : {}),
@@ -115,8 +118,9 @@ export async function createStageAudit(
   status: string | null,
   changedByUserId: string | null,
   notes?: string | null,
+  db: Prisma.TransactionClient | typeof prisma = prisma,
 ) {
-  return prisma.driverIntakeStage.create({
+  return db.driverIntakeStage.create({
     data: {
       driverIntakeId: intakeId,
       stage: stage as never,

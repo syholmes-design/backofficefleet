@@ -1,3 +1,5 @@
+import type { Prisma } from "@prisma/client";
+
 import { createAuditRecord } from "@/lib/audit";
 import { ADVANCE_COMPLIANCE_POLICIES, getConfiguredAdvanceWindowDays, evaluateAdvanceComplianceTrigger, evaluateComplianceTrigger } from "@/lib/advance-compliance-rule";
 import { prisma } from "@/lib/prisma";
@@ -10,6 +12,7 @@ import {
 } from "@/lib/repositories/requirementRepository";
 import type { DriverReviewRequirement } from "@/lib/driver-review-explanation";
 import { authorizedFleetAccess, logUnauthorizedAttempt, type SessionUserLike } from "@/lib/services/intakeService";
+import { withDriverQualificationLock } from "@/lib/services/readinessService";
 
 const VALID_REQUIREMENT_TYPES = [
   "DRIVER_LICENSE",
@@ -63,8 +66,12 @@ export function normalizeRequirementStatusForDocument(requirementType: string, d
   return "PENDING" as const;
 }
 
-export async function evaluateIntakeRequirements(intakeId: string) {
-  const intake = await prisma.driverIntake.findUnique({
+/**
+ * Re-derives the intake's requirement rows from its documents and records. The rows feed the authoritative
+ * qualification, so callers run this inside withDriverQualificationLock with the write that changed the evidence.
+ */
+export async function evaluateIntakeRequirements(intakeId: string, tx: Prisma.TransactionClient) {
+  const intake = await tx.driverIntake.findUnique({
     where: { id: intakeId },
     include: {
       requirements: {
@@ -99,13 +106,15 @@ export async function evaluateIntakeRequirements(intakeId: string) {
         isRequired: true,
         requiredAction: ADVANCE_COMPLIANCE_POLICIES[source.requirementType].requiredAction,
         status: "REQUIRED",
-      });
+      }, tx);
       requirements = [...requirements, created];
     }
   }
 
-  const required = await Promise.all(
-    requirements.map(async (requirement) => {
+  // One requirement at a time: the queries share the transaction's connection.
+  const required = [];
+  for (const requirement of requirements) {
+    {
       const requirementType = requirement.requirementType;
       const matching = intake.documents
         .filter(
@@ -197,7 +206,7 @@ export async function evaluateIntakeRequirements(intakeId: string) {
         resolvedAt: isResolved ? (requirement.resolvedAt ?? new Date()) : requirement.resolvedAt,
         resolutionNotes: isResolved ? `Verified replacement evidence linked to the ${requirement.label} obligation.` : requirement.resolutionNotes,
         satisfiedByDocumentId: latestDocument && (latestDocument.status === "VERIFIED" || latestDocument.status === "PENDING_VERIFICATION") ? latestDocument.id : (requirement.satisfiedByDocumentId ?? null),
-      });
+      }, tx);
 
       if (isResolved && requirement.resolutionStatus !== "RESOLVED") {
         await createAuditRecord({
@@ -209,7 +218,7 @@ export async function evaluateIntakeRequirements(intakeId: string) {
           entityId: requirement.id,
           details: { event: "requirement.resolved", driverId: intake.driverId, requirementType, satisfiedByDocumentId: latestDocument?.id },
           metadata: { source: "requirement-evaluator" },
-        });
+        }, tx);
       }
 
       if (triggerEvaluation.isTriggered && requirement.actionStatus !== "ACTION_REQUIRED" && !isResolved) {
@@ -222,12 +231,12 @@ export async function evaluateIntakeRequirements(intakeId: string) {
           entityId: requirement.id,
           details: { event: "requirement.advance_triggered", driverId: intake.driverId, requirementType, triggerDate: evaluatedTriggerDate?.toISOString(), advanceWindowDays: requirementAdvanceWindow },
           metadata: { source: "requirement-evaluator" },
-        });
+        }, tx);
       }
 
-      return saved;
-    }),
-  );
+      required.push(saved);
+    }
+  }
 
   return required;
 }
@@ -275,32 +284,40 @@ export async function createDriverRequirementRecord(input: {
 
   const advanceWindowDays = typeof input.payload.advanceWindowDays === "number" ? input.payload.advanceWindowDays : null;
   const requiredAction = input.payload.requiredAction ?? null;
-  const requirement = await createRequirement({
-    driverIntakeId: intake.id,
-    requirementType,
-    label: input.payload.label,
-    isRequired: input.payload.isRequired ?? true,
-    dueDate: input.payload.dueDate ? new Date(input.payload.dueDate) : null,
-    expiresAt: input.payload.expiresAt ? new Date(input.payload.expiresAt) : null,
-    advanceWindowDays,
-    triggerDate: null,
-    requiredAction,
-    actionStatus: null,
-    exceptionReason: input.payload.exceptionReason ?? null,
-    status: "REQUIRED",
-  });
+  const label = input.payload.label;
+  const actorId = input.sessionUser.id;
+  const actorEmail = input.sessionUser.email ?? null;
+  // Requirement rows (including exceptions) feed the authoritative qualification: write under the driver lock.
+  const requirement = await withDriverQualificationLock(intake.driverId, async (tx) => {
+    const created = await createRequirement({
+      driverIntakeId: intake.id,
+      requirementType,
+      label,
+      isRequired: input.payload.isRequired ?? true,
+      dueDate: input.payload.dueDate ? new Date(input.payload.dueDate) : null,
+      expiresAt: input.payload.expiresAt ? new Date(input.payload.expiresAt) : null,
+      advanceWindowDays,
+      triggerDate: null,
+      requiredAction,
+      actionStatus: null,
+      exceptionReason: input.payload.exceptionReason ?? null,
+      status: "REQUIRED",
+    }, tx);
 
-  await evaluateIntakeRequirements(intake.id);
+    await evaluateIntakeRequirements(intake.id, tx);
 
-  await createAuditRecord({
-    actorId: input.sessionUser.id,
-    actorEmail: input.sessionUser.email ?? null,
-    tenantId: intake.fleetId,
-    action: "CREATED",
-    entityType: "DriverIntakeRequirement",
-    entityId: requirement.id,
-    details: { event: "requirement.created", intakeId: intake.id, requirementType, label: requirement.label },
-    metadata: { source: "requirement-api" },
+    await createAuditRecord({
+      actorId,
+      actorEmail,
+      tenantId: intake.fleetId,
+      action: "CREATED",
+      entityType: "DriverIntakeRequirement",
+      entityId: created.id,
+      details: { event: "requirement.created", intakeId: intake.id, requirementType, label: created.label },
+      metadata: { source: "requirement-api" },
+    }, tx);
+
+    return created;
   });
 
   return requirement;
@@ -321,26 +338,30 @@ export async function affirmRequirementAction(input: {
   const intake = requirement.driverIntake;
 
   const affirmedAt = new Date();
-  const updated = await updateRequirement(requirement.id, {
-    affirmationStatus: "AFFIRMED",
-    affirmationTimestamp: affirmedAt,
-    affirmedBy: input.sessionUser.id,
-    actionStatus: requirement.requirementType === "MEDICAL" ? "AWAITING_MEDICAL_CARD" : "AWAITING_EVIDENCE",
-    resolutionStatus: "OPEN",
-  });
+  const actorId = input.sessionUser.id;
+  const actorEmail = input.sessionUser.email ?? null;
+  return withDriverQualificationLock(intake.driverId, async (tx) => {
+    const updated = await updateRequirement(requirement.id, {
+      affirmationStatus: "AFFIRMED",
+      affirmationTimestamp: affirmedAt,
+      affirmedBy: actorId,
+      actionStatus: requirement.requirementType === "MEDICAL" ? "AWAITING_MEDICAL_CARD" : "AWAITING_EVIDENCE",
+      resolutionStatus: "OPEN",
+    }, tx);
 
-  await createAuditRecord({
-    actorId: input.sessionUser.id,
-    actorEmail: input.sessionUser.email ?? null,
-    tenantId: intake.fleetId,
-    action: "UPDATED",
-    entityType: "DriverIntakeRequirement",
-    entityId: requirement.id,
-    details: { event: "requirement.action_affirmed", driverId: intake.driverId, requirementType: requirement.requirementType, affirmationTimestamp: affirmedAt.toISOString() },
-    metadata: { source: "requirement-action-api" },
-  });
+    await createAuditRecord({
+      actorId,
+      actorEmail,
+      tenantId: intake.fleetId,
+      action: "UPDATED",
+      entityType: "DriverIntakeRequirement",
+      entityId: requirement.id,
+      details: { event: "requirement.action_affirmed", driverId: intake.driverId, requirementType: requirement.requirementType, affirmationTimestamp: affirmedAt.toISOString() },
+      metadata: { source: "requirement-action-api" },
+    }, tx);
 
-  return updated;
+    return updated;
+  });
 }
 
 export async function affirmMedicalRenewalAppointment(input: {
@@ -443,29 +464,34 @@ export async function updateDriverRequirementRecord(input: {
     throw Object.assign(new Error(`Invalid fields: ${invalidKeys.join(", ")}`), { statusCode: 422 });
   }
 
-  const updated = await updateRequirement(requirement.id, {
-    label: input.payload.label,
-    isRequired: input.payload.isRequired,
-    dueDate: input.payload.dueDate !== undefined ? (input.payload.dueDate ? new Date(input.payload.dueDate) : null) : undefined,
-    expiresAt: input.payload.expiresAt !== undefined ? (input.payload.expiresAt ? new Date(input.payload.expiresAt) : null) : undefined,
-    advanceWindowDays: input.payload.advanceWindowDays,
-    requiredAction: input.payload.requiredAction,
-    exceptionReason: input.payload.exceptionReason,
-    triggerDate: input.payload.expiresAt ? new Date(input.payload.expiresAt) : requirement.triggerDate,
+  const actorId = input.sessionUser.id;
+  const actorEmail = input.sessionUser.email ?? null;
+  // Changes to a requirement (including exceptionReason) feed the authoritative qualification.
+  return withDriverQualificationLock(requirement.driverIntake.driverId, async (tx) => {
+    const updated = await updateRequirement(requirement.id, {
+      label: input.payload.label,
+      isRequired: input.payload.isRequired,
+      dueDate: input.payload.dueDate !== undefined ? (input.payload.dueDate ? new Date(input.payload.dueDate) : null) : undefined,
+      expiresAt: input.payload.expiresAt !== undefined ? (input.payload.expiresAt ? new Date(input.payload.expiresAt) : null) : undefined,
+      advanceWindowDays: input.payload.advanceWindowDays,
+      requiredAction: input.payload.requiredAction,
+      exceptionReason: input.payload.exceptionReason,
+      triggerDate: input.payload.expiresAt ? new Date(input.payload.expiresAt) : requirement.triggerDate,
+    }, tx);
+
+    await evaluateIntakeRequirements(requirement.driverIntakeId, tx);
+
+    await createAuditRecord({
+      actorId,
+      actorEmail,
+      tenantId: requirement.driverIntake.fleetId,
+      action: "UPDATED",
+      entityType: "DriverIntakeRequirement",
+      entityId: updated.id,
+      details: { event: "requirement.updated", previousStatus: requirement.status, nextStatus: updated.status },
+      metadata: { source: "requirement-api" },
+    }, tx);
+
+    return updated;
   });
-
-  await evaluateIntakeRequirements(requirement.driverIntakeId);
-
-  await createAuditRecord({
-    actorId: input.sessionUser.id,
-    actorEmail: input.sessionUser.email ?? null,
-    tenantId: requirement.driverIntake.fleetId,
-    action: "UPDATED",
-    entityType: "DriverIntakeRequirement",
-    entityId: updated.id,
-    details: { event: "requirement.updated", previousStatus: requirement.status, nextStatus: updated.status },
-    metadata: { source: "requirement-api" },
-  });
-
-  return updated;
 }

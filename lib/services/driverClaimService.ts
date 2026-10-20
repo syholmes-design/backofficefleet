@@ -5,6 +5,7 @@ import { Prisma, type PrismaClient } from "@prisma/client";
 import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
+import { lockDriverReadinessWrite } from "@/lib/services/readinessService";
 
 const CLAIM_TOKEN_BYTES = 32;
 const CLAIM_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
@@ -369,6 +370,8 @@ export async function completeDriverClaim(input: {
         throw claimConflict("Claim conflict");
       }
 
+      // Driver.userId decides which verifications count as self-verification in the qualification evaluator.
+      await lockDriverReadinessWrite(tx, token.driverId);
       try {
         const ownershipResult = await tx.driver.updateMany({
           where: {
