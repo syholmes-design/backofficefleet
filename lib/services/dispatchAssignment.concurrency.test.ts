@@ -13,10 +13,11 @@ function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-test("concurrent readiness writes cannot bypass the driver-scoped assignment lock", async () => {
+test("concurrent qualification writes cannot bypass the driver-scoped assignment lock", async () => {
   assertTestDatabaseTarget(process.env.DATABASE_URL);
   const { prisma } = await import("@/lib/prisma");
   const { createAssignment } = await import("@/lib/services/dispatchAssignmentService");
+  const { createQualifiedDriverEvidence, cleanupQualifiedDriverEvidence } = await import("@/lib/test/qualifiedDriverFixture");
   const { lockDriverReadinessWrite } = await import("@/lib/services/readinessService");
   const { recordOperatingProcessEvent } = await import("@/lib/process-intelligence/operating-event-service");
   const { getOperatingProcessStore } = await import("@/lib/process-intelligence/runtime-store");
@@ -46,6 +47,18 @@ test("concurrent readiness writes cannot bypass the driver-scoped assignment loc
   await prisma.fleetMembership.create({
     data: { userId: dispatcher.id, fleetId: fleetA.id, roleId: dispatchRole.id, status: "ACTIVE" },
   });
+  const complianceRole = await prisma.role.upsert({
+    where: { code: "BOF_COMPLIANCE_REVIEW" },
+    update: {},
+    create: { code: "BOF_COMPLIANCE_REVIEW", name: "BOF Compliance Review" },
+  });
+  const complianceUser = await prisma.user.create({
+    data: { email: `lock-compliance-${stamp}@dev.local`, name: "Lock Compliance" },
+  });
+  await prisma.fleetMembership.create({
+    data: { userId: complianceUser.id, fleetId: fleetA.id, roleId: complianceRole.id, status: "ACTIVE" },
+  });
+  const licenseByDriver = new Map<string, string>();
   const actor = {
     id: dispatcher.id,
     email: dispatcher.email,
@@ -83,6 +96,14 @@ test("concurrent readiness writes cannot bypass the driver-scoped assignment loc
     });
     ids.driverIds.push(driver.id);
     ids.readinessIds.push(score.id);
+    if (fleetId === fleetA.id) {
+      const evidence = await createQualifiedDriverEvidence(prisma, {
+        driverId: driver.id,
+        fleetId,
+        complianceUserId: complianceUser.id,
+      });
+      licenseByDriver.set(driver.id, evidence.licenseDocumentId);
+    }
     return driver;
   }
 
@@ -135,18 +156,11 @@ test("concurrent readiness writes cannot bypass the driver-scoped assignment loc
       await lockDriverReadinessWrite(tx, blockedDriver.id);
       markLocked();
       await release;
-      const score = await tx.driverReadinessScore.create({
-        data: {
-          driverId: blockedDriver.id,
-          fleetId: fleetA.id,
-          status: "NOT_READY",
-          policyVersion: "concurrency",
-          summary: "not ready while assignment waits",
-          score: 5,
-          evaluatedAt: new Date(),
-        },
+      // Compliance rejects the license while the assignment waits on the driver lock.
+      await tx.driverDocument.update({
+        where: { id: licenseByDriver.get(blockedDriver.id)! },
+        data: { status: "REJECTED" },
       });
-      ids.readinessIds.push(score.id);
     }, { timeout: 20_000 });
 
     await locked;
@@ -263,11 +277,12 @@ test("concurrent readiness writes cannot bypass the driver-scoped assignment loc
     await prisma.auditEvent.deleteMany({ where: { tenantId: { in: [fleetA.id, fleetB.id] } } });
     await prisma.dispatchAssignment.deleteMany({ where: { loadId: { in: ids.loadIds } } });
     await prisma.driverReadinessScore.deleteMany({ where: { driverId: { in: ids.driverIds } } });
+    await cleanupQualifiedDriverEvidence(prisma, ids.driverIds);
     await prisma.load.deleteMany({ where: { id: { in: ids.loadIds } } });
     await prisma.equipment.deleteMany({ where: { id: { in: ids.equipmentIds } } });
     await prisma.driver.deleteMany({ where: { id: { in: ids.driverIds } } });
     await prisma.fleetMembership.deleteMany({ where: { fleetId: { in: [fleetA.id, fleetB.id] } } });
-    await prisma.user.deleteMany({ where: { id: dispatcher.id } });
+    await prisma.user.deleteMany({ where: { id: { in: [dispatcher.id, complianceUser.id] } } });
     await prisma.fleet.deleteMany({ where: { id: { in: [fleetA.id, fleetB.id] } } });
     await prisma.carrierGroup.deleteMany({ where: { id: group.id } });
     await prisma.aggregator.deleteMany({ where: { id: aggregator.id } });

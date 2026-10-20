@@ -90,13 +90,16 @@ test("the delivery tab hides disabled POD actions", () => {
 
 test("assignment readiness stays inside BOF and does not read Samba findings", () => {
   const assignment = readFileSync("lib/services/dispatchAssignmentService.ts", "utf8");
-  assert.match(assignment, /MISSING_READINESS/);
-  assert.match(assignment, /NOT_READY/);
+  // Stage 0: assignment is gated by PLANNING_RESERVE on the authoritative qualification, not a stored score.
   assert.match(assignment, /DRIVER_ROLE/);
-  assert.match(assignment, /driverReadinessScore\.findFirst/);
-  const lockAt = assignment.indexOf("await lockDriverReadinessWrite");
-  const readAt = assignment.indexOf("driverReadinessScore.findFirst");
-  assert.ok(lockAt > 0 && lockAt < readAt);
+  assert.doesNotMatch(assignment, /driverReadinessScore\.findFirst/);
+  const gateAt = assignment.indexOf('authorizeMovement(tx, "PLANNING_RESERVE"');
+  assert.ok(gateAt > 0 && gateAt < assignment.indexOf("tx.dispatchAssignment.create"));
+  const movement = readFileSync("lib/services/dispatchMovementAuthorizationService.ts", "utf8");
+  const proposedAt = movement.indexOf("async function authorizeProposedPlanning");
+  const lockAt = movement.indexOf("await lockDriverReadinessWrite(tx, driver.id)", proposedAt);
+  const readAt = movement.indexOf("getAuthoritativeDriverQualification(tx, driver.id", proposedAt);
+  assert.ok(proposedAt > 0 && lockAt > proposedAt && lockAt < readAt);
   assert.match(assignment, /authorizedFleetId: assignment\.fleetId/);
   const events = readFileSync("lib/process-intelligence/operating-event-service.ts", "utf8");
   assert.match(events, /options\.authorizedFleetId !== input\.fleetId/);

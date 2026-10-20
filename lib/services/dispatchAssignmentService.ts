@@ -4,8 +4,9 @@ import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { recordOperatingProcessEvent } from "@/lib/process-intelligence/operating-event-service";
 import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
+import { authorizeMovement, type MovementAuthorizationResult } from "@/lib/services/dispatchMovementAuthorizationService";
+import { loadOpenSafetyCriticalConditionsForEquipment } from "@/lib/services/dispatchReleaseService";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
-import { lockDriverReadinessWrite } from "@/lib/services/readinessService";
 import { findLoadByOperatorKey } from "@/lib/services/loadService";
 import { rejectDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
 
@@ -22,6 +23,13 @@ const ACTIVE_ASSIGNMENT_CONSTRAINTS = new Map([
   ["trailerEquipmentId", "Trailer already has an active assignment."],
 ]);
 
+/**
+ * Roles that may create, reassign or unassign dispatch assignments. Held through an ACTIVE membership in the
+ * assignment's own fleet: BOF operations staff act only in fleets where they are explicitly granted that
+ * membership. DRIVER, compliance and other memberships, other fleets and aggregator membership do not qualify.
+ */
+const DISPATCH_MUTATION_ROLE_CODES = new Set(["DISPATCH", "FLEET_OPERATIONS", "FLEET_MANAGER", "FLEET_ADMIN", "BOF_OPERATIONS"]);
+
 function requireSessionUser(sessionUser: SessionUserLike | null | undefined) {
   if (!sessionUser?.id) {
     throw Object.assign(new Error("Unauthorized"), { statusCode: 401 });
@@ -35,6 +43,7 @@ async function recordAssignmentRefusal(input: {
   loadId: string;
   driverId: string;
   reason: string;
+  reasonCodes?: string[];
 }) {
   await createAuditRecord({
     action: "ACCESS_DENIED",
@@ -45,6 +54,7 @@ async function recordAssignmentRefusal(input: {
     details: {
       event: "assignment.refused",
       reason: input.reason,
+      ...(input.reasonCodes ? { reasonCodes: input.reasonCodes } : {}),
       loadId: input.loadId,
       driverId: input.driverId,
     },
@@ -67,6 +77,49 @@ async function logUnauthorizedDispatchAccess(
     details: { event: "unauthorized dispatch access", reason },
     metadata: { source: "dispatch-assignment-service" },
   });
+}
+
+/**
+ * Dispatch mutation authority, read from the database (session claims are not trusted) for the fleet that owns
+ * the load or assignment. Returns the authorizing role code; otherwise records the refusal and throws 403.
+ */
+async function requireDispatchMutationRole(
+  db: Prisma.TransactionClient,
+  sessionUser: SessionUserLike | null | undefined,
+  fleetId: string,
+  entityId: string | null,
+) {
+  const membership = await db.fleetMembership.findFirst({
+    where: { userId: sessionUser!.id!, fleetId, status: "ACTIVE", user: { status: "ACTIVE" } },
+    select: { role: { select: { code: true } } },
+  });
+  const roleCode = membership?.role.code;
+  if (roleCode && DISPATCH_MUTATION_ROLE_CODES.has(roleCode)) {
+    return roleCode;
+  }
+  const reason = !roleCode ? "TENANT_ACCESS_DENIED" : roleCode === "DRIVER" ? "DRIVER_ROLE" : "ROLE_REQUIRED";
+  await logUnauthorizedDispatchAccess(sessionUser, fleetId, entityId, reason);
+  throw Object.assign(
+    new Error(reason === "DRIVER_ROLE" ? "A driver cannot create or change a dispatch assignment." : "Forbidden"),
+    { statusCode: 403 },
+  );
+}
+
+function planningRefusal(result: MovementAuthorizationResult) {
+  if (result.reasonCodes.includes("DRIVER_PLANNING_DENIED")) {
+    const status = result.driverQualificationStatus;
+    return {
+      reason: status === "CONDITIONAL" ? "CONDITIONAL_NOT_PERMITTED" : status ?? "QUALIFICATION_EVALUATION_FAILED",
+      message:
+        status === "PENDING_COMPLIANCE"
+          ? "ASSIGNMENT BLOCKED — DRIVER QUALIFICATION PENDING COMPLIANCE REVIEW"
+          : "ASSIGNMENT BLOCKED — DRIVER NOT QUALIFIED",
+    };
+  }
+  if (result.reasonCodes.includes("EQUIPMENT_PLANNING_DENIED")) {
+    return { reason: "EQUIPMENT_PLANNING_DENIED", message: "ASSIGNMENT BLOCKED — EQUIPMENT OUT OF SERVICE" };
+  }
+  return { reason: "QUALIFICATION_EVALUATION_FAILED", message: "ASSIGNMENT BLOCKED — DRIVER QUALIFICATION COULD NOT BE EVALUATED" };
 }
 
 function isKnownUniqueConstraintError(error: unknown, knownConstraints: Map<string, string>) {
@@ -132,30 +185,7 @@ export async function createAssignment(
         throw Object.assign(new Error("Load not found"), { statusCode: 404 });
       }
 
-      const access = await authorizedFleetAccess(sessionUser, load.fleetId);
-      if (!access.allowed) {
-        await logUnauthorizedDispatchAccess(sessionUser, load.fleetId, null, access.reason ?? "TENANT_ACCESS_DENIED");
-        throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
-      }
-
-      const driverCaller = (sessionUser?.memberships ?? []).find(
-        (membership) =>
-          membership.fleetId === load.fleetId &&
-          membership.roleCode === "DRIVER" &&
-          membership.status !== "INACTIVE" &&
-          membership.status !== "INVITED",
-      );
-      if (driverCaller) {
-        await recordAssignmentRefusal({
-          actorId,
-          actorEmail: sessionUser?.email,
-          fleetId: load.fleetId,
-          loadId: load.id,
-          driverId,
-          reason: "DRIVER_ROLE",
-        });
-        throw Object.assign(new Error("A driver cannot create a dispatch assignment."), { statusCode: 403 });
-      }
+      const authorizedRole = await requireDispatchMutationRole(tx, sessionUser, load.fleetId, null);
 
       const driver = await tx.driver.findUnique({ where: { id: driverId } });
       if (!driver) {
@@ -163,6 +193,17 @@ export async function createAssignment(
       }
       if (driver.fleetId !== load.fleetId) {
         throw Object.assign(new Error("Driver does not belong to the load fleet"), { statusCode: 422 });
+      }
+      if (driver.userId && driver.userId === actorId) {
+        await recordAssignmentRefusal({
+          actorId,
+          actorEmail: sessionUser?.email,
+          fleetId: load.fleetId,
+          loadId: load.id,
+          driverId: driver.id,
+          reason: "SELF_ASSIGNMENT",
+        });
+        throw Object.assign(new Error("You cannot dispatch the driver record linked to your own account."), { statusCode: 403 });
       }
 
       const tractor = await tx.equipment.findUnique({ where: { id: tractorId } });
@@ -196,32 +237,31 @@ export async function createAssignment(
         }
       }
 
-      // Same transaction-scoped lock taken by the readiness writers before they insert a score.
-      await lockDriverReadinessWrite(tx, driver.id);
-      const readiness = await tx.driverReadinessScore.findFirst({
-        where: { driverId: driver.id, fleetId: load.fleetId },
-        orderBy: [{ evaluatedAt: "desc" }, { createdAt: "desc" }],
-        select: { status: true },
+      // Stage 0 planning gate (contract PLANNING_RESERVE): evaluated before the row exists. It takes the driver
+      // lock held by qualification and readiness writers, so the decision stands until this transaction commits.
+      const planning = await authorizeMovement(tx, "PLANNING_RESERVE", {
+        sessionUser: sessionUser!,
+        loadId: load.id,
+        proposedAssignment: { driverId: driver.id, tractorId: tractor.id, trailerId: trailer?.id ?? null },
       });
-      if (!readiness || (readiness.status !== "READY" && readiness.status !== "CONDITIONAL")) {
-        const reason = !readiness ? "MISSING_READINESS" : readiness.status === "NOT_READY" ? "NOT_READY" : "UNSUPPORTED_READINESS";
+      if (!planning.allowed) {
+        const refusal = planningRefusal(planning);
         await recordAssignmentRefusal({
           actorId,
           actorEmail: sessionUser?.email,
           fleetId: load.fleetId,
           loadId: load.id,
           driverId: driver.id,
-          reason,
+          reason: refusal.reason,
+          reasonCodes: planning.reasonCodes,
         });
-        throw Object.assign(
-          new Error(
-            readiness?.status === "NOT_READY"
-              ? "ASSIGNMENT BLOCKED — DRIVER NOT READY"
-              : "ASSIGNMENT BLOCKED — NO CURRENT DRIVER READINESS SCORE",
-          ),
-          { statusCode: 409 },
-        );
+        throw Object.assign(new Error(refusal.message), { statusCode: 409 });
       }
+      // Open safety-critical equipment conditions do not block planning; they are enforced at RELEASE and pickup.
+      const advisory = await loadOpenSafetyCriticalConditionsForEquipment(tractor.id, trailer?.id ?? null, tx);
+      const advisoryOpenConditionIds = [...advisory.openTractorConditions, ...advisory.openTrailerConditions].map(
+        (condition) => condition.id,
+      );
 
       const [loadConflict, driverConflict, tractorConflict, trailerConflict] = await Promise.all([
         tx.dispatchAssignment.findFirst({
@@ -281,7 +321,13 @@ export async function createAssignment(
             event: "dispatch.assigned",
             loadId: load.id,
             driverId: driver.id,
-            readinessStatus: readiness.status,
+            authorizedRole,
+            planningDisposition: planning.disposition,
+            planningReasonCodes: planning.reasonCodes,
+            driverQualificationStatus: planning.driverQualificationStatus,
+            driverQualificationPolicyVersion: planning.driverQualificationPolicyVersion,
+            movementPolicyVersion: planning.policyVersion,
+            advisoryOpenConditionIds,
           },
         },
         tx,
@@ -375,25 +421,50 @@ export async function unassign(
     throw Object.assign(new Error("Invalid unassignment status"), { statusCode: 422 });
   }
 
-  const { assignment, allowed, reason } = await getAuthorizedAssignmentRecord(sessionUser, assignmentId);
-  if (!assignment) {
-    throw Object.assign(new Error("DispatchAssignment not found"), { statusCode: 404 });
-  }
-  if (!allowed) {
-    await logUnauthorizedDispatchAccess(sessionUser, assignment.fleetId, assignment.id, reason ?? "TENANT_ACCESS_DENIED");
-    throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
-  }
-  if (assignment.status !== "ACTIVE") {
-    throw Object.assign(new Error("Only active assignments can be unassigned"), { statusCode: 422 });
-  }
+  return prisma.$transaction(async (tx) => {
+    const assignment = await tx.dispatchAssignment.findUnique({
+      where: { id: assignmentId },
+      include: { driver: { select: { userId: true } } },
+    });
+    if (!assignment) {
+      throw Object.assign(new Error("DispatchAssignment not found"), { statusCode: 404 });
+    }
+    const authorizedRole = await requireDispatchMutationRole(tx, sessionUser, assignment.fleetId, assignment.id);
+    if (assignment.driver.userId && assignment.driver.userId === actorId) {
+      await logUnauthorizedDispatchAccess(sessionUser, assignment.fleetId, assignment.id, "SELF_ASSIGNMENT");
+      throw Object.assign(new Error("You cannot change the assignment of the driver record linked to your own account."), {
+        statusCode: 403,
+      });
+    }
+    if (assignment.status !== "ACTIVE") {
+      throw Object.assign(new Error("Only active assignments can be unassigned"), { statusCode: 422 });
+    }
 
-  return prisma.dispatchAssignment.update({
-    where: { id: assignment.id },
-    data: {
-      status: nextStatus,
-      unassignedAt: new Date(),
-      unassignedByUserId: actorId,
-    },
+    // Conditional on the row still being ACTIVE: a concurrent closure cannot be overwritten.
+    const closed = await tx.dispatchAssignment.updateMany({
+      where: { id: assignment.id, status: "ACTIVE" },
+      data: {
+        status: nextStatus,
+        unassignedAt: new Date(),
+        unassignedByUserId: actorId,
+      },
+    });
+    if (closed.count !== 1) {
+      throw Object.assign(new Error("Assignment is no longer active"), { statusCode: 409 });
+    }
+    await createAuditRecord(
+      {
+        action: "UPDATED",
+        entityType: "DispatchAssignment",
+        entityId: assignment.id,
+        tenantId: assignment.fleetId,
+        actorId,
+        actorEmail: sessionUser?.email ?? null,
+        details: { event: "dispatch.unassigned", status: nextStatus, loadId: assignment.loadId, authorizedRole },
+      },
+      tx,
+    );
+    return tx.dispatchAssignment.findUniqueOrThrow({ where: { id: assignment.id } });
   });
 }
 

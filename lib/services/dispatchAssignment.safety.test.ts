@@ -13,6 +13,7 @@ test("dispatch assignment readiness, caller role, fleet isolation, and disabled 
   assertTestDatabaseTarget(process.env.DATABASE_URL);
   const { prisma } = await import("@/lib/prisma");
   const { createAssignment } = await import("@/lib/services/dispatchAssignmentService");
+  const { createQualifiedDriverEvidence, cleanupQualifiedDriverEvidence } = await import("@/lib/test/qualifiedDriverFixture");
   const { assertEpodEnabled } = await import("@/lib/services/epod/deliveryLifecycle");
   const proof = await import("@/lib/services/proofSettlementHoldService");
   const delivery = await import("@/lib/services/epod/epodPersistence");
@@ -35,6 +36,11 @@ test("dispatch assignment readiness, caller role, fleet isolation, and disabled 
     where: { code: "BOF_OPERATIONS" },
     update: {},
     create: { code: "BOF_OPERATIONS", name: "BOF Operations" },
+  });
+  const complianceRole = await prisma.role.upsert({
+    where: { code: "BOF_COMPLIANCE_REVIEW" },
+    update: {},
+    create: { code: "BOF_COMPLIANCE_REVIEW", name: "BOF Compliance Review" },
   });
 
   const aggregator = await prisma.aggregator.create({ data: { name: `Correction ${stamp}` } });
@@ -59,6 +65,12 @@ test("dispatch assignment readiness, caller role, fleet isolation, and disabled 
   const outsider = await prisma.user.create({
     data: { email: `corr-outsider-${stamp}@dev.local`, name: "Correction Outsider" },
   });
+  const fleetServiceUser = await prisma.user.create({
+    data: { email: `corr-service-a-${stamp}@dev.local`, name: "Correction Service A" },
+  });
+  const complianceUser = await prisma.user.create({
+    data: { email: `corr-compliance-${stamp}@dev.local`, name: "Correction Compliance" },
+  });
   await prisma.fleetMembership.create({
     data: { userId: dispatcher.id, fleetId: fleetA.id, roleId: dispatchRole.id, status: "ACTIVE" },
   });
@@ -70,6 +82,12 @@ test("dispatch assignment readiness, caller role, fleet isolation, and disabled 
   });
   await prisma.fleetMembership.create({
     data: { userId: outsider.id, fleetId: fleetB.id, roleId: dispatchRole.id, status: "ACTIVE" },
+  });
+  await prisma.fleetMembership.create({
+    data: { userId: fleetServiceUser.id, fleetId: fleetA.id, roleId: serviceRole.id, status: "ACTIVE" },
+  });
+  await prisma.fleetMembership.create({
+    data: { userId: complianceUser.id, fleetId: fleetA.id, roleId: complianceRole.id, status: "ACTIVE" },
   });
 
   const ids = {
@@ -113,6 +131,31 @@ test("dispatch assignment readiness, caller role, fleet isolation, and disabled 
       },
     });
     ids.driverIds.push(row.id);
+    // Assignment is gated by the authoritative qualification (Stage 0 PLANNING_RESERVE), not the stored score:
+    // READY → full evidence (QUALIFIED); CONDITIONAL → plus an internal policy waiver; NOT_READY → rejected
+    // license (NOT_QUALIFIED); NONE → no evidence (PENDING_COMPLIANCE).
+    if (readiness !== "NONE" && fleetId === fleetA.id) {
+      const evidence = await createQualifiedDriverEvidence(prisma, {
+        driverId: row.id,
+        fleetId,
+        complianceUserId: complianceUser.id,
+      });
+      if (readiness === "CONDITIONAL") {
+        await prisma.driverIntakeRequirement.create({
+          data: {
+            driverIntakeId: evidence.intakeId,
+            requirementType: "OTHER",
+            label: "fleet policy",
+            isRequired: true,
+            status: "SATISFIED",
+            exceptionReason: "fleet policy waiver",
+          },
+        });
+      }
+      if (readiness === "NOT_READY") {
+        await prisma.driverDocument.update({ where: { id: evidence.licenseDocumentId }, data: { status: "REJECTED" } });
+      }
+    }
     if (readiness !== "NONE") {
       const score = await prisma.driverReadinessScore.create({
         data: {
@@ -196,7 +239,7 @@ test("dispatch assignment readiness, caller role, fleet isolation, and disabled 
       where: { entityType: "DispatchAssignment", tenantId: fleetA.id, action: "ACCESS_DENIED" },
       orderBy: { createdAt: "desc" },
     });
-    assert.equal((blockedAudit?.details as { reason?: string } | null)?.reason, "NOT_READY");
+    assert.equal((blockedAudit?.details as { reason?: string } | null)?.reason, "NOT_QUALIFIED");
 
     const missingLoad = await makeLoad(fleetA.id);
     const missingDriver = await makeDriver(fleetA.id, "NONE");
@@ -218,7 +261,7 @@ test("dispatch assignment readiness, caller role, fleet isolation, and disabled 
         entityType: "DispatchAssignment",
         tenantId: fleetA.id,
         action: "ACCESS_DENIED",
-        details: { path: ["reason"], equals: "MISSING_READINESS" },
+        details: { path: ["reason"], equals: "PENDING_COMPLIANCE" },
       },
     });
     assert.ok(missingAudit);
@@ -315,8 +358,21 @@ test("dispatch assignment readiness, caller role, fleet isolation, and disabled 
     const serviceLoad = await makeLoad(fleetA.id);
     const serviceDriver = await makeDriver(fleetA.id, "READY");
     const serviceTractor = await makeEquipment(fleetA.id, "TRACTOR");
+    // BOF operations membership in another fleet does not authorize dispatch in fleet A.
+    await assert.rejects(
+      () =>
+        createAssignment(
+          session(serviceUser, fleetB.id, "BOF_OPERATIONS"),
+          serviceLoad.id,
+          serviceDriver.id,
+          serviceTractor.id,
+          null,
+        ),
+      (error: unknown) => statusOf(error) === 403,
+    );
+    assert.equal(await prisma.dispatchAssignment.count({ where: { loadId: serviceLoad.id } }), 0);
     const serviceAssignment = await createAssignment(
-      session(serviceUser, fleetB.id, "BOF_OPERATIONS"),
+      session(fleetServiceUser, fleetA.id, "BOF_OPERATIONS"),
       serviceLoad.id,
       serviceDriver.id,
       serviceTractor.id,
@@ -458,11 +514,12 @@ test("dispatch assignment readiness, caller role, fleet isolation, and disabled 
     await prisma.dispatchAssignment.deleteMany({ where: { id: { in: ids.assignmentIds } } });
     await prisma.dispatchAssignment.deleteMany({ where: { loadId: { in: ids.loadIds } } });
     await prisma.driverReadinessScore.deleteMany({ where: { id: { in: ids.readinessIds } } });
+    await cleanupQualifiedDriverEvidence(prisma, ids.driverIds);
     await prisma.load.deleteMany({ where: { id: { in: ids.loadIds } } });
     await prisma.equipment.deleteMany({ where: { id: { in: ids.equipmentIds } } });
     await prisma.driver.deleteMany({ where: { id: { in: ids.driverIds } } });
     await prisma.fleetMembership.deleteMany({ where: { fleetId: { in: [fleetA.id, fleetB.id] } } });
-    await prisma.user.deleteMany({ where: { id: { in: [dispatcher.id, driverUser.id, serviceUser.id, outsider.id] } } });
+    await prisma.user.deleteMany({ where: { id: { in: [dispatcher.id, driverUser.id, serviceUser.id, outsider.id, fleetServiceUser.id, complianceUser.id] } } });
     await prisma.fleet.deleteMany({ where: { id: { in: [fleetA.id, fleetB.id] } } });
     await prisma.carrierGroup.deleteMany({ where: { id: group.id } });
     await prisma.aggregator.deleteMany({ where: { id: aggregator.id } });

@@ -1,10 +1,11 @@
-import { DispatchReleaseDisposition, Prisma } from "@prisma/client";
+import { DispatchReleaseDisposition, Prisma, type Equipment } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import {
   AuthoritativeQualificationError,
   getAuthoritativeDriverQualification,
   type AuthoritativeDriverQualification,
+  type AuthoritativeDriverQualificationStatus,
 } from "@/lib/services/authoritativeDriverQualificationService";
 import {
   assembleReleaseInputsInTx,
@@ -12,6 +13,7 @@ import {
   evaluatePlanningEquipmentSafety,
   evaluateReleaseWithDriverQualification,
   type DispatchReleaseEvaluation,
+  type DispatchReleaseInputs,
 } from "@/lib/services/dispatchReleaseService";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
 import { findLoadByOperatorKey } from "@/lib/services/loadService";
@@ -41,15 +43,28 @@ export type MovementAuthorizationResult = {
   summary: string;
   policyVersion: typeof MOVEMENT_AUTHORIZATION_POLICY_VERSION;
   qualificationSnapshotId: string | null;
+  /** Authoritative driver status behind this decision; null when qualification evaluation failed (fail closed). */
+  driverQualificationStatus: AuthoritativeDriverQualificationStatus | null;
   driverQualificationPolicyVersion: string | null;
   equipmentPolicyVersion: string | null;
   releaseEvaluation?: DispatchReleaseEvaluation;
+};
+
+export type ProposedAssignment = {
+  driverId: string;
+  tractorId: string;
+  trailerId?: string | null;
 };
 
 export type MovementAuthorizationContext = {
   sessionUser: SessionUserLike;
   loadId: string;
   assignmentId?: string;
+  /**
+   * PLANNING_RESERVE only: evaluate an assignment before it is written, so a disqualified driver is refused
+   * without creating a row first. Release and pickup stages always evaluate the persisted ACTIVE assignment.
+   */
+  proposedAssignment?: ProposedAssignment;
 };
 
 function requireSessionUser(sessionUser: SessionUserLike | null | undefined) {
@@ -89,6 +104,36 @@ function movementAllowedForReleaseDisposition(disposition: DispatchReleaseDispos
   return disposition === "RELEASED" || disposition === "CONDITIONALLY_RELEASED";
 }
 
+export function composePlanningAuthorization(
+  driverQualification: AuthoritativeDriverQualification,
+  equipment: Pick<DispatchReleaseInputs, "tractor" | "trailer">,
+): MovementAuthorizationResult {
+  const planningEquipment = evaluatePlanningEquipmentSafety(equipment);
+  const driverBlocked = planningDriverBlocks(driverQualification);
+  const equipmentBlocked = planningEquipment.blocked;
+  const reasonCodes = uniqueReasonCodes([
+    ...driverQualification.reasonCodes,
+    ...planningEquipment.reasonCodes,
+    ...(driverBlocked ? ["DRIVER_PLANNING_DENIED"] : []),
+    ...(equipmentBlocked ? ["EQUIPMENT_PLANNING_DENIED"] : []),
+  ]);
+  const allowed = !driverBlocked && !equipmentBlocked;
+  return {
+    stage: "PLANNING_RESERVE",
+    allowed,
+    disposition: allowed ? "PLANNING_ALLOWED" : "PLANNING_DENIED",
+    reasonCodes,
+    summary: allowed
+      ? "Planning reservation is permitted under Stage 0 movement policy."
+      : "Planning reservation is denied under Stage 0 movement policy.",
+    policyVersion: MOVEMENT_AUTHORIZATION_POLICY_VERSION,
+    qualificationSnapshotId: driverQualification.qualificationSnapshotId,
+    driverQualificationStatus: driverQualification.status,
+    driverQualificationPolicyVersion: driverQualification.policyVersion,
+    equipmentPolicyVersion: null,
+  };
+}
+
 export function composeMovementAuthorization(
   stage: MovementAuthorizationStage,
   driverQualification: AuthoritativeDriverQualification,
@@ -97,29 +142,7 @@ export function composeMovementAuthorization(
   const driverReasons = [...driverQualification.reasonCodes];
 
   if (stage === "PLANNING_RESERVE") {
-    const planningEquipment = evaluatePlanningEquipmentSafety(releaseInputs);
-    const driverBlocked = planningDriverBlocks(driverQualification);
-    const equipmentBlocked = planningEquipment.blocked;
-    const reasonCodes = uniqueReasonCodes([
-      ...driverReasons,
-      ...planningEquipment.reasonCodes,
-      ...(driverBlocked ? ["DRIVER_PLANNING_DENIED"] : []),
-      ...(equipmentBlocked ? ["EQUIPMENT_PLANNING_DENIED"] : []),
-    ]);
-    const allowed = !driverBlocked && !equipmentBlocked;
-    return {
-      stage,
-      allowed,
-      disposition: allowed ? "PLANNING_ALLOWED" : "PLANNING_DENIED",
-      reasonCodes,
-      summary: allowed
-        ? "Planning reservation is permitted under Stage 0 movement policy."
-        : "Planning reservation is denied under Stage 0 movement policy.",
-      policyVersion: MOVEMENT_AUTHORIZATION_POLICY_VERSION,
-      qualificationSnapshotId: driverQualification.qualificationSnapshotId,
-      driverQualificationPolicyVersion: driverQualification.policyVersion,
-      equipmentPolicyVersion: null,
-    };
+    return composePlanningAuthorization(driverQualification, releaseInputs);
   }
 
   const releaseEvaluation = evaluateReleaseWithDriverQualification(releaseInputs, driverQualification);
@@ -137,6 +160,7 @@ export function composeMovementAuthorization(
     summary: releaseEvaluation.summary,
     policyVersion: MOVEMENT_AUTHORIZATION_POLICY_VERSION,
     qualificationSnapshotId: driverQualification.qualificationSnapshotId,
+    driverQualificationStatus: driverQualification.status,
     driverQualificationPolicyVersion: driverQualification.policyVersion,
     equipmentPolicyVersion: releaseEvaluation.policyVersion,
     releaseEvaluation,
@@ -155,9 +179,49 @@ function qualificationEvaluationFailedResult(
     summary: message,
     policyVersion: MOVEMENT_AUTHORIZATION_POLICY_VERSION,
     qualificationSnapshotId: null,
+    driverQualificationStatus: null,
     driverQualificationPolicyVersion: null,
     equipmentPolicyVersion: null,
   };
+}
+
+async function authorizeProposedPlanning(
+  tx: Prisma.TransactionClient,
+  fleetId: string,
+  proposed: ProposedAssignment,
+): Promise<MovementAuthorizationResult> {
+  const driver = await tx.driver.findUnique({ where: { id: proposed.driverId }, select: { id: true, fleetId: true } });
+  if (!driver) {
+    throw Object.assign(new Error("Driver not found"), { statusCode: 404 });
+  }
+  const tractor = await tx.equipment.findUnique({ where: { id: proposed.tractorId } });
+  if (!tractor) {
+    throw Object.assign(new Error("Tractor not found"), { statusCode: 404 });
+  }
+  let trailer: Equipment | null = null;
+  if (proposed.trailerId) {
+    trailer = await tx.equipment.findUnique({ where: { id: proposed.trailerId } });
+    if (!trailer) {
+      throw Object.assign(new Error("Trailer not found"), { statusCode: 404 });
+    }
+  }
+  if (driver.fleetId !== fleetId || tractor.fleetId !== fleetId || (trailer && trailer.fleetId !== fleetId)) {
+    throw Object.assign(new Error("Proposed assignment fleet does not match load fleet"), { statusCode: 422 });
+  }
+
+  await lockDriverReadinessWrite(tx, driver.id);
+
+  let driverQualification: AuthoritativeDriverQualification;
+  try {
+    driverQualification = await getAuthoritativeDriverQualification(tx, driver.id, fleetId);
+  } catch (error) {
+    if (error instanceof AuthoritativeQualificationError) {
+      return qualificationEvaluationFailedResult("PLANNING_RESERVE", error.message);
+    }
+    throw error;
+  }
+
+  return composePlanningAuthorization(driverQualification, { tractor, trailer });
 }
 
 export async function authorizeMovement(
@@ -175,6 +239,15 @@ export async function authorizeMovement(
   const access = await authorizedFleetAccess(context.sessionUser, load.fleetId);
   if (!access.allowed) {
     throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
+  }
+
+  if (context.proposedAssignment) {
+    if (stage !== "PLANNING_RESERVE") {
+      throw Object.assign(new Error("A proposed assignment can only be evaluated for PLANNING_RESERVE"), {
+        statusCode: 422,
+      });
+    }
+    return authorizeProposedPlanning(tx, load.fleetId, context.proposedAssignment);
   }
 
   const assignment = await tx.dispatchAssignment.findFirst({
