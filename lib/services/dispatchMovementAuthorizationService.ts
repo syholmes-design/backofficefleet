@@ -311,10 +311,14 @@ export async function requireMovementAuthorization(
 ): Promise<MovementAuthorizationResult> {
   const result = await authorizeMovementForLoad(sessionUser, loadId, stage);
   if (!result.allowed) {
-    throw Object.assign(new Error(result.summary), {
-      statusCode: 409,
-      payload: { result },
-    });
+    throw createMovementAuthorizationDeniedError(result);
   }
   return result;
+}
+
+export function createMovementAuthorizationDeniedError(result: MovementAuthorizationResult) {
+  return Object.assign(new Error(result.summary), {
+    statusCode: 409,
+    payload: { movementAuthorization: result, reasonCodes: result.reasonCodes },
+  });
 }

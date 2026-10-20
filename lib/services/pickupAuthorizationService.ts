@@ -1,7 +1,5 @@
 import {
   DispatchAssignmentStatus,
-  DispatchReleaseDisposition,
-  DriverReadinessState,
   PickupAuthorizationStatus,
   PickupVerificationMethod,
   PickupVerificationResult,
@@ -14,6 +12,11 @@ import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { recordOperatingProcessEvent } from "@/lib/process-intelligence/operating-event-service";
 import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
+import {
+  authorizeMovementForLoad,
+  createMovementAuthorizationDeniedError,
+} from "@/lib/services/dispatchMovementAuthorizationService";
+import { createDispatchReleaseWithMovementAuthorization } from "@/lib/services/dispatchReleaseService";
 import { authorizedFleetAccess, isServiceRole, type SessionUserLike } from "@/lib/services/intakeService";
 import { findLoadByOperatorKey } from "@/lib/services/loadService";
 import {
@@ -34,8 +37,8 @@ import {
 import { rejectDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
 
 export const PICKUP_BLOCKED_NO_ASSIGNMENT = "PICKUP AUTHORIZATION BLOCKED — NO ACTIVE ASSIGNMENT" as const;
-export const PICKUP_BLOCKED_NO_READINESS = "PICKUP AUTHORIZATION BLOCKED — NO CURRENT DRIVER READINESS SCORE" as const;
-export const PICKUP_BLOCKED_DRIVER_NOT_READY = "PICKUP AUTHORIZATION BLOCKED — DRIVER NOT READY" as const;
+export const PICKUP_BLOCKED_MOVEMENT_AUTHORIZATION =
+  "PICKUP AUTHORIZATION BLOCKED — MOVEMENT AUTHORIZATION FAILED" as const;
 export const PICKUP_BLOCKED_NO_TRIP_RELEASE = "PICKUP AUTHORIZATION BLOCKED — NO TRIP RELEASE" as const;
 export const PICKUP_BLOCKED_TRIP_NOT_RELEASED = "PICKUP AUTHORIZATION BLOCKED — TRIP RELEASE NOT RELEASED" as const;
 
@@ -293,29 +296,14 @@ export async function issuePickupAuthorization(sessionUser: SessionUserLike | nu
     throw Object.assign(new Error(PICKUP_BLOCKED_NO_ASSIGNMENT), { statusCode: 409 });
   }
 
-  const readiness = await prisma.driverReadinessScore.findFirst({
-    where: { driverId: assignment.driverId, fleetId: assignment.fleetId },
-    orderBy: [{ evaluatedAt: "desc" }, { createdAt: "desc" }],
-  });
-  if (!readiness) {
-    throw Object.assign(new Error(PICKUP_BLOCKED_NO_READINESS), { statusCode: 409 });
-  }
-  if (readiness.status === DriverReadinessState.NOT_READY) {
-    throw Object.assign(new Error(PICKUP_BLOCKED_DRIVER_NOT_READY), { statusCode: 409 });
-  }
-
-  const tripRelease = await prisma.dispatchRelease.findFirst({
-    where: { assignmentId: assignment.id, loadId: load.id },
-    orderBy: [{ evaluatedAt: "desc" }, { createdAt: "desc" }],
-  });
-  if (!tripRelease) {
-    throw Object.assign(new Error(PICKUP_BLOCKED_NO_TRIP_RELEASE), { statusCode: 409 });
-  }
-  if (
-    tripRelease.disposition !== DispatchReleaseDisposition.RELEASED &&
-    tripRelease.disposition !== DispatchReleaseDisposition.CONDITIONALLY_RELEASED
-  ) {
-    throw Object.assign(new Error(PICKUP_BLOCKED_TRIP_NOT_RELEASED), { statusCode: 409 });
+  const { movement, release: tripRelease } = await createDispatchReleaseWithMovementAuthorization(
+    sessionUser,
+    loadId,
+    "PICKUP_ISSUE",
+    { assignmentId: assignment.id },
+  );
+  if (!movement.allowed) {
+    throw createMovementAuthorizationDeniedError(movement);
   }
 
   const now = new Date();
@@ -343,7 +331,7 @@ export async function issuePickupAuthorization(sessionUser: SessionUserLike | nu
         tractorEquipmentId: assignment.tractorEquipmentId,
         trailerEquipmentId: assignment.trailerEquipmentId,
         dispatchReleaseId: tripRelease.id,
-        driverReadinessScoreId: readiness.id,
+        driverReadinessScoreId: tripRelease.driverReadinessScoreId,
         status: "PENDING",
         tokenHash,
         pickupWindowStart: load.pickupWindowStart,
@@ -380,6 +368,9 @@ export async function issuePickupAuthorization(sessionUser: SessionUserLike | nu
       tractorEquipmentId: assignment.tractorEquipmentId,
       trailerEquipmentId: assignment.trailerEquipmentId,
       dispatchReleaseId: tripRelease.id,
+      movementPolicyVersion: movement.policyVersion,
+      driverQualificationStatus: movement.driverQualificationStatus,
+      movementReasonCodes: movement.reasonCodes,
       status: created.status,
       physicalVerification: false,
     },
@@ -684,34 +675,13 @@ export async function verifyPickupAuthorization(
     await reject("STOPPED", "STOPPED", ["ASSIGNMENT_DRIFT"], "DispatchAssignment identities drifted from this authorization", 409);
   }
 
-  const readiness = await prisma.driverReadinessScore.findFirst({
-    where: { driverId: current.driverId, fleetId: current.fleetId },
-    orderBy: [{ evaluatedAt: "desc" }, { createdAt: "desc" }],
-  });
-  if (!readiness || readiness.status === DriverReadinessState.NOT_READY) {
-    await reject(
-      "STOPPED",
-      "STOPPED",
-      ["NO_DRIVER_READINESS"],
-      readiness ? PICKUP_BLOCKED_DRIVER_NOT_READY : PICKUP_BLOCKED_NO_READINESS,
-      409,
-    );
-  }
-
-  const tripRelease = await prisma.dispatchRelease.findFirst({
-    where: { assignmentId: current.assignmentId, loadId: current.loadId },
-    orderBy: [{ evaluatedAt: "desc" }, { createdAt: "desc" }],
-  });
-  if (
-    !tripRelease ||
-    (tripRelease.disposition !== DispatchReleaseDisposition.RELEASED &&
-      tripRelease.disposition !== DispatchReleaseDisposition.CONDITIONALLY_RELEASED)
-  ) {
+  const movement = await authorizeMovementForLoad(sessionUser!, current.loadId, "PICKUP_VERIFY", current.assignmentId);
+  if (!movement.allowed) {
     await reject(
       "STOPPED",
       "STOPPED",
       ["NO_TRIP_RELEASE"],
-      tripRelease ? PICKUP_BLOCKED_TRIP_NOT_RELEASED : PICKUP_BLOCKED_NO_TRIP_RELEASE,
+      movement.summary || PICKUP_BLOCKED_MOVEMENT_AUTHORIZATION,
       409,
     );
   }

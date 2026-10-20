@@ -14,6 +14,7 @@ import {
 import type { AuthoritativeDriverQualification } from "@/lib/services/authoritativeDriverQualificationService";
 import {
   composeMovementAuthorization,
+  composePlanningAuthorization,
   MOVEMENT_AUTHORIZATION_POLICY_VERSION,
 } from "@/lib/services/dispatchMovementAuthorizationService";
 import {
@@ -249,6 +250,16 @@ test("evaluateReleaseWithDriverQualification ignores stale readiness NOT_READY w
     qual(),
   );
   assert.equal(evaluation.disposition, DispatchReleaseDisposition.RELEASED);
+});
+
+test("composePlanningAuthorization exposes driverQualificationStatus from I-1 evaluator shape", () => {
+  const inputs = releaseInputs();
+  const result = composePlanningAuthorization(
+    qual({ status: "PENDING_COMPLIANCE", reasonCodes: ["CLEARINGHOUSE_PRE_EMPLOYMENT_QUERY_MISSING"] }),
+    { tractor: inputs.tractor, trailer: inputs.trailer },
+  );
+  assert.equal(result.driverQualificationStatus, "PENDING_COMPLIANCE");
+  assert.equal(result.allowed, false);
 });
 
 test("CONDITIONAL without movement permission is denied", () => {

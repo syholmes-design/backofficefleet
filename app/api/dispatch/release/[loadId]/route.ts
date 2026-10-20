@@ -1,9 +1,5 @@
 import { auth } from "@/auth";
-import {
-  assembleReleaseInputs,
-  evaluateRelease,
-  writeDispatchRelease,
-} from "@/lib/services/dispatchReleaseService";
+import { createDispatchReleaseWithMovementAuthorization } from "@/lib/services/dispatchReleaseService";
 
 import { NextRequest, NextResponse } from "next/server";
 
@@ -45,12 +41,22 @@ export async function POST(_request: NextRequest, context: { params: Promise<{ l
 
   try {
     const sessionUser = getSessionUser(session);
-    const inputs = await assembleReleaseInputs(sessionUser, loadId);
-    const evaluation = evaluateRelease(inputs);
-    const release = await writeDispatchRelease(sessionUser, loadId, evaluation, inputs.readiness.id);
+    const { movement, release } = await createDispatchReleaseWithMovementAuthorization(sessionUser, loadId, "RELEASE");
 
-    const status = release.disposition === "BLOCKED" || release.disposition === "HOLD" ? 409 : 200;
-    return NextResponse.json(release, { status });
+    const status = movement.allowed ? 200 : 409;
+    return NextResponse.json(
+      {
+        ...release,
+        movementAuthorization: {
+          allowed: movement.allowed,
+          disposition: movement.disposition,
+          reasonCodes: movement.reasonCodes,
+          policyVersion: movement.policyVersion,
+          driverQualificationStatus: movement.driverQualificationStatus,
+        },
+      },
+      { status },
+    );
   } catch (error) {
     return errorResponse(error);
   }

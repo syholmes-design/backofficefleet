@@ -15,6 +15,11 @@ import { prisma } from "@/lib/prisma";
 import { recordLoadReadinessEvaluatedEvent, recordReleaseDecisionEvent } from "@/lib/process-intelligence/operating-event-service";
 import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
 import type { AuthoritativeDriverQualification } from "@/lib/services/authoritativeDriverQualificationService";
+import {
+  authorizeMovement,
+  type MovementAuthorizationResult,
+  type MovementAuthorizationStage,
+} from "@/lib/services/dispatchMovementAuthorizationService";
 import { isSafetyCriticalOpenCondition } from "@/lib/services/equipmentSafetyPredicates";
 import { findLoadByOperatorKey } from "@/lib/services/loadService";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
@@ -617,53 +622,23 @@ export function evaluateRelease(inputs: DispatchReleaseInputs): DispatchReleaseE
   };
 }
 
-export async function writeDispatchRelease(
-  sessionUser: SessionUserLike | null | undefined,
-  loadId: string,
+type DispatchReleaseAuditContext = {
+  movementAuthorization?: Pick<
+    MovementAuthorizationResult,
+    "policyVersion" | "driverQualificationStatus" | "driverQualificationPolicyVersion" | "reasonCodes" | "stage"
+  >;
+};
+
+async function recordDispatchReleaseSideEffects(
+  sessionUser: SessionUserLike,
+  inputs: DispatchReleaseInputs,
+  release: Awaited<ReturnType<typeof prisma.dispatchRelease.create>>,
   evaluation: DispatchReleaseEvaluation,
   readinessId: string,
+  movementAudit?: DispatchReleaseAuditContext["movementAuthorization"],
 ) {
-  requireSessionUser(sessionUser);
-  const actorId = sessionUser!.id;
-  const actorEmail = sessionUser!.email ?? null;
-
-  const inputs = await assembleReleaseInputs(sessionUser, loadId);
-  if (inputs.readiness.id !== readinessId) {
-    throw Object.assign(
-      new Error("Dispatch release must use the exact DriverReadinessScore used during evaluation"),
-      { statusCode: 409 },
-    );
-  }
-
-  const readinessRecord = await prisma.driverReadinessScore.findUnique({
-    where: { id: readinessId },
-    select: { id: true, driverId: true, fleetId: true },
-  });
-  if (!readinessRecord) {
-    throw Object.assign(new Error("DriverReadinessScore not found"), { statusCode: 404 });
-  }
-  if (readinessRecord.driverId !== inputs.assignment.driverId || readinessRecord.fleetId !== inputs.assignment.fleetId) {
-    throw Object.assign(new Error("DriverReadinessScore does not belong to the active assignment"), { statusCode: 422 });
-  }
-
-  const release = await prisma.dispatchRelease.create({
-    data: {
-      fleetId: inputs.assignment.fleetId,
-      loadId: inputs.load.id,
-      assignmentId: inputs.assignment.id,
-      driverId: inputs.assignment.driverId,
-      tractorEquipmentId: inputs.assignment.tractorEquipmentId,
-      trailerEquipmentId: inputs.assignment.trailerEquipmentId ?? null,
-      preTripHeaderId: inputs.preTrip?.id ?? null,
-      driverReadinessScoreId: readinessId,
-      disposition: evaluation.disposition,
-      reasonCodes: evaluation.reasonCodes as Prisma.InputJsonValue,
-      summary: evaluation.summary,
-      policyVersion: evaluation.policyVersion,
-      evaluatedAt: new Date(),
-      evaluatedByUserId: actorId,
-    },
-  });
+  const actorId = sessionUser.id as string;
+  const actorEmail = sessionUser.email ?? null;
 
   await createAuditRecord({
     actorId,
@@ -681,6 +656,11 @@ export async function writeDispatchRelease(
       disposition: evaluation.disposition,
       reasonCodes: evaluation.reasonCodes,
       policyVersion: evaluation.policyVersion,
+      movementPolicyVersion: movementAudit?.policyVersion ?? null,
+      driverQualificationStatus: movementAudit?.driverQualificationStatus ?? null,
+      driverQualificationPolicyVersion: movementAudit?.driverQualificationPolicyVersion ?? null,
+      movementReasonCodes: movementAudit?.reasonCodes ?? null,
+      movementStage: movementAudit?.stage ?? null,
     },
     metadata: { source: "dispatch-release-service" },
   });
@@ -710,6 +690,8 @@ export async function writeDispatchRelease(
       disposition: evaluation.disposition,
       reasonCodes: evaluation.reasonCodes,
       policyVersion: evaluation.policyVersion,
+      movementPolicyVersion: movementAudit?.policyVersion ?? null,
+      driverQualificationStatus: movementAudit?.driverQualificationStatus ?? null,
     },
     metadata: { source: "dispatch-release-service" },
   });
@@ -733,7 +715,127 @@ export async function writeDispatchRelease(
     owner: actorId,
     eventTimestamp: release.evaluatedAt,
   });
+}
 
+export async function writeDispatchReleaseInTx(
+  tx: Prisma.TransactionClient,
+  sessionUser: SessionUserLike,
+  inputs: DispatchReleaseInputs,
+  evaluation: DispatchReleaseEvaluation,
+) {
+  const actorId = sessionUser.id as string;
+  const readinessId = inputs.readiness.id;
+
+  const readinessRecord = await tx.driverReadinessScore.findUnique({
+    where: { id: readinessId },
+    select: { id: true, driverId: true, fleetId: true },
+  });
+  if (!readinessRecord) {
+    throw Object.assign(new Error("DriverReadinessScore not found"), { statusCode: 404 });
+  }
+  if (readinessRecord.driverId !== inputs.assignment.driverId || readinessRecord.fleetId !== inputs.assignment.fleetId) {
+    throw Object.assign(new Error("DriverReadinessScore does not belong to the active assignment"), { statusCode: 422 });
+  }
+
+  return tx.dispatchRelease.create({
+    data: {
+      fleetId: inputs.assignment.fleetId,
+      loadId: inputs.load.id,
+      assignmentId: inputs.assignment.id,
+      driverId: inputs.assignment.driverId,
+      tractorEquipmentId: inputs.assignment.tractorEquipmentId,
+      trailerEquipmentId: inputs.assignment.trailerEquipmentId ?? null,
+      preTripHeaderId: inputs.preTrip?.id ?? null,
+      driverReadinessScoreId: readinessId,
+      disposition: evaluation.disposition,
+      reasonCodes: evaluation.reasonCodes as Prisma.InputJsonValue,
+      summary: evaluation.summary,
+      policyVersion: evaluation.policyVersion,
+      evaluatedAt: new Date(),
+      evaluatedByUserId: actorId,
+    },
+  });
+}
+
+export async function createDispatchReleaseWithMovementAuthorization(
+  sessionUser: SessionUserLike | null | undefined,
+  loadId: string,
+  stage: Extract<MovementAuthorizationStage, "RELEASE" | "PICKUP_ISSUE">,
+  options?: { assignmentId?: string },
+): Promise<{ movement: MovementAuthorizationResult; release: Awaited<ReturnType<typeof writeDispatchReleaseInTx>> }> {
+  requireSessionUser(sessionUser);
+
+  const result = await prisma.$transaction(async (tx) => {
+    const movement = await authorizeMovement(tx, stage, {
+      sessionUser: sessionUser!,
+      loadId,
+      assignmentId: options?.assignmentId,
+    });
+    if (!movement.releaseEvaluation) {
+      throw Object.assign(new Error("Movement authorization did not produce a release evaluation"), { statusCode: 500 });
+    }
+
+    const load = await findLoadByOperatorKey(loadId);
+    if (!load) {
+      throw Object.assign(new Error("Load not found"), { statusCode: 404 });
+    }
+
+    const assignment = await tx.dispatchAssignment.findFirst({
+      where: {
+        loadId: load.id,
+        status: "ACTIVE",
+        ...(options?.assignmentId ? { id: options.assignmentId } : {}),
+      },
+      include: {
+        load: true,
+        driver: { select: { id: true, fleetId: true } },
+        tractorEquipment: true,
+        trailerEquipment: true,
+      },
+      orderBy: [{ assignedAt: "desc" }, { createdAt: "desc" }],
+    });
+    if (!assignment) {
+      throw Object.assign(new Error(DISPATCH_RELEASE_BLOCKED_NO_ASSIGNMENT), { statusCode: 409 });
+    }
+
+    const inputs = await assembleReleaseInputsInTx(tx, load, assignment);
+    const release = await writeDispatchReleaseInTx(tx, sessionUser!, inputs, movement.releaseEvaluation);
+    return { movement, release, inputs, evaluation: movement.releaseEvaluation };
+  });
+
+  await recordDispatchReleaseSideEffects(
+    sessionUser!,
+    result.inputs,
+    result.release,
+    result.evaluation,
+    result.inputs.readiness.id,
+    result.movement,
+  );
+
+  return { movement: result.movement, release: result.release };
+}
+
+export async function writeDispatchRelease(
+  sessionUser: SessionUserLike | null | undefined,
+  loadId: string,
+  evaluation: DispatchReleaseEvaluation,
+  readinessId: string,
+) {
+  requireSessionUser(sessionUser);
+
+  const inputs = await assembleReleaseInputs(sessionUser, loadId);
+  if (inputs.readiness.id !== readinessId) {
+    throw Object.assign(
+      new Error("Dispatch release must use the exact DriverReadinessScore used during evaluation"),
+      { statusCode: 409 },
+    );
+  }
+
+  const release = await prisma.$transaction(async (tx) =>
+    writeDispatchReleaseInTx(tx, sessionUser!, inputs, evaluation),
+  );
+
+  await recordDispatchReleaseSideEffects(sessionUser!, inputs, release, evaluation, readinessId);
   return release;
 }
 
