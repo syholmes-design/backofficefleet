@@ -14,6 +14,7 @@ import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { recordLoadReadinessEvaluatedEvent, recordReleaseDecisionEvent } from "@/lib/process-intelligence/operating-event-service";
 import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
+import type { AuthoritativeDriverQualification } from "@/lib/services/authoritativeDriverQualificationService";
 import { isSafetyCriticalOpenCondition } from "@/lib/services/equipmentSafetyPredicates";
 import { findLoadByOperatorKey } from "@/lib/services/loadService";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
@@ -162,6 +163,7 @@ const openConditionThreadSelect = {
 export async function loadOpenSafetyCriticalConditionsForEquipment(
   tractorEquipmentId: string,
   trailerEquipmentId: string | null | undefined,
+  db: Prisma.TransactionClient | typeof prisma = prisma,
 ): Promise<{
   openTractorConditions: OpenConditionThreadSummary[];
   openTrailerConditions: OpenConditionThreadSummary[];
@@ -173,7 +175,7 @@ export async function loadOpenSafetyCriticalConditionsForEquipment(
     return { openTractorConditions: [], openTrailerConditions: [] };
   }
 
-  const threads = await prisma.conditionThread.findMany({
+  const threads = await db.conditionThread.findMany({
     where: {
       equipmentId: { in: equipmentIds },
       lifecycleState: { not: ConditionLifecycleState.RESOLVED },
@@ -187,6 +189,94 @@ export async function loadOpenSafetyCriticalConditionsForEquipment(
     openTrailerConditions: trailerEquipmentId
       ? safetyCritical.filter((thread) => thread.equipmentId === trailerEquipmentId)
       : [],
+  };
+}
+
+/** Planning reservation: block out-of-service equipment only (movement rules apply at RELEASE+). */
+export function evaluatePlanningEquipmentSafety(
+  inputs: Pick<DispatchReleaseInputs, "tractor" | "trailer">,
+): EquipmentSafetyEvaluation {
+  const reasonCodes: DispatchReleaseReasonCode[] = [];
+  if (inputs.tractor.status === EquipmentStatus.OUT_OF_SERVICE) {
+    addReason(reasonCodes, "TRUCK_OUT_OF_SERVICE");
+  }
+  if (inputs.trailer?.status === EquipmentStatus.OUT_OF_SERVICE) {
+    addReason(reasonCodes, "TRUCK_OUT_OF_SERVICE");
+  }
+  return {
+    blocked: reasonCodes.length > 0,
+    hold: false,
+    reasonCodes,
+  };
+}
+
+export async function assembleReleaseInputsInTx(
+  tx: Prisma.TransactionClient,
+  load: Load,
+  assignment: NonNullable<Awaited<ReturnType<typeof prisma.dispatchAssignment.findFirst>>> & {
+    load: Load;
+    driver: { id: string; fleetId: string };
+    tractorEquipment: Equipment;
+    trailerEquipment: Equipment | null;
+  },
+): Promise<DispatchReleaseInputs> {
+  const tractor = assignment.tractorEquipment;
+  if (!tractor) {
+    throw Object.assign(new Error(DISPATCH_RELEASE_BLOCKED_REQUIRED_EQUIPMENT), { statusCode: 409 });
+  }
+  const trailer = assignment.trailerEquipment ?? null;
+  if (assignment.trailerEquipmentId && !trailer) {
+    throw Object.assign(new Error(DISPATCH_RELEASE_BLOCKED_REQUIRED_EQUIPMENT), { statusCode: 409 });
+  }
+
+  const preTrip = await tx.preTripHeader.findFirst({
+    where: {
+      assignmentId: assignment.id,
+      status: { not: PreTripStatus.VOIDED },
+    },
+    include: {
+      items: { orderBy: [{ createdAt: "asc" }, { itemCode: "asc" }] },
+      defects: { orderBy: [{ createdAt: "asc" }, { itemCode: "asc" }] },
+    },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+  });
+
+  const { openTractorConditions, openTrailerConditions } = await loadOpenSafetyCriticalConditionsForEquipment(
+    tractor.id,
+    trailer?.id ?? assignment.trailerEquipmentId,
+    tx,
+  );
+
+  const readiness = await tx.driverReadinessScore.findFirst({
+    where: {
+      driverId: assignment.driverId,
+      fleetId: assignment.fleetId,
+    },
+    select: {
+      id: true,
+      status: true,
+      reasonCodes: true,
+      summary: true,
+      policyVersion: true,
+      evaluatedAt: true,
+      evaluatedByUserId: true,
+    },
+    orderBy: [{ evaluatedAt: "desc" }, { createdAt: "desc" }],
+  });
+
+  if (!readiness) {
+    throw Object.assign(new Error(DISPATCH_RELEASE_BLOCKED_NO_READINESS), { statusCode: 409 });
+  }
+
+  return {
+    load,
+    assignment,
+    tractor,
+    trailer,
+    preTrip,
+    openTractorConditions,
+    openTrailerConditions,
+    readiness,
   };
 }
 
@@ -443,6 +533,55 @@ export async function getCurrentReadinessForLoad(
   }
 
   return readiness;
+}
+
+function driverQualificationBlocksMovement(driverQualification: AuthoritativeDriverQualification): boolean {
+  if (
+    driverQualification.status === "NOT_QUALIFIED" ||
+    driverQualification.status === "PENDING_COMPLIANCE"
+  ) {
+    return true;
+  }
+  if (driverQualification.status === "CONDITIONAL" && !driverQualification.conditionalMovementPermitted) {
+    return true;
+  }
+  return false;
+}
+
+export function evaluateReleaseWithDriverQualification(
+  inputs: DispatchReleaseInputs,
+  driverQualification: AuthoritativeDriverQualification,
+): DispatchReleaseEvaluation {
+  const reasons: DispatchReleaseReasonCode[] = [];
+  const equipment = evaluateEquipmentSafety(inputs);
+
+  for (const code of equipment.reasonCodes) {
+    addReason(reasons, code);
+  }
+
+  const driverBlocks = driverQualificationBlocksMovement(driverQualification);
+  if (driverBlocks) {
+    addReason(reasons, "DRIVER_NOT_READY");
+  }
+
+  const equipmentBlocks = equipment.blocked;
+
+  let disposition: DispatchReleaseDisposition = "RELEASED";
+  if (driverBlocks || equipmentBlocks) {
+    disposition = "BLOCKED";
+  } else if (equipment.hold) {
+    disposition = "HOLD";
+  } else if (driverQualification.status === "CONDITIONAL") {
+    addReason(reasons, "DRIVER_CONDITIONAL_REVIEW");
+    disposition = "CONDITIONALLY_RELEASED";
+  }
+
+  return {
+    disposition,
+    reasonCodes: reasons,
+    summary: buildSummary(disposition, reasons),
+    policyVersion: DISPATCH_RELEASE_POLICY_VERSION,
+  };
 }
 
 export function evaluateRelease(inputs: DispatchReleaseInputs): DispatchReleaseEvaluation {
