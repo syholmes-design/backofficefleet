@@ -1071,16 +1071,20 @@ async function main() {
 
     const releaseInputs = await assembleReleaseInputs(operatorSessionA, load.id);
     const evaluation = evaluateRelease(releaseInputs);
-    assert.equal(evaluation.disposition, "RELEASED", "Dispatch release evaluation should remain authoritative");
-
-    const release = await writeDispatchRelease(operatorSessionA, load.id, evaluation, releaseInputs.readiness.id);
-    fixture.releaseIds.push(release.id);
-    assert.equal(release.disposition, "RELEASED", "Dispatch release should be released");
+    assert.equal(
+      evaluation.disposition,
+      "BLOCKED",
+      "Open safety-critical condition threads must block dispatch release evaluation",
+    );
+    assert.ok(
+      evaluation.reasonCodes.includes("SAFETY_CRITICAL_CONDITION"),
+      "Blocked release must cite safety-critical equipment conditions",
+    );
 
     const currentAfterRelease = await getCurrentConditionsForEquipment(operatorSessionA, truck407.id);
     assert(
       currentAfterRelease.some((entry) => entry.id === newCondition.id),
-      "Open condition should remain visible after release write",
+      "Open condition should remain visible when release evaluation is blocked",
     );
     assert(
       currentAfterRelease.every((entry) => entry.id !== condition.id),

@@ -1,4 +1,5 @@
 import {
+  ConditionLifecycleState,
   DispatchReleaseDisposition,
   DriverReadinessState,
   EquipmentStatus,
@@ -13,10 +14,11 @@ import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { recordLoadReadinessEvaluatedEvent, recordReleaseDecisionEvent } from "@/lib/process-intelligence/operating-event-service";
 import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
+import { isSafetyCriticalOpenCondition } from "@/lib/services/equipmentSafetyPredicates";
 import { findLoadByOperatorKey } from "@/lib/services/loadService";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
 
-export const DISPATCH_RELEASE_POLICY_VERSION = "bof-step11-dispatch-v1" as const;
+export const DISPATCH_RELEASE_POLICY_VERSION = "bof-equipment-safety-stage0-v1" as const;
 export const DISPATCH_RELEASE_BLOCKED_NO_ASSIGNMENT =
   "RELEASE EVALUATION BLOCKED — NO ACTIVE ASSIGNMENT" as const;
 export const DISPATCH_RELEASE_BLOCKED_NO_READINESS =
@@ -31,6 +33,7 @@ export type DispatchReleaseReasonCode =
   | "TRUCK_OUT_OF_SERVICE"
   | "MAINTENANCE_BLOCK"
   | "SAFETY_BLOCK"
+  | "SAFETY_CRITICAL_CONDITION"
   | "PRETRIP_INCOMPLETE"
   | "PRETRIP_DEFECT"
   | "LOAD_DOCUMENT_MISSING"
@@ -49,6 +52,15 @@ export type DispatchReleaseEvaluation = {
   policyVersion: typeof DISPATCH_RELEASE_POLICY_VERSION;
 };
 
+export type OpenConditionThreadSummary = {
+  id: string;
+  equipmentId: string;
+  lifecycleState: import("@prisma/client").ConditionLifecycleState;
+  severity: import("@prisma/client").ConditionSeverity;
+  impact: import("@prisma/client").ConditionImpact | null;
+  title: string;
+};
+
 export type DispatchReleaseInputs = {
   load: Load;
   assignment: Awaited<ReturnType<typeof prisma.dispatchAssignment.findUnique>> & {
@@ -61,10 +73,18 @@ export type DispatchReleaseInputs = {
     items: Awaited<ReturnType<typeof prisma.preTripItem.findMany>>;
     defects: Awaited<ReturnType<typeof prisma.preTripDefect.findMany>>;
   }) | null;
+  openTractorConditions: OpenConditionThreadSummary[];
+  openTrailerConditions: OpenConditionThreadSummary[];
   readiness: Pick<
     DriverReadinessScore,
     "id" | "status" | "reasonCodes" | "summary" | "policyVersion" | "evaluatedAt" | "evaluatedByUserId"
   >;
+};
+
+export type EquipmentSafetyEvaluation = {
+  blocked: boolean;
+  hold: boolean;
+  reasonCodes: DispatchReleaseReasonCode[];
 };
 
 export type CurrentReadinessForLoad = Pick<
@@ -128,6 +148,118 @@ function getActiveWarningDefects(
     return [];
   }
   return preTrip.defects.filter((defect) => defect.severity === "WARNING");
+}
+
+const openConditionThreadSelect = {
+  id: true,
+  equipmentId: true,
+  lifecycleState: true,
+  severity: true,
+  impact: true,
+  title: true,
+} satisfies Prisma.ConditionThreadSelect;
+
+export async function loadOpenSafetyCriticalConditionsForEquipment(
+  tractorEquipmentId: string,
+  trailerEquipmentId: string | null | undefined,
+): Promise<{
+  openTractorConditions: OpenConditionThreadSummary[];
+  openTrailerConditions: OpenConditionThreadSummary[];
+}> {
+  const equipmentIds = [tractorEquipmentId, trailerEquipmentId].filter(
+    (id): id is string => typeof id === "string" && id.length > 0,
+  );
+  if (equipmentIds.length === 0) {
+    return { openTractorConditions: [], openTrailerConditions: [] };
+  }
+
+  const threads = await prisma.conditionThread.findMany({
+    where: {
+      equipmentId: { in: equipmentIds },
+      lifecycleState: { not: ConditionLifecycleState.RESOLVED },
+    },
+    select: openConditionThreadSelect,
+  });
+
+  const safetyCritical = threads.filter(isSafetyCriticalOpenCondition);
+  return {
+    openTractorConditions: safetyCritical.filter((thread) => thread.equipmentId === tractorEquipmentId),
+    openTrailerConditions: trailerEquipmentId
+      ? safetyCritical.filter((thread) => thread.equipmentId === trailerEquipmentId)
+      : [],
+  };
+}
+
+export function evaluateEquipmentSafety(
+  inputs: Pick<
+    DispatchReleaseInputs,
+    "tractor" | "trailer" | "preTrip" | "openTractorConditions" | "openTrailerConditions"
+  >,
+): EquipmentSafetyEvaluation {
+  const reasonCodes: DispatchReleaseReasonCode[] = [];
+  const blockingDefects = getActiveBlockingDefects(inputs.preTrip);
+  const warningDefects = getActiveWarningDefects(inputs.preTrip);
+
+  if (inputs.tractor.status === EquipmentStatus.OUT_OF_SERVICE) {
+    addReason(reasonCodes, "TRUCK_OUT_OF_SERVICE");
+  } else if (inputs.tractor.status !== EquipmentStatus.AVAILABLE) {
+    addReason(reasonCodes, "TRUCK_UNAVAILABLE");
+  }
+
+  if (inputs.trailer) {
+    if (inputs.trailer.status === EquipmentStatus.OUT_OF_SERVICE) {
+      addReason(reasonCodes, "TRUCK_OUT_OF_SERVICE");
+    } else if (inputs.trailer.status !== EquipmentStatus.AVAILABLE) {
+      addReason(reasonCodes, "TRUCK_UNAVAILABLE");
+    }
+  }
+
+  if (!inputs.preTrip) {
+    addReason(reasonCodes, "PRETRIP_INCOMPLETE");
+  } else if (inputs.preTrip.status !== PreTripStatus.COMPLETED && blockingDefects.length === 0) {
+    addReason(reasonCodes, "PRETRIP_INCOMPLETE");
+  }
+
+  if (blockingDefects.length > 0) {
+    addReason(reasonCodes, "PRETRIP_DEFECT");
+  }
+
+  const openCriticalCount =
+    inputs.openTractorConditions.filter(isSafetyCriticalOpenCondition).length +
+    inputs.openTrailerConditions.filter(isSafetyCriticalOpenCondition).length;
+  if (openCriticalCount > 0) {
+    addReason(reasonCodes, "SAFETY_CRITICAL_CONDITION");
+    addReason(reasonCodes, "SAFETY_BLOCK");
+  }
+
+  const equipmentBlockingReasons = new Set<DispatchReleaseReasonCode>([
+    "TRUCK_UNAVAILABLE",
+    "TRUCK_OUT_OF_SERVICE",
+    "PRETRIP_INCOMPLETE",
+    "PRETRIP_DEFECT",
+    "SAFETY_CRITICAL_CONDITION",
+    "SAFETY_BLOCK",
+  ]);
+  const blocked = reasonCodes.some((code) => equipmentBlockingReasons.has(code));
+  const hold = !blocked && warningDefects.length > 0;
+
+  if (hold) {
+    addReason(reasonCodes, "PRETRIP_DEFECT");
+  }
+
+  return { blocked, hold, reasonCodes };
+}
+
+export function assertMovementAuthorizationAllowed(evaluation: DispatchReleaseEvaluation) {
+  if (
+    evaluation.disposition !== DispatchReleaseDisposition.RELEASED &&
+    evaluation.disposition !== DispatchReleaseDisposition.CONDITIONALLY_RELEASED
+  ) {
+    throw Object.assign(new Error(evaluation.summary), {
+      statusCode: 409,
+      payload: { evaluation },
+    });
+  }
 }
 
 function buildSummary(disposition: DispatchReleaseDisposition, reasonCodes: DispatchReleaseReasonCode[]) {
@@ -245,12 +377,19 @@ export async function assembleReleaseInputs(
     throw Object.assign(new Error(DISPATCH_RELEASE_BLOCKED_NO_READINESS), { statusCode: 409 });
   }
 
+  const { openTractorConditions, openTrailerConditions } = await loadOpenSafetyCriticalConditionsForEquipment(
+    tractor.id,
+    trailer?.id ?? assignment.trailerEquipmentId,
+  );
+
   return {
     load,
     assignment,
     tractor,
     trailer,
     preTrip,
+    openTractorConditions,
+    openTrailerConditions,
     readiness,
   };
 }
@@ -308,56 +447,23 @@ export async function getCurrentReadinessForLoad(
 
 export function evaluateRelease(inputs: DispatchReleaseInputs): DispatchReleaseEvaluation {
   const reasons: DispatchReleaseReasonCode[] = [];
-  const blockingDefects = getActiveBlockingDefects(inputs.preTrip);
-  const warningDefects = getActiveWarningDefects(inputs.preTrip);
+  const equipment = evaluateEquipmentSafety(inputs);
+
+  for (const code of equipment.reasonCodes) {
+    addReason(reasons, code);
+  }
 
   if (inputs.readiness.status === DriverReadinessState.NOT_READY) {
     addReason(reasons, "DRIVER_NOT_READY");
   }
 
-  if (inputs.tractor.status === EquipmentStatus.OUT_OF_SERVICE) {
-    addReason(reasons, "TRUCK_OUT_OF_SERVICE");
-  } else if (inputs.tractor.status !== EquipmentStatus.AVAILABLE) {
-    addReason(reasons, "TRUCK_UNAVAILABLE");
-  }
-
-  if (inputs.trailer) {
-    if (inputs.trailer.status === EquipmentStatus.OUT_OF_SERVICE) {
-      addReason(reasons, "TRUCK_OUT_OF_SERVICE");
-    } else if (inputs.trailer.status !== EquipmentStatus.AVAILABLE) {
-      addReason(reasons, "TRUCK_UNAVAILABLE");
-    }
-  }
-
-  if (!inputs.preTrip) {
-    addReason(reasons, "PRETRIP_INCOMPLETE");
-  } else if (inputs.preTrip.status !== PreTripStatus.COMPLETED && blockingDefects.length === 0) {
-    addReason(reasons, "PRETRIP_INCOMPLETE");
-  }
-
-  if (blockingDefects.length > 0) {
-    addReason(reasons, "PRETRIP_DEFECT");
-  }
-
-  const hasHoldCondition = warningDefects.length > 0;
-  if (hasHoldCondition) {
-    addReason(reasons, "PRETRIP_DEFECT");
-  }
-
-  const hasBlockingCondition = reasons.some((reasonCode) =>
-    [
-      "DRIVER_NOT_READY",
-      "TRUCK_UNAVAILABLE",
-      "TRUCK_OUT_OF_SERVICE",
-      "PRETRIP_INCOMPLETE",
-      "PRETRIP_DEFECT",
-    ].includes(reasonCode),
-  ) && (blockingDefects.length > 0 || reasons.includes("PRETRIP_INCOMPLETE") || reasons.includes("DRIVER_NOT_READY") || reasons.includes("TRUCK_UNAVAILABLE") || reasons.includes("TRUCK_OUT_OF_SERVICE"));
+  const driverBlocks = inputs.readiness.status === DriverReadinessState.NOT_READY;
+  const equipmentBlocks = equipment.blocked;
 
   let disposition: DispatchReleaseDisposition = "RELEASED";
-  if (hasBlockingCondition) {
+  if (driverBlocks || equipmentBlocks) {
     disposition = "BLOCKED";
-  } else if (hasHoldCondition) {
+  } else if (equipment.hold) {
     disposition = "HOLD";
   } else if (inputs.readiness.status === DriverReadinessState.CONDITIONAL) {
     addReason(reasons, "DRIVER_CONDITIONAL_REVIEW");

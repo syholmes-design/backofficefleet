@@ -300,6 +300,12 @@ export async function updatePreTripItem(
   if (header.status === "VOIDED") {
     throw Object.assign(new Error("Cannot modify a voided pre-trip"), { statusCode: 422 });
   }
+  if (header.status === "COMPLETED") {
+    throw Object.assign(new Error("Completed pre-trip inspections cannot be modified"), {
+      statusCode: 422,
+      code: "COMPLETED_PRETRIP_IMMUTABLE",
+    });
+  }
 
   return prisma.$transaction(async (tx) => {
     const item = await tx.preTripItem.upsert({
