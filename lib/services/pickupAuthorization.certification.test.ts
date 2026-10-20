@@ -197,7 +197,7 @@ test("cert 5: incomplete pre-trip blocks issue with 409 and creates no authoriza
       () => issuePickupAuthorization(admin, chain.load.id),
       (caught: unknown) => {
         const http = pickupHttpError(caught);
-        return http.statusCode === 409 && String(http.message).includes("BLOCKED");
+        return http.statusCode === 409 && String(http.message).toUpperCase().includes("PRETRIP_INCOMPLETE");
       },
     );
     const created = await prisma.pickupAuthorization.findMany({ where: { loadId: chain.load.id } });

@@ -110,13 +110,17 @@ export async function cleanupSecurePickupCertFixtures(ids: SecurePickupCertIds) 
     },
   });
   await prisma.pickupAuthorization.deleteMany({ where: { id: { in: ids.authorizationIds } } });
-  await prisma.dispatchRelease.deleteMany({ where: { id: { in: ids.releaseIds } } });
+  await prisma.dispatchRelease.deleteMany({
+    where: {
+      OR: [{ id: { in: ids.releaseIds } }, { loadId: { in: ids.loadIds } }, { assignmentId: { in: ids.assignmentIds } }],
+    },
+  });
+  await prisma.preTripHeader.deleteMany({ where: { assignmentId: { in: ids.assignmentIds } } });
   await prisma.dispatchAssignment.deleteMany({ where: { id: { in: ids.assignmentIds } } });
   await prisma.driverReadinessScore.deleteMany({ where: { id: { in: ids.readinessIds } } });
+  await cleanupQualifiedDriverEvidence(prisma, ids.driverIds);
   await prisma.load.deleteMany({ where: { id: { in: ids.loadIds } } });
   await prisma.equipment.deleteMany({ where: { id: { in: ids.equipmentIds } } });
-  await cleanupQualifiedDriverEvidence(prisma, ids.driverIds);
-  await prisma.preTripHeader.deleteMany({ where: { assignmentId: { in: ids.assignmentIds } } });
   await prisma.driver.deleteMany({ where: { id: { in: ids.driverIds } } });
   if (ids.userIds.length > 0) {
     await prisma.fleetMembership.deleteMany({ where: { userId: { in: ids.userIds } } });

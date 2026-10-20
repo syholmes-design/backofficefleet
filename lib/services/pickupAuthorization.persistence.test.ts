@@ -56,7 +56,11 @@ async function cleanup(ids: {
     where: { entityType: "PickupAuthorization", entityId: { in: ids.authorizationIds } },
   });
   await prisma.pickupAuthorization.deleteMany({ where: { id: { in: ids.authorizationIds } } });
-  await prisma.dispatchRelease.deleteMany({ where: { id: { in: ids.releaseIds } } });
+  await prisma.dispatchRelease.deleteMany({
+    where: {
+      OR: [{ id: { in: ids.releaseIds } }, { loadId: { in: ids.loadIds } }, { assignmentId: { in: ids.assignmentIds } }],
+    },
+  });
   await prisma.preTripHeader.deleteMany({ where: { assignmentId: { in: ids.assignmentIds } } });
   await prisma.dispatchAssignment.deleteMany({ where: { id: { in: ids.assignmentIds } } });
   await cleanupQualifiedDriverEvidence(prisma, ids.driverIds);
@@ -246,14 +250,14 @@ test("local persistence: pickup authorization issue, release, stop, expiry, reus
     await assert.rejects(
       () => issuePickupAuthorization(adminA, notReady.load.id),
       (error: { statusCode?: number; message?: string }) =>
-        error.statusCode === 409 && String(error.message).includes("BLOCKED"),
+        error.statusCode === 409 && String(error.message).includes("DRIVER_NOT_READY"),
     );
 
     const noPreTrip = await createChain({ trip: false, preTrip: false });
     await assert.rejects(
       () => issuePickupAuthorization(adminA, noPreTrip.load.id),
       (error: { statusCode?: number; message?: string }) =>
-        error.statusCode === 409 && String(error.message).includes("BLOCKED"),
+        error.statusCode === 409 && String(error.message).toUpperCase().includes("PRETRIP_INCOMPLETE"),
     );
 
     const valid = await createChain();

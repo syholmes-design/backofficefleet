@@ -186,6 +186,15 @@ test("samba2 3: repeated pickup STOP on the same driver is a pattern, not causat
       },
     });
     pickupIds.assignmentIds.push(assignment2.id);
+    await prisma.preTripHeader.create({
+      data: {
+        fleetId: fleet.id,
+        assignmentId: assignment2.id,
+        status: "COMPLETED",
+        completedAt: new Date(),
+        completedByUserId: admin.id as string,
+      },
+    });
     const release2 = await prisma.dispatchRelease.create({
       data: {
         fleetId: fleet.id,
