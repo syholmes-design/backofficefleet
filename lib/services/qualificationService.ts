@@ -13,6 +13,17 @@ export type QualificationEvaluation = {
   policyVersion: string;
 };
 
+/**
+ * Lets the Stage 0 authoritative evaluator (authoritativeDriverQualificationService.ts) reuse these rules
+ * while it evaluates mandatory evidence itself. The defaults keep today's behavior for every existing caller.
+ */
+export type QualificationEvaluationOptions = {
+  /** Requirement types the mandatory evidence registry evaluates; their rows (and any waiver on them) are skipped here. */
+  registryOwnedRequirementTypes?: ReadonlySet<string>;
+  /** Skip the "at least one WorkHistory row" check; the registry applies the employment-history rules instead. */
+  skipWorkHistoryCheck?: boolean;
+};
+
 export type QualificationInputs = {
   driver: Awaited<ReturnType<typeof prisma.driver.findUnique>> & { fleet?: { id: string } };
   intake: Awaited<ReturnType<typeof prisma.driverIntake.findUnique>>;
@@ -146,8 +157,12 @@ export async function assembleQualificationInputs(
   };
 }
 
-export function evaluateQualification(inputs: QualificationInputs): QualificationEvaluation {
+export function evaluateQualification(
+  inputs: QualificationInputs,
+  options: QualificationEvaluationOptions = {},
+): QualificationEvaluation {
   const intake = inputs.intake;
+  const registryOwned = (requirementType: string) => options.registryOwnedRequirementTypes?.has(requirementType) ?? false;
   if (!intake) {
     return {
       status: "PENDING_REVIEW",
@@ -162,6 +177,10 @@ export function evaluateQualification(inputs: QualificationInputs): Qualificatio
   const add = (reasonCode: string) => addReason(reasons, reasonCode);
 
   for (const requirement of inputs.requirements) {
+    if (registryOwned(requirement.requirementType)) {
+      continue;
+    }
+
     if (requirement.exceptionReason && requirement.exceptionReason.trim().length > 0) {
       add("REQUIREMENT_EXCEPTION");
       continue;
@@ -262,7 +281,7 @@ export function evaluateQualification(inputs: QualificationInputs): Qualificatio
     }
   }
 
-  if (inputs.workHistory.length === 0) {
+  if (!options.skipWorkHistoryCheck && inputs.workHistory.length === 0) {
     add("WORK_HISTORY_INCOMPLETE");
   }
 
@@ -275,7 +294,10 @@ export function evaluateQualification(inputs: QualificationInputs): Qualificatio
   }
 
   if (
-    inputs.requirements.some((requirement) => requirement.exceptionReason && requirement.exceptionReason.trim().length > 0) &&
+    inputs.requirements.some(
+      (requirement) =>
+        !registryOwned(requirement.requirementType) && requirement.exceptionReason && requirement.exceptionReason.trim().length > 0,
+    ) &&
     !reasons.some((reason) => BLOCKING_REASON_CODES.has(reason))
   ) {
     add("REQUIREMENT_EXCEPTION");
