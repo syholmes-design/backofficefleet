@@ -175,20 +175,29 @@ export async function setEquipmentStatus(
     throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
   }
 
-  const restoringToAvailable =
-    nextStatus === EquipmentStatus.AVAILABLE &&
-    (equipment.status === EquipmentStatus.OUT_OF_SERVICE || equipment.status === EquipmentStatus.UNAVAILABLE);
-  const downgrading =
-    nextStatus === EquipmentStatus.OUT_OF_SERVICE || nextStatus === EquipmentStatus.UNAVAILABLE;
-  const mutationIntent: "downgrade" | "restore" | "other" = restoringToAvailable
-    ? "restore"
-    : downgrading
-      ? "downgrade"
-      : "other";
-
   return prisma.$transaction(async (tx) => {
-    await requireEquipmentStatusMutationRole(tx, sessionUser as SessionUserLike, equipment.fleetId, equipment.id, mutationIntent);
     await lockEquipmentSafetyWrite(tx, equipment.id);
+    const lockedEquipment = await tx.equipment.findUniqueOrThrow({ where: { id: equipment.id } });
+    const previousStatus = lockedEquipment.status;
+
+    const restoringToAvailable =
+      nextStatus === EquipmentStatus.AVAILABLE &&
+      (previousStatus === EquipmentStatus.OUT_OF_SERVICE || previousStatus === EquipmentStatus.UNAVAILABLE);
+    const downgrading =
+      nextStatus === EquipmentStatus.OUT_OF_SERVICE || nextStatus === EquipmentStatus.UNAVAILABLE;
+    const mutationIntent: "downgrade" | "restore" | "other" = restoringToAvailable
+      ? "restore"
+      : downgrading
+        ? "downgrade"
+        : "other";
+
+    await requireEquipmentStatusMutationRole(
+      tx,
+      sessionUser as SessionUserLike,
+      equipment.fleetId,
+      equipment.id,
+      mutationIntent,
+    );
 
     if (nextStatus === EquipmentStatus.AVAILABLE) {
       const openConditions = await tx.conditionThread.findMany({
@@ -241,9 +250,9 @@ export async function setEquipmentStatus(
         entityId: equipment.id,
         details: {
           event: "equipment.status_updated",
-          previousStatus: equipment.status,
+          previousStatus,
           newStatus: nextStatus,
-          unitNumber: equipment.unitNumber,
+          unitNumber: lockedEquipment.unitNumber,
         },
         metadata: { source: "equipment-service" },
       },

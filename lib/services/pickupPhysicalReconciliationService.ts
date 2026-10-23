@@ -474,7 +474,21 @@ export async function reconcilePickupPhysicalArrival(
     actorUserId: actorId,
   };
 
-  const { attempt, physical } = await prisma.$transaction(async (tx) => {
+  type ReconcileTxResult =
+    | {
+        kind: "movement_denied";
+        attempt: Awaited<ReturnType<typeof prisma.pickupVerificationAttempt.create>>;
+        physical: Awaited<ReturnType<typeof prisma.pickupPhysicalReconciliation.upsert>>;
+        reason: string;
+        reasonCodes: PickupStopReasonCode[];
+      }
+    | {
+        kind: "released";
+        attempt: Awaited<ReturnType<typeof prisma.pickupVerificationAttempt.create>>;
+        physical: Awaited<ReturnType<typeof prisma.pickupPhysicalReconciliation.upsert>>;
+      };
+
+  const txResult = await prisma.$transaction(async (tx): Promise<ReconcileTxResult> => {
     if (releasingMovement) {
       const movement = await authorizeMovement(tx, "PICKUP_VERIFY", {
         sessionUser: sessionUser!,
@@ -538,21 +552,7 @@ export async function reconcilePickupPhysicalArrival(
             reasonCodes: reasonCodes as Prisma.InputJsonValue,
           },
         });
-        throw Object.assign(new Error(reason), {
-          statusCode: 409,
-          payload: {
-            authorization: detail.authorization,
-            physical: toPublicPhysical(stoppedPhysical),
-            attempt: {
-              id: stoppedAttempt.id,
-              result: stoppedAttempt.result,
-              reason: stoppedAttempt.reason,
-              reasonCodes: stoppedAttempt.reasonCodes,
-              createdAt: stoppedAttempt.createdAt,
-            },
-            physicalVerificationNote: PHASE2_PHYSICAL_UNVERIFIED_NOTE,
-          },
-        });
+        return { kind: "movement_denied", attempt: stoppedAttempt, physical: stoppedPhysical, reason, reasonCodes };
       }
     } else {
       const locked = await tx.pickupAuthorization.findUnique({
@@ -606,8 +606,79 @@ export async function reconcilePickupPhysicalArrival(
         : { status: "AUTHORIZED", reason: decision.summary },
     });
 
-    return { attempt: createdAttempt, physical: createdPhysical };
+    return { kind: "released", attempt: createdAttempt, physical: createdPhysical };
   });
+
+  if (txResult.kind === "movement_denied") {
+    const { attempt, physical, reason, reasonCodes } = txResult;
+    await createAuditRecord({
+      actorId,
+      actorEmail: sessionUser!.email ?? null,
+      tenantId: row.fleetId,
+      action: "UPDATED",
+      entityType: "PickupPhysicalReconciliation",
+      entityId: physical.id,
+      details: {
+        event: "pickup.physical_reconciliation",
+        disposition: "STOP",
+        dimensions: {
+          driver: decision.driverArrivalResult,
+          tractor: decision.tractorArrivalResult,
+          trailer: decision.trailerArrivalResult,
+          load: decision.loadArrivalResult,
+          authorization: decision.authorizationArrivalResult,
+        },
+        identityMatchToAuthorizedRecord: decision.identityMatchToAuthorizedRecord,
+        identityPhysicalClass: "UNVERIFIED",
+        equipmentPhysicalClass: "UNVERIFIED",
+        method,
+        reasonCodes,
+        evidenceReference: input.evidenceReference?.trim() || null,
+        physicalVerificationPerformed: false,
+        policyVersion: PICKUP_PHYSICAL_POLICY_VERSION,
+      },
+      metadata: { source: "pickup-physical-reconciliation" },
+    });
+    await recordOperatingProcessEvent(getOperatingProcessStore(), sessionUser!, {
+      fleetId: row.fleetId,
+      loadId: row.loadId,
+      entityType: "PickupPhysicalReconciliation",
+      entityId: physical.id,
+      eventType: "PICKUP_PHYSICAL_RECONCILED",
+      processStage: "RELEASE",
+      eventTimestamp: new Date(),
+      actorId,
+      actorType: "USER",
+      relatedRecordType: "PickupVerificationAttempt",
+      relatedRecordId: attempt.id,
+      lineage: { sourceSystem: "BOF", sourceRecordId: physical.id },
+      decisionType: "PICKUP_PHYSICAL_RELEASE",
+      decisionResult: "STOP",
+      decisionReason: reason,
+      decisionOwner: actorId,
+      priorState: row.status,
+      resultingState: "STOP",
+      operationalConsequence: "Shipper dock stopped pickup under Phase 2.",
+    });
+    const refreshed = await getPickupAuthorization(sessionUser, authorizationId);
+    throw Object.assign(new Error(reason), {
+      statusCode: 409,
+      payload: {
+        authorization: refreshed.authorization,
+        physical: toPublicPhysical(physical),
+        attempt: {
+          id: attempt.id,
+          result: attempt.result,
+          reason: attempt.reason,
+          reasonCodes: attempt.reasonCodes,
+          createdAt: attempt.createdAt,
+        },
+        physicalVerificationNote: PHASE2_PHYSICAL_UNVERIFIED_NOTE,
+      },
+    });
+  }
+
+  const { attempt, physical } = txResult;
 
   await createAuditRecord({
     actorId,
