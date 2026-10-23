@@ -1,19 +1,19 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { register } from "node:module";
+import { registerHooks } from "node:module";
 import test from "node:test";
 const prismaMockUrl = new URL("./bofInquiryReview.prisma-mock.mjs", import.meta.url).href;
-register(
-  "data:text/javascript," + encodeURIComponent(`
-    export async function resolve(specifier, context, nextResolve) {
-      if (specifier === "@/lib/prisma") {
-        return { url: ${JSON.stringify(prismaMockUrl)}, shortCircuit: true };
-      }
-      return nextResolve(specifier, context);
+// Synchronous hooks apply to both import and require, so the mock also replaces @/lib/prisma when the services are
+// loaded through tsx's CommonJS path. An async `register` hook does not see those loads, and the test then queried
+// the real database instead of the mock.
+registerHooks({
+  resolve(specifier, context, nextResolve) {
+    if (specifier === "@/lib/prisma") {
+      return { url: prismaMockUrl, shortCircuit: true };
     }
-  `),
-  { parentURL: import.meta.url },
-);
+    return nextResolve(specifier, context);
+  },
+});
 
 const reviewer = {
   id: "inquiry-reviewer",

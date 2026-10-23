@@ -1,7 +1,7 @@
 import {
   DispatchAssignmentStatus,
   DispatchReleaseDisposition,
-  DriverReadinessState,
+  PickupAuthorizationStatus,
   Prisma,
   type PickupStopReasonCode,
   type PickupVerificationMethod,
@@ -12,6 +12,7 @@ import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { recordOperatingProcessEvent } from "@/lib/process-intelligence/operating-event-service";
 import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
+import { authorizeMovement } from "@/lib/services/dispatchMovementAuthorizationService";
 import { getPickupAuthorization } from "@/lib/services/pickupAuthorizationService";
 import {
   PHASE2_PHYSICAL_UNVERIFIED_NOTE,
@@ -23,6 +24,8 @@ import {
 import { pickupAuthorizationTokensMatch } from "@/lib/services/pickupToken";
 
 export const SHIPPER_DOCK_ROLES = ["FLEET_ADMIN", "FLEET_OPERATIONS", "DISPATCH"] as const;
+
+const ACTIVE_PICKUP_STATUSES: PickupAuthorizationStatus[] = ["PENDING", "AUTHORIZED"];
 
 function requireSessionUser(sessionUser: SessionUserLike | null | undefined) {
   if (!sessionUser?.id) {
@@ -409,21 +412,6 @@ export async function reconcilePickupPhysicalArrival(
     );
   }
 
-  const readiness = await prisma.driverReadinessScore.findFirst({
-    where: { driverId: row.driverId, fleetId: row.fleetId },
-    orderBy: [{ evaluatedAt: "desc" }, { createdAt: "desc" }],
-  });
-  if (!readiness || readiness.status === DriverReadinessState.NOT_READY) {
-    const decision = evaluatePickupPhysicalArrival(authorizedArrival, arriving);
-    await throwDecision(
-      409,
-      "STOPPED",
-      { ...decision, disposition: "STOP", summary: "Driver readiness no longer allows pickup", reasonCodes: ["NO_DRIVER_READINESS"] },
-      ["NO_DRIVER_READINESS"],
-      { persistPhysical: true, stopPhase1: true },
-    );
-  }
-
   const tripRelease = await prisma.dispatchRelease.findFirst({
     where: { assignmentId: row.assignmentId, loadId: row.loadId },
     orderBy: [{ evaluatedAt: "desc" }, { createdAt: "desc" }],
@@ -462,84 +450,164 @@ export async function reconcilePickupPhysicalArrival(
     await throwDecision(409, "STOPPED", decision, [], { persistPhysical: true, stopPhase1: true });
   }
 
-  const attempt = await prisma.pickupVerificationAttempt.create({
-    data: {
-      pickupAuthorizationId: row.id,
-      fleetId: row.fleetId,
-      method,
-      result: "RELEASED",
-      presentedTokenValid: true,
-      presentedDriverId: arriving.driverId?.trim() || null,
-      presentedTractorEquipmentId: arriving.tractorId?.trim() || null,
-      presentedTrailerEquipmentId: arriving.trailerId?.trim() || null,
-      presentedLoadId: arriving.loadId?.trim() || null,
-      presentedAuthorizationId: arriving.authorizationId?.trim() || authorizationId,
-      reason: decision.summary,
-      reasonCodes: decision.reasonCodes as Prisma.InputJsonValue,
-      physicalVerificationPerformed: false,
-      actorUserId: actorId,
-    },
-  });
+  const releasingMovement = decision.identityMatchToAuthorizedRecord;
+  const physicalReleaseData = {
+    disposition: "RELEASE" as const,
+    driverArrivalResult: decision.driverArrivalResult,
+    tractorArrivalResult: decision.tractorArrivalResult,
+    trailerArrivalResult: decision.trailerArrivalResult,
+    loadArrivalResult: decision.loadArrivalResult,
+    authorizationArrivalResult: decision.authorizationArrivalResult,
+    identityMatchToAuthorizedRecord: decision.identityMatchToAuthorizedRecord,
+    identityPhysicalClass: "UNVERIFIED" as const,
+    equipmentPhysicalClass: "UNVERIFIED" as const,
+    method,
+    arrivingDriverId: arriving.driverId?.trim() || null,
+    arrivingTractorUnitNumber: arriving.tractorUnitNumber?.trim() || null,
+    arrivingTrailerUnitNumber: arriving.trailerUnitNumber?.trim() || null,
+    arrivingVin: arriving.vin?.trim() || null,
+    arrivingPlate: arriving.plate?.trim() || null,
+    arrivingQr: arriving.qr?.trim() || null,
+    reason: decision.summary,
+    reasonCodes: decision.reasonCodes as Prisma.InputJsonValue,
+    evidenceReference: input.evidenceReference?.trim() || null,
+    actorUserId: actorId,
+  };
 
-  const physical = await prisma.pickupPhysicalReconciliation.upsert({
-    where: { pickupAuthorizationId: row.id },
-    update: {
-      disposition: "RELEASE",
-      driverArrivalResult: decision.driverArrivalResult,
-      tractorArrivalResult: decision.tractorArrivalResult,
-      trailerArrivalResult: decision.trailerArrivalResult,
-      loadArrivalResult: decision.loadArrivalResult,
-      authorizationArrivalResult: decision.authorizationArrivalResult,
-      identityMatchToAuthorizedRecord: decision.identityMatchToAuthorizedRecord,
-      identityPhysicalClass: "UNVERIFIED",
-      equipmentPhysicalClass: "UNVERIFIED",
-      method,
-      arrivingDriverId: arriving.driverId?.trim() || null,
-      arrivingTractorUnitNumber: arriving.tractorUnitNumber?.trim() || null,
-      arrivingTrailerUnitNumber: arriving.trailerUnitNumber?.trim() || null,
-      arrivingVin: arriving.vin?.trim() || null,
-      arrivingPlate: arriving.plate?.trim() || null,
-      arrivingQr: arriving.qr?.trim() || null,
-      reason: decision.summary,
-      reasonCodes: decision.reasonCodes as Prisma.InputJsonValue,
-      evidenceReference: input.evidenceReference?.trim() || null,
-      actorUserId: actorId,
-    },
-    create: {
-      pickupAuthorizationId: row.id,
-      fleetId: row.fleetId,
-      loadId: row.loadId,
-      disposition: "RELEASE",
-      driverArrivalResult: decision.driverArrivalResult,
-      tractorArrivalResult: decision.tractorArrivalResult,
-      trailerArrivalResult: decision.trailerArrivalResult,
-      loadArrivalResult: decision.loadArrivalResult,
-      authorizationArrivalResult: decision.authorizationArrivalResult,
-      identityMatchToAuthorizedRecord: decision.identityMatchToAuthorizedRecord,
-      identityPhysicalClass: "UNVERIFIED",
-      equipmentPhysicalClass: "UNVERIFIED",
-      method,
-      arrivingDriverId: arriving.driverId?.trim() || null,
-      arrivingTractorUnitNumber: arriving.tractorUnitNumber?.trim() || null,
-      arrivingTrailerUnitNumber: arriving.trailerUnitNumber?.trim() || null,
-      arrivingVin: arriving.vin?.trim() || null,
-      arrivingPlate: arriving.plate?.trim() || null,
-      arrivingQr: arriving.qr?.trim() || null,
-      reason: decision.summary,
-      reasonCodes: decision.reasonCodes as Prisma.InputJsonValue,
-      evidenceReference: input.evidenceReference?.trim() || null,
-      actorUserId: actorId,
-    },
-  });
+  const { attempt, physical } = await prisma.$transaction(async (tx) => {
+    if (releasingMovement) {
+      const movement = await authorizeMovement(tx, "PICKUP_VERIFY", {
+        sessionUser: sessionUser!,
+        loadId: row.loadId,
+        assignmentId: row.assignmentId,
+      });
+      const locked = await tx.pickupAuthorization.findUnique({
+        where: { id: row.id },
+        select: { status: true },
+      });
+      if (!locked || !ACTIVE_PICKUP_STATUSES.includes(locked.status)) {
+        throw Object.assign(new Error(`Pickup authorization is ${locked?.status ?? "missing"}`), { statusCode: 409 });
+      }
+      if (!movement.allowed) {
+        const reason = movement.summary || "Pickup verification blocked by movement authorization.";
+        const reasonCodes: PickupStopReasonCode[] = movement.reasonCodes.includes("NO_TRIP_RELEASE")
+          ? ["NO_TRIP_RELEASE"]
+          : (movement.reasonCodes as PickupStopReasonCode[]);
+        const stoppedAttempt = await tx.pickupVerificationAttempt.create({
+          data: {
+            pickupAuthorizationId: row.id,
+            fleetId: row.fleetId,
+            method,
+            result: "STOPPED",
+            presentedTokenValid: true,
+            presentedDriverId: arriving.driverId?.trim() || null,
+            presentedTractorEquipmentId: arriving.tractorId?.trim() || null,
+            presentedTrailerEquipmentId: arriving.trailerId?.trim() || null,
+            presentedLoadId: arriving.loadId?.trim() || null,
+            presentedAuthorizationId: arriving.authorizationId?.trim() || authorizationId,
+            reason,
+            reasonCodes: reasonCodes as Prisma.InputJsonValue,
+            physicalVerificationPerformed: false,
+            actorUserId: actorId,
+          },
+        });
+        const stoppedPhysical = await tx.pickupPhysicalReconciliation.upsert({
+          where: { pickupAuthorizationId: row.id },
+          update: {
+            ...physicalReleaseData,
+            disposition: "STOP",
+            reason,
+            reasonCodes: reasonCodes as Prisma.InputJsonValue,
+          },
+          create: {
+            pickupAuthorizationId: row.id,
+            fleetId: row.fleetId,
+            loadId: row.loadId,
+            ...physicalReleaseData,
+            disposition: "STOP",
+            reason,
+            reasonCodes: reasonCodes as Prisma.InputJsonValue,
+          },
+        });
+        await tx.pickupAuthorization.update({
+          where: { id: row.id },
+          data: {
+            status: "STOPPED",
+            stoppedAt: new Date(),
+            reason,
+            reasonCodes: reasonCodes as Prisma.InputJsonValue,
+          },
+        });
+        throw Object.assign(new Error(reason), {
+          statusCode: 409,
+          payload: {
+            authorization: detail.authorization,
+            physical: toPublicPhysical(stoppedPhysical),
+            attempt: {
+              id: stoppedAttempt.id,
+              result: stoppedAttempt.result,
+              reason: stoppedAttempt.reason,
+              reasonCodes: stoppedAttempt.reasonCodes,
+              createdAt: stoppedAttempt.createdAt,
+            },
+            physicalVerificationNote: PHASE2_PHYSICAL_UNVERIFIED_NOTE,
+          },
+        });
+      }
+    } else {
+      const locked = await tx.pickupAuthorization.findUnique({
+        where: { id: row.id },
+        select: { status: true },
+      });
+      if (!locked || !ACTIVE_PICKUP_STATUSES.includes(locked.status)) {
+        throw Object.assign(new Error(`Pickup authorization is ${locked?.status ?? "missing"}`), { statusCode: 409 });
+      }
+    }
 
-  if (row.status === "PENDING" || row.status === "AUTHORIZED") {
-    await prisma.pickupAuthorization.update({
+    const createdAttempt = await tx.pickupVerificationAttempt.create({
+      data: {
+        pickupAuthorizationId: row.id,
+        fleetId: row.fleetId,
+        method,
+        result: "RELEASED",
+        presentedTokenValid: true,
+        presentedDriverId: arriving.driverId?.trim() || null,
+        presentedTractorEquipmentId: arriving.tractorId?.trim() || null,
+        presentedTrailerEquipmentId: arriving.trailerId?.trim() || null,
+        presentedLoadId: arriving.loadId?.trim() || null,
+        presentedAuthorizationId: arriving.authorizationId?.trim() || authorizationId,
+        reason: decision.summary,
+        reasonCodes: decision.reasonCodes as Prisma.InputJsonValue,
+        physicalVerificationPerformed: false,
+        actorUserId: actorId,
+      },
+    });
+
+    const createdPhysical = await tx.pickupPhysicalReconciliation.upsert({
+      where: { pickupAuthorizationId: row.id },
+      update: physicalReleaseData,
+      create: {
+        pickupAuthorizationId: row.id,
+        fleetId: row.fleetId,
+        loadId: row.loadId,
+        ...physicalReleaseData,
+      },
+    });
+
+    await tx.pickupAuthorization.update({
       where: { id: row.id },
-      data: decision.identityMatchToAuthorizedRecord
-        ? { status: "RELEASED", releasedAt: new Date(), reason: decision.summary, reasonCodes: [] as Prisma.InputJsonValue }
+      data: releasingMovement
+        ? {
+            status: "RELEASED",
+            releasedAt: new Date(),
+            reason: decision.summary,
+            reasonCodes: [] as Prisma.InputJsonValue,
+          }
         : { status: "AUTHORIZED", reason: decision.summary },
     });
-  }
+
+    return { attempt: createdAttempt, physical: createdPhysical };
+  });
 
   await createAuditRecord({
     actorId,

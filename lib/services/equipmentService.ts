@@ -1,4 +1,4 @@
-import { EquipmentStatus } from "@prisma/client";
+import { EquipmentStatus, type Prisma } from "@prisma/client";
 
 import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
@@ -21,6 +21,57 @@ function ensureValidEquipmentStatus(status: string) {
     throw Object.assign(new Error("Invalid equipment status"), { statusCode: 422 });
   }
   return status as EquipmentStatus;
+}
+
+/** Roles that may downgrade equipment (OUT_OF_SERVICE / UNAVAILABLE). Read from the database, not session claims. */
+const EQUIPMENT_DOWNGRADE_ROLE_CODES = new Set([
+  "DISPATCH",
+  "FLEET_OPERATIONS",
+  "FLEET_MANAGER",
+  "FLEET_ADMIN",
+  "BOF_OPERATIONS",
+  "BOF_COMPLIANCE_REVIEW",
+]);
+
+/** Roles that may restore equipment to AVAILABLE after a safety downgrade. */
+const EQUIPMENT_RESTORE_ROLE_CODES = new Set([
+  "FLEET_ADMIN",
+  "FLEET_OPERATIONS",
+  "FLEET_MANAGER",
+  "BOF_OPERATIONS",
+  "BOF_COMPLIANCE_REVIEW",
+]);
+
+async function requireEquipmentStatusMutationRole(
+  db: Prisma.TransactionClient,
+  sessionUser: SessionUserLike,
+  fleetId: string,
+  equipmentId: string,
+  intent: "downgrade" | "restore" | "other",
+) {
+  const membership = await db.fleetMembership.findFirst({
+    where: { userId: sessionUser.id!, fleetId, status: "ACTIVE", user: { status: "ACTIVE" } },
+    select: { role: { select: { code: true } } },
+  });
+  const roleCode = membership?.role.code;
+  if (roleCode === "DRIVER") {
+    await logUnauthorizedDispatchAccess(sessionUser, fleetId, equipmentId, "DRIVER_ROLE");
+    throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
+  }
+  const allowed =
+    intent === "restore"
+      ? Boolean(roleCode && EQUIPMENT_RESTORE_ROLE_CODES.has(roleCode))
+      : intent === "downgrade"
+        ? Boolean(roleCode && EQUIPMENT_DOWNGRADE_ROLE_CODES.has(roleCode))
+        : Boolean(
+            roleCode &&
+              (EQUIPMENT_DOWNGRADE_ROLE_CODES.has(roleCode) || EQUIPMENT_RESTORE_ROLE_CODES.has(roleCode)),
+          );
+  if (!allowed) {
+    await logUnauthorizedDispatchAccess(sessionUser, fleetId, equipmentId, roleCode ? "ROLE_REQUIRED" : "TENANT_ACCESS_DENIED");
+    throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
+  }
+  return roleCode!;
 }
 
 async function logUnauthorizedDispatchAccess(
@@ -124,33 +175,45 @@ export async function setEquipmentStatus(
     throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
   }
 
-  if (nextStatus === EquipmentStatus.AVAILABLE) {
-    const openConditions = await prisma.conditionThread.findMany({
-      where: {
-        equipmentId: equipment.id,
-        fleetId: equipment.fleetId,
-        lifecycleState: { not: "RESOLVED" },
-      },
-      select: {
-        lifecycleState: true,
-        severity: true,
-        impact: true,
-      },
-    });
-    const hasCriticalOpen = openConditions.some(isSafetyCriticalOpenCondition);
-    if (hasCriticalOpen) {
-      throw Object.assign(
-        new Error("Cannot set equipment to AVAILABLE: unresolved safety-critical conditions remain"),
-        {
-          statusCode: 422,
-          code: "EQUIPMENT_CONDITIONS_BLOCK_AVAILABILITY",
-        },
-      );
-    }
-  }
+  const restoringToAvailable =
+    nextStatus === EquipmentStatus.AVAILABLE &&
+    (equipment.status === EquipmentStatus.OUT_OF_SERVICE || equipment.status === EquipmentStatus.UNAVAILABLE);
+  const downgrading =
+    nextStatus === EquipmentStatus.OUT_OF_SERVICE || nextStatus === EquipmentStatus.UNAVAILABLE;
+  const mutationIntent: "downgrade" | "restore" | "other" = restoringToAvailable
+    ? "restore"
+    : downgrading
+      ? "downgrade"
+      : "other";
 
   return prisma.$transaction(async (tx) => {
+    await requireEquipmentStatusMutationRole(tx, sessionUser as SessionUserLike, equipment.fleetId, equipment.id, mutationIntent);
     await lockEquipmentSafetyWrite(tx, equipment.id);
+
+    if (nextStatus === EquipmentStatus.AVAILABLE) {
+      const openConditions = await tx.conditionThread.findMany({
+        where: {
+          equipmentId: equipment.id,
+          fleetId: equipment.fleetId,
+          lifecycleState: { not: "RESOLVED" },
+        },
+        select: {
+          lifecycleState: true,
+          severity: true,
+          impact: true,
+        },
+      });
+      const hasCriticalOpen = openConditions.some(isSafetyCriticalOpenCondition);
+      if (hasCriticalOpen) {
+        throw Object.assign(
+          new Error("Cannot set equipment to AVAILABLE: unresolved safety-critical conditions remain"),
+          {
+            statusCode: 422,
+            code: "EQUIPMENT_CONDITIONS_BLOCK_AVAILABILITY",
+          },
+        );
+      }
+    }
 
     const updated = await tx.equipment.update({
       where: { id: equipment.id },
