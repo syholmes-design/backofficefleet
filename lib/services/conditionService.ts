@@ -20,6 +20,11 @@ import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { authorizedFleetAccess, hasRole, type SessionUserLike } from "@/lib/services/intakeService";
 import { getAuthenticatedDriver } from "@/lib/services/authenticatedDriverService";
+import {
+  invalidateEquipmentMovementAuthorizations,
+  lockEquipmentSafetyWrite,
+} from "@/lib/services/equipmentSafetyInvalidationService";
+import { isSafetyCriticalOpenCondition } from "@/lib/services/equipmentSafetyPredicates";
 
 const CONDITION_EVIDENCE_ROOT = resolve(process.cwd(), "storage", "condition-evidence");
 const ALLOWED_EVIDENCE_MIME_TYPES = new Set([
@@ -1016,8 +1021,18 @@ async function persistConditionEvent(input: {
   const actor = await getAuthenticatedDriver(input.sessionUser);
   const driverId = actor.status === "LINKED" ? actor.driver.id : null;
   const now = new Date();
+  const actorId = input.sessionUser.id!;
+  const isSafetyCritical = isSafetyCriticalOpenCondition({
+    lifecycleState: lifecycleUpdate.lifecycleState,
+    severity: thread.severity,
+    impact: thread.impact,
+  });
 
   const event = await prisma.$transaction(async (tx) => {
+    if (input.eventType === ConditionEventType.REOPENED && isSafetyCritical) {
+      await lockEquipmentSafetyWrite(tx, thread.equipmentId);
+    }
+
     const createdEvent = await tx.conditionEvent.create({
       data: {
         conditionThread: { connect: { id: thread.id } },
@@ -1107,6 +1122,15 @@ async function persistConditionEvent(input: {
       },
     });
 
+    if (input.eventType === ConditionEventType.REOPENED && isSafetyCritical) {
+      await invalidateEquipmentMovementAuthorizations(tx, {
+        equipmentIds: [thread.equipmentId],
+        actor: { id: actorId, email: input.sessionUser.email ?? null },
+        trigger: "CONDITION_THREAD_REOPENED",
+        summary: `Safety-critical condition reopened on equipment: ${thread.title}.`,
+      });
+    }
+
     return {
       event: createdEvent,
       thread: retouchedThread,
@@ -1167,7 +1191,7 @@ export async function createCondition(sessionUser: SessionUserLike | null | unde
 }) {
   requireSessionUser(sessionUser);
   const actorSession = sessionUser as SessionUserLike;
-  const actorId = actorSession.id;
+  const actorId = actorSession.id!;
   const actorEmail = actorSession.email ?? null;
 
   const equipmentId = requireNonEmptyString(input.equipmentId, "equipmentId");
@@ -1192,8 +1216,17 @@ export async function createCondition(sessionUser: SessionUserLike | null | unde
   const category = toEnumValue(ConditionCategory, input.category, "category");
   const severity = toEnumValue(ConditionSeverity, input.severity, "severity");
   const impact = input.impact ? toEnumValue(ConditionImpact, input.impact, "impact") : null;
+  const isSafetyCritical = isSafetyCriticalOpenCondition({
+    lifecycleState: ConditionLifecycleState.IDENTIFIED,
+    severity,
+    impact,
+  });
 
   const thread = await prisma.$transaction(async (tx) => {
+    if (isSafetyCritical) {
+      await lockEquipmentSafetyWrite(tx, equipment.id);
+    }
+
     const createdThread = await tx.conditionThread.create({
       data: {
         fleet: { connect: { id: equipment.fleetId } },
@@ -1244,7 +1277,7 @@ export async function createCondition(sessionUser: SessionUserLike | null | unde
       },
     });
 
-    return tx.conditionThread.findUnique({
+    const resultThread = await tx.conditionThread.findUnique({
       where: { id: createdThread.id },
       include: {
         events: {
@@ -1255,6 +1288,17 @@ export async function createCondition(sessionUser: SessionUserLike | null | unde
         },
       },
     });
+
+    if (isSafetyCritical) {
+      await invalidateEquipmentMovementAuthorizations(tx, {
+        equipmentIds: [equipment.id],
+        actor: { id: actorId, email: actorEmail },
+        trigger: "CONDITION_THREAD_CREATED",
+        summary: `Safety-critical condition opened on equipment: ${title}.`,
+      });
+    }
+
+    return resultThread;
   });
 
   await createAuditRecord({

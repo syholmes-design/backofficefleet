@@ -17,6 +17,7 @@ import {
 } from "@/lib/services/dispatchReleaseService";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
 import { findLoadByOperatorKey } from "@/lib/services/loadService";
+import { lockEquipmentSafetyWrites } from "@/lib/services/equipmentSafetyInvalidationService";
 import { lockDriverReadinessWrite } from "@/lib/services/readinessService";
 
 export const MOVEMENT_AUTHORIZATION_POLICY_VERSION = "bof-stage0-movement-v1" as const;
@@ -209,6 +210,7 @@ async function authorizeProposedPlanning(
     throw Object.assign(new Error("Proposed assignment fleet does not match load fleet"), { statusCode: 422 });
   }
 
+  await lockEquipmentSafetyWrites(tx, [tractor.id, trailer?.id]);
   await lockDriverReadinessWrite(tx, driver.id);
 
   let driverQualification: AuthoritativeDriverQualification;
@@ -276,6 +278,7 @@ export async function authorizeMovement(
   const driverId = assignment.driverId;
   const fleetId = assignment.fleetId;
 
+  await lockEquipmentSafetyWrites(tx, [assignment.tractorEquipmentId, assignment.trailerEquipmentId]);
   await lockDriverReadinessWrite(tx, driverId);
 
   let driverQualification: AuthoritativeDriverQualification;

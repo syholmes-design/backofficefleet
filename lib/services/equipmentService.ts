@@ -2,6 +2,11 @@ import { EquipmentStatus } from "@prisma/client";
 
 import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
+import {
+  invalidateEquipmentMovementAuthorizations,
+  lockEquipmentSafetyWrite,
+} from "@/lib/services/equipmentSafetyInvalidationService";
+import { isSafetyCriticalOpenCondition } from "@/lib/services/equipmentSafetyPredicates";
 import { authorizedFleetAccess, isServiceRole, type SessionUserLike } from "@/lib/services/intakeService";
 import { rejectDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
 
@@ -108,6 +113,8 @@ export async function setEquipmentStatus(
 ) {
   requireSessionUser(sessionUser);
 
+  const nextStatus = ensureValidEquipmentStatus(status);
+
   const { equipment, allowed, reason } = await getAuthorizedEquipmentRecord(sessionUser, equipmentId);
   if (!equipment) {
     throw Object.assign(new Error("Equipment not found"), { statusCode: 404 });
@@ -117,8 +124,69 @@ export async function setEquipmentStatus(
     throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
   }
 
-  return prisma.equipment.update({
-    where: { id: equipment.id },
-    data: { status: ensureValidEquipmentStatus(status) },
+  if (nextStatus === EquipmentStatus.AVAILABLE) {
+    const openConditions = await prisma.conditionThread.findMany({
+      where: {
+        equipmentId: equipment.id,
+        fleetId: equipment.fleetId,
+        lifecycleState: { not: "RESOLVED" },
+      },
+      select: {
+        lifecycleState: true,
+        severity: true,
+        impact: true,
+      },
+    });
+    const hasCriticalOpen = openConditions.some(isSafetyCriticalOpenCondition);
+    if (hasCriticalOpen) {
+      throw Object.assign(
+        new Error("Cannot set equipment to AVAILABLE: unresolved safety-critical conditions remain"),
+        {
+          statusCode: 422,
+          code: "EQUIPMENT_CONDITIONS_BLOCK_AVAILABILITY",
+        },
+      );
+    }
+  }
+
+  return prisma.$transaction(async (tx) => {
+    await lockEquipmentSafetyWrite(tx, equipment.id);
+
+    const updated = await tx.equipment.update({
+      where: { id: equipment.id },
+      data: { status: nextStatus },
+    });
+
+    if (nextStatus === EquipmentStatus.OUT_OF_SERVICE || nextStatus === EquipmentStatus.UNAVAILABLE) {
+      const trigger =
+        nextStatus === EquipmentStatus.OUT_OF_SERVICE ? "EQUIPMENT_OUT_OF_SERVICE" : "EQUIPMENT_UNAVAILABLE";
+      await invalidateEquipmentMovementAuthorizations(tx, {
+        equipmentIds: [equipment.id],
+        actor: { id: sessionUser!.id!, email: sessionUser!.email ?? null },
+        trigger,
+        summary: `Equipment ${equipment.unitNumber} (${equipment.equipmentType}) status set to ${nextStatus}.`,
+      });
+    }
+
+    await createAuditRecord(
+      {
+        actorId: sessionUser!.id ?? null,
+        actorEmail: sessionUser!.email ?? null,
+        tenantId: equipment.fleetId,
+        action: "UPDATED",
+        entityType: "Equipment",
+        entityId: equipment.id,
+        details: {
+          event: "equipment.status_updated",
+          previousStatus: equipment.status,
+          newStatus: nextStatus,
+          unitNumber: equipment.unitNumber,
+        },
+        metadata: { source: "equipment-service" },
+      },
+      tx,
+    );
+
+    return updated;
   });
 }

@@ -4,6 +4,10 @@ import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { recordOperatingProcessEvent } from "@/lib/process-intelligence/operating-event-service";
 import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
+import {
+  invalidateAssignmentForPreTripDefect,
+  lockEquipmentSafetyWrites,
+} from "@/lib/services/equipmentSafetyInvalidationService";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
 
 const OPEN_PRETRIP_CONSTRAINTS = new Map([
@@ -308,6 +312,17 @@ export async function updatePreTripItem(
   }
 
   return prisma.$transaction(async (tx) => {
+    const assignmentEquipment = await tx.dispatchAssignment.findUnique({
+      where: { id: header.assignmentId },
+      select: { tractorEquipmentId: true, trailerEquipmentId: true },
+    });
+    if (assignmentEquipment) {
+      await lockEquipmentSafetyWrites(tx, [
+        assignmentEquipment.tractorEquipmentId,
+        assignmentEquipment.trailerEquipmentId,
+      ]);
+    }
+
     const item = await tx.preTripItem.upsert({
       where: {
         preTripHeaderId_itemCode: {
@@ -382,6 +397,15 @@ export async function updatePreTripItem(
     }
 
     await syncHeaderStatus(tx, header.id);
+
+    if (normalizedStatus === "FAIL") {
+      await invalidateAssignmentForPreTripDefect(tx, {
+        assignmentId: header.assignmentId,
+        actor: { id: sessionUser!.id!, email: sessionUser?.email ?? null },
+        defectSummary: notes?.trim() || `Pre-trip inspection recorded a blocking defect: ${definition.label}.`,
+        trigger: "PRETRIP_DEFECT",
+      });
+    }
 
     return tx.preTripHeader.findUnique({
       where: { id: header.id },
