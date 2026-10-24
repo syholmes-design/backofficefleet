@@ -19,6 +19,11 @@ import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/inta
 import { findLoadByOperatorKey } from "@/lib/services/loadService";
 import { lockEquipmentSafetyWrites } from "@/lib/services/equipmentSafetyInvalidationService";
 import { lockDriverReadinessWrite } from "@/lib/services/readinessService";
+import {
+  decideEffectiveAuthorization,
+  resolveStage0EnforcementMode,
+  type EnforcementDecision,
+} from "@/lib/services/stage0EnforcementPolicy";
 
 export const MOVEMENT_AUTHORIZATION_POLICY_VERSION = "bof-stage0-movement-v1" as const;
 
@@ -49,6 +54,12 @@ export type MovementAuthorizationResult = {
   driverQualificationPolicyVersion: string | null;
   equipmentPolicyVersion: string | null;
   releaseEvaluation?: DispatchReleaseEvaluation;
+  /**
+   * Stage 0 D-2: the enforcement mode and the effective decision recorded next to this result. Set by
+   * authorizeMovement. `allowed` above is the authoritative (shadow) result and is never modified; callers keep
+   * deciding on it. In ENFORCE, and today in every mode, enforcement.effectiveAllowed === allowed.
+   */
+  enforcement?: EnforcementDecision;
 };
 
 export type ProposedAssignment = {
@@ -226,11 +237,35 @@ async function authorizeProposedPlanning(
   return composePlanningAuthorization(driverQualification, { tractor, trailer });
 }
 
+/**
+ * Evaluates the movement stage (locks → qualification → equipment → compose) and returns the authoritative
+ * result unchanged, then records the D-2 enforcement decision next to it. Evaluation order, locks and the
+ * result are exactly those of authorizeMovementEvaluation.
+ */
 export async function authorizeMovement(
   tx: Prisma.TransactionClient,
   stage: MovementAuthorizationStage,
   context: MovementAuthorizationContext,
 ): Promise<MovementAuthorizationResult> {
+  const { result, fleetId } = await authorizeMovementEvaluation(tx, stage, context);
+  const resolution = await resolveStage0EnforcementMode(tx, fleetId);
+  const enforcement = decideEffectiveAuthorization({
+    stage,
+    shadow: {
+      allowed: result.allowed,
+      reasonCodes: result.reasonCodes,
+      driverQualificationStatus: result.driverQualificationStatus,
+    },
+    resolution,
+  });
+  return { ...result, enforcement };
+}
+
+async function authorizeMovementEvaluation(
+  tx: Prisma.TransactionClient,
+  stage: MovementAuthorizationStage,
+  context: MovementAuthorizationContext,
+): Promise<{ result: MovementAuthorizationResult; fleetId: string }> {
   requireSessionUser(context.sessionUser);
 
   const load = await findLoadByOperatorKey(context.loadId);
@@ -249,7 +284,7 @@ export async function authorizeMovement(
         statusCode: 422,
       });
     }
-    return authorizeProposedPlanning(tx, load.fleetId, context.proposedAssignment);
+    return { result: await authorizeProposedPlanning(tx, load.fleetId, context.proposedAssignment), fleetId: load.fleetId };
   }
 
   const assignment = await tx.dispatchAssignment.findFirst({
@@ -286,13 +321,13 @@ export async function authorizeMovement(
     driverQualification = await getAuthoritativeDriverQualification(tx, driverId, fleetId);
   } catch (error) {
     if (error instanceof AuthoritativeQualificationError) {
-      return qualificationEvaluationFailedResult(stage, error.message);
+      return { result: qualificationEvaluationFailedResult(stage, error.message), fleetId };
     }
     throw error;
   }
 
   const releaseInputs = await assembleReleaseInputsInTx(tx, load, assignment);
-  return composeMovementAuthorization(stage, driverQualification, releaseInputs);
+  return { result: composeMovementAuthorization(stage, driverQualification, releaseInputs), fleetId };
 }
 
 export async function authorizeMovementForLoad(

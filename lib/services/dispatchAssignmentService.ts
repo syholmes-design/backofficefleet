@@ -8,6 +8,11 @@ import { authorizeMovement, type MovementAuthorizationResult } from "@/lib/servi
 import { loadOpenSafetyCriticalConditionsForEquipment } from "@/lib/services/dispatchReleaseService";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
 import { findLoadByOperatorKey } from "@/lib/services/loadService";
+import {
+  enforcementAuditSummary,
+  enforcementColumns,
+  type EnforcementDecision,
+} from "@/lib/services/stage0EnforcementPolicy";
 import { rejectDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
 
 export type AssignmentClosureStatus = Extract<DispatchAssignmentStatus, "SUPERSEDED" | "CANCELLED">;
@@ -44,6 +49,7 @@ async function recordAssignmentRefusal(input: {
   driverId: string;
   reason: string;
   reasonCodes?: string[];
+  enforcement?: EnforcementDecision;
 }) {
   await createAuditRecord({
     action: "ACCESS_DENIED",
@@ -55,6 +61,7 @@ async function recordAssignmentRefusal(input: {
       event: "assignment.refused",
       reason: input.reason,
       ...(input.reasonCodes ? { reasonCodes: input.reasonCodes } : {}),
+      ...(input.enforcement ? { enforcement: enforcementAuditSummary(input.enforcement) } : {}),
       loadId: input.loadId,
       driverId: input.driverId,
     },
@@ -254,6 +261,7 @@ export async function createAssignment(
           driverId: driver.id,
           reason: refusal.reason,
           reasonCodes: planning.reasonCodes,
+          enforcement: planning.enforcement,
         });
         throw Object.assign(new Error(refusal.message), { statusCode: 409 });
       }
@@ -307,6 +315,7 @@ export async function createAssignment(
           status: "ACTIVE",
           assignedAt: new Date(),
           assignedByUserId: actorId,
+          ...(planning.enforcement ? enforcementColumns(planning.enforcement) : {}),
         },
       });
       await createAuditRecord(
@@ -327,6 +336,7 @@ export async function createAssignment(
             driverQualificationStatus: planning.driverQualificationStatus,
             driverQualificationPolicyVersion: planning.driverQualificationPolicyVersion,
             movementPolicyVersion: planning.policyVersion,
+            ...(planning.enforcement ? { enforcement: enforcementAuditSummary(planning.enforcement) } : {}),
             advisoryOpenConditionIds,
           },
         },

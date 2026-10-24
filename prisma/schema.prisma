@@ -917,6 +917,8 @@ model ComplianceGate {
 
 model Fleet {
   id                               String                            @id @default(cuid())
+  stage0EnforcementSetting         Stage0EnforcementSetting?
+  stage0EnforcementChanges         Stage0EnforcementModeChange[]
   slug                             String                            @unique
   name                             String
   carrierGroupId                   String
@@ -980,6 +982,8 @@ model Fleet {
 
 model User {
   id                                  String                            @id @default(cuid())
+  stage0EnforcementSettings           Stage0EnforcementSetting[]        @relation("Stage0EnforcementSettingConfiguredBy")
+  stage0EnforcementChanges            Stage0EnforcementModeChange[]     @relation("Stage0EnforcementModeChangeActor")
   email                               String                            @unique
   name                                String?
   passwordHash                        String?
@@ -1694,6 +1698,12 @@ model DispatchAssignment {
   assignedByUserId    String?
   unassignedAt        DateTime?
   unassignedByUserId  String?
+  enforcementMode          Stage0EnforcementMode?
+  shadowAllowed            Boolean?
+  effectiveAllowed         Boolean?
+  enforcementOverridden    Boolean                    @default(false)
+  enforcementPolicyVersion String?
+  enforcementMetadata      Json?
   createdAt           DateTime                 @default(now())
   updatedAt           DateTime                 @updatedAt
   fleet               Fleet                    @relation(fields: [fleetId], references: [id], onDelete: Restrict)
@@ -1783,6 +1793,12 @@ model DispatchRelease {
   policyVersion          String
   evaluatedAt            DateTime                   @default(now())
   evaluatedByUserId      String?
+  enforcementMode          Stage0EnforcementMode?
+  shadowAllowed            Boolean?
+  effectiveAllowed         Boolean?
+  enforcementOverridden    Boolean                    @default(false)
+  enforcementPolicyVersion String?
+  enforcementMetadata      Json?
   createdAt              DateTime                   @default(now())
   fleet                  Fleet                      @relation(fields: [fleetId], references: [id], onDelete: Restrict)
   load                   Load                       @relation(fields: [loadId], references: [id], onDelete: Restrict)
@@ -3117,4 +3133,42 @@ model LoadMovementAssessment {
 
   @@unique([fleetId, loadId])
   @@index([fleetId, progressStatus])
+}
+
+/// Stage 0 D-2: movement enforcement mode. ENFORCE is the default and the only mode in production.
+enum Stage0EnforcementMode {
+  ENFORCE
+  OBSERVE
+}
+
+/// Stage 0 D-2: per-fleet enforcement override (pilot). Written only by BOF personnel through
+/// stage0EnforcementConfigService; ignored by the policy resolver in production-like environments.
+model Stage0EnforcementSetting {
+  id                 String                @id @default(cuid())
+  fleetId            String                @unique
+  mode               Stage0EnforcementMode
+  reason             String
+  configuredByUserId String
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  fleet              Fleet                 @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  configuredByUser   User                  @relation("Stage0EnforcementSettingConfiguredBy", fields: [configuredByUserId], references: [id], onDelete: Restrict)
+}
+
+/// Stage 0 D-2: append-only history of every enforcement-mode change.
+model Stage0EnforcementModeChange {
+  id            String                @id @default(cuid())
+  fleetId       String
+  previousMode  Stage0EnforcementMode
+  newMode       Stage0EnforcementMode
+  reason        String
+  actorUserId   String
+  actorEmail    String?
+  actorRoleCode String
+  policyVersion String
+  createdAt     DateTime              @default(now())
+  fleet         Fleet                 @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  actorUser     User                  @relation("Stage0EnforcementModeChangeActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([fleetId, createdAt])
 }

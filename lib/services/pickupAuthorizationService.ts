@@ -22,6 +22,7 @@ import {
   recordDispatchReleaseSideEffects,
 } from "@/lib/services/dispatchReleaseService";
 import { authorizedFleetAccess, isServiceRole, type SessionUserLike } from "@/lib/services/intakeService";
+import { enforcementAuditSummary } from "@/lib/services/stage0EnforcementPolicy";
 import { findLoadByOperatorKey } from "@/lib/services/loadService";
 import {
   PHASE1_PHYSICAL_VERIFICATION_NOTE,
@@ -388,6 +389,7 @@ export async function issuePickupAuthorization(sessionUser: SessionUserLike | nu
       movementPolicyVersion: movement.policyVersion,
       driverQualificationStatus: movement.driverQualificationStatus,
       movementReasonCodes: movement.reasonCodes,
+      ...(movement.enforcement ? { enforcement: enforcementAuditSummary(movement.enforcement) } : {}),
       status: created.status,
       physicalVerification: false,
     },

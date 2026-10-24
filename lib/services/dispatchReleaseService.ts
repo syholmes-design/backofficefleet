@@ -23,6 +23,7 @@ import {
 import { isSafetyCriticalOpenCondition } from "@/lib/services/equipmentSafetyPredicates";
 import { findLoadByOperatorKey } from "@/lib/services/loadService";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
+import { enforcementColumns, type EnforcementDecision } from "@/lib/services/stage0EnforcementPolicy";
 
 export const DISPATCH_RELEASE_POLICY_VERSION = "bof-equipment-safety-stage0-v1" as const;
 export const DISPATCH_RELEASE_BLOCKED_NO_ASSIGNMENT =
@@ -722,6 +723,8 @@ export async function writeDispatchReleaseInTx(
   sessionUser: SessionUserLike,
   inputs: DispatchReleaseInputs,
   evaluation: DispatchReleaseEvaluation,
+  /** Stage 0 D-2 decision recorded with the release; omitted by movement invalidation, which is always enforced. */
+  enforcement?: EnforcementDecision,
 ) {
   const actorId = sessionUser.id as string;
   const readinessId = inputs.readiness.id;
@@ -753,6 +756,7 @@ export async function writeDispatchReleaseInTx(
       policyVersion: evaluation.policyVersion,
       evaluatedAt: new Date(),
       evaluatedByUserId: actorId,
+      ...(enforcement ? enforcementColumns(enforcement) : {}),
     },
   });
 }
@@ -797,7 +801,7 @@ export async function executeMovementReleaseInTransaction(
   }
 
   const inputs = await assembleReleaseInputsInTx(tx, load, assignment);
-  const release = await writeDispatchReleaseInTx(tx, sessionUser, inputs, movement.releaseEvaluation);
+  const release = await writeDispatchReleaseInTx(tx, sessionUser, inputs, movement.releaseEvaluation, movement.enforcement);
   return { movement, release, inputs, evaluation: movement.releaseEvaluation };
 }
 
