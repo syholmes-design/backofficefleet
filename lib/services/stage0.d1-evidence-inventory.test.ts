@@ -503,12 +503,20 @@ test("D-2 and production safeguards are untouched after running the inventory", 
 });
 
 test("script: refuses without confirmation or a declared non-production environment, and never prints the connection string", async () => {
+  // Direct executable invocation (no shell, no npx/.cmd shim): the child is the current Node binary and reuses the
+  // loader flags of this test process (tsx), so nothing needs resolving on PATH and it behaves the same on Windows
+  // and POSIX. Environment variables are removed, not set to undefined.
   const run = (args: string[], env: Record<string, string | undefined>) => {
+    const childEnv: Record<string, string | undefined> = { ...process.env, ...env };
+    for (const key of Object.keys(childEnv)) if (childEnv[key] === undefined) delete childEnv[key];
+    if (!("BOF_STAGE0_ENVIRONMENT_CLASS" in env)) delete childEnv.BOF_STAGE0_ENVIRONMENT_CLASS;
+    if (!("VERCEL_ENV" in env)) delete childEnv.VERCEL_ENV;
     try {
-      const stdout = execFileSync("npx", ["tsx", "scripts/driver-qualification-evidence-inventory.ts", ...args], {
-        env: { ...process.env, BOF_STAGE0_ENVIRONMENT_CLASS: undefined, VERCEL_ENV: undefined, ...env } as NodeJS.ProcessEnv,
+      const stdout = execFileSync(process.execPath, [...process.execArgv, "scripts/driver-qualification-evidence-inventory.ts", ...args], {
+        env: childEnv as NodeJS.ProcessEnv,
         encoding: "utf8",
         stdio: ["ignore", "pipe", "pipe"],
+        windowsHide: true,
       });
       return { code: 0, stdout, stderr: "" };
     } catch (error) {
