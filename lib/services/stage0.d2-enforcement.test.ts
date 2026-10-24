@@ -550,6 +550,11 @@ test("history, audit and notification: every change is recorded in order, atomic
       assert.ok(audits.every((a) => (a.details as { event?: string }).event === "stage0.enforcement_mode_changed"));
       const notifications = await m.prisma.operationalChatNotification.findMany({ where: { tenantId: fleet, kind: "STAGE0_ENFORCEMENT_MODE_CHANGED" } });
       assert.ok(notifications.some((n) => n.userId === admin.id), "the carrier fleet admin is told");
+      // The persisted notification text must not depend on the database encoding (WIN1252 has no arrow).
+      const messages = await m.prisma.operationalChatMessage.findMany({ where: { tenantId: fleet }, orderBy: { createdAt: "asc" } });
+      assert.equal(messages.length, 3);
+      assert.ok(messages.every((message) => /^[\x00-\x7F]*$/.test(message.body)), "mode-change messages are ASCII");
+      assert.match(messages[0].body, /^Movement enforcement mode changed ENFORCE -> OBSERVE by BOF_OPERATIONS\. Reason: begin D-1 backfill pilot$/);
       assert.ok(notifications.some((n) => n.userId === compliance.id));
 
       // Atomic: a failing audit insert rolls the mode change back (no setting, history or notification change).

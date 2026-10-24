@@ -178,7 +178,7 @@ async function notifyModeChange(
       tenantId: input.fleetId,
       senderId: input.actorId,
       visibility: "INTERNAL",
-      body: `Movement enforcement mode changed ${input.previousMode} → ${input.newMode} by ${input.roleCode}. Reason: ${input.reason}`,
+      body: `Movement enforcement mode changed ${input.previousMode} -> ${input.newMode} by ${input.roleCode}. Reason: ${input.reason}`,
     },
     select: { id: true },
   });
