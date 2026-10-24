@@ -176,6 +176,8 @@ const bump = (map: Map<string, number>, key: string) => map.set(key, (map.get(ke
 export type InventoryOptions = {
   fleetId: string;
   includeDrivers?: boolean;
+  /** Restricts the run to these drivers of the fleet (ids from other fleets simply match nothing). Absent = whole fleet. */
+  driverIds?: readonly string[];
   /** Conflict-detection clock. Defaults to now; tests pass a fixed value. */
   asOf?: Date;
 };
@@ -193,7 +195,7 @@ export async function buildDriverQualificationEvidenceInventory(
   if (!fleet) throw new Error("Fleet not found");
 
   const drivers = await tx.driver.findMany({
-    where: { fleetId },
+    where: { fleetId, ...(options.driverIds ? { id: { in: [...options.driverIds] } } : {}) },
     orderBy: { id: "asc" },
     select: { id: true, fleetId: true, status: true, userId: true },
   });
